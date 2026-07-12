@@ -1,0 +1,324 @@
+﻿<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>作品集 | 装修签约前 AI 风险审查助手</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="#top" aria-label="返回顶部">
+        <img src="./assets/brand-icon.png" alt="项目图标" />
+        <span>FDE Portfolio</span>
+      </a>
+      <nav aria-label="页面导航">
+        <a href="#about">关于我</a>
+        <a href="#insight">洞察</a>
+        <a href="#solution">方案</a>
+        <a href="#architecture">架构</a>
+        <a href="#evaluation">评测</a>
+        <a href="#deliverables">交付物</a>
+      </nav>
+    </header>
+
+    <main id="top">
+      <section class="hero-section">
+        <div class="hero-copy">
+          <p class="eyebrow">AI Product / RAG / C-end Risk Review</p>
+          <h1>基于 RAG + LLM 的装修签约前风险审查助手</h1>
+          <p class="lead">
+            将报价单、合同条款和销售沟通记录转化为可追问、可留证、可复核的风险报告，帮助业主在签约前识别漏项、增项、口头承诺和责任边界风险。
+          </p>
+          <div class="hero-actions">
+            <a class="primary-link" href="./">查看原型</a>
+            <a class="secondary-link" href="./docs/owner-risk-review-prd.md">阅读 PRD</a>
+          </div>
+        </div>
+        <aside class="hero-card" aria-label="项目摘要">
+          <div class="hero-visual">
+            <img src="./assets/brand-icon.png" alt="" />
+          </div>
+          <dl class="project-meta">
+            <div>
+              <dt>项目定位</dt>
+              <dd>C 端签约前风控助手</dd>
+            </div>
+            <div>
+              <dt>MVP 范围</dt>
+              <dd>报价 / 合同 / 承诺审查</dd>
+            </div>
+            <div>
+              <dt>核心技术</dt>
+              <dd>知识卡检索 + LLM Agent</dd>
+            </div>
+            <div>
+              <dt>交付形态</dt>
+              <dd>Web 原型 + 桌面演示版</dd>
+            </div>
+          </dl>
+        </aside>
+      </section>
+
+      <section class="metrics-strip" aria-label="项目关键指标">
+        <article>
+          <strong>165</strong>
+          <span>条装修风险知识卡</span>
+        </article>
+        <article>
+          <strong>15 → 5</strong>
+          <span>两轮审查依据检索</span>
+        </article>
+        <article>
+          <strong>4</strong>
+          <span>页式风险审查路径</span>
+        </article>
+        <article>
+          <strong>1</strong>
+          <span>桌面演示版 exe</span>
+        </article>
+      </section>
+
+      <section id="about" class="section-block about-section">
+        <div class="about-card">
+          <div class="section-heading">
+            <p class="eyebrow">About / Project Owner</p>
+            <h2><span class="name-cn">何珊</span><span class="name-en"> / Luna</span>：把用户调研、业务流程和 AI 能力连起来</h2>
+            <p>
+              我是市场营销本科、企业管理硕士背景的 AI 产品 / FDE 方向候选人。这个项目不是从“想做一个 AI 工具”开始，而是从装修用户调研中反复出现的签约焦虑开始：费用不透明、承诺不落纸、责任边界不清、后续维权成本高。
+            </p>
+          </div>
+          <div class="about-grid">
+            <article>
+              <span>业务理解</span>
+              <h3>从真实痛点收敛 MVP</h3>
+              <p>从 B 端销售辅助转向 C 端业主签约前审查，聚焦报价、合同、承诺和追问清单，而不是做大而全的装修平台。</p>
+            </article>
+            <article>
+              <span>AI 产品设计</span>
+              <h3>让 AI 输出可解释</h3>
+              <p>设计“结构化知识卡 + 两轮检索 + LLM 生成”的流程，让每个风险卡片绑定依据，避免无依据的确定性结论。</p>
+            </article>
+            <article>
+              <span>FDE 能力</span>
+              <h3>把原型落成可演示系统</h3>
+              <p>完成 PRD、RAG 知识库、Prompt 约束、Web 原型、桌面演示版和评测指标，展示从业务问题到工程原型的闭环。</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section id="insight" class="section-block">
+        <div class="section-heading">
+          <p class="eyebrow">01 / Problem Insight</p>
+          <h2>从“装修公司销售工具”转向“业主风险审查工具”</h2>
+          <p>
+            初始方向是帮助装修公司销售解释报价，但用户调研后发现，真正更痛的一方是签约前的业主：他们面对高金额、低频、强信息差的消费决策，很难判断报价和承诺是否可靠。
+          </p>
+        </div>
+        <div class="comparison-grid">
+          <article class="soft-card muted">
+            <span>初始假设</span>
+            <h3>B 端销售辅助</h3>
+            <p>帮助销售生成报价说明、责任边界和销售话术，以提升成交率。</p>
+          </article>
+          <article class="soft-card active">
+            <span>调研修正</span>
+            <h3>C 端签约前审查</h3>
+            <p>帮助业主看懂报价、合同和销售承诺，生成签约前追问清单。</p>
+          </article>
+        </div>
+        <div class="insight-list">
+          <article>
+            <h3>客户真正怕的不是贵</h3>
+            <p>而是签约前说得很好，签约后漏项、增项、延期、返工和责任推诿。</p>
+          </article>
+          <article>
+            <h3>AI 不做法律裁判</h3>
+            <p>系统只把材料中的不确定点转成风险提示、追问问题和人工复核事项。</p>
+          </article>
+          <article>
+            <h3>作品集价值在于重定位</h3>
+            <p>项目展示的不是“做了页面”，而是从业务假设中收敛出更真实的用户切口。</p>
+          </article>
+        </div>
+      </section>
+
+      <section id="solution" class="section-block">
+        <div class="section-heading">
+          <p class="eyebrow">02 / Product Solution</p>
+          <h2>V1 MVP 只聚焦签约前风险审查</h2>
+          <p>
+            为避免产品变成泛装修管理平台，V1 收敛在业主签约前最需要的 5 个能力：报价审查、合同条款审查、销售承诺核对、追问清单和人工复核提示。
+          </p>
+        </div>
+        <div class="workflow-line" aria-label="产品流程">
+          <article>
+            <b>01</b>
+            <h3>资料输入</h3>
+            <p>粘贴报价单、合同文本、销售沟通记录。</p>
+          </article>
+          <article>
+            <b>02</b>
+            <h3>AI 审查</h3>
+            <p>解析触发词，匹配审查依据，生成风险。</p>
+          </article>
+          <article>
+            <b>03</b>
+            <h3>风险总览</h3>
+            <p>先看结论、风险等级和重点风险卡片。</p>
+          </article>
+          <article>
+            <b>04</b>
+            <h3>结构化报告</h3>
+            <p>输出风险明细、漏项、责任边界和追问清单。</p>
+          </article>
+        </div>
+        <div class="feature-grid">
+          <article>
+            <h3>报价单审查</h3>
+            <p>识别报价不清、按实结算、套餐外另计、水电不封顶等费用风险。</p>
+          </article>
+          <article>
+            <h3>合同条款审查</h3>
+            <p>检查付款节点、工期、材料替换、验收、售后和变更规则是否写清。</p>
+          </article>
+          <article>
+            <h3>销售承诺核对</h3>
+            <p>把“无增项、全程管理、赠送项目”等口头承诺转成书面确认问题。</p>
+          </article>
+          <article>
+            <h3>人工复核提示</h3>
+            <p>没有依据或涉及责任认定的内容，不生成确定性结论，进入人工复核。</p>
+          </article>
+        </div>
+      </section>
+
+      <section id="architecture" class="section-block">
+        <div class="section-heading">
+          <p class="eyebrow">03 / RAG + LLM Architecture</p>
+          <h2>先找依据，再生成风险解释</h2>
+          <p>
+            系统不是让 LLM 直接“凭感觉审合同”，而是先通过结构化知识卡和本地相似度检索召回证据，再把用户材料和证据交给 LLM 生成结构化报告。
+          </p>
+        </div>
+        <div class="architecture-card">
+          <div class="arch-node">用户材料<br /><span>报价 / 合同 / 沟通</span></div>
+          <div class="arch-arrow">→</div>
+          <div class="arch-node">知识路由<br /><span>城市 / 阶段 / 模板</span></div>
+          <div class="arch-arrow">→</div>
+          <div class="arch-node">两轮检索<br /><span>15 条候选 → Top 5</span></div>
+          <div class="arch-arrow">→</div>
+          <div class="arch-node">LLM Agent<br /><span>基于 evidence 生成</span></div>
+          <div class="arch-arrow">→</div>
+          <div class="arch-node">风险报告<br /><span>卡片 / 追问 / 表格</span></div>
+        </div>
+        <div class="architecture-details">
+          <article>
+            <h3>知识库分层</h3>
+            <p>A 合同硬知识与验收标准，B 消费提示，C 典型案例，D 项目经验规则。</p>
+          </article>
+          <article>
+            <h3>证据绑定</h3>
+            <p>风险卡片必须绑定审查依据；没有依据的内容只能进入人工复核。</p>
+          </article>
+          <article>
+            <h3>兜底机制</h3>
+            <p>LLM 不可用时仍可用本地规则和知识卡生成基础报告，保证演示不中断。</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section-block output-section">
+        <div class="section-heading">
+          <p class="eyebrow">04 / Product Output</p>
+          <h2>输出不是长文本，而是可执行的签约前动作</h2>
+        </div>
+        <div class="report-preview">
+          <article class="report-main">
+            <span class="risk-pill">高风险</span>
+            <h3>当前材料存在较多签约前不确定点</h3>
+            <p>
+              建议先补齐合同附件、报价明细、付款验收节点和变更规则，再判断是否继续签约。
+            </p>
+          </article>
+          <aside class="report-side">
+            <div><strong>5</strong><span>高风险</span></div>
+            <div><strong>16</strong><span>建议追问</span></div>
+            <div><strong>8</strong><span>知识命中</span></div>
+          </aside>
+        </div>
+        <div class="question-card">
+          <h3>可直接发送给销售的问题示例</h3>
+          <p>请确认水电按实结算项目的单价、预估数量、增项审批方式和费用上限，并写入合同附件。</p>
+        </div>
+      </section>
+
+      <section id="evaluation" class="section-block">
+        <div class="section-heading">
+          <p class="eyebrow">05 / Evaluation System</p>
+          <h2>从模型能力和业务实现双层评测</h2>
+          <p>评测不只看回答是否流畅，而要验证“准不准、有无依据、用户能不能用”。</p>
+        </div>
+        <div class="eval-grid">
+          <article>
+            <h3>模型能力评测</h3>
+            <ul>
+              <li>风险识别召回率</li>
+              <li>误报率与漏报率</li>
+              <li>Top-K 证据相关性</li>
+              <li>evidenceId 覆盖率</li>
+              <li>边界违规率</li>
+            </ul>
+          </article>
+          <article>
+            <h3>业务实现评测</h3>
+            <ul>
+              <li>用户是否看懂报告</li>
+              <li>追问清单是否可直接使用</li>
+              <li>是否帮助暂缓或补充签约确认</li>
+              <li>是否理解 AI 不替代法律/监理</li>
+              <li>是否愿意进入人工复核</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section id="deliverables" class="section-block">
+        <div class="section-heading">
+          <p class="eyebrow">06 / Deliverables</p>
+          <h2>项目交付物</h2>
+          <p>当前项目已经形成 Web 原型、桌面演示版、PRD、RAG 知识库和架构文档。</p>
+        </div>
+        <div class="deliverable-grid">
+          <a href="./">
+            <span>Prototype</span>
+            <strong>四页式 Web 原型</strong>
+            <p>资料输入、AI 审查、风险总览、结构化报告。</p>
+          </a>
+          <a href="./docs/desktop-demo-build.md">
+            <span>Desktop</span>
+            <strong>Electron 桌面演示版</strong>
+            <p>双击 exe 自动启动本地后端和风险审查页面。</p>
+          </a>
+          <a href="./docs/owner-risk-review-prd.md">
+            <span>PRD</span>
+            <strong>产品需求文档</strong>
+            <p>明确 V1 MVP 范围、隐私边界和后续迭代。</p>
+          </a>
+          <a href="./docs/current-real-rag-architecture-20260710.md">
+            <span>Architecture</span>
+            <strong>当前 RAG 架构图</strong>
+            <p>前端、后端、知识库、LLM Agent 的真实实现关系。</p>
+          </a>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <p>Portfolio case study for FDE / AI Product roles.</p>
+      <a href="#top">返回顶部</a>
+    </footer>
+  </body>
+</html>
+
