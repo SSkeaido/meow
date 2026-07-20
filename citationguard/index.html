@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="CitationGuard：基于 RAG 与多模型协作的学术引用准确性审查平台作品集。" />
+    <title>CitationGuard | AI 学术引用审查平台</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="#top"><span class="brand-mark">CG</span><span>CitationGuard</span></a>
+      <nav aria-label="页面导航">
+        <a href="#insight">洞察</a>
+        <a href="#solution">方案</a>
+        <a href="#architecture">架构</a>
+        <a href="#evaluation">评测</a>
+        <a href="#delivery">交付物</a>
+      </nav>
+    </header>
+
+    <main id="top">
+      <section class="hero-section">
+        <div class="hero-copy">
+          <p class="eyebrow">AI PRODUCT / RAG / MULTI-MODEL REVIEW</p>
+          <h1>让每一句引用，都能回到它真正支持的证据。</h1>
+          <p class="lead">CitationGuard 是一个面向论文写作者的 AI 学术引用准确性审查平台。它把 PDF 解析、证据检索、主张提取和高风险复核串成一条可解释的审查流程。</p>
+          <div class="hero-actions">
+            <a class="primary-link" href="#solution">查看产品方案</a>
+            <a class="secondary-link" href="README.md">阅读项目文档</a>
+          </div>
+        </div>
+        <aside class="hero-card">
+          <div class="hero-visual">
+            <div class="document-stack" aria-label="文献证据审查示意图">
+              <div class="paper paper-back"></div>
+              <div class="paper paper-front">
+                <span class="paper-tag">EVIDENCE REVIEW</span>
+                <strong>Claim</strong>
+                <span class="paper-line paper-line-long"></span>
+                <span class="paper-line"></span>
+                <span class="paper-line paper-line-short"></span>
+                <div class="paper-verdict">CHECK <small>p. 04</small></div>
+              </div>
+            </div>
+          </div>
+          <dl class="project-meta">
+            <div><dt>项目定位</dt><dd>科研写作引用审查</dd></div>
+            <div><dt>MVP 范围</dt><dd>PDF / 论文段落 / 证据报告</dd></div>
+            <div><dt>核心技术</dt><dd>RAG + Qwen + 复核模型</dd></div>
+            <div><dt>交付形态</dt><dd>Web 原型 + 可部署后端</dd></div>
+          </dl>
+        </aside>
+      </section>
+
+      <section class="metrics-strip" aria-label="项目概览">
+        <article><strong>7 天</strong><span>访问密钥工作区</span></article>
+        <article><strong>4 类</strong><span>PASS / CHECK / RISK / FAIL</span></article>
+        <article><strong>6 层</strong><span>解析、检索、判断与复核</span></article>
+        <article><strong>38 项</strong><span>后端自动化测试通过</span></article>
+      </section>
+
+      <section class="section-block about-section" id="insight">
+        <div class="about-card">
+          <div class="section-heading">
+            <p class="eyebrow">ABOUT / PRODUCT INSIGHT</p>
+            <h2>不是帮用户生成更多文字，而是帮用户确认已有文字是否站得住。</h2>
+            <p>论文经过翻译、润色和多轮修改后，原始引用很容易无法完整支撑最终表述。CitationGuard 把“人工回看文献”的高成本工作拆成可检索、可解释、可复核的产品流程。</p>
+          </div>
+          <div class="about-grid">
+            <article><span>问题</span><h3>表述变强了，证据没有跟上</h3><p>润色后的绝对化表达、因果表达和范围扩大，可能已经超过原始文献的支持范围。</p></article>
+            <article><span>判断</span><h3>AI 不能只给一个分数</h3><p>审查结果必须绑定原文片段、页码和支持范围，否则用户无法判断模型为什么这样说。</p></article>
+            <article><span>边界</span><h3>系统不是学术裁判</h3><p>平台输出的是证据辅助和修改建议，复杂结论仍然交给作者、导师或领域专家复核。</p></article>
+          </div>
+        </div>
+      </section>
+
+      <section class="section-block" id="solution">
+        <div class="section-heading"><p class="eyebrow">01 / PRODUCT SOLUTION</p><h2>把一次性上传，变成可持续使用的个人文献工作区。</h2><p>用户可以在一周密钥有效期内分批上传公开参考文献，再多次提交论文内容进行检查。历史文献、论文和结果都保存在自己的工作区中。</p></div>
+        <div class="workflow-line">
+          <article><b>01</b><h3>资料输入</h3><p>上传参考文献 PDF，粘贴或上传待审论文内容。</p></article>
+          <article><b>02</b><h3>证据准备</h3><p>解析、切块、去重，建立带页码的可检索文献片段。</p></article>
+          <article><b>03</b><h3>引用审查</h3><p>提取主张，检索证据，判断支持程度并复核高风险结果。</p></article>
+          <article><b>04</b><h3>结果回看</h3><p>查看证据、风险原因、建议改法和历史审查内容。</p></article>
+        </div>
+        <div class="feature-grid">
+          <article><span>Batch Upload</span><h3>分批上传不丢历史</h3><p>单批控制文件数量，用户可以稍后回来继续补充参考文献。</p></article>
+          <article><span>Evidence First</span><h3>先证据，后结论</h3><p>没有可定位的证据时，结果明确标记为证据不足。</p></article>
+          <article><span>Workspace</span><h3>密钥隔离工作区</h3><p>每个内测密钥只能访问自己的项目、文献和审计记录。</p></article>
+          <article><span>Export</span><h3>结果可带走</h3><p>支持 Markdown、CSV 和证据台账导出，方便继续修改论文。</p></article>
+        </div>
+      </section>
+
+      <section class="section-block" id="architecture">
+        <div class="section-heading"><p class="eyebrow">02 / RAG + MULTI-MODEL ARCHITECTURE</p><h2>先缩小证据范围，再让模型做判断。</h2><p>不同模型承担不同任务：本地解析和检索降低成本，Qwen负责主张理解和引用判断，DeepSeek只复核高风险结果。</p></div>
+        <div class="architecture-card">
+          <div class="arch-node">PDF 输入<span>PyMuPDF / OCR</span></div><div class="arch-arrow">→</div>
+          <div class="arch-node">文献切块<span>页码与段落</span></div><div class="arch-arrow">→</div>
+          <div class="arch-node">证据检索<span>BGE-M3 / Reranker</span></div><div class="arch-arrow">→</div>
+          <div class="arch-node">引用判断<span>Qwen</span></div><div class="arch-arrow">→</div>
+          <div class="arch-node">风险复核<span>DeepSeek</span></div>
+        </div>
+        <div class="architecture-details">
+          <article><span>01 / Parse</span><h3>非 LLM 解析优先</h3><p>普通文本 PDF 先在本地抽取，只有低文本页面才进入 OCR。</p></article>
+          <article><span>02 / Retrieve</span><h3>证据片段可定位</h3><p>每个 chunk 绑定文献、页码和章节，保证结果可以回到原文。</p></article>
+          <article><span>03 / Judge</span><h3>模型只看必要上下文</h3><p>发送当前 claim、Top-K证据和必要元数据，不发送整篇 PDF。</p></article>
+          <article><span>04 / Review</span><h3>高风险才二次复核</h3><p>把更强模型预算留给真正有争议的结果，控制成本。</p></article>
+        </div>
+      </section>
+
+      <section class="section-block">
+        <div class="section-heading"><p class="eyebrow">03 / PRODUCT OUTPUT</p><h2>输出不是一段漂亮的解释，而是下一步可以执行的修改动作。</h2></div>
+        <div class="report-preview">
+          <article class="report-main"><span class="risk-pill">RISK · 部分支持</span><h3>该主张的因果强度超过原文证据。</h3><p>原文只报告了相关性结果，没有验证直接因果关系。建议将“导致”改为“与……相关”，或补充能够支持因果推断的研究设计。</p><div class="quote-box">“The results were associated with higher retrieval performance...”<small>参考文献 A · 第 4 页 · Results</small></div></article>
+          <aside class="report-side"><div><strong>4</strong><span>风险主张</span></div><div><strong>12</strong><span>证据片段</span></div><div><strong>7</strong><span>修改建议</span></div></aside>
+        </div>
+      </section>
+
+      <section class="section-block" id="evaluation">
+        <div class="section-heading"><p class="eyebrow">04 / EVALUATION &amp; TRUST</p><h2>评测的不只是模型会不会说，而是证据是否够、用户能不能用。</h2></div>
+        <div class="eval-grid">
+          <article><span>模型层</span><h3>判断质量</h3><ul><li>主张提取完整性</li><li>Top-K证据相关性</li><li>支持 / 部分支持 / 不支持一致性</li><li>高风险复核一致性</li></ul></article>
+          <article><span>产品层</span><h3>用户可执行性</h3><ul><li>用户是否看懂风险原因</li><li>证据能否定位回页码</li><li>修改建议能否直接使用</li><li>是否明确 AI 不替代专家判断</li></ul></article>
+          <article><span>工程层</span><h3>运行稳定性</h3><ul><li>批量上传是否受控</li><li>重复文献是否去重</li><li>密钥工作区是否隔离</li><li>失败任务是否可追踪</li></ul></article>
+          <article><span>隐私层</span><h3>内容边界</h3><ul><li>不保存明文访问密钥</li><li>最小化发送模型内容</li><li>历史记录按工作区隔离</li><li>公开部署前配置删除机制</li></ul></article>
+        </div>
+      </section>
+
+      <section class="section-block" id="delivery">
+        <div class="section-heading"><p class="eyebrow">05 / DELIVERABLES</p><h2>从产品判断到工程实现，形成一个可以被打开、被解释、被验证的项目。</h2></div>
+        <div class="deliverable-grid">
+          <a href="README.md"><span>Prototype</span><strong>Web 工作台</strong><p>上传、绑定、审查、历史和导出。</p></a>
+          <a href="product_requirements.md"><span>PRD</span><strong>产品需求文档</strong><p>明确用户问题、边界、隐私和Agent路线。</p></a>
+          <a href="system_architecture_overview.md"><span>Architecture</span><strong>系统架构</strong><p>前端、后端、存储、检索和模型路由。</p></a>
+          <a href="portfolio_case_study.md"><span>Case Study</span><strong>案例说明</strong><p>记录关键决策、限制和后续演进。</p></a>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer"><span>CitationGuard · AI 学术引用准确性审查平台</span><a href="#top">返回顶部 ↑</a></footer>
+  </body>
+</html>
