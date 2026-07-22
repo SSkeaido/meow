@@ -1,0 +1,75 @@
+NON-COMMERCIAL USE LICENSE
+
+Copyright (c) 2026 SSkeaido. All Rights Reserved.
+
+This repository and its contents, including source code, documentation, designs,
+data, images, presentations, and other materials (collectively, the "Work"), are
+not open source.
+
+1. Limited Permission
+
+Subject to this License, the copyright holder grants you a limited, revocable,
+non-exclusive, non-transferable permission to access, view, download, fork, and
+modify the Work solely for:
+
+- personal learning;
+- non-commercial education or academic research; and
+- internal, non-commercial evaluation.
+
+All copyright and license notices must be preserved.
+
+2. Commercial Use Is Prohibited
+
+You may not use the Work, in whole or in part, for any commercial purpose or
+commercial advantage without prior written permission from the copyright holder.
+
+Prohibited commercial use includes, without limitation:
+
+- selling, renting, licensing, sublicensing, or monetizing the Work;
+- incorporating the Work into a paid product, service, platform, SaaS offering,
+  client deliverable, or commercial prototype;
+- using the Work to provide paid consulting, implementation, training, or other
+  professional services;
+- using the Work in production or internal business operations for commercial
+  advantage;
+- using the Work for commercial marketing, sales demonstrations, fundraising,
+  or customer acquisition;
+- removing notices or presenting the Work as your own; and
+- using the Work or its contents to train, fine-tune, evaluate, or improve a
+  commercial artificial intelligence or machine learning system.
+
+3. Redistribution
+
+Redistribution, republication, or creation of public derivative works is not
+permitted, except for an unmodified fork made through GitHub's standard
+functionality for non-commercial review or study. Any permitted fork must retain
+this License and all attribution notices.
+
+4. Third-Party Materials
+
+This License applies only to material for which SSkeaido owns the copyright.
+Third-party software, fonts, images, datasets, trademarks, and other components
+remain subject to their respective licenses and rights.
+
+5. No Trademark Rights
+
+No permission is granted to use any name, logo, trademark, service mark, or
+trade dress appearing in the Work.
+
+6. Commercial Licensing
+
+To request commercial use, redistribution, or a separate license, contact the
+copyright holder through the GitHub account associated with this repository.
+
+7. Termination
+
+Any permission granted under this License terminates automatically upon breach.
+Upon termination, you must stop using the Work and delete copies under your
+control, except where retention is required by law.
+
+8. Disclaimer
+
+THE WORK IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND. TO THE MAXIMUM
+EXTENT PERMITTED BY LAW, THE COPYRIGHT HOLDER SHALL NOT BE LIABLE FOR ANY CLAIM,
+DAMAGES, OR OTHER LIABILITY ARISING FROM THE WORK OR ITS USE.
+
