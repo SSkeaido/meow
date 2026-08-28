@@ -1,324 +1,1568 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="zh-CN">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>作品集 | 装修签约前 AI 风险审查助手</title>
-    <link rel="stylesheet" href="./styles.css" />
-  </head>
-  <body>
-    <header class="site-header">
-      <a class="brand" href="#top" aria-label="返回顶部">
-        <img src="./assets/brand-icon.png" alt="项目图标" />
-        <span>FDE Portfolio</span>
-      </a>
-      <nav aria-label="页面导航">
-        <a href="#about">关于我</a>
-        <a href="#insight">洞察</a>
-        <a href="#solution">方案</a>
-        <a href="#architecture">架构</a>
-        <a href="#evaluation">评测</a>
-        <a href="#deliverables">交付物</a>
-      </nav>
-    </header>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>文优小助 Demo · 文献综述文献需求联动</title>
+  <style>
+    html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#f7f8fc}
+    iframe{border:0;width:100%;height:100%;display:block}
+  </style>
+</head>
+<body>
+<iframe id="wenyouFrame" src="../wenyouxiaozhu-prototype.html" title="文优小助产品重构 Demo"></iframe>
+<script>
+const frame=document.getElementById('wenyouFrame');
 
-    <main id="top">
-      <section class="hero-section">
-        <div class="hero-copy">
-          <p class="eyebrow">AI Product / RAG / C-end Risk Review</p>
-          <h1>基于 RAG + LLM 的装修签约前风险审查助手</h1>
-          <p class="lead">
-            将报价单、合同条款和销售沟通记录转化为可追问、可留证、可复核的风险报告，帮助业主在签约前识别漏项、增项、口头承诺和责任边界风险。
-          </p>
-          <div class="hero-actions">
-            <a class="primary-link" href="./">查看原型</a>
-            <a class="secondary-link" href="./docs/owner-risk-review-prd.md">阅读 PRD</a>
-          </div>
-        </div>
-        <aside class="hero-card" aria-label="项目摘要">
-          <div class="hero-visual">
-            <img src="./assets/brand-icon.png" alt="" />
-          </div>
-          <dl class="project-meta">
-            <div>
-              <dt>项目定位</dt>
-              <dd>C 端签约前风控助手</dd>
-            </div>
-            <div>
-              <dt>MVP 范围</dt>
-              <dd>报价 / 合同 / 承诺审查</dd>
-            </div>
-            <div>
-              <dt>核心技术</dt>
-              <dd>知识卡检索 + LLM Agent</dd>
-            </div>
-            <div>
-              <dt>交付形态</dt>
-              <dd>Web 原型 + 桌面演示版</dd>
-            </div>
-          </dl>
-        </aside>
-      </section>
+frame.addEventListener('load',()=>{
+  const d=frame.contentDocument;
+  if(!d || d.getElementById('wy-review-req-patch')) return;
 
-      <section class="metrics-strip" aria-label="项目关键指标">
-        <article>
-          <strong>165</strong>
-          <span>条装修风险知识卡</span>
-        </article>
-        <article>
-          <strong>15 → 5</strong>
-          <span>两轮审查依据检索</span>
-        </article>
-        <article>
-          <strong>4</strong>
-          <span>页式风险审查路径</span>
-        </article>
-        <article>
-          <strong>1</strong>
-          <span>桌面演示版 exe</span>
-        </article>
-      </section>
+  const style=d.createElement('style');
+  style.id='wy-review-req-patch';
+  style.textContent=`
+    .wy-req-shell{display:grid;gap:11px}
+    .wy-req-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+    .wy-req-total{display:flex;align-items:center;gap:7px;font-size:11px}
+    .wy-req-total input{width:78px;height:34px;border:1px solid var(--line);border-radius:7px;padding:0 8px;font-size:12px}
+    .wy-system-rec{display:inline-flex;align-items:center;gap:5px;padding:6px 8px;border-radius:7px;background:var(--purple-weak);color:var(--purple);font-size:10px}
+    .wy-discipline{display:flex;align-items:center;gap:7px;font-size:11px}
+    .wy-discipline select{height:34px;border:1px solid var(--line);border-radius:7px;background:#fff;padding:0 9px;font-size:11px;min-width:180px}
+    .wy-expand{height:32px;padding:0 10px;border:1px solid var(--line);border-radius:7px;background:#fff;color:#525b70;font-size:10px}
+    .wy-req-detail{display:none;padding:11px;border:1px solid #ded8f8;border-radius:8px;background:#fbfaff}
+    .wy-req-detail.open{display:grid;gap:8px}
+    .wy-req-tip{color:var(--muted);font-size:10px;line-height:1.55}
+    .wy-req-row{display:grid;grid-template-columns:minmax(150px,1fr) 92px 118px 88px;gap:8px;align-items:center;padding:9px;border:1px solid var(--line);border-radius:7px;background:#fff}
+    .wy-req-name strong{display:block;font-size:11px}.wy-req-name small{display:block;margin-top:2px;color:var(--muted);font-size:9px}
+    .wy-req-row input{width:100%;height:30px;border:1px solid var(--line);border-radius:6px;padding:0 7px;font-size:11px}
+    .wy-kind{display:flex;padding:2px;border-radius:6px;background:#f0f2f6}
+    .wy-kind button{flex:1;border:0;background:transparent;border-radius:5px;padding:5px 4px;color:#788093;font-size:9px}
+    .wy-kind button.active{background:#fff;color:var(--purple);font-weight:700;box-shadow:0 1px 2px rgba(40,42,60,.08)}
+    .wy-match{text-align:right;font-size:10px;color:var(--muted)}.wy-match.good{color:var(--teal)}.wy-match.warn{color:var(--amber)}
+    .wy-library-check{border:1px solid #dcd6f5;border-radius:9px;background:#fcfbff;padding:12px}
+    .wy-check-head{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:11px}
+    .wy-spinner{width:13px;height:13px;border:2px solid #ddd7f4;border-top-color:var(--purple);border-radius:50%;display:none;animation:wyspin .7s linear infinite}
+    .wy-library-check.checking .wy-spinner{display:inline-block}@keyframes wyspin{to{transform:rotate(360deg)}}
+    .wy-check-title{display:flex;align-items:center;gap:7px;font-weight:700}
+    .wy-progress{height:6px;border-radius:999px;background:#eceef4;overflow:hidden;margin:9px 0}
+    .wy-progress i{display:block;height:100%;background:var(--purple);border-radius:999px;transition:.25s}
+    .wy-metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}
+    .wy-metric{padding:8px;border:1px solid var(--line);border-radius:7px;background:#fff}
+    .wy-metric b{display:block;color:var(--purple);font-size:16px}.wy-metric span{font-size:9px;color:var(--muted)}
+    .wy-gap{margin-top:9px;padding:9px 10px;border-radius:7px;background:var(--amber-weak);color:#77511b;font-size:10px;line-height:1.55}
+    .wy-gap.good{background:var(--teal-weak);color:#246a63}
+    .wy-upload{display:grid;gap:8px;padding:11px;border:1px dashed #b9afea;border-radius:7px;background:#fbfaff}
+    .wy-upload-head{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+    .wy-upload strong{font-size:11px;color:var(--purple)}.wy-upload small{font-size:9px;color:var(--muted);line-height:1.5}
+    .wy-upload-actions{display:flex;gap:7px;flex-wrap:wrap}
+    .wy-upload input[type=file]{display:none}
+    .wy-upload-status{font-size:10px;color:var(--muted)}
+    .wy-create-footer{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:15px;padding-top:14px;border-top:1px solid var(--line)}
+    .wy-create-footer .hint{max-width:58%;font-size:10px;color:var(--muted);line-height:1.55}
+    .wy-create-footer .actions{display:flex;gap:7px}
+    .wy-demo-btn{height:30px;padding:0 9px;border:1px dashed #bcb3e7;border-radius:7px;background:#fff;color:#6d5ab0;font-size:9px}
+    @media(max-width:900px){.wy-req-row{grid-template-columns:1fr 85px 110px}.wy-match{grid-column:1/-1;text-align:left}.wy-metrics{grid-template-columns:repeat(2,1fr)}.wy-create-footer{align-items:flex-start;flex-direction:column}.wy-create-footer .hint{max-width:none}}
+  `;
+  d.head.appendChild(style);
 
-      <section id="about" class="section-block about-section">
-        <div class="about-card">
-          <div class="section-heading">
-            <p class="eyebrow">About / Project Owner</p>
-            <h2><span class="name-cn">何珊</span><span class="name-en"> / Luna</span>：把用户调研、业务流程和 AI 能力连起来</h2>
-            <p>
-              我是市场营销本科、企业管理硕士背景的 AI 产品 / FDE 方向候选人。这个项目不是从“想做一个 AI 工具”开始，而是从装修用户调研中反复出现的签约焦虑开始：费用不透明、承诺不落纸、责任边界不清、后续维权成本高。
-            </p>
-          </div>
-          <div class="about-grid">
-            <article>
-              <span>业务理解</span>
-              <h3>从真实痛点收敛 MVP</h3>
-              <p>从 B 端销售辅助转向 C 端业主签约前审查，聚焦报价、合同、承诺和追问清单，而不是做大而全的装修平台。</p>
-            </article>
-            <article>
-              <span>AI 产品设计</span>
-              <h3>让 AI 输出可解释</h3>
-              <p>设计“结构化知识卡 + 两轮检索 + LLM 生成”的流程，让每个风险卡片绑定依据，避免无依据的确定性结论。</p>
-            </article>
-            <article>
-              <span>FDE 能力</span>
-              <h3>把原型落成可演示系统</h3>
-              <p>完成 PRD、RAG 知识库、Prompt 约束、Web 原型、桌面演示版和评测指标，展示从业务问题到工程原型的闭环。</p>
-            </article>
-          </div>
-        </div>
-      </section>
+  const patch=d.createElement('script');
+  patch.textContent=String.raw`
+    (function(){
+      const WY_DISCIPLINES={
+        econ:{
+          label:'经济 / 管理 / 社会科学',
+          reqs:[
+            {id:'ssci',name:'SSCI',desc:'社会科学引文索引',need:5,base:1,kind:'must'},
+            {id:'cssci',name:'CSSCI',desc:'中文社会科学引文索引',need:5,base:2,kind:'must'},
+            {id:'jcr12',name:'JCR Q1–Q2',desc:'JCR 高分区期刊',need:3,base:1,kind:'prefer'},
+            {id:'recent',name:'近 5 年',desc:'保证研究时效性',need:12,base:3,kind:'prefer'}
+          ]
+        },
+        cs:{
+          label:'计算机 / AI / 信息科学',
+          reqs:[
+            {id:'ccf',name:'CCF A/B',desc:'计算机高质量会议 / 期刊',need:4,base:1,kind:'must'},
+            {id:'scie',name:'SCIE',desc:'Science Citation Index Expanded',need:8,base:2,kind:'must'},
+            {id:'jcr12',name:'JCR Q1–Q2',desc:'JCR 高分区期刊',need:4,base:1,kind:'prefer'},
+            {id:'recent',name:'近 5 年',desc:'快速变化领域优先近期研究',need:14,base:3,kind:'prefer'}
+          ]
+        },
+        stem:{
+          label:'理工 / 材料 / 环境',
+          reqs:[
+            {id:'scie',name:'SCIE',desc:'自然科学与工程主流收录',need:10,base:2,kind:'must'},
+            {id:'cas12',name:'中科院 1–2 区',desc:'按中科院期刊分区',need:5,base:1,kind:'prefer'},
+            {id:'ei',name:'EI Compendex',desc:'工程技术重要文献来源',need:5,base:1,kind:'prefer'},
+            {id:'recent',name:'近 5 年',desc:'保证研究时效性',need:12,base:3,kind:'prefer'}
+          ]
+        },
+        med:{
+          label:'医学 / 生命科学',
+          reqs:[
+            {id:'scie',name:'SCIE',desc:'医学 / 生命科学主流收录',need:10,base:2,kind:'must'},
+            {id:'jcr12',name:'JCR Q1–Q2',desc:'优先较高质量期刊',need:6,base:1,kind:'prefer'},
+            {id:'rct',name:'RCT / 系统综述',desc:'高证据等级研究类型',need:5,base:1,kind:'prefer'},
+            {id:'recent',name:'近 5 年',desc:'优先近期临床证据',need:12,base:3,kind:'prefer'}
+          ]
+        },
+        human:{
+          label:'人文 / 法学 / 文史哲',
+          reqs:[
+            {id:'ahci',name:'A&HCI',desc:'艺术与人文引文索引',need:3,base:0,kind:'prefer'},
+            {id:'cssci',name:'CSSCI',desc:'中文社会科学引文索引',need:8,base:2,kind:'must'},
+            {id:'pkucore',name:'北大核心',desc:'中文核心期刊来源',need:8,base:2,kind:'prefer'},
+            {id:'recent',name:'近 8 年',desc:'兼顾经典与近期研究',need:10,base:3,kind:'prefer'}
+          ]
+        }
+      };
 
-      <section id="insight" class="section-block">
-        <div class="section-heading">
-          <p class="eyebrow">01 / Problem Insight</p>
-          <h2>从“装修公司销售工具”转向“业主风险审查工具”</h2>
-          <p>
-            初始方向是帮助装修公司销售解释报价，但用户调研后发现，真正更痛的一方是签约前的业主：他们面对高金额、低频、强信息差的消费决策，很难判断报价和承诺是否可靠。
-          </p>
-        </div>
-        <div class="comparison-grid">
-          <article class="soft-card muted">
-            <span>初始假设</span>
-            <h3>B 端销售辅助</h3>
-            <p>帮助销售生成报价说明、责任边界和销售话术，以提升成交率。</p>
-          </article>
-          <article class="soft-card active">
-            <span>调研修正</span>
-            <h3>C 端签约前审查</h3>
-            <p>帮助业主看懂报价、合同和销售承诺，生成签约前追问清单。</p>
-          </article>
-        </div>
-        <div class="insight-list">
-          <article>
-            <h3>客户真正怕的不是贵</h3>
-            <p>而是签约前说得很好，签约后漏项、增项、延期、返工和责任推诿。</p>
-          </article>
-          <article>
-            <h3>AI 不做法律裁判</h3>
-            <p>系统只把材料中的不确定点转成风险提示、追问问题和人工复核事项。</p>
-          </article>
-          <article>
-            <h3>作品集价值在于重定位</h3>
-            <p>项目展示的不是“做了页面”，而是从业务假设中收敛出更真实的用户切口。</p>
-          </article>
-        </div>
-      </section>
+      function wyInitState(){
+        state.wyReview=state.wyReview||{
+          total:20,
+          discipline:'econ',
+          uploaded:0,
+          duplicate:0,
+          expanded:false,
+          reqs:JSON.parse(JSON.stringify(WY_DISCIPLINES.econ.reqs))
+        };
+        return state.wyReview;
+      }
+      function wyHave(req){
+        const s=wyInitState(),u=s.uploaded;
+        if(req.id==='recent') return Math.min(s.total,req.base+Math.round(u*.8));
+        if(req.id==='ssci'||req.id==='scie'||req.id==='cssci') return Math.min(s.total,req.base+Math.floor(u/2));
+        if(req.id==='ccf'||req.id==='pkucore') return Math.min(s.total,req.base+Math.floor(u/3));
+        if(req.id==='jcr12'||req.id==='cas12'||req.id==='rct'||req.id==='ei'||req.id==='ahci') return Math.min(s.total,req.base+Math.floor(u/4));
+        return req.base;
+      }
+      function wyUsable(){return 3+wyInitState().uploaded}
+      function wyHardMissing(){
+        const s=wyInitState();
+        return s.reqs.filter(r=>r.kind==='must'&&wyHave(r)<r.need);
+      }
+      function wySatisfied(){
+        const s=wyInitState();
+        return wyUsable()>=s.total&&wyHardMissing().length===0;
+      }
+      function wyGapText(){
+        const s=wyInitState(),parts=[];
+        const g=Math.max(0,s.total-wyUsable());
+        if(g) parts.push('总量还缺 '+g+' 篇');
+        wyHardMissing().forEach(r=>parts.push(r.name+' 至少还缺 '+(r.need-wyHave(r))+' 篇'));
+        return parts.length?parts.join('；'):'已满足本次任务的必须要求';
+      }
+      function wyReqRows(){
+        const s=wyInitState();
+        return s.reqs.map((r,i)=>'<div class="wy-req-row"><div class="wy-req-name"><strong>'+r.name+'</strong><small>'+r.desc+'</small></div><input data-wy-need="'+i+'" type="number" min="0" max="'+s.total+'" value="'+r.need+'"><div class="wy-kind"><button type="button" class="'+(r.kind==='must'?'active':'')+'" data-wy-kind="'+i+'" data-kind="must">必须满足</button><button type="button" class="'+(r.kind==='prefer'?'active':'')+'" data-wy-kind="'+i+'" data-kind="prefer">优先满足</button></div><div class="wy-match '+(wyHave(r)>=r.need?'good':'warn')+'"><b>'+wyHave(r)+'</b> / ≥'+r.need+'</div></div>').join('');
+      }
+      function wyRequirementHTML(){
+        const s=wyInitState(),ok=wySatisfied(),usable=wyUsable();
+        return '<div class="wy-req-shell">'+
+          '<div class="wy-req-head"><div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap"><div class="wy-req-total"><span>文献需求</span><input id="wyTotal" type="number" min="0" max="80" value="'+s.total+'"><span>篇</span></div><span class="wy-system-rec">系统建议 · 文献综述 '+s.total+' 篇</span><div class="wy-discipline"><span>学科</span><select id="wyDiscipline">'+Object.entries(WY_DISCIPLINES).map(([k,v])=>'<option value="'+k+'" '+(k===s.discipline?'selected':'')+'>'+v.label+'</option>').join('')+'</select></div></div><button class="wy-expand" id="wyExpand">'+(s.expanded?'收起详细要求 ▴':'展开详细要求 ▾')+'</button></div>'+
+          '<div class="wy-req-detail '+(s.expanded?'open':'')+'" id="wyReqDetail"><div class="wy-req-tip">按学科提供质量评价项。同一篇论文可同时满足“收录体系 / 分区 / 年份”等多个非互斥条件；“必须满足”影响是否达标，“优先满足”只形成补充建议。</div>'+wyReqRows()+'</div>'+
+          '<div class="wy-library-check" id="wyLibraryCheck"><div class="wy-check-head"><div class="wy-check-title"><i class="wy-spinner"></i><span id="wyCheckTitle">已连接你的文献库</span></div><span>'+usable+' / '+s.total+' 篇可用</span></div><div class="wy-progress"><i style="width:'+Math.min(100,s.total?usable/s.total*100:100)+'%"></i></div><div class="wy-metrics"><div class="wy-metric"><b>63</b><span>个人文献库</span></div><div class="wy-metric"><b>6</b><span>与当前选题相关</span></div><div class="wy-metric"><b>3</b><span>库内全文解析完成</span></div><div class="wy-metric"><b>'+usable+'</b><span>本次可用</span></div></div><div class="wy-gap '+(ok?'good':'')+'">'+(ok?'✓ 已满足本次任务文献要求，可进入生成。':'⚠ 当前建议补充：'+wyGapText()+'。')+'</div></div>'+
+        '</div>';
+      }
+      function wyBind(){
+        const s=wyInitState();
+        const total=document.querySelector('#wyTotal');
+        if(total){
+          total.addEventListener('change',()=>{s.total=Math.max(0,Math.min(80,Number(total.value)||0));s.reqs.forEach(r=>r.need=Math.min(r.need,s.total));wyRecheck(true)});
+          total.addEventListener('blur',()=>wyRecheck(true));
+        }
+        const dis=document.querySelector('#wyDiscipline');
+        if(dis)dis.addEventListener('change',()=>{s.discipline=dis.value;s.reqs=JSON.parse(JSON.stringify(WY_DISCIPLINES[dis.value].reqs));wyRecheck(true)});
+        const exp=document.querySelector('#wyExpand');
+        if(exp)exp.addEventListener('click',()=>{s.expanded=!s.expanded;renderReviewCreate()});
+        document.querySelectorAll('[data-wy-need]').forEach(inp=>inp.addEventListener('change',()=>{const r=s.reqs[Number(inp.dataset.wyNeed)];r.need=Math.max(0,Math.min(s.total,Number(inp.value)||0));wyRecheck(true)}));
+        document.querySelectorAll('[data-wy-kind]').forEach(btn=>btn.addEventListener('click',()=>{s.reqs[Number(btn.dataset.wyKind)].kind=btn.dataset.kind;renderReviewCreate()}));
+        const file=document.querySelector('#wyUpload');
+        if(file)file.addEventListener('change',()=>{
+          const count=file.files?file.files.length:0;
+          const dup=count>=5?1:0;
+          s.duplicate=dup;
+          s.uploaded=Math.max(0,count-dup);
+          renderReviewCreate();
+          toast('已查重：'+s.uploaded+' 篇新增全文进入文献库'+(dup?'，'+dup+' 篇重复已忽略':''));
+        });
+      }
+      function wyRecheck(showLoading){
+        const card=document.querySelector('#wyLibraryCheck');
+        if(showLoading&&card){
+          card.classList.add('checking');
+          const t=document.querySelector('#wyCheckTitle');if(t)t.textContent='正在按选题和质量要求匹配文献库…';
+          setTimeout(()=>renderReviewCreate(),520);
+        }else renderReviewCreate();
+      }
 
-      <section id="solution" class="section-block">
-        <div class="section-heading">
-          <p class="eyebrow">02 / Product Solution</p>
-          <h2>V1 MVP 只聚焦签约前风险审查</h2>
-          <p>
-            为避免产品变成泛装修管理平台，V1 收敛在业主签约前最需要的 5 个能力：报价审查、合同条款审查、销售承诺核对、追问清单和人工复核提示。
-          </p>
-        </div>
-        <div class="workflow-line" aria-label="产品流程">
-          <article>
-            <b>01</b>
-            <h3>资料输入</h3>
-            <p>粘贴报价单、合同文本、销售沟通记录。</p>
-          </article>
-          <article>
-            <b>02</b>
-            <h3>AI 审查</h3>
-            <p>解析触发词，匹配审查依据，生成风险。</p>
-          </article>
-          <article>
-            <b>03</b>
-            <h3>风险总览</h3>
-            <p>先看结论、风险等级和重点风险卡片。</p>
-          </article>
-          <article>
-            <b>04</b>
-            <h3>结构化报告</h3>
-            <p>输出风险明细、漏项、责任边界和追问清单。</p>
-          </article>
-        </div>
-        <div class="feature-grid">
-          <article>
-            <h3>报价单审查</h3>
-            <p>识别报价不清、按实结算、套餐外另计、水电不封顶等费用风险。</p>
-          </article>
-          <article>
-            <h3>合同条款审查</h3>
-            <p>检查付款节点、工期、材料替换、验收、售后和变更规则是否写清。</p>
-          </article>
-          <article>
-            <h3>销售承诺核对</h3>
-            <p>把“无增项、全程管理、赠送项目”等口头承诺转成书面确认问题。</p>
-          </article>
-          <article>
-            <h3>人工复核提示</h3>
-            <p>没有依据或涉及责任认定的内容，不生成确定性结论，进入人工复核。</p>
-          </article>
-        </div>
-      </section>
+      enhanceReviewCreate=function(){};
 
-      <section id="architecture" class="section-block">
-        <div class="section-heading">
-          <p class="eyebrow">03 / RAG + LLM Architecture</p>
-          <h2>先找依据，再生成风险解释</h2>
-          <p>
-            系统不是让 LLM 直接“凭感觉审合同”，而是先通过结构化知识卡和本地相似度检索召回证据，再把用户材料和证据交给 LLM 生成结构化报告。
-          </p>
-        </div>
-        <div class="architecture-card">
-          <div class="arch-node">用户材料<br /><span>报价 / 合同 / 沟通</span></div>
-          <div class="arch-arrow">→</div>
-          <div class="arch-node">知识路由<br /><span>城市 / 阶段 / 模板</span></div>
-          <div class="arch-arrow">→</div>
-          <div class="arch-node">两轮检索<br /><span>15 条候选 → Top 5</span></div>
-          <div class="arch-arrow">→</div>
-          <div class="arch-node">LLM Agent<br /><span>基于 evidence 生成</span></div>
-          <div class="arch-arrow">→</div>
-          <div class="arch-node">风险报告<br /><span>卡片 / 追问 / 表格</span></div>
-        </div>
-        <div class="architecture-details">
-          <article>
-            <h3>知识库分层</h3>
-            <p>A 合同硬知识与验收标准，B 消费提示，C 典型案例，D 项目经验规则。</p>
-          </article>
-          <article>
-            <h3>证据绑定</h3>
-            <p>风险卡片必须绑定审查依据；没有依据的内容只能进入人工复核。</p>
-          </article>
-          <article>
-            <h3>兜底机制</h3>
-            <p>LLM 不可用时仍可用本地规则和知识卡生成基础报告，保证演示不中断。</p>
-          </article>
-        </div>
-      </section>
+      renderReviewCreate=function(){
+        const s=wyInitState(),usable=wyUsable(),ok=wySatisfied();
+        document.querySelector('#workBody').innerHTML=
+          pageTitle('创建文献综述','保留当前任务填写方式，在文献需求处实时联动个人文献库。','<button class="ghost" data-wy-review-back>返回开始任务</button>')+
+          '<div class="create-review-layout"><section class="create-card"><h2>任务信息</h2><p>先补充本次综述的写作要求。文献需求为选填，系统会按任务类型给出默认建议。</p><div class="create-form">'+
+          '<div class="create-form-row"><label>当前选题</label><div class="topic-chip"><strong>市场需求对中国省级旅游产业技术演化的影响</strong><span>已关联</span></div></div>'+
+          '<div class="create-form-row"><label>* 标题</label><input id="reviewTopic" value="市场需求对中国省级旅游产业技术演化的影响"></div>'+
+          '<div class="create-form-row"><label>研究方向</label><input id="wyDirection" value="旅游产业技术演化与区域市场需求" placeholder="请输入研究方向"></div>'+
+          '<div class="create-form-row"><label>研究问题</label><textarea id="wyQuestion" placeholder="例如：市场需求如何影响省级旅游产业技术演化？">市场需求如何影响省级旅游产业技术演化？现有研究有哪些共同结论与不足？</textarea></div>'+
+          '<div class="create-form-row"><label>* 字数</label><div class="word-row"><input id="wyWords" value="5000"><span class="muted">字</span></div></div>'+
+          '<div class="create-form-row"><label>文献需求</label><div>'+wyRequirementHTML()+'</div></div>'+
+          '<div class="create-form-row"><label>上传相关文献</label><div class="wy-upload"><div class="wy-upload-head"><div><strong>上传全文后自动查重并进入文献库</strong><br><small>只有“已入库 + 有全文 + 解析完成”的文献才计入本次可用数量。</small></div><div class="wy-upload-actions"><label class="small-btn primary" for="wyUpload">选择本地文件</label><input id="wyUpload" type="file" accept=".pdf,.ris,.bib" multiple><button class="wy-demo-btn" type="button" data-wy-sim-upload>原型：模拟加入 8 篇</button></div></div><div class="wy-upload-status">'+(s.uploaded?'本次新增 '+s.uploaded+' 篇全文'+(s.duplicate?' · 已忽略 '+s.duplicate+' 篇重复文献':''):'尚未上传本次任务文献')+'</div></div></div>'+
+          '<div class="create-form-row"><label>可选成果</label><div class="asset-check"><label class="asset-check-row"><input type="checkbox"> 使用已有学术成果 <small>当前暂无可关联成果</small></label><button class="small-btn" data-view="artifacts">查看学术成果</button></div></div>'+
+          '</div><div class="wy-create-footer"><div class="hint">'+(ok?'文献数量与必须质量条件均已满足，可以开始生成。':'当前材料未完全满足要求。主操作优先补文献，但仍允许使用现有材料继续。')+'</div><div class="actions">'+(ok?'':'<button class="ghost" data-wy-force-generate>仍使用现有 '+usable+' 篇生成</button>')+'<button class="primary" data-wy-review-primary>'+(ok?'开始生成':'找文献')+'</button></div></div></section>'+
+          '<aside class="create-side"><section class="create-card"><h2>文献需求如何联动？</h2><p>系统不会把“文献需求”当作普通 Prompt，而是直接检查个人研究资产。</p><div class="prepare-list"><div class="prepare-step"><i>1</i><div><strong>按选题匹配文献库</strong><small>先从全局个人文献库找到当前任务相关论文</small></div></div><div class="prepare-step"><i>2</i><div><strong>只计算可用全文</strong><small>仅全文存在且解析完成的文献进入可用数量</small></div></div><div class="prepare-step"><i>3</i><div><strong>按学科检查质量要求</strong><small>经济社科、计算机、理工、医学、人文使用不同评价体系</small></div></div><div class="prepare-step"><i>4</i><div><strong>实时计算缺口</strong><small>上传文献后立即查重、入库并重新计算</small></div></div></div></section><div class="create-note">材料不足时进入「找文献」；满足要求或用户选择继续时进入「生成 Paper」。两个后续分支暂时沿用现有 Demo，下一轮再分别重构。</div></aside></div>';
+        document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('active',b.dataset.view==='review'));
+        wyBind();
+      };
 
-      <section class="section-block output-section">
-        <div class="section-heading">
-          <p class="eyebrow">04 / Product Output</p>
-          <h2>输出不是长文本，而是可执行的签约前动作</h2>
-        </div>
-        <div class="report-preview">
-          <article class="report-main">
-            <span class="risk-pill">高风险</span>
-            <h3>当前材料存在较多签约前不确定点</h3>
-            <p>
-              建议先补齐合同附件、报价明细、付款验收节点和变更规则，再判断是否继续签约。
-            </p>
-          </article>
-          <aside class="report-side">
-            <div><strong>5</strong><span>高风险</span></div>
-            <div><strong>16</strong><span>建议追问</span></div>
-            <div><strong>8</strong><span>知识命中</span></div>
-          </aside>
-        </div>
-        <div class="question-card">
-          <h3>可直接发送给销售的问题示例</h3>
-          <p>请确认水电按实结算项目的单价、预估数量、增项审批方式和费用上限，并写入合同附件。</p>
-        </div>
-      </section>
+      document.addEventListener('change',e=>{
+        if(e.target.matches('#wyDirection,#wyQuestion,#wyWords')) wyRecheck(true);
+      });
 
-      <section id="evaluation" class="section-block">
-        <div class="section-heading">
-          <p class="eyebrow">05 / Evaluation System</p>
-          <h2>从模型能力和业务实现双层评测</h2>
-          <p>评测不只看回答是否流畅，而要验证“准不准、有无依据、用户能不能用”。</p>
-        </div>
-        <div class="eval-grid">
-          <article>
-            <h3>模型能力评测</h3>
-            <ul>
-              <li>风险识别召回率</li>
-              <li>误报率与漏报率</li>
-              <li>Top-K 证据相关性</li>
-              <li>evidenceId 覆盖率</li>
-              <li>边界违规率</li>
-            </ul>
-          </article>
-          <article>
-            <h3>业务实现评测</h3>
-            <ul>
-              <li>用户是否看懂报告</li>
-              <li>追问清单是否可直接使用</li>
-              <li>是否帮助暂缓或补充签约确认</li>
-              <li>是否理解 AI 不替代法律/监理</li>
-              <li>是否愿意进入人工复核</li>
-            </ul>
-          </article>
-        </div>
-      </section>
+      document.addEventListener('click',e=>{
+        const b=e.target.closest('button');
+        if(!b)return;
+        if(b.matches('[data-wy-review-back]')){
+          document.body.classList.remove('task-setup');
+          state.view='home';
+          renderAll();
+        }
+        if(b.matches('[data-wy-sim-upload]')){
+          const s=wyInitState();
+          s.uploaded+=8;
+          renderReviewCreate();
+          toast('原型模拟：新增 8 篇全文，已重新计算文献需求');
+        }
+        if(b.matches('[data-wy-review-primary]')){
+          document.body.classList.remove('task-setup');
+          if(wySatisfied()){
+            state.analysisDone=true;
+            state.outlineEdited=false;
+            state.view='review';
+            toast('材料满足要求，进入生成 Paper 分支');
+            renderAll();
+          }else{
+            state.view='recommend';
+            state.wyReviewGap=wyGapText();
+            toast('当前材料不足，进入找文献分支');
+            renderAll();
+          }
+        }
+        if(b.matches('[data-wy-force-generate]')){
+          document.body.classList.remove('task-setup');
+          state.analysisDone=true;
+          state.outlineEdited=false;
+          state.view='review';
+          toast('已确认使用现有材料，进入生成 Paper 分支');
+          renderAll();
+        }
+      },true);
+    })();
+  `;
+  d.body.appendChild(patch);
+});
+</script>
 
-      <section id="deliverables" class="section-block">
-        <div class="section-heading">
-          <p class="eyebrow">06 / Deliverables</p>
-          <h2>项目交付物</h2>
-          <p>当前项目已经形成 Web 原型、桌面演示版、PRD、RAG 知识库和架构文档。</p>
-        </div>
-        <div class="deliverable-grid">
-          <a href="./">
-            <span>Prototype</span>
-            <strong>四页式 Web 原型</strong>
-            <p>资料输入、AI 审查、风险总览、结构化报告。</p>
-          </a>
-          <a href="./docs/desktop-demo-build.md">
-            <span>Desktop</span>
-            <strong>Electron 桌面演示版</strong>
-            <p>双击 exe 自动启动本地后端和风险审查页面。</p>
-          </a>
-          <a href="./docs/owner-risk-review-prd.md">
-            <span>PRD</span>
-            <strong>产品需求文档</strong>
-            <p>明确 V1 MVP 范围、隐私边界和后续迭代。</p>
-          </a>
-          <a href="./docs/current-real-rag-architecture-20260710.md">
-            <span>Architecture</span>
-            <strong>当前 RAG 架构图</strong>
-            <p>前端、后端、知识库、LLM Agent 的真实实现关系。</p>
-          </a>
-        </div>
-      </section>
-    </main>
+<script>
+frame.addEventListener('load',()=>{
+  const d=frame.contentDocument;
+  if(!d || d.getElementById('wy-find-branch-patch')) return;
 
-    <footer class="site-footer">
-      <p>Portfolio case study for FDE / AI Product roles.</p>
-      <a href="#top">返回顶部</a>
-    </footer>
-  </body>
+  const style=d.createElement('style');
+  style.id='wy-find-branch-patch';
+  style.textContent=`
+    .wy-find-config{max-width:930px;margin:0 auto}
+    .wy-find-config-grid{display:grid;grid-template-columns:minmax(0,1.18fr) minmax(280px,.82fr);gap:14px}
+    .wy-find-card{background:#fff;border:1px solid var(--line);border-radius:9px;padding:16px}
+    .wy-find-card h2{margin:0 0 5px;font-size:15px}.wy-find-card>p{margin:0 0 13px;color:var(--muted);font-size:10px;line-height:1.6}
+    .wy-find-block{padding:12px 0;border-bottom:1px solid #f0f1f5}.wy-find-block:last-child{border-bottom:0}
+    .wy-find-block-head{display:flex;justify-content:space-between;gap:10px;align-items:flex-start;margin-bottom:9px}
+    .wy-find-block-head strong{font-size:11px}.wy-find-block-head small{display:block;color:var(--muted);font-size:9px;margin-top:3px}
+    .wy-keywords{display:flex;gap:6px;flex-wrap:wrap}.wy-keyword{padding:5px 7px;border-radius:6px;background:#f4f2fb;color:#594b91;font-size:9px}
+    .wy-req-summary{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}.wy-req-chip{padding:8px;border:1px solid var(--line);border-radius:7px;background:#fcfdff}
+    .wy-req-chip b{display:block;color:var(--purple);font-size:13px}.wy-req-chip span{font-size:9px;color:var(--muted)}
+    .wy-db-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:7px}
+    .wy-db{display:flex;gap:8px;align-items:flex-start;padding:9px;border:1px solid var(--line);border-radius:7px;background:#fff;font-size:10px}
+    .wy-db input{accent-color:var(--purple);margin-top:2px}.wy-db b{display:block;font-size:10px}.wy-db small{display:block;color:var(--muted);font-size:9px;margin-top:2px}
+    .wy-intensity{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}.wy-intensity-btn{padding:10px;border:1px solid var(--line);border-radius:8px;background:#fff;text-align:left}
+    .wy-intensity-btn.active{border-color:#b6a9ec;background:var(--purple-weak)}.wy-intensity-btn b{display:block;font-size:11px}.wy-intensity-btn small{display:block;color:var(--muted);font-size:9px;line-height:1.45;margin-top:4px}
+    .wy-find-estimate{margin-top:9px;padding:9px;border-radius:7px;background:var(--teal-weak);color:#306e66;font-size:10px;line-height:1.55}
+    .wy-search-run{max-width:830px;margin:0 auto}.wy-run-hero{text-align:center;padding:20px 0 12px}.wy-run-hero h2{margin:0;font-size:20px}.wy-run-hero p{color:var(--muted);font-size:10px}
+    .wy-run-list{display:grid;gap:8px;margin-top:13px}.wy-run-item{display:flex;gap:10px;align-items:flex-start;padding:10px;border:1px solid var(--line);border-radius:7px;background:#fff}
+    .wy-run-item i{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;background:#eef0f4;color:#8b91a0;font-style:normal;font-size:10px}
+    .wy-run-item.done i{background:var(--teal);color:#fff}.wy-run-item.current{border-color:#c9bef5;background:#fbfaff}.wy-run-item.current i{background:var(--purple);color:#fff}
+    .wy-run-item strong{font-size:10px}.wy-run-item small{display:block;color:var(--muted);font-size:9px;margin-top:3px}
+    .wy-find-work{position:relative;max-width:100%;padding-bottom:72px}
+    .wy-find-top{display:grid;grid-template-columns:34px minmax(0,1fr) 34px;align-items:center;gap:7px;margin-bottom:11px}
+    .wy-find-tabs{display:grid;grid-template-columns:repeat(3,1fr);border:1px solid var(--line);border-radius:8px;background:#fff;padding:3px}
+    .wy-find-tab{height:34px;border:0;background:transparent;border-radius:6px;font-size:10px;color:var(--muted)}
+    .wy-find-tab.active{background:var(--purple-weak);color:var(--purple);font-weight:700}
+    .wy-page-arrow{width:34px;height:34px;border:1px solid var(--line);border-radius:8px;background:#fff;color:var(--purple);font-size:16px}.wy-page-arrow:disabled{visibility:hidden}
+    .wy-find-section{background:#fff;border:1px solid var(--line);border-radius:9px;padding:14px;margin-bottom:10px}
+    .wy-find-section h2{margin:0;font-size:14px}.wy-find-section h3{margin:0 0 8px;font-size:12px}.wy-find-section p{font-size:10px;color:var(--muted);line-height:1.6}
+    .wy-overview{display:grid;grid-template-columns:1fr auto;gap:12px;align-items:start}.wy-overview-score strong{font-size:26px;color:var(--purple)}.wy-overview-score small{display:block;color:var(--muted);font-size:9px}
+    .wy-demand-table{width:100%;border-collapse:collapse;margin-top:10px;font-size:9px}.wy-demand-table th,.wy-demand-table td{padding:8px 6px;border-bottom:1px solid var(--line);text-align:left}
+    .wy-demand-table th{color:var(--muted);font-weight:600;background:#fafbfe}.wy-status-ok{color:var(--teal);font-weight:700}.wy-status-gap{color:var(--amber);font-weight:700}
+    .wy-fulltext-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}.wy-fulltext-card{border:1px solid var(--line);border-radius:8px;padding:12px;background:#fcfdff}
+    .wy-fulltext-card .big{font-size:21px;color:var(--purple);font-weight:800}.wy-fulltext-card small{display:block;color:var(--muted);font-size:9px;line-height:1.5;margin:3px 0 9px}
+    .wy-db-breakdown{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:9px}.wy-db-pill{padding:4px 6px;border-radius:5px;background:#f0f2f6;color:#5e6678;font-size:8px}
+    .wy-cluster-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}.wy-cluster{border:1px solid var(--line);border-radius:8px;padding:11px;background:#fff}
+    .wy-cluster-head{display:flex;justify-content:space-between;gap:7px}.wy-cluster h3{margin:0;font-size:11px}.wy-cluster-count{color:var(--purple);font-weight:800;font-size:11px}
+    .wy-query-list{display:flex;gap:5px;flex-wrap:wrap;margin-top:7px}.wy-query{padding:4px 6px;border-radius:5px;background:#f5f3fd;color:#5d5190;font-size:8px}
+    .wy-cluster-foot{display:flex;justify-content:space-between;gap:8px;margin-top:8px;color:var(--muted);font-size:8px}
+    .wy-paper-cluster{margin-bottom:13px}.wy-paper-cluster-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:7px}
+    .wy-paper-cluster-head h3{font-size:12px;margin:0}.wy-paper-cluster-head span{font-size:9px;color:var(--muted)}
+    .wy-paper-card{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:9px;padding:11px;border:1px solid var(--line);border-radius:8px;background:#fff;margin-bottom:7px}
+    .wy-paper-card h4{margin:0;font-size:11px;line-height:1.45}.wy-paper-meta{margin-top:5px;color:#596175;font-size:9px;line-height:1.55}
+    .wy-levels{display:flex;gap:5px;flex-wrap:wrap;margin-top:6px}.wy-level{padding:3px 5px;border-radius:5px;background:#f1effc;color:#5f4ea1;font-size:8px}.wy-level.fit{background:var(--teal-weak);color:var(--teal)}
+    .wy-paper-side{display:grid;align-content:start;justify-items:end;gap:6px;min-width:105px}.wy-full-status{font-size:8px;padding:4px 6px;border-radius:5px}.wy-full-status.oa{background:var(--teal-weak);color:var(--teal)}.wy-full-status.external{background:var(--amber-weak);color:var(--amber)}
+    .wy-search-adjust{padding:10px;border:1px solid #dcd6f7;border-radius:8px;background:#fbfaff}.wy-search-adjust b{font-size:10px;color:var(--purple)}.wy-search-adjust p{font-size:9px;color:var(--muted);margin:4px 0 0}
+    .wy-global-cta{position:sticky;bottom:0;z-index:4;margin-top:12px;padding:10px 12px;border:1px solid var(--line);border-radius:9px;background:rgba(255,255,255,.96);box-shadow:0 -8px 24px rgba(46,43,67,.08);display:flex;justify-content:space-between;align-items:center;gap:12px}
+    .wy-global-cta small{color:var(--muted);font-size:9px;line-height:1.45}.wy-global-cta .actions{display:flex;gap:7px}.wy-disabled{height:35px;padding:0 13px;border:0;border-radius:8px;background:#e5e7ec;color:#9ba1ad;font-size:10px;cursor:not-allowed}
+    .wy-funnel-wrap{display:grid;grid-template-columns:minmax(260px,.95fr) 1.05fr;gap:16px;align-items:center}.wy-funnel{display:grid;justify-items:center;gap:5px;padding:8px}
+    .wy-funnel-step{height:52px;display:grid;place-items:center;text-align:center;color:#fff;font-size:9px;line-height:1.3;border-radius:6px;clip-path:polygon(8% 0,92% 0,82% 100%,18% 100%);background:linear-gradient(135deg,#7962dc,#9b89ee)}
+    .wy-funnel-step:nth-child(1){width:100%}.wy-funnel-step:nth-child(2){width:82%;opacity:.92}.wy-funnel-step:nth-child(3){width:64%;opacity:.84}.wy-funnel-step:nth-child(4){width:48%;opacity:.76}
+    .wy-risk-copy h3{margin:0 0 7px;font-size:13px}.wy-risk-copy p{font-size:10px;line-height:1.65;color:var(--muted)}.wy-risk-reasons{display:grid;gap:5px;margin-top:8px}.wy-risk-reason{padding:7px 8px;border-radius:6px;background:#f7f8fb;font-size:9px;color:#596175}
+    @media(max-width:1000px){.wy-find-config-grid,.wy-funnel-wrap{grid-template-columns:1fr}.wy-db-grid,.wy-cluster-grid{grid-template-columns:1fr}.wy-req-summary,.wy-metrics{grid-template-columns:repeat(2,1fr)}.wy-fulltext-grid{grid-template-columns:1fr}}
+  `;
+  d.head.appendChild(style);
+
+  const patch=d.createElement('script');
+  patch.textContent=String.raw`
+    (function(){
+      const WY_FIND_CLUSTERS=[
+        {id:'demand',name:'市场需求与消费升级',count:16,keep:5,queries:['旅游市场需求 技术升级','消费升级 旅游数字化','tourism demand technology adoption'],db:'OpenAlex · Semantic Scholar · 中文库'},
+        {id:'tech',name:'技术创新与数字化转型',count:14,keep:4,queries:['旅游产业 技术创新','数字化转型 旅游产业','tourism digital transformation'],db:'OpenAlex · Crossref · 中文库'},
+        {id:'region',name:'区域差异与空间演化',count:12,keep:4,queries:['省级旅游产业 区域差异','空间分异 技术演化','regional tourism innovation'],db:'OpenAlex · 中文库'},
+        {id:'policy',name:'产业政策与治理机制',count:10,keep:4,queries:['旅游产业 政策机制','地方治理 技术扩散','tourism policy innovation'],db:'Semantic Scholar · 中文库'},
+        {id:'industry',name:'产业组织与绩效',count:8,keep:3,queries:['旅游产业组织 技术绩效','市场结构 创新绩效','tourism industry performance'],db:'Crossref · 中文库'}
+      ];
+      const WY_FIND_PAPERS=[
+        {id:'f1',cluster:'demand',title:'Tourism demand upgrading and digital technology adoption: Evidence from regional markets',authors:'Liu, Chen & Wang',year:'2025',venue:'Tourism Management',doi:'10.1016/j.tourman.2025.mock01',levels:['SSCI','JCR Q1','近5年'],db:'Semantic Scholar',abstract:true,oa:true,fit:['SSCI','JCR Q1–Q2']},
+        {id:'f2',cluster:'demand',title:'市场需求升级与旅游产业技术创新：来自省级面板数据的证据',authors:'王宁，赵辰',year:'2024',venue:'旅游学刊',doi:'10.mock/cnki.2024.021',levels:['CSSCI','北大核心','近5年'],db:'中文数据库',abstract:true,oa:false,fit:['CSSCI','近5年']},
+        {id:'f3',cluster:'tech',title:'Digital transformation, innovation capability and tourism industry productivity',authors:'Huang & Li',year:'2024',venue:'Information & Management',doi:'10.1016/j.im.2024.mock02',levels:['SSCI','JCR Q1','近5年'],db:'OpenAlex',abstract:true,oa:true,fit:['SSCI','JCR Q1–Q2']},
+        {id:'f4',cluster:'tech',title:'数字技术赋能旅游产业高质量发展的机制研究',authors:'周敏，孙凯',year:'2023',venue:'经济地理',doi:'10.mock/cnki.2023.066',levels:['CSSCI','北大核心','近5年'],db:'中文数据库',abstract:true,oa:false,fit:['CSSCI','近5年']},
+        {id:'f5',cluster:'region',title:'Regional heterogeneity in tourism innovation: A spatial panel analysis',authors:'Smith, Zhao & Park',year:'2023',venue:'Annals of Tourism Research',doi:'10.1016/j.annals.2023.mock03',levels:['SSCI','JCR Q1','近5年'],db:'OpenAlex',abstract:true,oa:true,fit:['SSCI','JCR Q1–Q2']},
+        {id:'f6',cluster:'region',title:'中国旅游产业技术效率的空间分异及其驱动因素',authors:'刘洋，周敏',year:'2022',venue:'地理研究',doi:'10.mock/cnki.2022.108',levels:['CSSCI','CSCD','近5年'],db:'中文数据库',abstract:true,oa:false,fit:['CSSCI','近5年']},
+        {id:'f7',cluster:'policy',title:'Policy support, institutional environment and technology diffusion in tourism',authors:'Hughes & Martin',year:'2024',venue:'Research Policy',doi:'10.1016/j.respol.2024.mock04',levels:['SSCI','JCR Q1','近5年'],db:'Crossref',abstract:true,oa:true,fit:['SSCI','JCR Q1–Q2']},
+        {id:'f8',cluster:'policy',title:'地方治理能力、产业政策与旅游技术扩散',authors:'陈立，郭宇',year:'2024',venue:'公共管理学报',doi:'10.mock/cnki.2024.031',levels:['CSSCI','北大核心','近5年'],db:'中文数据库',abstract:true,oa:false,fit:['CSSCI','近5年']},
+        {id:'f9',cluster:'industry',title:'Market structure and innovation performance in tourism industries',authors:'Garcia & Lee',year:'2022',venue:'Technological Forecasting & Social Change',doi:'10.1016/j.techfore.2022.mock05',levels:['SSCI','JCR Q1','近5年'],db:'Semantic Scholar',abstract:true,oa:true,fit:['SSCI','JCR Q1–Q2']},
+        {id:'f10',cluster:'industry',title:'旅游产业组织演化、竞争结构与技术绩效',authors:'李卓，杨帆',year:'2021',venue:'科研管理',doi:'10.mock/cnki.2021.087',levels:['CSSCI','北大核心','近5年'],db:'中文数据库',abstract:true,oa:false,fit:['CSSCI','近5年']}
+      ];
+
+      function wyFindInit(){
+        if(!state.wyReview){
+          state.wyReview={total:20,discipline:'econ',uploaded:0,duplicate:0,expanded:false,reqs:[
+            {id:'ssci',name:'SSCI',desc:'社会科学引文索引',need:5,base:1,kind:'must'},
+            {id:'cssci',name:'CSSCI',desc:'中文社会科学引文索引',need:5,base:2,kind:'must'},
+            {id:'jcr12',name:'JCR Q1–Q2',desc:'JCR 高分区期刊',need:3,base:1,kind:'prefer'},
+            {id:'recent',name:'近 5 年',desc:'保证研究时效性',need:12,base:3,kind:'prefer'}
+          ]};
+        }
+        if(!state.wyFind){
+          state.wyFind={
+            stage:'setup',page:0,intensity:'standard',runStep:0,searchRevision:0,
+            dbs:{openalex:true,semantic:true,crossref:true,cnki:true,wanfang:true,vip:false,pubmed:false,arxiv:false},
+            importedOA:0,uploadedExternal:0,downloadList:0,lastAgentUpdate:'',
+            importedPaperIds:{}
+          };
+        }
+        return state.wyFind;
+      }
+      function wyMultiplier(){const f=wyFindInit();return f.intensity==='quick'?2:f.intensity==='deep'?4:3}
+      function wyPool(){return Math.max(20,(state.wyReview.total||20)*wyMultiplier())}
+      function wyScale(n){return Math.max(1,Math.round(n*wyPool()/60))}
+      function wyOACount(){return Math.round(wyPool()*.30)}
+      function wyExternalCount(){return wyPool()-wyOACount()}
+      function wyBaseFull(){return 3+(Number(state.wyReview.uploaded)||0)}
+      function wyCurrentFull(){const f=wyFindInit();return wyBaseFull()+f.importedOA+f.uploadedExternal}
+      function wyReqCandidate(req){
+        const pool=wyPool();
+        if(req.id==='ssci'||req.name==='SSCI')return Math.round(pool*.30);
+        if(req.id==='cssci'||req.name==='CSSCI')return Math.round(pool*.27);
+        if(req.id==='jcr12'||req.name.indexOf('JCR')>-1)return Math.round(pool*.20);
+        if(req.id==='recent'||req.name.indexOf('近')===0)return Math.round(pool*.73);
+        return Math.round(pool*.22);
+      }
+      function wyReqOA(req){return Math.max(1,Math.round(wyReqCandidate(req)*.30))}
+      function wyReqExternal(req){return Math.max(0,wyReqCandidate(req)-wyReqOA(req))}
+      function wyReqCurrent(req){
+        const f=wyFindInit(),extra=f.importedOA+f.uploadedExternal,base=Number(req.base)||0;
+        if(req.id==='recent'||req.name.indexOf('近')===0)return Math.min(wyCurrentFull(),base+Math.round(extra*.78));
+        if(req.id==='ssci'||req.id==='cssci'||req.id==='scie'||req.name==='SSCI'||req.name==='CSSCI'||req.name==='SCIE')return Math.min(wyCurrentFull(),base+Math.floor(extra*.30));
+        if(req.id==='jcr12'||req.name.indexOf('JCR')>-1)return Math.min(wyCurrentFull(),base+Math.floor(extra*.22));
+        return Math.min(wyCurrentFull(),base+Math.floor(extra*.20));
+      }
+      function wyFindHardMissing(){return state.wyReview.reqs.filter(r=>r.kind==='must'&&wyReqCurrent(r)<r.need)}
+      function wyFindStatus(){
+        const total=Number(state.wyReview.total)||20,current=wyCurrentFull(),hard=wyFindHardMissing();
+        if(current<total||hard.length)return 'insufficient';
+        const safe=Math.ceil(total/.75);
+        return current<safe?'critical':'safe';
+      }
+      function wyFindGap(){
+        const parts=[],total=Number(state.wyReview.total)||20,current=wyCurrentFull();
+        if(current<total)parts.push('总量还缺 '+(total-current)+' 篇可用全文');
+        wyFindHardMissing().forEach(r=>parts.push(r.name+' 还缺 '+(r.need-wyReqCurrent(r))+' 篇'));
+        return parts.join('；')||'数量与必须质量条件已经满足';
+      }
+      function wySearchContext(){return state.wyReviewGap?'为当前文献综述补充文献':'围绕当前选题发现文献'}
+      function wySearchRequirements(){
+        const reqs=state.wyReview.reqs.filter(r=>r.need>0);
+        return '<div class="wy-req-summary"><div class="wy-req-chip"><b>'+state.wyReview.total+'</b><span>目标全文文献</span></div>'+reqs.slice(0,3).map(r=>'<div class="wy-req-chip"><b>≥'+r.need+'</b><span>'+r.name+' · '+(r.kind==='must'?'必须':'优先')+'</span></div>').join('')+'</div>';
+      }
+      function wySearchSetup(){
+        const f=wyFindInit(),pool=wyPool();
+        document.body.classList.add('task-setup');
+        return pageTitle('找文献 · 检索设置',wySearchContext()+'。检索阶段不受当前文献库数量限制，而是重新建立完整候选池。','<button class="ghost" data-wy-find-back-review>返回文献综述</button>')+
+          '<div class="wy-find-config"><div class="wy-find-config-grid"><section class="wy-find-card"><h2>检索需求</h2><p>系统已继承选题、研究问题和文献需求，你可以在开始检索前继续调整。</p>'+
+          '<div class="wy-find-block"><div class="wy-find-block-head"><div><strong>研究选题</strong><small>从文献综述任务继承</small></div></div><div class="topic-chip"><strong>市场需求对中国省级旅游产业技术演化的影响</strong><span>已继承</span></div></div>'+
+          '<div class="wy-find-block"><div class="wy-find-block-head"><div><strong>系统生成的检索关键词</strong><small>基于选题、研究方向和研究问题</small></div><button class="small-btn" data-wy-keyword-refresh>AI 优化关键词</button></div><div class="wy-keywords"><span class="wy-keyword">旅游市场需求</span><span class="wy-keyword">技术演化</span><span class="wy-keyword">数字化转型</span><span class="wy-keyword">区域差异</span><span class="wy-keyword">产业政策</span><span class="wy-keyword">tourism technology adoption</span></div></div>'+
+          '<div class="wy-find-block"><div class="wy-find-block-head"><div><strong>文献需求</strong><small>直接继承上一页，可在这里修改数量和硬性要求</small></div></div>'+wySearchRequirements()+'<div class="actions" style="justify-content:flex-start;margin-top:8px"><button class="small-btn" data-wy-find-edit-req>调整文献需求</button></div><div id="wyFindReqEdit"></div></div>'+
+          '<div class="wy-find-block"><div class="wy-find-block-head"><div><strong>检索数据库</strong><small>外文开放数据库 + 中文数据库（原型示意）</small></div></div><div class="wy-db-grid">'+
+            [['openalex','OpenAlex','开放学术元数据'],['semantic','Semantic Scholar','语义检索与引文元数据'],['crossref','Crossref','DOI 与出版元数据'],['cnki','知网','中文数据库 · 规划接入'],['wanfang','万方','中文数据库 · 规划接入'],['vip','维普','中文数据库 · 规划接入'],['pubmed','PubMed','医学方向可选'],['arxiv','arXiv','预印本方向可选']].map(x=>'<label class="wy-db"><input type="checkbox" data-wy-db="'+x[0]+'" '+(f.dbs[x[0]]?'checked':'')+'><span><b>'+x[1]+'</b><small>'+x[2]+'</small></span></label>').join('')+
+          '</div></div>'+
+          '<div class="wy-find-block"><div class="wy-find-block-head"><div><strong>检索强度</strong><small>强度影响查询组合、候选池规模和等待时间</small></div></div><div class="wy-intensity">'+
+            '<button class="wy-intensity-btn '+(f.intensity==='quick'?'active':'')+'" data-wy-intensity="quick"><b>快速</b><small>目标需求 × 2<br>预计 10–20 秒</small></button>'+
+            '<button class="wy-intensity-btn '+(f.intensity==='standard'?'active':'')+'" data-wy-intensity="standard"><b>标准 · 推荐</b><small>目标需求 × 3<br>预计 30–60 秒</small></button>'+
+            '<button class="wy-intensity-btn '+(f.intensity==='deep'?'active':'')+'" data-wy-intensity="deep"><b>深度</b><small>目标需求 × 4<br>预计 1–3 分钟</small></button>'+
+          '</div><div class="wy-find-estimate">预计形成约 <b>'+pool+' 篇候选文献</b>。候选池主要依据元数据和可用摘要初筛，全文相关性将在入库解析后再次判断。</div></div>'+
+          '<div class="actions" style="justify-content:flex-end;margin-top:13px"><button class="primary" data-wy-start-search>开始检索</button></div></section>'+
+          '<aside class="wy-find-card"><h2>为什么候选数高于最终需求？</h2><p>检索阶段只能判断“值得获取全文”，不能确认正文一定能用于写作。</p>'+
+          '<div class="prepare-list"><div class="prepare-step"><i>1</i><div><strong>多数据库广泛检索</strong><small>原始结果可能达到数百篇</small></div></div><div class="prepare-step"><i>2</i><div><strong>Metadata 去重和初筛</strong><small>根据题目、关键词、年份和文献层次筛选</small></div></div><div class="prepare-step"><i>3</i><div><strong>形成 2–4 倍候选池</strong><small>为后续全文筛选保留冗余</small></div></div><div class="prepare-step"><i>4</i><div><strong>获取全文后再次筛选</strong><small>真正进入写作的文献必须全文解析可用</small></div></div></div></aside></div></div>';
+      }
+      function wySearchRunning(){
+        const f=wyFindInit(),steps=[
+          ['生成检索式','根据选题拆解中英文关键词与查询组合'],
+          ['多数据库检索','并行查询已选择的外文与中文数据库'],
+          ['Metadata 归一化与去重','合并 DOI、标题、作者与年份信息'],
+          ['文献层次筛选','按 SSCI / CSSCI / JCR 等需求筛选'],
+          ['主题聚类与相关性排序','形成结构化候选文献池']
+        ];
+        document.body.classList.add('task-setup');
+        return pageTitle('正在检索文献','本次检索目标约 '+wyPool()+' 篇候选文献。','')+
+          '<section class="surface wy-search-run"><div class="wy-run-hero"><h2>正在建立候选文献池</h2><p>检索过程只使用元数据与可用摘要，不把候选论文直接视为最终写作材料。</p></div><div class="progress"><i style="width:'+Math.min(100,(f.runStep+1)/steps.length*100)+'%"></i></div><div class="wy-run-list">'+steps.map((s,i)=>'<div class="wy-run-item '+(i<f.runStep?'done':i===f.runStep?'current':'')+'"><i>'+(i<f.runStep?'✓':i+1)+'</i><div><strong>'+s[0]+'</strong><small>'+s[1]+'</small></div></div>').join('')+'</div></section>';
+      }
+      function wyDemandRows(){
+        return state.wyReview.reqs.filter(r=>r.need>0).map(r=>{
+          const c=wyReqCandidate(r),cur=wyReqCurrent(r),ok=cur>=r.need;
+          return '<tr><td><b>'+r.name+'</b><br><span class="muted">'+(r.kind==='must'?'必须满足':'优先满足')+'</span></td><td>≥ '+r.need+'</td><td>'+c+'</td><td>'+wyReqOA(r)+'</td><td>'+wyReqExternal(r)+'</td><td>'+cur+'</td><td class="'+(ok?'wy-status-ok':'wy-status-gap')+'">'+(ok?'已满足':'还缺 '+(r.need-cur))+'</td></tr>';
+        }).join('');
+      }
+      function wyL1(){
+        const status=wyFindStatus(),f=wyFindInit(),current=wyCurrentFull(),total=state.wyReview.total;
+        return '<section class="wy-find-section"><div class="wy-overview"><div><h2>本次文献需求满足情况</h2><p>候选池回答“系统找到了什么”，当前全文回答“真正已经可以进入任务的材料有多少”。</p></div><div class="wy-overview-score"><strong>'+current+' / '+total+'</strong><small>当前可用全文</small></div></div>'+
+          '<table class="wy-demand-table"><thead><tr><th>文献要求</th><th>我的需求</th><th>候选池</th><th>可一键获取</th><th>需自行下载</th><th>当前全文</th><th>状态</th></tr></thead><tbody><tr><td><b>总文献</b></td><td>'+total+'</td><td>'+wyPool()+'</td><td>'+wyOACount()+'</td><td>'+wyExternalCount()+'</td><td>'+current+'</td><td class="'+(current>=total?'wy-status-ok':'wy-status-gap')+'">'+(current>=total?'数量已达标':'还缺 '+(total-current))+'</td></tr>'+wyDemandRows()+'</tbody></table></section>'+
+          '<section class="wy-find-section"><h3>全文获取方式</h3><div class="wy-fulltext-grid"><div class="wy-fulltext-card"><span class="wy-full-status oa">OA / 可直接获取</span><div class="big">'+Math.max(0,wyOACount()-f.importedOA)+'</div><small>平台可直接取得全文，入库后自动查重、解析并计入本次任务。</small><button class="small-btn primary" data-wy-bulk-oa '+(f.importedOA?'disabled':'')+'>'+(f.importedOA?'已一键入库 '+f.importedOA+' 篇':'一键入库')+'</button></div>'+
+          '<div class="wy-fulltext-card"><span class="wy-full-status external">需前往数据库获取</span><div class="big">'+wyExternalCount()+'</div><small>系统保留完整 Metadata，用户可导出清单后前往对应数据库下载全文。</small><div class="wy-db-breakdown"><span class="wy-db-pill">知网 '+Math.round(wyExternalCount()*.42)+'</span><span class="wy-db-pill">万方 '+Math.round(wyExternalCount()*.28)+'</span><span class="wy-db-pill">其他 '+Math.round(wyExternalCount()*.30)+'</span></div><div class="actions" style="justify-content:flex-start"><button class="small-btn" data-wy-export-list>导出文献 List</button><button class="small-btn primary" data-wy-upload-external>上传已下载全文</button></div></div></div></section>'+
+          '<section class="wy-find-section"><h3>当前结论</h3><div class="wy-gap '+(status==='safe'?'good':'')+'">'+(status==='insufficient'?'目前仍不足：'+wyFindGap()+'。':status==='critical'?'已经达到表面文献需求，但全文内容筛选后仍可能低于需求，继续时会进行风险提示。':'已有较充分的全文冗余，可继续进入文献综述。')+'</div></section>';
+      }
+      function wyL2(){
+        const scale=wyPool()/60;
+        return '<section class="wy-find-section"><h2>系统检索策略</h2><p>以下内容是结构化 Search Plan，不是模型隐式推理。它告诉用户系统如何把选题拆成可检索的研究方向。</p></section>'+
+          '<div class="wy-cluster-grid">'+WY_FIND_CLUSTERS.map(c=>'<article class="wy-cluster"><div class="wy-cluster-head"><div><h3>'+c.name+'</h3><span class="muted">建议最终覆盖约 '+c.keep+' 篇</span></div><span class="wy-cluster-count">'+Math.round(c.count*scale)+' 篇</span></div><div class="wy-query-list">'+c.queries.map(q=>'<span class="wy-query">'+q+'</span>').join('')+'</div><div class="wy-cluster-foot"><span>'+c.db+'</span><span>Metadata 聚类</span></div></article>').join('')+'</div>'+
+          '<section class="wy-find-section" style="margin-top:10px"><h3>策略可继续修改</h3><p>'+(wyFindInit().lastAgentUpdate?'<b style="color:var(--purple)">最近调整：</b>'+wyFindInit().lastAgentUpdate:'在中间「文献助手」中输入：少一点国际研究、多找政策机制、只看 CSSCI 等。系统会更新检索策略并刷新候选池。')+'</p><div class="actions" style="justify-content:flex-start"><button class="small-btn" data-wy-rerun-search>按当前策略重新检索</button></div></section>';
+      }
+      function wyPaperActions(p){
+        const f=wyFindInit(),bulkDone=f.importedOA>=wyOACount(),imported=bulkDone||!!f.importedPaperIds[p.id];
+        if(p.oa)return '<span class="wy-full-status oa">OA 可获取</span><button class="small-btn primary" data-wy-import-paper="'+p.id+'" '+(imported?'disabled':'')+'>'+(imported?'已入库':'一键入库')+'</button>';
+        return '<span class="wy-full-status external">需自行获取</span><button class="small-btn" data-wy-download-paper="'+p.id+'">加入下载清单</button>';
+      }
+      function wyL3(){
+        const scale=wyPool()/60;
+        return '<section class="wy-find-section"><h2>候选文献</h2><p>按检索主题聚类。此阶段仅展示 Metadata、文献层次、摘要可用状态和全文获取方式，不把候选文献解释为全文证据。</p></section>'+
+          WY_FIND_CLUSTERS.map(c=>'<section class="wy-paper-cluster"><div class="wy-paper-cluster-head"><h3>'+c.name+'</h3><span>候选 '+Math.round(c.count*scale)+' · 建议最终覆盖 '+c.keep+'</span></div>'+
+            WY_FIND_PAPERS.filter(p=>p.cluster===c.id).map(p=>'<article class="wy-paper-card"><div><h4>'+p.title+'</h4><div class="wy-paper-meta">'+p.authors+' · '+p.year+' · '+p.venue+'<br>DOI：'+p.doi+' · 来源：'+p.db+' · '+(p.abstract?'摘要可用':'仅基础 Metadata')+'</div><div class="wy-levels">'+p.levels.map(x=>'<span class="wy-level">'+x+'</span>').join('')+p.fit.map(x=>'<span class="wy-level fit">可补 '+x+'</span>').join('')+'</div></div><div class="wy-paper-side">'+wyPaperActions(p)+'</div></article>').join('')+
+          '</section>').join('');
+      }
+      function wyGlobalCTA(){
+        const status=wyFindStatus(),current=wyCurrentFull(),total=state.wyReview.total,safe=Math.ceil(total/.75);
+        if(status==='insufficient')return '<div class="wy-global-cta"><small>当前 '+current+' / '+total+' 篇；'+wyFindGap()+'。</small><div class="actions"><button class="wy-disabled" disabled>需要继续补充文献</button></div></div>';
+        if(status==='critical')return '<div class="wy-global-cta"><small>当前 '+current+' 篇已达到基本要求，但低于建议安全储备 '+safe+' 篇。</small><div class="actions"><button class="primary" data-wy-continue-review>继续文献综述</button></div></div>';
+        return '<div class="wy-global-cta"><small>当前 '+current+' 篇，数量与必须质量要求均有较充分冗余。</small><div class="actions"><button class="primary" data-wy-continue-review>继续文献综述</button></div></div>';
+      }
+      function wyWorkspace(){
+        const f=wyFindInit(),page=f.page;
+        document.body.classList.remove('task-setup');
+        const body=page===0?wyL1():page===1?wyL2():wyL3();
+        return '<div class="wy-find-work"><div class="wy-find-top"><button class="wy-page-arrow" data-wy-find-prev '+(page===0?'disabled':'')+'>‹</button><div class="wy-find-tabs"><button class="wy-find-tab '+(page===0?'active':'')+'" data-wy-find-page="0">需求满足情况</button><button class="wy-find-tab '+(page===1?'active':'')+'" data-wy-find-page="1">检索策略</button><button class="wy-find-tab '+(page===2?'active':'')+'" data-wy-find-page="2">候选文献</button></div><button class="wy-page-arrow" data-wy-find-next '+(page===2?'disabled':'')+'>›</button></div>'+body+wyGlobalCTA()+'</div>';
+      }
+      function wyRenderRecommend(){
+        const f=wyFindInit();
+        if(f.stage==='setup')return wySearchSetup();
+        if(f.stage==='running')return wySearchRunning();
+        return wyWorkspace();
+      }
+
+      const wyOldRenderRecommend=renderRecommend;
+      renderRecommend=function(){
+        return wyRenderRecommend();
+      };
+
+      const wyOldRenderChat=renderChat;
+      renderChat=function(){
+        const f=wyFindInit();
+        const head=document.querySelector('.chat-head span');
+        if(state.view==='recommend'&&f.stage==='workspace'){
+          if(head)head.textContent='文献助手';
+          document.querySelector('#chatList').innerHTML=
+            '<div class="message"><div class="status-row"><span class="status-dot"></span><span>候选池已建立</span></div><p>当前候选 '+wyPool()+' 篇，已按 5 个检索方向聚类。</p><p class="muted">你可以继续修改检索策略，例如“多找政策机制”“只看 CSSCI”“近三年的多一点”。</p><div class="message-actions"><button class="small-btn primary" data-wy-agent-prompt="多找政策与治理机制">多找政策机制</button><button class="small-btn" data-wy-agent-prompt="只看 CSSCI">优先 CSSCI</button></div></div>'+
+            (f.lastAgentUpdate?'<div class="message user">'+f.lastAgentUpdate+'</div><div class="message"><p>已更新检索策略，候选文献与主题覆盖已重新排序。</p></div>':'');
+          return;
+        }
+        if(head)head.textContent='任务助手';
+        wyOldRenderChat();
+      };
+
+      function wyStartRunning(){
+        const f=wyFindInit();
+        f.stage='running';f.runStep=0;renderAll();
+        const tick=()=>{
+          if(state.view!=='recommend'||f.stage!=='running')return;
+          f.runStep++;
+          if(f.runStep>=5){
+            f.stage='workspace';f.page=0;document.body.classList.remove('task-setup');renderAll();toast('检索完成：已建立 '+wyPool()+' 篇候选文献池');
+          }else{renderAll();setTimeout(tick,420)}
+        };
+        setTimeout(tick,420);
+      }
+      function wyExportList(){
+        const rows=[['Title','Authors','Year','Venue','DOI','Database','Literature level','Cluster']];
+        WY_FIND_PAPERS.filter(p=>!p.oa).forEach(p=>rows.push([p.title,p.authors,p.year,p.venue,p.doi,p.db,p.levels.join(' / '),WY_FIND_CLUSTERS.find(c=>c.id===p.cluster)?.name||'']));
+        const csv=rows.map(r=>r.map(x=>'"'+String(x).replaceAll('"','""')+'"').join(',')).join('\\n');
+        const blob=new Blob(['\\uFEFF'+csv],{type:'text/csv;charset=utf-8'});
+        const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='文优小助_待下载文献List.csv';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+        toast('已导出待下载文献 List');
+      }
+      function wyRiskModal(){
+        const current=wyCurrentFull(),low=Math.floor(current*.75),high=Math.max(low,Math.floor(current*.9));
+        document.querySelector('#modalTitle').textContent='当前文献数量处于临界区间';
+        document.querySelector('#modalBody').innerHTML='<div class="wy-funnel-wrap"><div class="wy-funnel"><div class="wy-funnel-step"><b>Metadata 候选池</b><br>'+wyPool()+' 篇</div><div class="wy-funnel-step"><b>已获取全文</b><br>'+current+' 篇</div><div class="wy-funnel-step"><b>全文解析 + 内容筛选</b><br>预计保留 '+low+'–'+high+' 篇</div><div class="wy-funnel-step"><b>最终写作材料</b><br>目标 ≥ '+state.wyReview.total+' 篇</div></div><div class="wy-risk-copy"><h3>为什么还要提醒？</h3><p>候选文献最初主要依据题目、关键词、书目信息和可用摘要筛选。进入全文解析后，部分论文可能因为正文与研究问题不匹配而被移出任务。</p><div class="wy-risk-reasons"><div class="wy-risk-reason">Metadata 相关，但正文研究对象不一致</div><div class="wy-risk-reason">只有背景提及，无法作为主要写作材料</div><div class="wy-risk-reason">与其他论文重复，最终只保留更强证据</div></div></div></div>';
+        document.querySelector('#modalFoot').innerHTML='<button class="ghost" data-wy-risk-more>继续补充文献</button><button class="primary" data-wy-risk-ack>是的，我已知晓</button>';
+        document.querySelector('#modal').classList.add('open');
+      }
+      function wyContinueReview(){
+        const f=wyFindInit();
+        state.wyReview.uploaded=Math.max(Number(state.wyReview.uploaded)||0,f.importedOA+f.uploadedExternal);
+        state.analysisDone=true;state.outlineEdited=false;state.view='review';
+        document.body.classList.remove('task-setup');
+        renderAll();
+        toast('已返回文献综述，进入生成 Paper 分支');
+      }
+
+      document.addEventListener('click',e=>{
+        const b=e.target.closest('button');if(!b)return;
+        if(b.matches('[data-wy-find-back-review]')){document.body.classList.remove('task-setup');state.view='reviewCreate';renderReviewCreate()}
+        if(b.matches('[data-wy-intensity]')){wyFindInit().intensity=b.dataset.wyIntensity;renderAll()}
+        if(b.matches('[data-wy-db]')){}
+        if(b.matches('[data-wy-keyword-refresh]'))toast('已根据研究问题扩展中英文关键词与同义词');
+        if(b.matches('[data-wy-find-edit-req]')){
+          const box=document.querySelector('#wyFindReqEdit');
+          if(box)box.innerHTML='<div style="margin-top:8px;padding:10px;border:1px solid var(--line);border-radius:7px;background:#fff"><div class="search-row"><input class="input" id="wyFindTotal" type="number" min="1" max="80" value="'+state.wyReview.total+'"><span class="muted" style="align-self:center">篇总需求</span></div><div style="display:grid;gap:6px;margin-top:8px">'+state.wyReview.reqs.map((r,i)=>'<div style="display:grid;grid-template-columns:1fr 80px 110px;gap:7px;align-items:center"><span style="font-size:10px">'+r.name+'</span><input class="input" style="height:30px" data-wy-find-req-need="'+i+'" type="number" min="0" value="'+r.need+'"><select class="input" style="height:30px" data-wy-find-req-kind="'+i+'"><option value="must" '+(r.kind==='must'?'selected':'')+'>必须满足</option><option value="prefer" '+(r.kind==='prefer'?'selected':'')+'>优先满足</option></select></div>').join('')+'</div><div class="actions" style="justify-content:flex-end;margin-top:8px"><button class="small-btn primary" data-wy-save-find-req>保存文献需求</button></div></div>';
+        }
+        if(b.matches('[data-wy-save-find-req]')){
+          const n=Number(document.querySelector('#wyFindTotal')?.value)||20;
+          state.wyReview.total=Math.max(1,Math.min(80,n));
+          document.querySelectorAll('[data-wy-find-req-need]').forEach(x=>{const r=state.wyReview.reqs[Number(x.dataset.wyFindReqNeed)];if(r)r.need=Math.max(0,Math.min(state.wyReview.total,Number(x.value)||0))});
+          document.querySelectorAll('[data-wy-find-req-kind]').forEach(x=>{const r=state.wyReview.reqs[Number(x.dataset.wyFindReqKind)];if(r)r.kind=x.value});
+          renderAll();toast('已更新检索使用的文献需求');
+        }
+        if(b.matches('[data-wy-start-search]'))wyStartRunning();
+        if(b.matches('[data-wy-find-page]')){wyFindInit().page=Number(b.dataset.wyFindPage);renderAll()}
+        if(b.matches('[data-wy-find-prev]')){wyFindInit().page=Math.max(0,wyFindInit().page-1);renderAll()}
+        if(b.matches('[data-wy-find-next]')){wyFindInit().page=Math.min(2,wyFindInit().page+1);renderAll()}
+        if(b.matches('[data-wy-bulk-oa]')){const f=wyFindInit();f.importedOA=wyOACount();renderAll();toast('正在一键获取 OA 全文：查重 → 入库 → 解析完成')}
+        if(b.matches('[data-wy-upload-external]')){wyFindInit().uploadedExternal+=7;renderAll();toast('原型模拟：上传 7 篇已下载全文，已解析并重新计算需求')}
+        if(b.matches('[data-wy-export-list]'))wyExportList();
+        if(b.matches('[data-wy-import-paper]')){
+          const f=wyFindInit(),id=b.dataset.wyImportPaper;
+          if(!f.importedPaperIds[id]&&f.importedOA<wyOACount()){f.importedPaperIds[id]=true;f.importedOA=Math.min(wyOACount(),f.importedOA+1);renderAll();toast('全文已一键入库并完成解析')}
+        }
+        if(b.matches('[data-wy-download-paper]')){wyFindInit().downloadList+=1;toast('已加入下载清单 · 当前 '+wyFindInit().downloadList+' 篇')}
+        if(b.matches('[data-wy-rerun-search]')){wyFindInit().stage='running';wyFindInit().runStep=0;wyStartRunning()}
+        if(b.matches('[data-wy-agent-prompt]')){wyFindInit().lastAgentUpdate=b.dataset.wyAgentPrompt;wyFindInit().searchRevision++;renderAll();toast('已根据要求更新检索策略')}
+        if(b.matches('[data-wy-continue-review]')){
+          const s=wyFindStatus();
+          if(s==='critical')wyRiskModal();else if(s==='safe')wyContinueReview();
+        }
+        if(b.matches('[data-wy-risk-more]')){document.querySelector('#modal').classList.remove('open');wyFindInit().page=0;renderAll()}
+        if(b.matches('[data-wy-risk-ack]')){document.querySelector('#modal').classList.remove('open');wyContinueReview()}
+      },true);
+
+      document.addEventListener('change',e=>{
+        if(e.target.matches('[data-wy-db]'))wyFindInit().dbs[e.target.dataset.wyDb]=e.target.checked;
+      });
+
+      document.addEventListener('click',e=>{
+        const b=e.target.closest('button');
+        if(!b||!b.matches('[data-send]'))return;
+        const f=wyFindInit();
+        if(state.view==='recommend'&&f.stage==='workspace'){
+          e.preventDefault();e.stopImmediatePropagation();
+          const txt=document.querySelector('#composer')?.value.trim();
+          if(txt){
+            f.lastAgentUpdate=txt;f.searchRevision++;
+            const input=document.querySelector('#composer');if(input)input.value='';
+            renderAll();toast('文献助手已更新检索策略');
+          }
+        }
+      },true);
+
+      const wyOldRenderDoc=renderDoc;
+      renderDoc=function(){
+        wyOldRenderDoc();
+        if(state.view==='recommend'){
+          document.querySelector('#workBody').innerHTML=renderRecommend();
+          document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('active',b.dataset.view==='library'));
+        }
+      };
+    })();
+  `;
+  d.body.appendChild(patch);
+});
+</script>
+
+
+<script>
+frame.addEventListener('load',()=>{
+  const d=frame.contentDocument;
+  if(!d || d.getElementById('wy-outline-confirm-v8')) return;
+
+  const style=d.createElement('style');
+  style.id='wy-outline-confirm-v8';
+  style.textContent=`
+    body.wy-outline-v8 .project-switch,
+    body.wy-outline-v8 .sidebar,
+    body.wy-outline-v8 .chat,
+    body.wy-outline-v8 .workspace>.tabs{display:none!important}
+    body.wy-outline-v8 .main{display:block!important;height:calc(100vh - 64px)!important}
+    body.wy-outline-v8 .workspace{height:100%!important;display:block!important;border:0!important}
+    body.wy-outline-v8 .work-body{height:100%!important;padding:0!important;overflow:hidden!important;background:#f7f8fc!important}
+
+    .wy8-shell{
+      height:100%;
+      display:grid;
+      grid-template-columns:250px minmax(350px,390px) minmax(600px,1fr);
+      background:#f7f8fc;
+      min-width:0;
+    }
+
+    /* 左侧任务 / 研究资产 */
+    .wy8-side{
+      background:#fff;
+      border-right:1px solid var(--line);
+      padding:18px 14px;
+      display:flex;
+      flex-direction:column;
+      gap:18px;
+      overflow:auto;
+    }
+    .wy8-side-title{font-size:12px;font-weight:800;color:#2d3240;margin-bottom:7px}
+    .wy8-topic{
+      width:100%;border:0;border-radius:8px;background:#f7f7fb;
+      display:flex;align-items:center;justify-content:space-between;gap:8px;
+      padding:10px 11px;text-align:left;font-size:10px;font-weight:700;
+    }
+    .wy8-topic span:first-child{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .wy8-tree{display:grid;gap:4px;margin:7px 0 0 10px;padding-left:12px;border-left:1px solid #e2e5ed}
+    .wy8-nav{
+      width:100%;height:36px;border:0;border-radius:7px;background:transparent;
+      padding:0 10px;text-align:left;font-size:11px;color:#596174;
+    }
+    .wy8-nav:hover{background:#f7f6fc;color:var(--purple)}
+    .wy8-nav.active{background:var(--purple-weak);color:var(--purple);font-weight:800}
+    .wy8-divider{height:1px;background:var(--line)}
+    .wy8-side-note{
+      margin-top:auto;padding:10px;border:1px solid var(--line);border-radius:8px;
+      background:#fbfcff;color:var(--muted);font-size:9px;line-height:1.55;
+    }
+
+    /* 中间：文优小助手 */
+    .wy8-assistant{
+      min-width:0;background:#fff;border-right:1px solid var(--line);
+      display:grid;grid-template-rows:auto 1fr auto;overflow:hidden;
+    }
+    .wy8-assistant-head{padding:17px 17px 12px;border-bottom:1px solid var(--line)}
+    .wy8-assistant-head-row{display:flex;align-items:center;justify-content:space-between;gap:8px}
+    .wy8-assistant-head h2{margin:0;font-size:17px}
+    .wy8-task-chip{
+      margin-top:10px;padding:8px 10px;border:1px solid var(--line);border-radius:7px;
+      background:#fbfcff;font-size:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+    }
+    .wy8-assistant-body{
+      overflow:auto;padding:14px 15px 20px;background:#fcfdff;
+      display:grid;align-content:start;gap:10px;
+    }
+    .wy8-msg{display:flex;gap:8px;align-items:flex-start}
+    .wy8-avatar{
+      width:29px;height:29px;border-radius:50%;background:var(--purple-weak);
+      color:var(--purple);display:grid;place-items:center;font-size:10px;font-weight:800;flex:0 0 auto;
+    }
+    .wy8-bubble{
+      max-width:88%;padding:10px 11px;border:1px solid var(--line);border-radius:10px;
+      background:#fff;font-size:10px;line-height:1.65;
+    }
+    .wy8-user{margin-left:auto;background:var(--purple-weak);border-color:#ddd6fa}
+    .wy8-card{padding:11px;border:1px solid var(--line);border-radius:9px;background:#fff}
+    .wy8-card-title{
+      display:flex;align-items:center;justify-content:space-between;gap:8px;
+      margin-bottom:9px;font-size:11px;font-weight:800;
+    }
+    .wy8-progress{display:grid;grid-template-columns:repeat(6,1fr);gap:3px}
+    .wy8-step{
+      position:relative;text-align:center;padding-top:29px;color:var(--muted);
+      font-size:8px;line-height:1.35;
+    }
+    .wy8-step:before{
+      content:"";position:absolute;top:6px;left:50%;transform:translateX(-50%);
+      width:19px;height:19px;border-radius:50%;border:1px solid #d8dce6;background:#fff;
+    }
+    .wy8-step:after{
+      content:"";position:absolute;top:15px;left:calc(50% + 11px);
+      width:calc(100% - 18px);height:1px;background:#dddfee;
+    }
+    .wy8-step:last-child:after{display:none}
+    .wy8-step.done:before{background:var(--teal);border-color:var(--teal)}
+    .wy8-step.done{color:#535d71}
+    .wy8-step.current:before{background:var(--purple);border:5px solid #ddd7fa}
+    .wy8-step.current{color:var(--purple);font-weight:800}
+    .wy8-stats{display:grid;grid-template-columns:repeat(2,1fr);gap:6px}
+    .wy8-stat{padding:9px;border:1px solid #edf0f5;border-radius:7px;background:#fbfcff}
+    .wy8-stat b{display:block;color:var(--purple);font-size:15px}
+    .wy8-stat span{font-size:8px;color:var(--muted)}
+    .wy8-actions{display:flex;gap:6px;flex-wrap:wrap}
+    .wy8-compose{padding:12px 14px;border-top:1px solid var(--line);background:#fff}
+    .wy8-compose-row{display:grid;grid-template-columns:1fr 40px;gap:7px}
+    .wy8-compose input{
+      height:38px;border:1px solid var(--line);border-radius:8px;
+      padding:0 10px;font-size:10px;outline:none;
+    }
+    .wy8-compose button{border:0;border-radius:8px;background:var(--purple);color:#fff;font-size:15px}
+
+    /* 右侧：大纲确认 */
+    .wy8-outline{
+      min-width:0;background:#fff;display:grid;grid-template-rows:auto 1fr auto;overflow:hidden;
+    }
+    .wy8-outline-head{
+      min-height:69px;padding:13px 18px;border-bottom:1px solid var(--line);
+      display:flex;align-items:center;justify-content:space-between;gap:14px;
+    }
+    .wy8-outline-head h1{margin:0;font-size:18px}
+    .wy8-outline-head p{margin:5px 0 0;color:var(--muted);font-size:9px}
+    .wy8-outline-head-actions{display:flex;gap:7px;align-items:center}
+    .wy8-outline-scroll{overflow:auto;padding:18px 24px 86px;background:#fbfcff}
+    .wy8-outline-list{max-width:820px;margin:0 auto;display:grid;gap:9px}
+    .wy8-outline-row{
+      display:grid;grid-template-columns:25px 1fr auto;gap:8px;align-items:center;
+      padding:10px 11px;border:1px solid var(--line);border-radius:8px;background:#fff;
+    }
+    .wy8-drag{color:#a0a6b4;font-size:14px;cursor:grab;text-align:center}
+    .wy8-outline-input{
+      width:100%;height:31px;border:0;background:transparent;outline:none;
+      font-size:11px;font-weight:700;color:#303644;
+    }
+    .wy8-outline-row.child{margin-left:34px;background:#fcfdff}
+    .wy8-outline-row.child .wy8-outline-input{font-weight:500}
+    .wy8-outline-row button{height:28px;padding:0 8px;border:0;border-radius:6px;background:#f1f3f7;color:#697184;font-size:9px}
+    .wy8-add-row{
+      max-width:820px;margin:10px auto 0;border:1px dashed #c9c1ef;border-radius:8px;
+      background:#fbfaff;color:var(--purple);height:38px;width:100%;font-size:10px;
+    }
+    .wy8-outline-foot{
+      position:relative;padding:11px 18px;border-top:1px solid var(--line);background:#fff;
+      display:flex;align-items:center;justify-content:space-between;gap:12px;
+      box-shadow:0 -8px 24px rgba(46,43,67,.05);
+    }
+    .wy8-outline-foot small{color:var(--muted);font-size:9px;line-height:1.5}
+    .wy8-outline-foot .actions{display:flex;gap:7px}
+
+    .wy8-confirm-overlay{
+      position:fixed;inset:0;background:rgba(28,31,43,.42);z-index:50;
+      display:flex;align-items:center;justify-content:center;padding:20px;
+    }
+    .wy8-confirm-card{
+      width:min(460px,100%);background:#fff;border:1px solid var(--line);border-radius:11px;
+      box-shadow:var(--shadow);padding:19px;
+    }
+    .wy8-confirm-card h3{margin:0 0 8px;font-size:15px}
+    .wy8-confirm-card p{margin:0;color:var(--muted);font-size:10px;line-height:1.65}
+    .wy8-confirm-card .actions{margin-top:14px}
+
+    @media(max-width:1200px){
+      .wy8-shell{grid-template-columns:225px 345px minmax(510px,1fr)}
+    }
+  `;
+  d.head.appendChild(style);
+
+  const js=d.createElement('script');
+  js.textContent=String.raw`
+    (function(){
+      function wy8State(){
+        state.wy8=state.wy8||{
+          messages:[],
+          outline:[
+            {level:1,text:'1 绪论'},
+            {level:2,text:'1.1 研究背景与意义'},
+            {level:2,text:'1.2 国内外研究现状'},
+            {level:1,text:'2 理论基础与概念界定'},
+            {level:2,text:'2.1 核心概念'},
+            {level:2,text:'2.2 理论基础'},
+            {level:1,text:'3 主要影响因素分析'},
+            {level:2,text:'3.1 政策与制度环境'},
+            {level:2,text:'3.2 市场需求'},
+            {level:2,text:'3.3 技术创新'},
+            {level:2,text:'3.4 区域基础条件'},
+            {level:1,text:'4 研究不足与未来方向'},
+            {level:1,text:'5 结论'}
+          ]
+        };
+        return state.wy8;
+      }
+
+      function currentReviewTask(){
+        return state.tasks?.find(t=>t.id==='review') || state.tasks?.find(t=>t.type==='文献综述');
+      }
+      function taskTitle(){
+        return currentReviewTask()?.title || '低空经济发展的影响因素研究';
+      }
+
+      function sideHTML(){
+        return '<aside class="wy8-side">'+
+          '<div><div class="wy8-side-title">任务类别</div>'+
+            '<button class="wy8-topic"><span>'+taskTitle()+'</span><span>⌃</span></button>'+
+            '<div class="wy8-tree">'+
+              '<button class="wy8-nav active" data-wy8-nav="review">文献综述</button>'+
+              '<button class="wy8-nav" data-wy8-nav="proposal">开题报告</button>'+
+              '<button class="wy8-nav" data-wy8-nav="draft">论文初稿</button>'+
+            '</div>'+
+          '</div>'+
+          '<div class="wy8-divider"></div>'+
+          '<div><div class="wy8-side-title">研究资产</div>'+
+            '<button class="wy8-nav" data-wy8-nav="library">文献库</button>'+
+            '<button class="wy8-nav" data-wy8-nav="artifacts">学术成果</button>'+
+          '</div>'+
+          '<div class="wy8-side-note">当前选题下的任务在这里聚类；文献库和学术成果作为研究资产持续复用。</div>'+
+        '</aside>';
+      }
+
+      function assistantHTML(){
+        const s=wy8State();
+        const extra=s.messages.map(x=>
+          '<div class="wy8-bubble wy8-user">'+x+'</div>'+
+          '<div class="wy8-msg"><div class="wy8-avatar">AI</div><div class="wy8-bubble">已收到。我会据此调整右侧大纲，你也可以继续手动修改章节。</div></div>'
+        ).join('');
+        return '<section class="wy8-assistant">'+
+          '<header class="wy8-assistant-head">'+
+            '<div class="wy8-assistant-head-row"><h2>文优小助手 ✦</h2><span class="status-pill">等待确认</span></div>'+
+            '<div class="wy8-task-chip">当前任务：'+taskTitle()+' · 文献综述</div>'+
+          '</header>'+
+          '<div class="wy8-assistant-body">'+
+            '<div class="wy8-msg"><div class="wy8-avatar">AI</div><div class="wy8-bubble">我已经完成本次文献综述的材料准备，并根据你的研究问题和文献结构生成了研究大纲。你可以直接确认，也可以先调整章节结构。</div></div>'+
+            '<div class="wy8-card">'+
+              '<div class="wy8-card-title"><span>当前任务进度</span><span class="muted">正文尚未开始</span></div>'+
+              '<div class="wy8-progress">'+
+                '<div class="wy8-step done">匹配文献<br>完成</div>'+
+                '<div class="wy8-step done">读取批注<br>完成</div>'+
+                '<div class="wy8-step done">加载术语<br>完成</div>'+
+                '<div class="wy8-step done">构建材料<br>完成</div>'+
+                '<div class="wy8-step current">确认大纲<br>当前</div>'+
+                '<div class="wy8-step">撰写正文<br>等待</div>'+
+              '</div>'+
+            '</div>'+
+            '<div class="wy8-card">'+
+              '<div class="wy8-card-title"><span>本次任务材料</span><span class="muted">材料透明化</span></div>'+
+              '<div class="wy8-stats">'+
+                '<div class="wy8-stat"><b>18</b><span>本次采用文献</span></div>'+
+                '<div class="wy8-stat"><b>18</b><span>全文可用</span></div>'+
+                '<div class="wy8-stat"><b>26</b><span>相关批注</span></div>'+
+                '<div class="wy8-stat"><b>14</b><span>核心术语</span></div>'+
+              '</div>'+
+            '</div>'+
+            extra+
+            '<div class="wy8-actions">'+
+              '<button class="small-btn primary" data-wy8-material>查看本次任务材料</button>'+
+              '<button class="small-btn" data-wy8-prompt="政策机制部分再细一点">政策机制再细一点</button>'+
+              '<button class="small-btn" data-wy8-prompt="减少背景部分，增加研究争议">强化研究争议</button>'+
+            '</div>'+
+          '</div>'+
+          '<footer class="wy8-compose"><div class="wy8-compose-row">'+
+            '<input id="wy8Input" placeholder="例如：把政策机制部分拆得更细一些">'+
+            '<button data-wy8-send>➤</button>'+
+          '</div></footer>'+
+        '</section>';
+      }
+
+      function outlineRows(){
+        const s=wy8State();
+        return s.outline.map((x,i)=>
+          '<div class="wy8-outline-row '+(x.level===2?'child':'')+'">'+
+            '<div class="wy8-drag">⋮⋮</div>'+
+            '<input class="wy8-outline-input" data-wy8-outline-input="'+i+'" value="'+x.text.replaceAll('"','&quot;')+'">'+
+            '<button data-wy8-delete="'+i+'">删除</button>'+
+          '</div>'
+        ).join('');
+      }
+
+      function outlineHTML(){
+        return '<section class="wy8-outline">'+
+          '<header class="wy8-outline-head">'+
+            '<div><h1>大纲方案</h1><p>基于 18 篇全文文献、26 条批注和 14 个核心术语生成，可直接轻量编辑。</p></div>'+
+            '<div class="wy8-outline-head-actions"><span class="status-pill">等待确认</span><button class="small-btn" data-wy8-regenerate>重新生成大纲</button></div>'+
+          '</header>'+
+          '<div class="wy8-outline-scroll">'+
+            '<div class="wy8-outline-list">'+outlineRows()+'</div>'+
+            '<button class="wy8-add-row" data-wy8-add>＋ 添加章节</button>'+
+          '</div>'+
+          '<footer class="wy8-outline-foot">'+
+            '<small>确认后将正式进入正文生成阶段，文优小助手会继续显示生成进度。</small>'+
+            '<div class="actions"><button class="ghost" data-wy8-regenerate>重新生成大纲</button><button class="primary" data-wy8-confirm>确认大纲并生成正文</button></div>'+
+          '</footer>'+
+        '</section>';
+      }
+
+      function renderOutlineV8(){
+        document.body.classList.add('wy-outline-v8','task-setup');
+        const wb=document.querySelector('#workBody');
+        if(!wb)return;
+        wb.innerHTML='<div class="wy8-shell">'+sideHTML()+assistantHTML()+outlineHTML()+'</div>';
+      }
+      window.__renderOutlineV8=renderOutlineV8;
+
+      /* 只替换“大纲待确认”这一状态，正文页仍沿用当前母版 */
+      const oldRenderReview=renderReview;
+      renderReview=function(){
+        if(state.analysisDone && !state.outlineEdited){
+          setTimeout(renderOutlineV8,0);
+          return '<div></div>';
+        }
+        document.body.classList.remove('wy-outline-v8');
+        return oldRenderReview();
+      };
+
+      /* 老用户已有任务卡可恢复 */
+      document.addEventListener('click',e=>{
+        const card=e.target.closest('.task-card[data-task]');
+        if(!card)return;
+        const id=card.dataset.task;
+        const task=state.tasks?.find(t=>String(t.id)===String(id));
+        if(!task)return;
+
+        e.preventDefault();
+        e.stopImmediatePropagation();
+
+        if(task.type==='文献综述' || id==='review'){
+          state.analysisDone=true;
+          state.outlineEdited=false;
+          state.view='review';
+          renderAll();
+          setTimeout(renderOutlineV8,0);
+          toast('已恢复文献综述：进入大纲确认');
+        }else if(task.type==='开题报告' || id==='proposal'){
+          document.body.classList.remove('wy-outline-v8','task-setup');
+          state.view='proposal';
+          renderAll();
+          toast('已恢复开题报告');
+        }else if(task.type==='论文初稿' || id==='draft'){
+          document.body.classList.remove('wy-outline-v8','task-setup');
+          state.view='draft';
+          renderAll();
+          toast('已恢复论文初稿');
+        }
+      },true);
+
+      document.addEventListener('input',e=>{
+        const inp=e.target.closest('[data-wy8-outline-input]');
+        if(!inp)return;
+        const idx=Number(inp.dataset.wy8OutlineInput);
+        if(wy8State().outline[idx]) wy8State().outline[idx].text=inp.value;
+      });
+
+      document.addEventListener('click',e=>{
+        const b=e.target.closest('button');
+        if(!b)return;
+
+        if(b.matches('[data-wy8-nav]')){
+          const v=b.dataset.wy8Nav;
+          document.body.classList.remove('wy-outline-v8','task-setup');
+          if(v==='review'){
+            state.view='review';state.analysisDone=true;state.outlineEdited=false;
+            renderAll();setTimeout(renderOutlineV8,0);
+          }else{
+            state.view=v;renderAll();
+          }
+        }
+
+        if(b.matches('[data-wy8-delete]')){
+          const i=Number(b.dataset.wy8Delete);
+          wy8State().outline.splice(i,1);
+          renderOutlineV8();
+        }
+
+        if(b.matches('[data-wy8-add]')){
+          wy8State().outline.push({level:1,text:'新增章节'});
+          renderOutlineV8();
+        }
+
+        if(b.matches('[data-wy8-material]')){
+          toast('本次任务材料：18 篇全文文献 · 26 条批注 · 14 个核心术语');
+        }
+
+        if(b.matches('[data-wy8-prompt]')){
+          wy8State().messages.push(b.dataset.wy8Prompt);
+          if(b.dataset.wy8Prompt.includes('政策机制')){
+            const index=wy8State().outline.findIndex(x=>x.text.includes('政策与制度环境'));
+            if(index>=0){
+              wy8State().outline.splice(index+1,0,
+                {level:2,text:'3.1.1 国家政策驱动'},
+                {level:2,text:'3.1.2 地方治理机制'},
+                {level:2,text:'3.1.3 空域管理制度'}
+              );
+            }
+          }
+          renderOutlineV8();
+        }
+
+        if(b.matches('[data-wy8-send]')){
+          const input=document.querySelector('#wy8Input');
+          const txt=input?.value.trim();
+          if(txt){
+            wy8State().messages.push(txt);
+            renderOutlineV8();
+          }
+        }
+
+        if(b.matches('[data-wy8-regenerate]')){
+          document.querySelector('#wy8ConfirmOverlay')?.remove();
+          const overlay=document.createElement('div');
+          overlay.id='wy8ConfirmOverlay';
+          overlay.className='wy8-confirm-overlay';
+          overlay.innerHTML='<div class="wy8-confirm-card"><h3>重新生成大纲？</h3><p>重新生成会覆盖你在当前大纲中的手动修改。</p><div class="actions"><button class="ghost" data-wy8-cancel-regenerate>取消</button><button class="primary" data-wy8-do-regenerate>确认重新生成</button></div></div>';
+          document.body.appendChild(overlay);
+        }
+
+        if(b.matches('[data-wy8-cancel-regenerate]')){
+          document.querySelector('#wy8ConfirmOverlay')?.remove();
+        }
+
+        if(b.matches('[data-wy8-do-regenerate]')){
+          state.wy8=null;
+          document.querySelector('#wy8ConfirmOverlay')?.remove();
+          renderOutlineV8();
+          toast('大纲已重新生成');
+        }
+
+        if(b.matches('[data-wy8-confirm]')){
+          document.body.classList.remove('wy-outline-v8','task-setup');
+          state.outlineEdited=true;
+          state.view='review';
+          renderAll();
+          toast('大纲已确认，进入正文生成');
+        }
+      },true);
+
+      document.addEventListener('keydown',e=>{
+        if(e.key==='Enter' && e.target?.id==='wy8Input'){
+          e.preventDefault();
+          document.querySelector('[data-wy8-send]')?.click();
+        }
+      });
+    })();
+  `;
+  d.body.appendChild(js);
+});
+</script>
+
+
+<script>
+frame.addEventListener('load',()=>{
+  const d=frame.contentDocument;
+  if(!d || d.getElementById('wy-remove-legacy-home-v9')) return;
+
+  const style=d.createElement('style');
+  style.id='wy-remove-legacy-home-v9';
+  style.textContent=`
+    /* 旧版工作台不再作为一个版本共存：直接由新版导航壳替换 */
+    body:not(.prelogin) .project-switch,
+    body:not(.prelogin) .workspace>.tabs,
+    body:not(.prelogin) .notice{display:none!important}
+
+    body:not(.prelogin):not(.task-setup):not(.wy-outline-v8) .main{
+      grid-template-columns:250px 380px minmax(520px,1fr)!important;
+    }
+    body:not(.prelogin):not(.task-setup):not(.wy-outline-v8) .workspace{
+      grid-template-rows:1fr!important;
+    }
+
+    /* 新版左栏 */
+    .wy9-sidebar{
+      height:100%;
+      display:flex;
+      flex-direction:column;
+      gap:18px;
+    }
+    .wy9-section-title{
+      font-size:13px;
+      font-weight:800;
+      color:#2d3240;
+      padding:0 6px;
+      margin-bottom:8px;
+    }
+    .wy9-topic{
+      width:100%;
+      border:0;
+      border-radius:8px;
+      background:#f7f7fb;
+      padding:10px 11px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:8px;
+      text-align:left;
+      font-size:11px;
+      font-weight:700;
+    }
+    .wy9-topic span:first-child{
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .wy9-tree{
+      display:grid;
+      gap:4px;
+      margin:7px 0 0 10px;
+      padding-left:12px;
+      border-left:1px solid #e2e5ed;
+    }
+    .wy9-nav{
+      width:100%;
+      height:37px;
+      border:0;
+      border-radius:7px;
+      background:transparent;
+      padding:0 10px;
+      text-align:left;
+      font-size:11px;
+      color:#596174;
+    }
+    .wy9-nav:hover{background:#f7f6fc;color:var(--purple)}
+    .wy9-nav.active{background:var(--purple-weak);color:var(--purple);font-weight:800}
+    .wy9-divider{height:1px;background:var(--line)}
+    .wy9-side-note{
+      margin-top:auto;
+      padding:10px;
+      border:1px solid var(--line);
+      border-radius:8px;
+      background:#fbfcff;
+      color:var(--muted);
+      font-size:9px;
+      line-height:1.55;
+    }
+
+    /* 中栏统一命名为文优小助手 */
+    .chat-head span{font-size:15px}
+    .chat-head [data-clear]{display:none!important}
+    .wy9-home-removed{
+      max-width:930px;margin:0 auto;background:#fff;border:1px solid var(--line);
+      border-radius:9px;padding:18px;
+    }
+  `;
+  d.head.appendChild(style);
+
+  const js=d.createElement('script');
+  js.textContent=String.raw`
+    (function(){
+      function reviewTask(){
+        return state.tasks?.find(t=>t.type==='文献综述') || state.tasks?.find(t=>t.id==='review');
+      }
+      function topicTitle(){
+        return reviewTask()?.title || '低空经济发展的影响因素研究';
+      }
+      function activeForState(){
+        if(['library','notes','terms','reading','recommend'].includes(state.view)) return 'library';
+        if(state.view==='artifacts') return 'artifacts';
+        if(state.view==='proposal') return 'proposal';
+        if(state.view==='draft') return 'draft';
+        return 'review';
+      }
+
+      function renderNewSidebar(){
+        if(document.body.classList.contains('prelogin') || document.body.classList.contains('task-setup') || document.body.classList.contains('wy-outline-v8')) return;
+        const side=document.querySelector('.sidebar');
+        if(!side)return;
+
+        const active=activeForState();
+        side.innerHTML=
+          '<div class="wy9-sidebar">'+
+            '<div>'+
+              '<div class="wy9-section-title">任务类别</div>'+
+              '<button class="wy9-topic"><span>'+topicTitle()+'</span><span>⌃</span></button>'+
+              '<div class="wy9-tree">'+
+                '<button class="wy9-nav '+(active==='review'?'active':'')+'" data-wy9-nav="review">文献综述</button>'+
+                '<button class="wy9-nav '+(active==='proposal'?'active':'')+'" data-wy9-nav="proposal">开题报告</button>'+
+                '<button class="wy9-nav '+(active==='draft'?'active':'')+'" data-wy9-nav="draft">论文初稿</button>'+
+              '</div>'+
+            '</div>'+
+            '<div class="wy9-divider"></div>'+
+            '<div>'+
+              '<div class="wy9-section-title">研究资产</div>'+
+              '<button class="wy9-nav '+(active==='library'?'active':'')+'" data-wy9-nav="library">文献库</button>'+
+              '<button class="wy9-nav '+(active==='artifacts'?'active':'')+'" data-wy9-nav="artifacts">学术成果</button>'+
+            '</div>'+
+            '<div class="wy9-side-note">旧版“我的写作任务 / 当前选题资产”导航已移除。任务按选题组织，研究资产只保留文献库与学术成果。</div>'+
+          '</div>';
+
+        const head=document.querySelector('.chat-head span');
+        if(head && !(state.view==='recommend' && state.wyFind?.stage==='workspace')) head.textContent='文优小助手';
+      }
+
+      /* 不再存在“开始任务”旧首页。任何回到 home 的动作都恢复当前文献综述任务 */
+      function resumeCurrentReview(){
+        state.analysisDone=true;
+        state.outlineEdited=false;
+        state.view='review';
+        renderAll();
+        setTimeout(()=>{
+          if(typeof window.__renderOutlineV8==='function') window.__renderOutlineV8();
+        },0);
+      }
+
+      const oldRenderAll=renderAll;
+      renderAll=function(){
+        if(state.view==='home' && !document.body.classList.contains('prelogin')){
+          state.analysisDone=true;
+          state.outlineEdited=false;
+          state.view='review';
+        }
+        oldRenderAll();
+        setTimeout(renderNewSidebar,0);
+      };
+
+      /* 老用户登录：不进入旧“开始任务”页，直接 Resume 当前进行中的任务 */
+      document.addEventListener('click',e=>{
+        const b=e.target.closest('button');
+        if(!b)return;
+
+        if(b.matches('[data-v2-login]')){
+          e.preventDefault();
+          e.stopImmediatePropagation();
+
+          document.body.classList.remove('prelogin');
+          document.querySelectorAll('.onboarding-screen').forEach(x=>x.hidden=true);
+          const login=document.querySelector('#loginV2');
+          const select=document.querySelector('#selectV2');
+          if(login) login.hidden=true;
+          if(select) select.hidden=true;
+
+          resumeCurrentReview();
+          toast('已恢复上次进行中的文献综述');
+        }
+
+        if(b.matches('[data-wy9-nav]')){
+          const v=b.dataset.wy9Nav;
+          if(v==='review'){
+            resumeCurrentReview();
+          }else{
+            state.view=v;
+            oldRenderAll();
+            setTimeout(renderNewSidebar,0);
+          }
+        }
+
+        /* 旧逻辑中任何“返回首页”按钮，现在都解释为返回当前任务，而不是展示旧首页 */
+        if(b.matches('[data-view="home"],[data-wy-review-back],[data-review-create-back]')){
+          e.preventDefault();
+          e.stopImmediatePropagation();
+          resumeCurrentReview();
+        }
+      },true);
+
+      /* 首次进入 app 后，保证不会闪回旧首页 */
+      setInterval(()=>{
+        if(!document.body.classList.contains('prelogin')){
+          if(state.view==='home'){
+            resumeCurrentReview();
+            return;
+          }
+          renderNewSidebar();
+        }
+      },250);
+    })();
+  `;
+  d.body.appendChild(js);
+});
+</script>
+
+
+<script>
+frame.addEventListener('load',()=>{
+  const d=frame.contentDocument;
+  if(!d || d.getElementById('wy-user-split-v10')) return;
+
+  const style=d.createElement('style');
+  style.id='wy-user-split-v10';
+  style.textContent=`
+    /* 两类用户共用新版三栏壳，但初始状态与文案不同 */
+    body.wy10-new-user:not(.task-setup):not(.wy-outline-v8) .project-switch,
+    body.wy10-new-user:not(.task-setup):not(.wy-outline-v8) .workspace>.tabs,
+    body.wy10-old-user:not(.task-setup):not(.wy-outline-v8) .project-switch,
+    body.wy10-old-user:not(.task-setup):not(.wy-outline-v8) .workspace>.tabs{display:none!important}
+
+    .wy10-welcome{
+      max-width:980px;margin:0 auto;padding:8px 0 30px;
+    }
+    .wy10-kicker{font-size:11px;font-weight:800;color:var(--purple);margin-bottom:7px}
+    .wy10-welcome h1{margin:0;font-size:23px}
+    .wy10-welcome>p{margin:7px 0 18px;color:var(--muted);font-size:11px;line-height:1.65}
+    .wy10-choice-grid{display:grid;grid-template-columns:1fr 1fr;gap:13px}
+    .wy10-choice-card{border:1px solid var(--line);border-radius:10px;background:#fff;padding:17px}
+    .wy10-choice-card.research{background:#fbfaff}
+    .wy10-choice-card h2{margin:0 0 5px;font-size:16px}
+    .wy10-choice-card p{margin:0 0 13px;color:var(--muted);font-size:10px;line-height:1.55}
+    .wy10-actions{display:grid;gap:8px}
+    .wy10-action{
+      width:100%;display:flex;align-items:center;gap:10px;padding:11px;
+      border:1px solid var(--line);border-radius:8px;background:#fff;text-align:left;
+    }
+    .wy10-action:hover{border-color:#a293e7;background:var(--purple-weak)}
+    .wy10-action strong{display:block;font-size:12px}
+    .wy10-action small{display:block;margin-top:3px;color:var(--muted);font-size:9px}
+    .wy10-icon{
+      width:29px;height:29px;border-radius:7px;display:grid;place-items:center;
+      background:var(--purple-weak);color:var(--purple);font-weight:800;font-size:11px;
+    }
+    .wy10-choice-card.research .wy10-icon{background:var(--teal-weak);color:var(--teal)}
+    .wy10-empty{
+      margin-top:14px;padding:12px;border:1px dashed #c9c1ef;border-radius:8px;
+      background:#fbfaff;color:#5e5195;font-size:10px;line-height:1.55;
+    }
+
+    .wy10-old-home{max-width:980px;margin:0 auto;padding-bottom:30px}
+    .wy10-old-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:13px}
+    .wy10-old-card{border:1px solid var(--line);border-radius:9px;background:#fff;padding:16px}
+    .wy10-old-card h2{margin:0 0 6px;font-size:15px}
+    .wy10-old-card>p{margin:0 0 12px;color:var(--muted);font-size:10px;line-height:1.6}
+    .wy10-task-resume{display:grid;gap:8px}
+    .wy10-resume-item{
+      width:100%;border:1px solid var(--line);border-radius:8px;background:#fcfdff;
+      padding:11px;text-align:left;display:grid;gap:4px;
+    }
+    .wy10-resume-item.active{border-color:#baaaff;background:var(--purple-weak)}
+    .wy10-resume-item b{font-size:11px}
+    .wy10-resume-item span{font-size:9px;color:var(--muted)}
+    .wy10-resume-item em{font-size:9px;color:var(--teal);font-style:normal}
+    .wy10-asset-stats{display:grid;grid-template-columns:repeat(2,1fr);gap:7px}
+    .wy10-asset-stat{padding:10px;border:1px solid var(--line);border-radius:8px;background:#fbfcff}
+    .wy10-asset-stat b{display:block;color:var(--purple);font-size:17px}
+    .wy10-asset-stat span{font-size:9px;color:var(--muted)}
+    @media(max-width:1000px){.wy10-choice-grid,.wy10-old-grid{grid-template-columns:1fr}}
+  `;
+  d.head.appendChild(style);
+
+  const js=d.createElement('script');
+  js.textContent=String.raw`
+    (function(){
+      window.__wy10UserMode = window.__wy10UserMode || null;
+
+      function setMode(mode){
+        window.__wy10UserMode=mode;
+        document.body.classList.toggle('wy10-new-user',mode==='new');
+        document.body.classList.toggle('wy10-old-user',mode==='old');
+      }
+
+      function renderNewUserHome(){
+        const wb=document.querySelector('#workBody');
+        if(!wb)return;
+        document.body.classList.remove('task-setup','wy-outline-v8');
+        setMode('new');
+
+        wb.innerHTML=
+          '<div class="wy10-welcome">'+
+            '<div class="wy10-kicker">第一次使用文优小助</div>'+
+            '<h1>你现在想完成什么？</h1>'+
+            '<p>新用户还没有历史任务与研究资产。先选择一个方向开始，后续文献、批注、术语和成果会自然沉淀。</p>'+
+            '<div class="wy10-choice-grid">'+
+              '<section class="wy10-choice-card">'+
+                '<h2>我要完成论文任务</h2>'+
+                '<p>适合已经有明确交付目标的用户。三个任务彼此独立，可以直接创建。</p>'+
+                '<div class="wy10-actions">'+
+                  '<button class="wy10-action" data-wy10-new-task="review"><span class="wy10-icon">综</span><span><strong>文献综述</strong><small>先填写综述要求，再检查文献材料</small></span></button>'+
+                  '<button class="wy10-action" data-wy10-new-task="proposal"><span class="wy10-icon">题</span><span><strong>开题报告</strong><small>基于选题创建开题任务</small></span></button>'+
+                  '<button class="wy10-action" data-wy10-new-task="draft"><span class="wy10-icon">稿</span><span><strong>论文初稿</strong><small>直接创建论文初稿任务</small></span></button>'+
+                '</div>'+
+              '</section>'+
+              '<section class="wy10-choice-card research">'+
+                '<h2>我要做研究准备</h2>'+
+                '<p>适合暂时没有明确 Deadline，先围绕选题发现、阅读并积累文献。</p>'+
+                '<div class="wy10-actions">'+
+                  '<button class="wy10-action" data-wy10-new-task="recommend"><span class="wy10-icon">找</span><span><strong>找文献</strong><small>从外部数据库建立候选文献池</small></span></button>'+
+                  '<button class="wy10-action" data-wy10-new-task="library"><span class="wy10-icon">读</span><span><strong>打开文献库</strong><small>开始积累、精读和管理研究材料</small></span></button>'+
+                '</div>'+
+                '<div class="wy10-empty">当前还没有历史研究资产。后续入库的文献、批注和术语会在这里持续积累。</div>'+
+              '</section>'+
+            '</div>'+
+          '</div>';
+
+        const side=document.querySelector('.sidebar');
+        if(side && typeof renderNewSidebar==='function') renderNewSidebar();
+        const head=document.querySelector('.chat-head span');
+        if(head)head.textContent='文优小助手';
+        const chat=document.querySelector('#chatList');
+        if(chat)chat.innerHTML=
+          '<div class="message"><div class="status-row"><span class="status-dot"></span><span>欢迎第一次使用文优小助</span></div><p>先告诉我你的目标。我可以从写作任务开始，也可以先帮你找文献。</p></div>';
+      }
+
+      function renderOldUserHome(){
+        const wb=document.querySelector('#workBody');
+        if(!wb)return;
+        document.body.classList.remove('task-setup','wy-outline-v8');
+        setMode('old');
+
+        wb.innerHTML=
+          '<div class="wy10-old-home">'+
+            '<div class="wy10-kicker">欢迎回来</div>'+
+            '<h1 style="margin:0;font-size:23px">继续你的研究任务</h1>'+
+            '<p style="margin:7px 0 18px;color:var(--muted);font-size:11px;line-height:1.65">你已经有进行中的任务和研究资产，可以直接恢复上次工作，也可以从已有资产创建新的任务。</p>'+
+            '<div class="wy10-old-grid">'+
+              '<section class="wy10-old-card"><h2>进行中的任务</h2><p>点击任务卡片恢复到上次工作阶段。</p>'+
+                '<div class="wy10-task-resume">'+
+                  '<button class="wy10-resume-item active" data-wy10-resume="review"><b>文献综述 · '+(state.tasks?.find(t=>t.type==='文献综述')?.title||'低空经济发展的影响因素研究')+'</b><em>进行中 · 待确认研究大纲</em><span>材料准备已完成，可以继续确认大纲并进入正文生成。</span></button>'+
+                  '<button class="wy10-resume-item" data-wy10-resume="proposal"><b>开题报告 · 低空经济发展的影响因素研究</b><em>未开始</em><span>可直接使用当前研究资产创建。</span></button>'+
+                '</div>'+
+              '</section>'+
+              '<section class="wy10-old-card"><h2>研究资产</h2><p>继续使用已积累的材料。</p><div class="wy10-asset-stats">'+
+                '<div class="wy10-asset-stat"><b>63</b><span>文献库</span></div>'+
+                '<div class="wy10-asset-stat"><b>31</b><span>批注</span></div>'+
+                '<div class="wy10-asset-stat"><b>14</b><span>术语</span></div>'+
+                '<div class="wy10-asset-stat"><b>3</b><span>学术成果</span></div>'+
+              '</div><div class="actions" style="justify-content:flex-start;margin-top:12px"><button class="small-btn primary" data-wy10-old-nav="library">打开文献库</button><button class="small-btn" data-wy10-old-nav="artifacts">查看学术成果</button></div></section>'+
+            '</div>'+
+          '</div>';
+
+        const side=document.querySelector('.sidebar');
+        if(side && typeof renderNewSidebar==='function') renderNewSidebar();
+        const head=document.querySelector('.chat-head span');
+        if(head)head.textContent='文优小助手';
+        const chat=document.querySelector('#chatList');
+        if(chat)chat.innerHTML=
+          '<div class="message"><div class="status-row"><span class="status-dot"></span><span>已恢复你的研究上下文</span></div><p>上次停留在文献综述的大纲确认阶段。</p><p class="muted">文献 63 篇 · 批注 31 条 · 术语 14 个 · 学术成果 3 项</p><div class="message-actions"><button class="small-btn primary" data-wy10-resume="review">继续文献综述</button></div></div>';
+      }
+
+      window.__wy10RenderNewUserHome=renderNewUserHome;
+      window.__wy10RenderOldUserHome=renderOldUserHome;
+
+      /* 覆盖 v9 将所有 home 强制改成 review 的行为 */
+      const oldRenderAllV10=renderAll;
+      renderAll=function(){
+        if(state.view==='home' && window.__wy10UserMode==='new'){
+          oldRenderAllV10();
+          setTimeout(renderNewUserHome,0);
+          return;
+        }
+        if(state.view==='home' && window.__wy10UserMode==='old'){
+          oldRenderAllV10();
+          setTimeout(renderOldUserHome,0);
+          return;
+        }
+        oldRenderAllV10();
+      };
+
+      document.addEventListener('click',e=>{
+        const b=e.target.closest('button');
+        if(!b)return;
+
+        /* 老用户入口：明确进入老用户首页，不直接进入新用户页面 */
+        if(b.matches('[data-v2-login]')){
+          e.preventDefault();
+          e.stopImmediatePropagation();
+
+          document.body.classList.remove('prelogin');
+          document.querySelectorAll('.onboarding-screen').forEach(x=>x.hidden=true);
+          const login=document.querySelector('#loginV2');
+          const select=document.querySelector('#selectV2');
+          if(login)login.hidden=true;
+          if(select)select.hidden=true;
+
+          setMode('old');
+          state.view='home';
+          setTimeout(renderOldUserHome,0);
+        }
+
+        /* 新用户入口：恢复原本的新用户任务选择逻辑 */
+        if(b.matches('[data-v2-new]')){
+          e.preventDefault();
+          e.stopImmediatePropagation();
+          setMode('new');
+
+          const login=document.querySelector('#loginV2');
+          const select=document.querySelector('#selectV2');
+          if(login)login.hidden=true;
+          if(select)select.hidden=false;
+          document.body.classList.add('prelogin');
+        }
+
+        /* 新用户选择页内的具体任务，进入真正的新用户任务创建/研究准备 */
+        if(b.matches('[data-v2-option]')){
+          setMode('new');
+        }
+
+        if(b.matches('[data-wy10-new-task]')){
+          const v=b.dataset.wy10NewTask;
+          setMode('new');
+          if(v==='review'){
+            state.analysisDone=false;
+            state.outlineEdited=false;
+            state.view='reviewCreate';
+            document.body.classList.add('task-setup');
+            renderReviewCreate();
+          }else if(v==='recommend'){
+            state.view='recommend';
+            if(state.wyFind){state.wyFind.stage='setup';state.wyFind.page=0}
+            renderAll();
+          }else{
+            state.view=v;
+            renderAll();
+          }
+        }
+
+        /* 老用户首页的 Resume */
+        if(b.matches('[data-wy10-resume]')){
+          const v=b.dataset.wy10Resume;
+          setMode('old');
+          if(v==='review'){
+            state.analysisDone=true;
+            state.outlineEdited=false;
+            state.view='review';
+            renderAll();
+            setTimeout(()=>window.__renderOutlineV8?.(),0);
+          }else{
+            state.view=v;
+            renderAll();
+          }
+        }
+
+        if(b.matches('[data-wy10-old-nav]')){
+          setMode('old');
+          state.view=b.dataset.wy10OldNav;
+          renderAll();
+        }
+      },true);
+
+      /* 新用户完成 select-v2 后，不再被 v9 的 home 强制劫持 */
+      document.addEventListener('click',e=>{
+        const b=e.target.closest('button');
+        if(!b)return;
+        if(b.matches('[data-v2-continue]') && window.__wy10UserMode==='new'){
+          setTimeout(()=>{
+            if(state.view==='home') renderNewUserHome();
+          },0);
+        }
+      },true);
+    })();
+  `;
+  d.body.appendChild(js);
+});
+</script>
+
+</body>
 </html>
-
