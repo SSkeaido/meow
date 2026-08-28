@@ -1077,51 +1077,168 @@ frame.addEventListener('load',()=>{
 <script>
 frame.addEventListener('load',()=>{
   const d=frame.contentDocument;
-  if(!d || d.getElementById('wy-direct-resume-v9')) return;
+  if(!d || d.getElementById('wy-remove-legacy-home-v9')) return;
+
+  const style=d.createElement('style');
+  style.id='wy-remove-legacy-home-v9';
+  style.textContent=`
+    /* 旧版工作台不再作为一个版本共存：直接由新版导航壳替换 */
+    body:not(.prelogin) .project-switch,
+    body:not(.prelogin) .workspace>.tabs,
+    body:not(.prelogin) .notice{display:none!important}
+
+    body:not(.prelogin):not(.task-setup):not(.wy-outline-v8) .main{
+      grid-template-columns:250px 380px minmax(520px,1fr)!important;
+    }
+    body:not(.prelogin):not(.task-setup):not(.wy-outline-v8) .workspace{
+      grid-template-rows:1fr!important;
+    }
+
+    /* 新版左栏 */
+    .wy9-sidebar{
+      height:100%;
+      display:flex;
+      flex-direction:column;
+      gap:18px;
+    }
+    .wy9-section-title{
+      font-size:13px;
+      font-weight:800;
+      color:#2d3240;
+      padding:0 6px;
+      margin-bottom:8px;
+    }
+    .wy9-topic{
+      width:100%;
+      border:0;
+      border-radius:8px;
+      background:#f7f7fb;
+      padding:10px 11px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:8px;
+      text-align:left;
+      font-size:11px;
+      font-weight:700;
+    }
+    .wy9-topic span:first-child{
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .wy9-tree{
+      display:grid;
+      gap:4px;
+      margin:7px 0 0 10px;
+      padding-left:12px;
+      border-left:1px solid #e2e5ed;
+    }
+    .wy9-nav{
+      width:100%;
+      height:37px;
+      border:0;
+      border-radius:7px;
+      background:transparent;
+      padding:0 10px;
+      text-align:left;
+      font-size:11px;
+      color:#596174;
+    }
+    .wy9-nav:hover{background:#f7f6fc;color:var(--purple)}
+    .wy9-nav.active{background:var(--purple-weak);color:var(--purple);font-weight:800}
+    .wy9-divider{height:1px;background:var(--line)}
+    .wy9-side-note{
+      margin-top:auto;
+      padding:10px;
+      border:1px solid var(--line);
+      border-radius:8px;
+      background:#fbfcff;
+      color:var(--muted);
+      font-size:9px;
+      line-height:1.55;
+    }
+
+    /* 中栏统一命名为文优小助手 */
+    .chat-head span{font-size:15px}
+    .chat-head [data-clear]{display:none!important}
+    .wy9-home-removed{
+      max-width:930px;margin:0 auto;background:#fff;border:1px solid var(--line);
+      border-radius:9px;padding:18px;
+    }
+  `;
+  d.head.appendChild(style);
 
   const js=d.createElement('script');
-  js.id='wy-direct-resume-v9';
   js.textContent=String.raw`
     (function(){
-      function enterLatestReviewTask(){
-        /*
-          原型约定：
-          老用户“最近一次点击的任务” = 文献综述；
-          当前恢复状态 = 材料已完成、等待确认大纲。
-          因此登录后不经过旧工作台首页，直接进入新版大纲确认页。
-        */
-        try{
-          if(typeof v2Show==='function') v2Show('app');
-          else{
-            document.body.classList.remove('prelogin');
-            document.querySelectorAll('.onboarding-screen,.login-v2,.select-v2').forEach(x=>x.hidden=true);
-          }
-        }catch(e){
-          document.body.classList.remove('prelogin');
-        }
+      function reviewTask(){
+        return state.tasks?.find(t=>t.type==='文献综述') || state.tasks?.find(t=>t.id==='review');
+      }
+      function topicTitle(){
+        return reviewTask()?.title || '低空经济发展的影响因素研究';
+      }
+      function activeForState(){
+        if(['library','notes','terms','reading','recommend'].includes(state.view)) return 'library';
+        if(state.view==='artifacts') return 'artifacts';
+        if(state.view==='proposal') return 'proposal';
+        if(state.view==='draft') return 'draft';
+        return 'review';
+      }
 
+      function renderNewSidebar(){
+        if(document.body.classList.contains('prelogin') || document.body.classList.contains('task-setup') || document.body.classList.contains('wy-outline-v8')) return;
+        const side=document.querySelector('.sidebar');
+        if(!side)return;
+
+        const active=activeForState();
+        side.innerHTML=
+          '<div class="wy9-sidebar">'+
+            '<div>'+
+              '<div class="wy9-section-title">任务类别</div>'+
+              '<button class="wy9-topic"><span>'+topicTitle()+'</span><span>⌃</span></button>'+
+              '<div class="wy9-tree">'+
+                '<button class="wy9-nav '+(active==='review'?'active':'')+'" data-wy9-nav="review">文献综述</button>'+
+                '<button class="wy9-nav '+(active==='proposal'?'active':'')+'" data-wy9-nav="proposal">开题报告</button>'+
+                '<button class="wy9-nav '+(active==='draft'?'active':'')+'" data-wy9-nav="draft">论文初稿</button>'+
+              '</div>'+
+            '</div>'+
+            '<div class="wy9-divider"></div>'+
+            '<div>'+
+              '<div class="wy9-section-title">研究资产</div>'+
+              '<button class="wy9-nav '+(active==='library'?'active':'')+'" data-wy9-nav="library">文献库</button>'+
+              '<button class="wy9-nav '+(active==='artifacts'?'active':'')+'" data-wy9-nav="artifacts">学术成果</button>'+
+            '</div>'+
+            '<div class="wy9-side-note">旧版“我的写作任务 / 当前选题资产”导航已移除。任务按选题组织，研究资产只保留文献库与学术成果。</div>'+
+          '</div>';
+
+        const head=document.querySelector('.chat-head span');
+        if(head && !(state.view==='recommend' && state.wyFind?.stage==='workspace')) head.textContent='文优小助手';
+      }
+
+      /* 不再存在“开始任务”旧首页。任何回到 home 的动作都恢复当前文献综述任务 */
+      function resumeCurrentReview(){
         state.analysisDone=true;
         state.outlineEdited=false;
         state.view='review';
-
-        if(typeof renderAll==='function') renderAll();
-
+        renderAll();
         setTimeout(()=>{
-          if(typeof window.__renderOutlineV8==='function'){
-            window.__renderOutlineV8();
-          }else if(typeof renderAll==='function'){
-            renderAll();
-          }
-        },30);
-
-        if(typeof toast==='function') toast('已恢复最近一次任务：文献综述');
+          if(typeof window.__renderOutlineV8==='function') window.__renderOutlineV8();
+        },0);
       }
 
-      /* 
-        关键修正：
-        旧用户点击“登录并进入工作台”时，在 capture 阶段截断旧逻辑，
-        避免旧逻辑先进入 home/开始任务页。
-      */
+      const oldRenderAll=renderAll;
+      renderAll=function(){
+        if(state.view==='home' && !document.body.classList.contains('prelogin')){
+          state.analysisDone=true;
+          state.outlineEdited=false;
+          state.view='review';
+        }
+        oldRenderAll();
+        setTimeout(renderNewSidebar,0);
+      };
+
+      /* 老用户登录：不进入旧“开始任务”页，直接 Resume 当前进行中的任务 */
       document.addEventListener('click',e=>{
         const b=e.target.closest('button');
         if(!b)return;
@@ -1129,19 +1246,47 @@ frame.addEventListener('load',()=>{
         if(b.matches('[data-v2-login]')){
           e.preventDefault();
           e.stopImmediatePropagation();
-          enterLatestReviewTask();
-          return;
+
+          document.body.classList.remove('prelogin');
+          document.querySelectorAll('.onboarding-screen').forEach(x=>x.hidden=true);
+          const login=document.querySelector('#loginV2');
+          const select=document.querySelector('#selectV2');
+          if(login) login.hidden=true;
+          if(select) select.hidden=true;
+
+          resumeCurrentReview();
+          toast('已恢复上次进行中的文献综述');
         }
 
-        /* 兼容旧登录页按钮 */
-        if(b.matches('[data-onboard-login]')){
+        if(b.matches('[data-wy9-nav]')){
+          const v=b.dataset.wy9Nav;
+          if(v==='review'){
+            resumeCurrentReview();
+          }else{
+            state.view=v;
+            oldRenderAll();
+            setTimeout(renderNewSidebar,0);
+          }
+        }
+
+        /* 旧逻辑中任何“返回首页”按钮，现在都解释为返回当前任务，而不是展示旧首页 */
+        if(b.matches('[data-view="home"],[data-wy-review-back],[data-review-create-back]')){
           e.preventDefault();
           e.stopImmediatePropagation();
-          enterLatestReviewTask();
+          resumeCurrentReview();
         }
       },true);
 
-      window.__enterLatestReviewTaskV9=enterLatestReviewTask;
+      /* 首次进入 app 后，保证不会闪回旧首页 */
+      setInterval(()=>{
+        if(!document.body.classList.contains('prelogin')){
+          if(state.view==='home'){
+            resumeCurrentReview();
+            return;
+          }
+          renderNewSidebar();
+        }
+      },250);
     })();
   `;
   d.body.appendChild(js);
