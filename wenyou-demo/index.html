@@ -1307,5 +1307,214 @@ frame.addEventListener('load',()=>{
 });
 </script>
 
+
+<script>
+frame.addEventListener('load',()=>{
+  const d=frame.contentDocument;
+  const w=frame.contentWindow;
+  if(!d || !w || d.getElementById('wy-generation-final-v7')) return;
+
+  const style=d.createElement('style');
+  style.id='wy-generation-final-v7';
+  style.textContent=`
+    body.wy7-generation .project-switch,
+    body.wy7-generation .sidebar,
+    body.wy7-generation .chat,
+    body.wy7-generation .workspace>.tabs{display:none!important}
+    body.wy7-generation .main{display:block!important;height:calc(100vh - 64px)!important}
+    body.wy7-generation .workspace{display:block!important;height:100%!important;border:0!important}
+    body.wy7-generation .work-body{height:100%!important;padding:0!important;overflow:hidden!important;background:#f7f8fc!important}
+
+    .wy7-shell{height:100%;display:grid;min-width:0;background:#f7f8fc}
+    .wy7-shell.collapsed{grid-template-columns:48px minmax(390px,430px) minmax(620px,1fr)}
+    .wy7-shell.open{grid-template-columns:250px minmax(360px,405px) minmax(590px,1fr)}
+
+    .wy7-rail{background:#fff;border-right:1px solid var(--line);display:flex;flex-direction:column;align-items:center;padding:16px 7px;gap:10px}
+    .wy7-rail button{width:32px;height:32px;border:1px solid #d4cdf5;border-radius:8px;background:#fff;color:var(--purple);font-size:18px}
+    .wy7-rail small{writing-mode:vertical-rl;color:var(--muted);font-size:9px;letter-spacing:2px}
+
+    .wy7-side{background:#fff;border-right:1px solid var(--line);padding:18px 14px;display:flex;flex-direction:column;gap:18px;height:100%;overflow:auto}
+    .wy7-side-head{display:flex;align-items:center;justify-content:space-between;gap:8px}
+    .wy7-side-title{font-size:12px;font-weight:800}
+    .wy7-collapse{height:29px;padding:0 8px;border:1px solid #d4cdf5;border-radius:7px;background:#fff;color:var(--purple);font-size:9px}
+    .wy7-topic{display:flex;align-items:center;justify-content:space-between;gap:8px;width:100%;border:0;border-radius:8px;background:#f7f7fb;padding:10px 11px;text-align:left;font-size:10px;font-weight:700}
+    .wy7-topic span:first-child{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .wy7-tree{display:grid;gap:4px;margin:7px 0 0 10px;padding-left:12px;border-left:1px solid #e2e5ed}
+    .wy7-item{height:36px;border:0;background:transparent;border-radius:7px;padding:0 10px;text-align:left;font-size:11px;color:#586174;width:100%}
+    .wy7-item:hover{background:#f7f6fc;color:var(--purple)}
+    .wy7-item.active{background:var(--purple-weak);color:var(--purple);font-weight:800}
+    .wy7-divider{height:1px;background:var(--line)}
+    .wy7-note{margin-top:auto;padding:10px;border:1px solid var(--line);border-radius:8px;background:#fbfcff;color:var(--muted);font-size:9px;line-height:1.55}
+
+    .wy7-assistant{min-width:0;background:#fff;border-right:1px solid var(--line);display:grid;grid-template-rows:auto 1fr auto;overflow:hidden}
+    .wy7-assistant-head{padding:17px 17px 12px;border-bottom:1px solid var(--line)}
+    .wy7-assistant-head-row{display:flex;align-items:center;justify-content:space-between;gap:8px}
+    .wy7-assistant-head h2{margin:0;font-size:17px}
+    .wy7-task{margin-top:10px;padding:8px 10px;border:1px solid var(--line);border-radius:7px;background:#fbfcff;font-size:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .wy7-assistant-body{overflow:auto;padding:14px 15px 20px;background:#fcfdff;display:grid;align-content:start;gap:10px}
+    .wy7-msg{display:flex;gap:8px;align-items:flex-start}
+    .wy7-avatar{width:29px;height:29px;border-radius:50%;background:var(--purple-weak);color:var(--purple);display:grid;place-items:center;font-size:10px;font-weight:800;flex:0 0 auto}
+    .wy7-bubble{padding:10px 11px;border:1px solid var(--line);border-radius:10px;background:#fff;font-size:10px;line-height:1.65;max-width:88%}
+    .wy7-user{margin-left:auto;background:var(--purple-weak);border-color:#ded8fa}
+    .wy7-card{padding:11px;border:1px solid var(--line);border-radius:9px;background:#fff}
+    .wy7-card-title{display:flex;justify-content:space-between;gap:8px;margin-bottom:9px;font-size:11px;font-weight:800}
+    .wy7-progress{display:grid;grid-template-columns:repeat(6,1fr);gap:3px}
+    .wy7-pnode{position:relative;text-align:center;padding-top:29px;color:var(--muted);font-size:8px;line-height:1.35}
+    .wy7-pnode:before{content:"";position:absolute;top:6px;left:50%;transform:translateX(-50%);width:19px;height:19px;border-radius:50%;border:1px solid #d8dce6;background:#fff}
+    .wy7-pnode:after{content:"";position:absolute;top:15px;left:calc(50% + 11px);width:calc(100% - 18px);height:1px;background:#dddfee}
+    .wy7-pnode:last-child:after{display:none}
+    .wy7-pnode.done:before{background:var(--teal);border-color:var(--teal)}
+    .wy7-pnode.current:before{background:var(--purple);border:5px solid #ded8fa}
+    .wy7-pnode.current{color:var(--purple);font-weight:700}
+    .wy7-retrieval{display:grid;grid-template-columns:repeat(4,1fr);gap:5px}
+    .wy7-retrieval-step{padding:8px 6px;border-radius:7px;background:#f6f7fb;text-align:center;font-size:8px;color:#596174}
+    .wy7-retrieval-step b{display:block;color:#2f3443;font-size:13px}
+    .wy7-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+    .wy7-stat{padding:8px;border:1px solid #edf0f5;border-radius:7px;background:#fbfcff}
+    .wy7-stat b{display:block;color:var(--purple);font-size:14px}.wy7-stat span{font-size:8px;color:var(--muted)}
+    .wy7-current{padding:9px 10px;border:1px solid #ddd7f7;border-radius:7px;background:#fbfaff;color:#5e4fa1;font-size:10px;font-weight:700}
+    .wy7-assist-actions{display:flex;gap:6px;flex-wrap:wrap}
+    .wy7-compose{padding:12px 14px;border-top:1px solid var(--line);background:#fff}
+    .wy7-compose-row{display:grid;grid-template-columns:1fr 40px;gap:7px}
+    .wy7-compose input{height:38px;border:1px solid var(--line);border-radius:8px;padding:0 10px;font-size:10px;outline:none}
+    .wy7-compose button{border:0;border-radius:8px;background:var(--purple);color:#fff;font-size:15px}
+
+    .wy7-editor{min-width:0;background:#fff;display:grid;grid-template-rows:55px 46px 1fr 38px;overflow:hidden}
+    .wy7-editor-head{border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:10px;padding:0 14px}
+    .wy7-editor-tabs{display:flex;gap:20px;height:100%}
+    .wy7-etab{position:relative;border:0;background:transparent;font-size:10px;color:#596174}
+    .wy7-etab.active{color:var(--purple);font-weight:800}
+    .wy7-etab.active:after{content:"";position:absolute;left:0;right:0;bottom:0;height:2px;background:var(--purple)}
+    .wy7-editor-actions{display:flex;gap:7px}
+    .wy7-toolbar{border-bottom:1px solid var(--line);display:flex;align-items:center;gap:7px;padding:0 14px;font-size:11px;color:#51596b}
+    .wy7-tbtn{min-width:26px;height:28px;border:0;border-radius:5px;background:transparent}
+    .wy7-tbtn:hover{background:#f2f3f7}
+    .wy7-sep{width:1px;height:22px;background:var(--line)}
+    .wy7-doc{overflow:auto;padding:27px 50px 80px}
+    .wy7-paper{max-width:790px;margin:0 auto;font-family:"Songti SC","SimSun",serif;font-size:13px;line-height:1.92;color:#1f222b}
+    .wy7-paper h1{text-align:center;font-size:23px;margin:4px 0 30px}
+    .wy7-paper h2{font-size:17px;margin:22px 0 11px}.wy7-paper h3{font-size:14px;margin:18px 0 8px}
+    .wy7-paper p{margin:8px 0;text-align:justify}
+    .wy7-cite{color:#6452d4}
+    .wy7-generating{color:var(--purple);font-family:"PingFang SC","Microsoft YaHei",sans-serif;font-size:10px}
+    .wy7-panel{overflow:auto;padding:28px 34px}
+    .wy7-panel-card{max-width:850px;margin:0 auto;border:1px solid var(--line);border-radius:9px;padding:15px}
+    .wy7-panel-card h2{margin:0 0 12px;font-size:16px}
+    .wy7-plan{display:grid;gap:8px}.wy7-plan-row{padding:10px;border:1px solid var(--line);border-radius:7px;font-size:10px}
+    .wy7-editor-foot{border-top:1px solid #f1d7aa;background:#fff8ed;padding:7px 14px;color:#a35e15;font-size:9px;display:flex;justify-content:space-between;gap:10px}
+
+    @media(max-width:1250px){
+      .wy7-shell.collapsed{grid-template-columns:44px 375px minmax(530px,1fr)}
+      .wy7-shell.open{grid-template-columns:230px 350px minmax(510px,1fr)}
+    }
+  `;
+  d.head.appendChild(style);
+
+  const js=d.createElement('script');
+  js.textContent=String.raw`
+    (function(){
+      function v7state(){
+        state.__wy7=state.__wy7||{sideOpen:false,tab:'paper',messages:[]};
+        return state.__wy7;
+      }
+      function topic(){
+        return document.querySelector('#reviewTopic')?.value || '低空经济发展的影响因素研究';
+      }
+      function metrics(){
+        const f=state.wyFind||{},r=state.wyReview||{total:20,uploaded:0};
+        const mult=f.intensity==='quick'?2:f.intensity==='deep'?4:3;
+        const pool=Math.max(20,(Number(r.total)||20)*mult);
+        const full=3+(Number(r.uploaded)||0)+(Number(f.importedOA)||0)+(Number(f.uploadedExternal)||0);
+        const selected=Math.max(18,Math.min(full,Number(r.total)||20));
+        return {pool,full,related:Math.max(selected+5,24),selected,annotations:26,terms:14};
+      }
+      function side(){
+        return '<aside class="wy7-side"><div class="wy7-side-head"><div class="wy7-side-title">任务类别</div><button class="wy7-collapse" data-v7-toggle>‹ 收起</button></div>'+
+          '<div><button class="wy7-topic"><span>'+topic()+'</span><span>⌃</span></button><div class="wy7-tree"><button class="wy7-item active" data-v7-nav="review">文献综述</button><button class="wy7-item" data-v7-nav="proposal">开题报告</button><button class="wy7-item" data-v7-nav="draft">论文初稿</button></div></div>'+
+          '<div class="wy7-divider"></div><div><div class="wy7-side-title" style="margin-bottom:7px">研究资产</div><button class="wy7-item" data-v7-nav="library">文献库</button><button class="wy7-item" data-v7-nav="artifacts">学术成果</button></div>'+
+          '<div class="wy7-note">任务按研究选题聚类；研究资产直接包含文献库和学术成果。</div></aside>';
+      }
+      function assistant(){
+        const s=v7state(),m=metrics();
+        const extra=s.messages.map(x=>'<div class="wy7-bubble wy7-user">'+x+'</div><div class="wy7-msg"><div class="wy7-avatar">AI</div><div class="wy7-bubble">已记录。我会在当前任务材料范围内继续调整生成内容。</div></div>').join('');
+        return '<section class="wy7-assistant"><header class="wy7-assistant-head"><div class="wy7-assistant-head-row"><h2>文优小助手 ✦</h2><span class="status-pill">生成中</span></div><div class="wy7-task">当前任务：'+topic()+' · 文献综述</div></header>'+
+        '<div class="wy7-assistant-body">'+
+          '<div class="wy7-msg"><div class="wy7-avatar">AI</div><div class="wy7-bubble">我已进入文献综述生成阶段。先整理本次任务材料，再生成大纲并逐步撰写正文。</div></div>'+
+          '<div class="wy7-card"><div class="wy7-card-title"><span>生成进度</span><span class="muted">正文生成中</span></div><div class="wy7-progress"><div class="wy7-pnode done">匹配文献<br>完成</div><div class="wy7-pnode done">读取批注<br>完成</div><div class="wy7-pnode done">加载术语<br>完成</div><div class="wy7-pnode done">构建材料<br>完成</div><div class="wy7-pnode done">研究大纲<br>完成</div><div class="wy7-pnode current">撰写正文<br>进行中</div></div></div>'+
+          '<div class="wy7-card"><div class="wy7-card-title"><span>本次检索与筛选情况</span><span class="muted">从发现到采用</span></div><div class="wy7-retrieval"><div class="wy7-retrieval-step"><b>'+m.pool+'</b>候选文献</div><div class="wy7-retrieval-step"><b>'+m.full+'</b>已获取全文</div><div class="wy7-retrieval-step"><b>'+m.related+'</b>内容相关</div><div class="wy7-retrieval-step"><b>'+m.selected+'</b>本次采用</div></div></div>'+
+          '<div class="wy7-card"><div class="wy7-card-title"><span>本次任务材料</span><span class="muted">研究资产调用</span></div><div class="wy7-stats"><div class="wy7-stat"><b>63</b><span>个人文献库</span></div><div class="wy7-stat"><b>'+m.related+'</b><span>选题相关</span></div><div class="wy7-stat"><b>'+m.full+'</b><span>全文可用</span></div><div class="wy7-stat"><b>'+m.selected+'</b><span>本次采用</span></div><div class="wy7-stat"><b>'+m.annotations+'</b><span>相关批注</span></div><div class="wy7-stat"><b>'+m.terms+'</b><span>核心术语</span></div><div class="wy7-stat"><b>0</b><span>已有成果</span></div><div class="wy7-stat"><b>1</b><span>研究大纲</span></div></div></div>'+
+          '<div class="wy7-current">当前生成位置：正在生成 1.1 研究背景与意义 ›</div>'+
+          '<div class="wy7-msg"><div class="wy7-avatar">AI</div><div class="wy7-bubble">已完成任务准备，正在撰写正文第一部分。</div></div>'+extra+
+          '<div class="wy7-assist-actions"><button class="small-btn primary" data-v7-material>查看本次任务材料</button><button class="small-btn" data-v7-outline>调整大纲</button><button class="small-btn" data-v7-find>补充文献</button></div>'+
+        '</div><footer class="wy7-compose"><div class="wy7-compose-row"><input id="v7Input" placeholder="继续告诉我如何调整，例如：强调政策机制相关研究"><button data-v7-send>➤</button></div></footer></section>';
+      }
+      function paper(){
+        return '<div class="wy7-doc"><article class="wy7-paper"><h1>低空经济发展的影响因素研究</h1><h2>1. 绪论</h2><h3>1.1 研究背景与意义</h3><h3>1.1.1 政策驱动下的产业机遇</h3><p>近年来，低空经济作为战略性新兴产业的重要组成部分，受到政策层面的高度重视。国家陆续出台相关规划与行动方案，明确提出发展低空经济、培育新增长点 <span class="wy7-cite">（王婷婷等，2026）</span>。政策支持为低空经济发展提供制度保障和发展导向，并推动相关产业链的快速布局与技术创新 <span class="wy7-cite">（李想，2025）</span>。</p><p>地方层面也积极响应国家号召，在空域管理改革、基础设施建设、场景应用示范等方面持续发力 <span class="wy7-cite">（张伟等，2025）</span>。政策协同推进不仅优化了产业发展环境，也为企业参与低空经济创造了良好的外部条件。</p><h3>1.1.2 技术进步带来的发展动能</h3><p>技术创新是低空经济发展的核心驱动力。无人机、eVTOL、低空通信导航、人工智能等领域的技术突破，显著提升了低空飞行的安全性、经济性与智能化水平 <span class="wy7-cite">（刘畅等，2024）</span>。电池能量密度提升、飞控系统优化和自主飞行能力增强，为低空物流、应急救援、城市空中交通等应用场景提供技术支撑 <span class="wy7-cite">（陈楠，2025）</span>。</p><p class="wy7-generating">● 正在继续生成「1.2 国内外研究现状」...</p></article></div>';
+      }
+      function panel(type){
+        if(type==='plan')return '<div class="wy7-panel"><section class="wy7-panel-card"><h2>执行计划</h2><div class="wy7-plan"><div class="wy7-plan-row"><b>✓ 准备研究材料</b><br><span class="muted">完成文献、批注、术语和已有成果的匹配</span></div><div class="wy7-plan-row"><b>✓ 生成研究大纲</b><br><span class="muted">根据材料和研究问题形成章节结构</span></div><div class="wy7-plan-row"><b>3 分章节撰写正文</b><br><span class="muted">当前正在生成第一章并建立引用关系</span></div><div class="wy7-plan-row"><b>4 完成全文检查</b></div></div></section></div>';
+        return '<div class="wy7-panel"><section class="wy7-panel-card"><h2>大纲方案</h2><div class="wy7-plan"><div class="wy7-plan-row"><b>1 绪论</b><br>1.1 研究背景与意义 · 1.2 国内外研究现状</div><div class="wy7-plan-row"><b>2 理论基础与概念界定</b></div><div class="wy7-plan-row"><b>3 低空经济发展的主要影响因素</b><br>政策制度 · 市场需求 · 技术创新 · 区域环境</div><div class="wy7-plan-row"><b>4 研究不足与未来方向</b></div><div class="wy7-plan-row"><b>5 结论</b></div></div></section></div>';
+      }
+      function editor(){
+        const s=v7state();
+        return '<section class="wy7-editor"><header class="wy7-editor-head"><div class="wy7-editor-tabs"><button class="wy7-etab '+(s.tab==='paper'?'active':'')+'" data-v7-tab="paper">论文编辑</button><button class="wy7-etab '+(s.tab==='plan'?'active':'')+'" data-v7-tab="plan">执行计划</button><button class="wy7-etab '+(s.tab==='outline'?'active':'')+'" data-v7-tab="outline">大纲方案</button></div><div class="wy7-editor-actions"><button class="small-btn primary" data-v7-save>保存为成果物</button><button class="small-btn" data-v7-preview>预览</button><button class="small-btn" data-v7-export>导出 ▾</button></div></header>'+
+          '<div class="wy7-toolbar"><button class="wy7-tbtn">↶</button><button class="wy7-tbtn">↷</button><span class="wy7-sep"></span><button class="wy7-tbtn">正文⌄</button><button class="wy7-tbtn">宋体⌄</button><button class="wy7-tbtn">小四⌄</button><span class="wy7-sep"></span><button class="wy7-tbtn"><b>B</b></button><button class="wy7-tbtn"><i>I</i></button><button class="wy7-tbtn"><u>U</u></button><button class="wy7-tbtn">A</button><span class="wy7-sep"></span><button class="wy7-tbtn">☷</button><button class="wy7-tbtn">≡</button><button class="wy7-tbtn">…</button></div>'+
+          (s.tab==='paper'?paper():panel(s.tab))+'<footer class="wy7-editor-foot"><span>⚠ AI生成内容请核查事实与引用，注意学术规范与格式要求。</span><span><b>查看引用建议（18）</b>　｜　格式检查 ●</span></footer></section>';
+      }
+      function renderGeneration(){
+        const wb=document.querySelector('#workBody');
+        if(!wb)return;
+        document.body.classList.add('wy7-generation','task-setup');
+        const s=v7state();
+        const left=s.sideOpen?side():'<aside class="wy7-rail"><button data-v7-toggle>›</button><small>展开任务栏</small></aside>';
+        wb.innerHTML='<div class="wy7-shell '+(s.sideOpen?'open':'collapsed')+'">'+left+assistant()+editor()+'</div>';
+      }
+      window.__wy7RenderGeneration=renderGeneration;
+
+      function shouldRender(){
+        return (state.view==='review' && state.analysisDone) || state.view==='result';
+      }
+      const observer=setInterval(()=>{
+        if(shouldRender() && !document.querySelector('.wy7-shell')) renderGeneration();
+        if(!shouldRender() && document.body.classList.contains('wy7-generation')) document.body.classList.remove('wy7-generation');
+      },180);
+
+      document.addEventListener('click',e=>{
+        const b=e.target.closest('button');if(!b)return;
+        if(b.matches('[data-material-continue],[data-wy-force-generate],[data-wy-risk-ack],[data-generate-body],[data-confirm-outline]')){
+          setTimeout(()=>{state.analysisDone=true;state.view='review';renderGeneration()},40);
+        }
+        if(b.matches('[data-v7-toggle]')){v7state().sideOpen=!v7state().sideOpen;renderGeneration()}
+        if(b.matches('[data-v7-tab]')){v7state().tab=b.dataset.v7Tab;renderGeneration()}
+        if(b.matches('[data-v7-outline]')){v7state().tab='outline';renderGeneration()}
+        if(b.matches('[data-v7-find]')){document.body.classList.remove('wy7-generation');state.view='recommend';if(state.wyFind)state.wyFind.stage='workspace';renderAll()}
+        if(b.matches('[data-v7-nav]')){
+          const v=b.dataset.v7Nav;
+          document.body.classList.remove('wy7-generation');
+          if(v==='review'){state.view='review';state.analysisDone=true;renderGeneration()}
+          else{state.view=v;renderAll()}
+        }
+        if(b.matches('[data-v7-material]'))toast('本次任务材料：可查看当前采用文献、批注、术语与已有成果');
+        if(b.matches('[data-v7-send]')){
+          const input=document.querySelector('#v7Input'),txt=input?.value.trim();
+          if(txt){v7state().messages.push(txt);renderGeneration()}
+        }
+        if(b.matches('[data-v7-save]'))toast('已保存为学术成果（原型模拟）');
+        if(b.matches('[data-v7-preview]'))toast('已打开论文预览（原型模拟）');
+        if(b.matches('[data-v7-export]'))toast('已打开导出选项（原型模拟）');
+      },true);
+
+      document.addEventListener('keydown',e=>{
+        if(e.key==='Enter'&&e.target?.id==='v7Input'){
+          e.preventDefault();
+          document.querySelector('[data-v7-send]')?.click();
+        }
+      });
+    })();
+  `;
+  d.body.appendChild(js);
+});
+</script>
+
 </body>
 </html>
