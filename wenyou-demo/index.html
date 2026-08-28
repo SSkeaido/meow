@@ -623,5 +623,392 @@ frame.addEventListener('load',()=>{
 });
 </script>
 
+
+<script>
+frame.addEventListener('load',()=>{
+  const d=frame.contentDocument;
+  if(!d || d.getElementById('wy-layout-restructure-patch')) return;
+
+  const style=d.createElement('style');
+  style.id='wy-layout-restructure-patch';
+  style.textContent=`
+    /* ===== Shared layout reset for the two redesigned screens ===== */
+    body.wy-form-mode .project-switch,
+    body.wy-writing-mode .project-switch{display:none!important}
+    body.wy-form-mode .workspace .tabs,
+    body.wy-writing-mode .workspace .tabs{display:none!important}
+    body.wy-form-mode .workspace,
+    body.wy-writing-mode .workspace{grid-template-rows:1fr!important}
+    body.wy-form-mode .work-body{padding:0!important;background:#f7f8fc;overflow:auto}
+    body.wy-writing-mode .work-body{padding:0!important;background:#f7f8fc;overflow:hidden}
+    body.wy-writing-mode .app{height:100vh}
+    body.wy-writing-mode .main,
+    body.wy-form-mode .main{display:block!important;height:calc(100vh - 64px)!important}
+    body.wy-writing-mode .sidebar,
+    body.wy-writing-mode .chat,
+    body.wy-form-mode .sidebar,
+    body.wy-form-mode .chat{display:none!important}
+    body.wy-writing-mode .workspace,
+    body.wy-form-mode .workspace{height:100%!important;border:0!important}
+
+    /* ===== New left vertical navigation ===== */
+    .wy-side-panel{width:255px;min-width:255px;background:#fff;border-right:1px solid var(--line);padding:18px 14px;display:flex;flex-direction:column;gap:18px}
+    .wy-side-section{display:grid;gap:7px}
+    .wy-side-section-title{font-size:12px;font-weight:800;color:#2f3443;padding:0 7px}
+    .wy-side-topic{display:flex;align-items:center;justify-content:space-between;gap:8px;width:100%;border:0;background:#f7f7fb;border-radius:8px;padding:10px 11px;text-align:left;font-size:11px;font-weight:700}
+    .wy-side-topic span:first-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .wy-side-tree{display:grid;gap:4px;padding-left:14px;border-left:1px solid #e4e6ee;margin-left:10px}
+    .wy-side-item{height:37px;width:100%;border:0;background:transparent;border-radius:7px;padding:0 10px;text-align:left;font-size:11px;color:#596174}
+    .wy-side-item:hover{background:#f7f6fc;color:var(--purple)}
+    .wy-side-item.active{background:var(--purple-weak);color:var(--purple);font-weight:800}
+    .wy-side-divider{height:1px;background:var(--line);margin:1px 0}
+    .wy-side-note{margin-top:auto;padding:10px;border:1px solid var(--line);border-radius:8px;background:#fbfcff;color:var(--muted);font-size:9px;line-height:1.55}
+    .wy-side-collapse-btn{height:30px;padding:0 9px;border:1px solid #d6d0f5;border-radius:7px;background:#fff;color:var(--purple);font-size:10px}
+    .wy-side-title-row{display:flex;align-items:center;justify-content:space-between;gap:8px}
+
+    /* ===== Review form screen ===== */
+    .wy-form-shell{min-height:calc(100vh - 64px);display:grid;grid-template-columns:255px minmax(0,1fr)}
+    .wy-form-content{padding:28px 34px 45px;min-width:0}
+    .wy-form-content .page-title{max-width:1080px;margin:0 auto 16px}
+    .wy-form-content .create-card{max-width:1080px;margin:0 auto;border-radius:10px;padding:20px 22px}
+    .wy-form-content .create-card>p{max-width:760px}
+    .wy-form-content .create-form-row{grid-template-columns:110px minmax(0,1fr)}
+    .wy-form-content .create-form-row>label{font-size:12px}
+    .wy-form-content .wy-create-footer{margin-top:20px}
+    .wy-form-content .create-review-layout{display:block;max-width:none;margin:0}
+    .wy-form-content .create-side{display:none!important}
+
+    /* ===== Writing workspace ===== */
+    .wy-writing-shell{height:calc(100vh - 64px);display:grid;min-width:0;background:#f7f8fc}
+    .wy-writing-shell.side-collapsed{grid-template-columns:48px minmax(360px,430px) minmax(620px,1fr)}
+    .wy-writing-shell.side-open{grid-template-columns:255px minmax(345px,405px) minmax(590px,1fr)}
+    .wy-writing-rail{background:#fff;border-right:1px solid var(--line);display:flex;flex-direction:column;align-items:center;padding:16px 7px;gap:8px}
+    .wy-writing-rail button{width:32px;height:32px;border:1px solid #d5cef5;border-radius:8px;background:#fff;color:var(--purple);font-size:17px}
+    .wy-writing-rail small{writing-mode:vertical-rl;color:var(--muted);font-size:9px;letter-spacing:2px;margin-top:4px}
+    .wy-writing-side{height:100%;overflow:auto}
+    .wy-assistant{background:#fff;border-right:1px solid var(--line);display:grid;grid-template-rows:auto 1fr auto;min-width:0;overflow:hidden}
+    .wy-assistant-head{padding:18px 18px 12px;border-bottom:1px solid var(--line)}
+    .wy-assistant-head-row{display:flex;align-items:center;justify-content:space-between;gap:8px}
+    .wy-assistant-head h2{margin:0;font-size:17px}
+    .wy-task-chip{margin-top:10px;padding:9px 10px;border:1px solid var(--line);border-radius:7px;background:#fbfcff;font-size:10px;color:#555f72;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .wy-assistant-scroll{overflow:auto;padding:14px 16px 20px;display:grid;align-content:start;gap:11px;background:#fcfdff}
+    .wy-bot-row{display:flex;gap:9px;align-items:flex-start}
+    .wy-bot-avatar{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:var(--purple-weak);color:var(--purple);font-size:14px;flex:0 0 auto}
+    .wy-bubble{max-width:86%;padding:10px 11px;border:1px solid var(--line);border-radius:10px;background:#fff;font-size:10px;line-height:1.65}
+    .wy-bubble.user{margin-left:auto;background:var(--purple-weak);border-color:#ded7fa}
+    .wy-progress-card,.wy-material-card,.wy-retrieval-card{border:1px solid var(--line);border-radius:9px;background:#fff;padding:12px}
+    .wy-card-title{font-size:11px;font-weight:800;margin-bottom:9px;display:flex;align-items:center;justify-content:space-between;gap:8px}
+    .wy-progress-line{display:grid;grid-template-columns:repeat(6,1fr);gap:4px}
+    .wy-progress-node{position:relative;text-align:center;padding-top:31px;color:var(--muted);font-size:8px;line-height:1.35}
+    .wy-progress-node:before{content:"";position:absolute;top:8px;left:50%;transform:translateX(-50%);width:20px;height:20px;border-radius:50%;border:1px solid #d8dce6;background:#fff}
+    .wy-progress-node:after{content:"";position:absolute;top:18px;left:calc(50% + 12px);width:calc(100% - 20px);height:1px;background:#dddfee}
+    .wy-progress-node:last-child:after{display:none}
+    .wy-progress-node.done:before{background:var(--teal);border-color:var(--teal)}
+    .wy-progress-node.done{color:#485269}
+    .wy-progress-node.current:before{border:5px solid #ded8fa;background:var(--purple)}
+    .wy-progress-node.current{color:var(--purple);font-weight:700}
+    .wy-mini-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+    .wy-mini-stat{padding:8px;border:1px solid #edf0f5;border-radius:7px;background:#fbfcff}
+    .wy-mini-stat b{display:block;color:var(--purple);font-size:14px}
+    .wy-mini-stat span{font-size:8px;color:var(--muted)}
+    .wy-retrieval-flow{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;align-items:stretch}
+    .wy-retrieval-step{padding:8px;border-radius:7px;background:#f7f8fb;text-align:center;font-size:8px;line-height:1.45;color:#596174}
+    .wy-retrieval-step b{display:block;color:#2f3443;font-size:11px;margin-bottom:2px}
+    .wy-current-pos{padding:9px 10px;border:1px solid #ddd7f7;border-radius:7px;background:#fbfaff;color:#5f50a0;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:space-between;gap:8px}
+    .wy-assistant-actions{display:flex;gap:7px;flex-wrap:wrap}
+    .wy-assistant-compose{padding:12px 14px;border-top:1px solid var(--line);background:#fff}
+    .wy-compose-box{display:grid;grid-template-columns:1fr auto;gap:7px}
+    .wy-compose-box input{height:38px;border:1px solid var(--line);border-radius:8px;padding:0 10px;font-size:10px;outline:none}
+    .wy-compose-box button{width:40px;border:0;border-radius:8px;background:var(--purple);color:#fff;font-size:15px}
+
+    /* ===== Editor surface, inspired by current Wenyou production editor ===== */
+    .wy-editor{min-width:0;background:#fff;display:grid;grid-template-rows:auto auto 1fr auto;overflow:hidden}
+    .wy-editor-top{min-height:55px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:10px;padding:0 14px}
+    .wy-editor-tabs{display:flex;gap:20px;align-self:stretch}
+    .wy-editor-tab{position:relative;border:0;background:transparent;font-size:10px;color:#596174;padding:0 2px}
+    .wy-editor-tab.active{color:var(--purple);font-weight:800}
+    .wy-editor-tab.active:after{content:"";position:absolute;left:0;right:0;bottom:0;height:2px;background:var(--purple)}
+    .wy-editor-actions{display:flex;gap:7px;flex-wrap:wrap}
+    .wy-toolbar{min-height:46px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:8px;padding:0 14px;color:#4f586a;font-size:11px}
+    .wy-tool-sep{width:1px;height:22px;background:var(--line)}
+    .wy-tool-btn{border:0;background:transparent;min-width:25px;height:28px;border-radius:5px}
+    .wy-tool-btn:hover{background:#f2f3f7}
+    .wy-document{overflow:auto;padding:26px 54px 80px;background:#fff}
+    .wy-paper{max-width:790px;margin:0 auto;font-family:"Songti SC","SimSun",serif;color:#1f222b;line-height:1.92;font-size:13px}
+    .wy-paper h1{text-align:center;font-size:23px;margin:4px 0 30px}
+    .wy-paper h2{font-size:17px;margin:22px 0 11px}
+    .wy-paper h3{font-size:14px;margin:18px 0 8px}
+    .wy-paper p{margin:8px 0;text-align:justify}
+    .wy-citation{color:#6452d4}
+    .wy-generating{display:inline-flex;align-items:center;gap:5px;color:var(--purple);font-family:"PingFang SC","Microsoft YaHei",sans-serif;font-size:10px}
+    .wy-generating i{width:7px;height:7px;border-radius:50%;background:var(--purple);animation:wyBlink 1s infinite alternate}
+    @keyframes wyBlink{from{opacity:.25}to{opacity:1}}
+    .wy-editor-bottom{min-height:38px;padding:7px 14px;border-top:1px solid #f1d7aa;background:#fff8ed;display:flex;align-items:center;justify-content:space-between;gap:10px;color:#a35e15;font-size:9px}
+    .wy-panel-page{overflow:auto;padding:26px 34px}
+    .wy-panel-card{max-width:850px;margin:0 auto;border:1px solid var(--line);border-radius:9px;padding:15px;background:#fff}
+    .wy-panel-card h2{margin:0 0 12px;font-size:16px}
+    .wy-plan-list{display:grid;gap:8px}.wy-plan-row{display:flex;gap:10px;padding:10px;border:1px solid var(--line);border-radius:7px}
+    .wy-plan-row i{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;background:var(--teal-weak);color:var(--teal);font-style:normal;font-size:9px}
+    .wy-outline-list{display:grid;gap:7px}.wy-outline-row{padding:10px 11px;border:1px solid var(--line);border-radius:7px;background:#fcfdff;font-size:10px}
+
+    @media(max-width:1280px){
+      .wy-writing-shell.side-collapsed{grid-template-columns:44px 390px minmax(540px,1fr)}
+      .wy-writing-shell.side-open{grid-template-columns:235px 360px minmax(520px,1fr)}
+      .wy-side-panel{width:235px;min-width:235px}
+      .wy-form-shell{grid-template-columns:235px minmax(0,1fr)}
+      .wy-form-content{padding:24px}
+      .wy-document{padding-left:34px;padding-right:34px}
+    }
+  `;
+  d.head.appendChild(style);
+
+  const patch=d.createElement('script');
+  patch.textContent=String.raw`
+    (function(){
+      function wyClearLayoutModes(){
+        document.body.classList.remove('wy-form-mode','wy-writing-mode');
+      }
+      function wySetLayoutMode(mode){
+        wyClearLayoutModes();
+        if(mode==='form') document.body.classList.add('wy-form-mode','task-setup');
+        if(mode==='writing') document.body.classList.add('wy-writing-mode','task-setup');
+      }
+      function wySidePanel(active,withCollapse){
+        return '<aside class="wy-side-panel">'+
+          '<div class="wy-side-section"><div class="wy-side-title-row"><div class="wy-side-section-title">任务类别</div>'+(withCollapse?'<button class="wy-side-collapse-btn" data-wy-writing-side-toggle>‹ 收起</button>':'')+'</div>'+
+          '<button class="wy-side-topic" type="button"><span>低空经济发展的影响因素研究</span><span>⌃</span></button>'+
+          '<div class="wy-side-tree">'+
+            '<button class="wy-side-item '+(active==='review'?'active':'')+'" data-wy-side-view="review">文献综述</button>'+
+            '<button class="wy-side-item '+(active==='proposal'?'active':'')+'" data-wy-side-view="proposal">开题报告</button>'+
+            '<button class="wy-side-item '+(active==='draft'?'active':'')+'" data-wy-side-view="draft">论文初稿</button>'+
+          '</div></div>'+
+          '<div class="wy-side-divider"></div>'+
+          '<div class="wy-side-section"><div class="wy-side-section-title">研究资产</div>'+
+            '<button class="wy-side-item '+(active==='library'?'active':'')+'" data-wy-side-view="library">文献库</button>'+
+            '<button class="wy-side-item '+(active==='artifacts'?'active':'')+'" data-wy-side-view="artifacts">学术成果</button>'+
+          '</div>'+
+          '<div class="wy-side-note">任务按研究选题聚类；文献库和学术成果是全局研究资产，可被不同任务复用。</div>'+
+        '</aside>';
+      }
+
+      /* ---------- 1. Literature-review form: keep original form logic, only restructure UI ---------- */
+      const wyPrevReviewCreate=renderReviewCreate;
+      renderReviewCreate=function(){
+        wySetLayoutMode('form');
+        wyPrevReviewCreate();
+
+        const work=document.querySelector('#workBody');
+        if(!work) return;
+        const title=work.querySelector('.page-title');
+        const layout=work.querySelector('.create-review-layout');
+        const mainCard=layout?.querySelector('section.create-card');
+        if(!title||!mainCard) return;
+
+        const shell=document.createElement('div');
+        shell.className='wy-form-shell';
+        const navWrap=document.createElement('div');
+        navWrap.innerHTML=wySidePanel('review',false);
+        const content=document.createElement('section');
+        content.className='wy-form-content';
+
+        work.innerHTML='';
+        shell.appendChild(navWrap.firstElementChild);
+        shell.appendChild(content);
+        work.appendChild(shell);
+        content.appendChild(title);
+        content.appendChild(mainCard);
+
+        const subtitle=title.querySelector('p');
+        if(subtitle) subtitle.textContent='填写本次文献综述的任务信息，并让文献需求实时联动个人文献库。';
+      };
+
+      /* ---------- 2. Generation branch ---------- */
+      const wyPrevRenderReview=renderReview;
+      function wyWritingInit(){
+        state.wyWriting=state.wyWriting||{
+          sideOpen:false,
+          editorTab:'paper',
+          messages:[],
+          saved:false
+        };
+        return state.wyWriting;
+      }
+      function wyWritingMetrics(){
+        const f=state.wyFind||{};
+        const r=state.wyReview||{total:20,uploaded:0};
+        const mult=f.intensity==='quick'?2:f.intensity==='deep'?4:3;
+        const pool=Math.max(20,(Number(r.total)||20)*mult);
+        const full=3+(Number(r.uploaded)||0)+(Number(f.importedOA)||0)+(Number(f.uploadedExternal)||0);
+        const selected=Math.min(Math.max(full,18),Number(r.total)||20);
+        return {pool,full,selected,related:Math.max(24,selected+4),annotations:26,terms:14};
+      }
+      function wyAssistantHTML(){
+        const w=wyWritingInit(),m=wyWritingMetrics();
+        const extra=w.messages.map(x=>'<div class="wy-bubble user">'+x+'</div><div class="wy-bot-row"><div class="wy-bot-avatar">AI</div><div class="wy-bubble">已记录你的要求。我会在当前材料范围内继续调整生成内容。</div></div>').join('');
+        return '<section class="wy-assistant">'+
+          '<header class="wy-assistant-head"><div class="wy-assistant-head-row"><h2>文优小助手 ✦</h2><span class="status-pill">生成中</span></div><div class="wy-task-chip">当前任务：低空经济发展的影响因素研究 · 文献综述</div></header>'+
+          '<div class="wy-assistant-scroll">'+
+            '<div class="wy-bot-row"><div class="wy-bot-avatar">AI</div><div class="wy-bubble">我已进入文献综述生成阶段。先整理本次任务全部材料，再生成研究大纲并逐步撰写正文。</div></div>'+
+            '<div class="wy-progress-card"><div class="wy-card-title"><span>生成进度</span><span class="muted">当前 6 / 6</span></div><div class="wy-progress-line">'+
+              '<div class="wy-progress-node done">匹配文献<br>已完成</div>'+
+              '<div class="wy-progress-node done">读取批注<br>已完成</div>'+
+              '<div class="wy-progress-node done">加载术语<br>已完成</div>'+
+              '<div class="wy-progress-node done">构建任务材料<br>已完成</div>'+
+              '<div class="wy-progress-node done">生成研究大纲<br>已完成</div>'+
+              '<div class="wy-progress-node current">撰写正文<br>进行中</div>'+
+            '</div></div>'+
+            '<div class="wy-retrieval-card"><div class="wy-card-title"><span>本次检索与筛选情况</span><span class="muted">从发现到最终采用</span></div><div class="wy-retrieval-flow">'+
+              '<div class="wy-retrieval-step"><b>'+m.pool+'</b>候选文献</div>'+
+              '<div class="wy-retrieval-step"><b>'+m.full+'</b>已获取全文</div>'+
+              '<div class="wy-retrieval-step"><b>'+m.related+'</b>内容相关</div>'+
+              '<div class="wy-retrieval-step"><b>'+m.selected+'</b>本次采用</div>'+
+            '</div></div>'+
+            '<div class="wy-material-card"><div class="wy-card-title"><span>本次任务材料概览</span><span class="muted">研究资产调用情况</span></div><div class="wy-mini-stats">'+
+              '<div class="wy-mini-stat"><b>63</b><span>个人文献库</span></div>'+
+              '<div class="wy-mini-stat"><b>'+m.related+'</b><span>选题相关</span></div>'+
+              '<div class="wy-mini-stat"><b>'+m.full+'</b><span>全文可用</span></div>'+
+              '<div class="wy-mini-stat"><b>'+m.selected+'</b><span>本次采用</span></div>'+
+              '<div class="wy-mini-stat"><b>'+m.annotations+'</b><span>相关批注</span></div>'+
+              '<div class="wy-mini-stat"><b>'+m.terms+'</b><span>核心术语</span></div>'+
+              '<div class="wy-mini-stat"><b>0</b><span>已有成果</span></div>'+
+              '<div class="wy-mini-stat"><b>1</b><span>研究大纲</span></div>'+
+            '</div></div>'+
+            '<div class="wy-current-pos"><span>当前生成位置</span><span>正在生成 1.1 研究背景与意义 ›</span></div>'+
+            '<div class="wy-bot-row"><div class="wy-bot-avatar">AI</div><div class="wy-bubble">已根据你的材料完成任务准备，正在撰写正文第一部分。</div></div>'+
+            extra+
+            '<div class="wy-assistant-actions"><button class="small-btn primary" data-wy-writing-material>查看本次任务材料</button><button class="small-btn" data-wy-writing-outline>调整大纲</button><button class="small-btn" data-wy-writing-find>补充文献</button></div>'+
+          '</div>'+
+          '<footer class="wy-assistant-compose"><div class="wy-compose-box"><input id="wyWritingInput" placeholder="继续告诉我如何调整，例如：强调政策机制相关研究"><button data-wy-writing-send>➤</button></div></footer>'+
+        '</section>';
+      }
+      function wyEditorPaper(){
+        return '<div class="wy-document"><article class="wy-paper">'+
+          '<h1>低空经济发展的影响因素研究</h1>'+
+          '<h2>1. 绪论</h2>'+
+          '<h3>1.1 研究背景与意义</h3>'+
+          '<h3>1.1.1 政策驱动下的产业机遇</h3>'+
+          '<p>近年来，低空经济作为战略性新兴产业的重要组成部分，受到政策层面的高度重视。2021年以来，国家陆续出台相关规划与行动方案，明确提出发展低空经济、培育新增长点 <span class="wy-citation">（王婷婷等，2026）</span>。政策支持为低空经济发展提供了制度保障和发展导向，并推动相关产业链的快速布局与技术创新 <span class="wy-citation">（李想，2025）</span>。</p>'+
+          '<p>地方层面也积极响应国家号召，深圳、合肥、成都等地相继发布低空经济发展行动方案，在空域管理改革、基础设施建设、场景应用示范等方面持续发力 <span class="wy-citation">（张伟等，2025）</span>。政策的协同推进不仅优化了产业发展环境，也为企业参与低空经济创造了良好的外部条件。</p>'+
+          '<h3>1.1.2 技术进步带来的发展动能</h3>'+
+          '<p>技术创新是低空经济发展的核心驱动力。无人机、eVTOL、低空通信导航、人工智能等领域的技术突破，显著提升了低空飞行的安全性、经济性与智能化水平 <span class="wy-citation">（刘畅等，2024）</span>。电池能量密度提升、飞控系统优化和自主飞行能力增强，为低空物流、应急救援、城市空中交通等应用场景提供了技术支撑 <span class="wy-citation">（陈楠，2025）</span>。</p>'+
+          '<p><span class="wy-generating"><i></i> 正在继续生成“1.2 国内外研究现状”...</span></p>'+
+        '</article></div>';
+      }
+      function wyEditorPlan(){
+        return '<div class="wy-panel-page"><section class="wy-panel-card"><h2>执行计划</h2><div class="wy-plan-list">'+
+          '<div class="wy-plan-row"><i>✓</i><div><b>准备研究材料</b><div class="muted">完成文献、批注、术语和已有成果的匹配与筛选</div></div></div>'+
+          '<div class="wy-plan-row"><i>✓</i><div><b>生成研究大纲</b><div class="muted">根据任务要求和研究材料形成章节结构</div></div></div>'+
+          '<div class="wy-plan-row"><i>3</i><div><b>分章节撰写正文</b><div class="muted">当前正在生成第一章，并同步建立引用关系</div></div></div>'+
+          '<div class="wy-plan-row"><i>4</i><div><b>完成全文检查</b><div class="muted">生成完成后进入引用与格式检查</div></div></div>'+
+        '</div></section></div>';
+      }
+      function wyEditorOutline(){
+        return '<div class="wy-panel-page"><section class="wy-panel-card"><h2>大纲方案</h2><div class="wy-outline-list">'+
+          '<div class="wy-outline-row"><b>1 绪论</b><br>1.1 研究背景与意义 · 1.2 国内外研究现状</div>'+
+          '<div class="wy-outline-row"><b>2 理论基础与概念界定</b><br>2.1 低空经济概念 · 2.2 产业发展理论</div>'+
+          '<div class="wy-outline-row"><b>3 低空经济发展的主要影响因素</b><br>政策制度 · 市场需求 · 技术创新 · 区域环境</div>'+
+          '<div class="wy-outline-row"><b>4 研究不足与未来方向</b></div>'+
+          '<div class="wy-outline-row"><b>5 结论</b></div>'+
+        '</div><div class="actions" style="justify-content:flex-start;margin-top:12px"><button class="small-btn primary" data-wy-writing-outline-edit>编辑大纲</button></div></section></div>';
+      }
+      function wyEditorHTML(){
+        const w=wyWritingInit();
+        const body=w.editorTab==='paper'?wyEditorPaper():w.editorTab==='plan'?wyEditorPlan():wyEditorOutline();
+        return '<section class="wy-editor">'+
+          '<div class="wy-editor-top"><div class="wy-editor-tabs">'+
+            '<button class="wy-editor-tab '+(w.editorTab==='paper'?'active':'')+'" data-wy-editor-tab="paper">论文编辑</button>'+
+            '<button class="wy-editor-tab '+(w.editorTab==='plan'?'active':'')+'" data-wy-editor-tab="plan">执行计划</button>'+
+            '<button class="wy-editor-tab '+(w.editorTab==='outline'?'active':'')+'" data-wy-editor-tab="outline">大纲方案</button>'+
+          '</div><div class="wy-editor-actions"><button class="small-btn primary" data-wy-save-artifact>保存为成果物</button><button class="small-btn" data-wy-preview-paper>预览</button><button class="small-btn" data-wy-export-paper>导出 ▾</button></div></div>'+
+          '<div class="wy-toolbar">'+
+            '<button class="wy-tool-btn">↶</button><button class="wy-tool-btn">↷</button><span class="wy-tool-sep"></span>'+
+            '<button class="wy-tool-btn">正文⌄</button><button class="wy-tool-btn">宋体⌄</button><button class="wy-tool-btn">小四⌄</button><span class="wy-tool-sep"></span>'+
+            '<button class="wy-tool-btn"><b>B</b></button><button class="wy-tool-btn"><i>I</i></button><button class="wy-tool-btn"><u>U</u></button><button class="wy-tool-btn">A</button><span class="wy-tool-sep"></span>'+
+            '<button class="wy-tool-btn">☷</button><button class="wy-tool-btn">≡</button><button class="wy-tool-btn">…</button>'+
+          '</div>'+body+
+          '<div class="wy-editor-bottom"><span>⚠ AI生成内容请核查事实与引用，注意学术规范与格式要求。</span><span><b>查看引用建议（18）</b>　｜　格式检查 ●</span></div>'+
+        '</section>';
+      }
+      function wyWritingPage(){
+        wySetLayoutMode('writing');
+        const w=wyWritingInit();
+        const left=w.sideOpen?'<div class="wy-writing-side">'+wySidePanel('review',true)+'</div>':'<aside class="wy-writing-rail"><button data-wy-writing-side-toggle>›</button><small>展开任务栏</small></aside>';
+        return '<div class="wy-writing-shell '+(w.sideOpen?'side-open':'side-collapsed')+'">'+left+wyAssistantHTML()+wyEditorHTML()+'</div>';
+      }
+
+      renderReview=function(){
+        if(state.analysisDone) return wyWritingPage();
+        wyClearLayoutModes();
+        return wyPrevRenderReview();
+      };
+
+      /* Clean up custom layout when normal pages render */
+      const wyPrevRenderDoc=renderDoc;
+      renderDoc=function(){
+        if(!['reviewCreate','review'].includes(state.view)) wyClearLayoutModes();
+        wyPrevRenderDoc();
+      };
+
+      document.addEventListener('click',e=>{
+        const b=e.target.closest('button');
+        if(!b)return;
+
+        if(b.matches('[data-wy-side-view]')){
+          const v=b.dataset.wySideView;
+          if(v==='review'){
+            if(state.analysisDone){state.view='review';renderAll()}
+            else{state.view='reviewCreate';renderReviewCreate()}
+            return;
+          }
+          wyClearLayoutModes();
+          state.view=v;
+          renderAll();
+        }
+
+        if(b.matches('[data-wy-writing-side-toggle]')){
+          wyWritingInit().sideOpen=!wyWritingInit().sideOpen;
+          renderAll();
+        }
+        if(b.matches('[data-wy-editor-tab]')){
+          wyWritingInit().editorTab=b.dataset.wyEditorTab;
+          renderAll();
+        }
+        if(b.matches('[data-wy-writing-find]')){
+          wyClearLayoutModes();
+          state.view='recommend';
+          if(state.wyFind) state.wyFind.stage='workspace';
+          renderAll();
+        }
+        if(b.matches('[data-wy-writing-material]')) toast('本次任务材料：文献、批注和术语均可继续查看与调整');
+        if(b.matches('[data-wy-writing-outline]')){
+          wyWritingInit().editorTab='outline';
+          renderAll();
+        }
+        if(b.matches('[data-wy-writing-outline-edit]')) toast('已进入大纲编辑状态（原型模拟）');
+        if(b.matches('[data-wy-writing-send]')){
+          const input=document.querySelector('#wyWritingInput');
+          const txt=input?.value.trim();
+          if(txt){
+            wyWritingInit().messages.push(txt);
+            renderAll();
+          }
+        }
+        if(b.matches('[data-wy-save-artifact]')){wyWritingInit().saved=true;toast('已保存为学术成果（原型模拟）')}
+        if(b.matches('[data-wy-preview-paper]')) toast('已进入论文预览（原型模拟）');
+        if(b.matches('[data-wy-export-paper]')) toast('已打开导出选项（原型模拟）');
+      },true);
+
+      document.addEventListener('keydown',e=>{
+        if(e.key==='Enter'&&e.target?.id==='wyWritingInput'){
+          e.preventDefault();
+          document.querySelector('[data-wy-writing-send]')?.click();
+        }
+      });
+    })();
+  `;
+  d.body.appendChild(patch);
+});
+</script>
+
 </body>
 </html>
