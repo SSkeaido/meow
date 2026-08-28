@@ -1010,5 +1010,302 @@ frame.addEventListener('load',()=>{
 });
 </script>
 
+
+<script>
+frame.addEventListener('load',()=>{
+  const d=frame.contentDocument;
+  const w=frame.contentWindow;
+  if(!d || !w || d.getElementById('wy-hard-layout-v6')) return;
+
+  const style=d.createElement('style');
+  style.id='wy-hard-layout-v6';
+  style.textContent=`
+    body.wy-hard-form .project-switch,
+    body.wy-hard-writing .project-switch,
+    body.wy-hard-form .sidebar,
+    body.wy-hard-form .chat,
+    body.wy-hard-form .workspace>.tabs,
+    body.wy-hard-writing .sidebar,
+    body.wy-hard-writing .chat,
+    body.wy-hard-writing .workspace>.tabs{display:none!important}
+
+    body.wy-hard-form .main,
+    body.wy-hard-writing .main{display:block!important;height:calc(100vh - 64px)!important}
+    body.wy-hard-form .workspace,
+    body.wy-hard-writing .workspace{height:100%!important;display:block!important;border:0!important}
+    body.wy-hard-form .work-body,
+    body.wy-hard-writing .work-body{height:100%!important;padding:0!important;background:#f7f8fc!important;overflow:hidden!important}
+
+    .wy6-form-shell{height:100%;display:grid;grid-template-columns:250px minmax(0,1fr);background:#f7f8fc}
+    .wy6-side{background:#fff;border-right:1px solid var(--line);padding:20px 14px;display:flex;flex-direction:column;gap:18px;overflow:auto}
+    .wy6-side-title-row{display:flex;align-items:center;justify-content:space-between;gap:8px}
+    .wy6-side-title{font-size:12px;font-weight:800}
+    .wy6-topic{display:flex;align-items:center;justify-content:space-between;gap:8px;width:100%;border:0;border-radius:8px;background:#f7f7fb;padding:10px 11px;text-align:left;font-size:10px;font-weight:700}
+    .wy6-topic span:first-child{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .wy6-tree{display:grid;gap:4px;margin:7px 0 0 10px;padding-left:12px;border-left:1px solid #e2e5ed}
+    .wy6-item{height:36px;border:0;background:transparent;border-radius:7px;padding:0 10px;text-align:left;font-size:11px;color:#586174}
+    .wy6-item:hover{background:#f7f6fc;color:var(--purple)}
+    .wy6-item.active{background:var(--purple-weak);color:var(--purple);font-weight:800}
+    .wy6-divider{height:1px;background:var(--line)}
+    .wy6-note{margin-top:auto;padding:10px;border:1px solid var(--line);border-radius:8px;background:#fbfcff;color:var(--muted);font-size:9px;line-height:1.6}
+
+    .wy6-form-main{overflow:auto;padding:28px 34px 50px}
+    .wy6-form-main .page-title{max-width:1080px;margin:0 auto 16px}
+    .wy6-form-main .create-card{max-width:1080px;margin:0 auto;border-radius:10px}
+    .wy6-form-main .create-review-layout{display:block!important;max-width:none!important;margin:0!important}
+    .wy6-form-main .create-side{display:none!important}
+    .wy6-form-main .create-form-row{grid-template-columns:110px minmax(0,1fr)!important}
+
+    .wy6-writing-shell{height:100%;display:grid;background:#f7f8fc}
+    .wy6-writing-shell.collapsed{grid-template-columns:48px minmax(390px,430px) minmax(620px,1fr)}
+    .wy6-writing-shell.open{grid-template-columns:250px minmax(360px,405px) minmax(590px,1fr)}
+    .wy6-rail{background:#fff;border-right:1px solid var(--line);display:flex;flex-direction:column;align-items:center;padding:16px 7px;gap:9px}
+    .wy6-rail button{width:32px;height:32px;border:1px solid #d6d0f5;border-radius:8px;background:#fff;color:var(--purple);font-size:18px}
+    .wy6-rail small{writing-mode:vertical-rl;color:var(--muted);font-size:9px;letter-spacing:2px}
+    .wy6-side-wrap{height:100%;overflow:auto}
+    .wy6-collapse{height:29px;padding:0 8px;border:1px solid #d6d0f5;border-radius:7px;background:#fff;color:var(--purple);font-size:9px}
+
+    .wy6-assistant{min-width:0;background:#fff;border-right:1px solid var(--line);display:grid;grid-template-rows:auto 1fr auto;overflow:hidden}
+    .wy6-assistant-head{padding:17px 17px 12px;border-bottom:1px solid var(--line)}
+    .wy6-assistant-head h2{margin:0;font-size:17px}
+    .wy6-task{margin-top:10px;padding:8px 10px;border:1px solid var(--line);border-radius:7px;background:#fbfcff;font-size:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .wy6-assistant-body{overflow:auto;padding:14px 15px 20px;background:#fcfdff;display:grid;align-content:start;gap:10px}
+    .wy6-msg{display:flex;gap:8px;align-items:flex-start}
+    .wy6-avatar{width:29px;height:29px;border-radius:50%;background:var(--purple-weak);color:var(--purple);display:grid;place-items:center;font-size:11px;font-weight:800;flex:0 0 auto}
+    .wy6-bubble{padding:10px 11px;border:1px solid var(--line);border-radius:10px;background:#fff;font-size:10px;line-height:1.65;max-width:88%}
+    .wy6-user{margin-left:auto;background:var(--purple-weak);border-color:#ded8fa}
+    .wy6-card{padding:11px;border:1px solid var(--line);border-radius:9px;background:#fff}
+    .wy6-card-title{display:flex;justify-content:space-between;gap:8px;margin-bottom:9px;font-size:11px;font-weight:800}
+    .wy6-progress{display:grid;grid-template-columns:repeat(6,1fr);gap:3px}
+    .wy6-pnode{position:relative;text-align:center;padding-top:29px;color:var(--muted);font-size:8px;line-height:1.35}
+    .wy6-pnode:before{content:"";position:absolute;top:6px;left:50%;transform:translateX(-50%);width:19px;height:19px;border-radius:50%;border:1px solid #d8dce6;background:#fff}
+    .wy6-pnode:after{content:"";position:absolute;top:15px;left:calc(50% + 11px);width:calc(100% - 18px);height:1px;background:#dddfee}
+    .wy6-pnode:last-child:after{display:none}
+    .wy6-pnode.done:before{background:var(--teal);border-color:var(--teal)}
+    .wy6-pnode.current:before{background:var(--purple);border:5px solid #ded8fa}
+    .wy6-pnode.current{color:var(--purple);font-weight:700}
+    .wy6-funnel-row{display:grid;grid-template-columns:repeat(4,1fr);gap:5px}
+    .wy6-funnel-step{padding:8px 6px;border-radius:7px;background:#f6f7fb;text-align:center;font-size:8px;color:#596174}
+    .wy6-funnel-step b{display:block;color:#2f3443;font-size:13px}
+    .wy6-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+    .wy6-stat{padding:8px;border:1px solid #edf0f5;border-radius:7px;background:#fbfcff}
+    .wy6-stat b{display:block;color:var(--purple);font-size:14px}.wy6-stat span{font-size:8px;color:var(--muted)}
+    .wy6-current{padding:9px 10px;border:1px solid #ddd7f7;border-radius:7px;background:#fbfaff;color:#5e4fa1;font-size:10px;font-weight:700}
+    .wy6-assist-actions{display:flex;gap:6px;flex-wrap:wrap}
+    .wy6-compose{padding:12px 14px;border-top:1px solid var(--line);background:#fff}
+    .wy6-compose-row{display:grid;grid-template-columns:1fr 40px;gap:7px}
+    .wy6-compose input{height:38px;border:1px solid var(--line);border-radius:8px;padding:0 10px;font-size:10px;outline:none}
+    .wy6-compose button{border:0;border-radius:8px;background:var(--purple);color:#fff;font-size:15px}
+
+    .wy6-editor{min-width:0;background:#fff;display:grid;grid-template-rows:55px 46px 1fr 38px;overflow:hidden}
+    .wy6-editor-head{border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:10px;padding:0 14px}
+    .wy6-editor-tabs{display:flex;gap:20px;height:100%}
+    .wy6-etab{position:relative;border:0;background:transparent;font-size:10px;color:#596174}
+    .wy6-etab.active{color:var(--purple);font-weight:800}
+    .wy6-etab.active:after{content:"";position:absolute;left:0;right:0;bottom:0;height:2px;background:var(--purple)}
+    .wy6-editor-actions{display:flex;gap:7px}
+    .wy6-toolbar{border-bottom:1px solid var(--line);display:flex;align-items:center;gap:7px;padding:0 14px;font-size:11px;color:#51596b}
+    .wy6-tbtn{min-width:26px;height:28px;border:0;border-radius:5px;background:transparent}.wy6-tbtn:hover{background:#f2f3f7}
+    .wy6-sep{width:1px;height:22px;background:var(--line)}
+    .wy6-doc{overflow:auto;padding:27px 50px 80px}
+    .wy6-paper{max-width:790px;margin:0 auto;font-family:"Songti SC","SimSun",serif;font-size:13px;line-height:1.92;color:#1f222b}
+    .wy6-paper h1{text-align:center;font-size:23px;margin:4px 0 30px}.wy6-paper h2{font-size:17px;margin:22px 0 11px}.wy6-paper h3{font-size:14px;margin:18px 0 8px}.wy6-paper p{margin:8px 0;text-align:justify}
+    .wy6-cite{color:#6452d4}.wy6-generating{color:var(--purple);font-family:"PingFang SC","Microsoft YaHei",sans-serif;font-size:10px}
+    .wy6-panel{overflow:auto;padding:28px 34px}.wy6-panel-card{max-width:850px;margin:0 auto;border:1px solid var(--line);border-radius:9px;padding:15px}.wy6-panel-card h2{margin:0 0 12px;font-size:16px}
+    .wy6-plan{display:grid;gap:8px}.wy6-plan-row{padding:10px;border:1px solid var(--line);border-radius:7px;font-size:10px}
+    .wy6-editor-foot{border-top:1px solid #f1d7aa;background:#fff8ed;padding:7px 14px;color:#a35e15;font-size:9px;display:flex;justify-content:space-between;gap:10px}
+
+    @media(max-width:1250px){
+      .wy6-writing-shell.collapsed{grid-template-columns:44px 375px minmax(530px,1fr)}
+      .wy6-writing-shell.open{grid-template-columns:230px 350px minmax(510px,1fr)}
+      .wy6-side{width:230px}
+      .wy6-form-shell{grid-template-columns:230px minmax(0,1fr)}
+      .wy6-form-main{padding:24px}
+      .wy6-doc{padding-left:32px;padding-right:32px}
+    }
+  `;
+  d.head.appendChild(style);
+
+  const patch=d.createElement('script');
+  patch.textContent=String.raw`
+    (function(){
+      function wy6Topic(){
+        return document.querySelector('#reviewTopic')?.value || '低空经济发展的影响因素研究';
+      }
+      function wy6Side(active,collapseButton){
+        return '<aside class="wy6-side">'+
+          '<div class="wy6-side-title-row"><div class="wy6-side-title">任务类别</div>'+(collapseButton?'<button class="wy6-collapse" data-wy6-toggle>‹ 收起</button>':'')+'</div>'+
+          '<div><button class="wy6-topic"><span>'+wy6Topic()+'</span><span>⌃</span></button><div class="wy6-tree">'+
+            '<button class="wy6-item '+(active==='review'?'active':'')+'" data-wy6-nav="review">文献综述</button>'+
+            '<button class="wy6-item '+(active==='proposal'?'active':'')+'" data-wy6-nav="proposal">开题报告</button>'+
+            '<button class="wy6-item '+(active==='draft'?'active':'')+'" data-wy6-nav="draft">论文初稿</button>'+
+          '</div></div>'+
+          '<div class="wy6-divider"></div>'+
+          '<div><div class="wy6-side-title" style="margin-bottom:7px">研究资产</div>'+
+            '<button class="wy6-item '+(active==='library'?'active':'')+'" data-wy6-nav="library">文献库</button>'+
+            '<button class="wy6-item '+(active==='artifacts'?'active':'')+'" data-wy6-nav="artifacts">学术成果</button>'+
+          '</div>'+
+          '<div class="wy6-note">任务按研究选题聚类；研究资产直接包含文献库和学术成果。</div>'+
+        '</aside>';
+      }
+      function wy6Cleanup(){
+        document.body.classList.remove('wy-hard-form','wy-hard-writing');
+        document.body.classList.remove('task-setup');
+      }
+      function wy6ApplyForm(){
+        document.body.classList.remove('wy-hard-writing');
+        document.body.classList.add('wy-hard-form','task-setup');
+        const work=document.querySelector('#workBody');
+        if(!work) return;
+        if(work.querySelector('.wy6-form-shell')) return;
+
+        let title=work.querySelector('.page-title');
+        let card=work.querySelector('.create-review-layout section.create-card') || work.querySelector('section.create-card');
+        if(!title || !card) return;
+
+        const shell=document.createElement('div');
+        shell.className='wy6-form-shell';
+        const nav=document.createElement('div');
+        nav.innerHTML=wy6Side('review',false);
+        const main=document.createElement('section');
+        main.className='wy6-form-main';
+        work.innerHTML='';
+        shell.appendChild(nav.firstElementChild);
+        shell.appendChild(main);
+        work.appendChild(shell);
+        main.appendChild(title);
+        main.appendChild(card);
+        const p=title.querySelector('p');
+        if(p)p.textContent='填写本次文献综述的任务信息，并让文献需求实时联动个人文献库。';
+      }
+
+      function wy6WritingState(){
+        state.wy6Writing=state.wy6Writing||{sideOpen:false,tab:'paper',messages:[]};
+        return state.wy6Writing;
+      }
+      function wy6Metrics(){
+        const f=state.wyFind||{},r=state.wyReview||{total:20,uploaded:0};
+        const mult=f.intensity==='quick'?2:f.intensity==='deep'?4:3;
+        const pool=Math.max(20,(Number(r.total)||20)*mult);
+        const full=3+(Number(r.uploaded)||0)+(Number(f.importedOA)||0)+(Number(f.uploadedExternal)||0);
+        const selected=Math.max(18,Math.min(full,Number(r.total)||20));
+        return {pool,full,related:Math.max(selected+5,24),selected,annotations:26,terms:14};
+      }
+      function wy6Assistant(){
+        const s=wy6WritingState(),m=wy6Metrics();
+        const extra=s.messages.map(x=>'<div class="wy6-bubble wy6-user">'+x+'</div><div class="wy6-msg"><div class="wy6-avatar">AI</div><div class="wy6-bubble">已记录。我会在当前任务材料范围内继续调整生成内容。</div></div>').join('');
+        return '<section class="wy6-assistant">'+
+          '<header class="wy6-assistant-head"><div style="display:flex;justify-content:space-between;gap:8px"><h2>文优小助手 ✦</h2><span class="status-pill">生成中</span></div><div class="wy6-task">当前任务：'+wy6Topic()+' · 文献综述</div></header>'+
+          '<div class="wy6-assistant-body">'+
+            '<div class="wy6-msg"><div class="wy6-avatar">AI</div><div class="wy6-bubble">我已进入文献综述生成阶段。先整理本次任务材料，再生成大纲并逐步撰写正文。</div></div>'+
+            '<div class="wy6-card"><div class="wy6-card-title"><span>生成进度</span><span class="muted">正文生成中</span></div><div class="wy6-progress">'+
+              '<div class="wy6-pnode done">匹配文献<br>完成</div><div class="wy6-pnode done">读取批注<br>完成</div><div class="wy6-pnode done">加载术语<br>完成</div><div class="wy6-pnode done">构建材料<br>完成</div><div class="wy6-pnode done">研究大纲<br>完成</div><div class="wy6-pnode current">撰写正文<br>进行中</div>'+
+            '</div></div>'+
+            '<div class="wy6-card"><div class="wy6-card-title"><span>本次检索与筛选情况</span><span class="muted">从候选到采用</span></div><div class="wy6-funnel-row">'+
+              '<div class="wy6-funnel-step"><b>'+m.pool+'</b>候选文献</div><div class="wy6-funnel-step"><b>'+m.full+'</b>全文获取</div><div class="wy6-funnel-step"><b>'+m.related+'</b>内容相关</div><div class="wy6-funnel-step"><b>'+m.selected+'</b>本次采用</div>'+
+            '</div></div>'+
+            '<div class="wy6-card"><div class="wy6-card-title"><span>本次任务材料</span><span class="muted">研究资产调用</span></div><div class="wy6-stats">'+
+              '<div class="wy6-stat"><b>63</b><span>个人文献库</span></div><div class="wy6-stat"><b>'+m.related+'</b><span>选题相关</span></div><div class="wy6-stat"><b>'+m.full+'</b><span>全文可用</span></div><div class="wy6-stat"><b>'+m.selected+'</b><span>本次采用</span></div>'+
+              '<div class="wy6-stat"><b>'+m.annotations+'</b><span>相关批注</span></div><div class="wy6-stat"><b>'+m.terms+'</b><span>核心术语</span></div><div class="wy6-stat"><b>0</b><span>已有成果</span></div><div class="wy6-stat"><b>1</b><span>研究大纲</span></div>'+
+            '</div></div>'+
+            '<div class="wy6-current">当前生成位置：正在生成 1.1 研究背景与意义 ›</div>'+
+            '<div class="wy6-msg"><div class="wy6-avatar">AI</div><div class="wy6-bubble">已完成任务准备，正在撰写正文第一部分。</div></div>'+extra+
+            '<div class="wy6-assist-actions"><button class="small-btn primary" data-wy6-material>查看本次任务材料</button><button class="small-btn" data-wy6-outline>调整大纲</button><button class="small-btn" data-wy6-find>补充文献</button></div>'+
+          '</div>'+
+          '<footer class="wy6-compose"><div class="wy6-compose-row"><input id="wy6Input" placeholder="继续告诉我如何调整，例如：强调政策机制相关研究"><button data-wy6-send>➤</button></div></footer>'+
+        '</section>';
+      }
+      function wy6Paper(){
+        return '<div class="wy6-doc"><article class="wy6-paper">'+
+          '<h1>低空经济发展的影响因素研究</h1>'+
+          '<h2>1. 绪论</h2><h3>1.1 研究背景与意义</h3><h3>1.1.1 政策驱动下的产业机遇</h3>'+
+          '<p>近年来，低空经济作为战略性新兴产业的重要组成部分，受到政策层面的高度重视。国家陆续出台相关规划与行动方案，明确提出发展低空经济、培育新增长点 <span class="wy6-cite">（王婷婷等，2026）</span>。政策支持为低空经济发展提供制度保障和发展导向，并推动相关产业链的快速布局与技术创新 <span class="wy6-cite">（李想，2025）</span>。</p>'+
+          '<p>地方层面也积极响应国家号召，在空域管理改革、基础设施建设、场景应用示范等方面持续发力 <span class="wy6-cite">（张伟等，2025）</span>。政策协同推进不仅优化了产业发展环境，也为企业参与低空经济创造了良好的外部条件。</p>'+
+          '<h3>1.1.2 技术进步带来的发展动能</h3>'+
+          '<p>技术创新是低空经济发展的核心驱动力。无人机、eVTOL、低空通信导航、人工智能等领域的技术突破，显著提升了低空飞行的安全性、经济性与智能化水平 <span class="wy6-cite">（刘畅等，2024）</span>。电池能量密度提升、飞控系统优化和自主飞行能力增强，为低空物流、应急救援、城市空中交通等应用场景提供技术支撑 <span class="wy6-cite">（陈楠，2025）</span>。</p>'+
+          '<p class="wy6-generating">● 正在继续生成「1.2 国内外研究现状」...</p>'+
+        '</article></div>';
+      }
+      function wy6Panel(type){
+        if(type==='plan')return '<div class="wy6-panel"><section class="wy6-panel-card"><h2>执行计划</h2><div class="wy6-plan"><div class="wy6-plan-row"><b>✓ 准备研究材料</b><br><span class="muted">完成文献、批注、术语和已有成果的匹配</span></div><div class="wy6-plan-row"><b>✓ 生成研究大纲</b><br><span class="muted">根据材料和研究问题形成章节结构</span></div><div class="wy6-plan-row"><b>3 分章节撰写正文</b><br><span class="muted">当前正在生成第一章并建立引用关系</span></div><div class="wy6-plan-row"><b>4 完成全文检查</b><br><span class="muted">生成完成后进入引用与格式检查</span></div></div></section></div>';
+        return '<div class="wy6-panel"><section class="wy6-panel-card"><h2>大纲方案</h2><div class="wy6-plan"><div class="wy6-plan-row"><b>1 绪论</b><br>1.1 研究背景与意义 · 1.2 国内外研究现状</div><div class="wy6-plan-row"><b>2 理论基础与概念界定</b></div><div class="wy6-plan-row"><b>3 低空经济发展的主要影响因素</b><br>政策制度 · 市场需求 · 技术创新 · 区域环境</div><div class="wy6-plan-row"><b>4 研究不足与未来方向</b></div><div class="wy6-plan-row"><b>5 结论</b></div></div></section></div>';
+      }
+      function wy6Editor(){
+        const s=wy6WritingState();
+        return '<section class="wy6-editor">'+
+          '<header class="wy6-editor-head"><div class="wy6-editor-tabs"><button class="wy6-etab '+(s.tab==='paper'?'active':'')+'" data-wy6-tab="paper">论文编辑</button><button class="wy6-etab '+(s.tab==='plan'?'active':'')+'" data-wy6-tab="plan">执行计划</button><button class="wy6-etab '+(s.tab==='outline'?'active':'')+'" data-wy6-tab="outline">大纲方案</button></div><div class="wy6-editor-actions"><button class="small-btn primary" data-wy6-save>保存为成果物</button><button class="small-btn" data-wy6-preview>预览</button><button class="small-btn" data-wy6-export>导出 ▾</button></div></header>'+
+          '<div class="wy6-toolbar"><button class="wy6-tbtn">↶</button><button class="wy6-tbtn">↷</button><span class="wy6-sep"></span><button class="wy6-tbtn">正文⌄</button><button class="wy6-tbtn">宋体⌄</button><button class="wy6-tbtn">小四⌄</button><span class="wy6-sep"></span><button class="wy6-tbtn"><b>B</b></button><button class="wy6-tbtn"><i>I</i></button><button class="wy6-tbtn"><u>U</u></button><button class="wy6-tbtn">A</button><span class="wy6-sep"></span><button class="wy6-tbtn">☷</button><button class="wy6-tbtn">≡</button><button class="wy6-tbtn">…</button></div>'+
+          (s.tab==='paper'?wy6Paper():wy6Panel(s.tab))+
+          '<footer class="wy6-editor-foot"><span>⚠ AI生成内容请核查事实与引用，注意学术规范与格式要求。</span><span><b>查看引用建议（18）</b>　｜　格式检查 ●</span></footer>'+
+        '</section>';
+      }
+      function wy6Writing(){
+        document.body.classList.remove('wy-hard-form');
+        document.body.classList.add('wy-hard-writing','task-setup');
+        const s=wy6WritingState();
+        const left=s.sideOpen?'<div class="wy6-side-wrap">'+wy6Side('review',true)+'</div>':'<aside class="wy6-rail"><button data-wy6-toggle>›</button><small>展开任务栏</small></aside>';
+        return '<div class="wy6-writing-shell '+(s.sideOpen?'open':'collapsed')+'">'+left+wy6Assistant()+wy6Editor()+'</div>';
+      }
+
+      const oldRenderAll=renderAll;
+      renderAll=function(){
+        oldRenderAll();
+        setTimeout(()=>{
+          if(state.view==='reviewCreate') wy6ApplyForm();
+          else if(state.view==='review' && state.analysisDone){
+            document.querySelector('#workBody').innerHTML=wy6Writing();
+          }else{
+            wy6Cleanup();
+          }
+        },0);
+      };
+
+      const oldReviewCreate=renderReviewCreate;
+      renderReviewCreate=function(){
+        oldReviewCreate();
+        setTimeout(wy6ApplyForm,0);
+      };
+
+      document.addEventListener('click',e=>{
+        const b=e.target.closest('button');
+        if(!b)return;
+        if(b.matches('[data-wy6-toggle]')){wy6WritingState().sideOpen=!wy6WritingState().sideOpen;document.querySelector('#workBody').innerHTML=wy6Writing()}
+        if(b.matches('[data-wy6-nav]')){
+          const v=b.dataset.wy6Nav;
+          if(v==='review'){
+            if(state.analysisDone){state.view='review';document.querySelector('#workBody').innerHTML=wy6Writing()}
+            else{state.view='reviewCreate';renderReviewCreate()}
+          }else{wy6Cleanup();state.view=v;oldRenderAll()}
+        }
+        if(b.matches('[data-wy6-tab]')){wy6WritingState().tab=b.dataset.wy6Tab;document.querySelector('#workBody').innerHTML=wy6Writing()}
+        if(b.matches('[data-wy6-outline]')){wy6WritingState().tab='outline';document.querySelector('#workBody').innerHTML=wy6Writing()}
+        if(b.matches('[data-wy6-find]')){wy6Cleanup();state.view='recommend';if(state.wyFind)state.wyFind.stage='workspace';oldRenderAll()}
+        if(b.matches('[data-wy6-material]'))toast('本次任务材料：可查看当前采用文献、批注、术语与已有成果');
+        if(b.matches('[data-wy6-send]')){
+          const input=document.querySelector('#wy6Input'),txt=input?.value.trim();
+          if(txt){wy6WritingState().messages.push(txt);document.querySelector('#workBody').innerHTML=wy6Writing()}
+        }
+        if(b.matches('[data-wy6-save]'))toast('已保存为学术成果（原型模拟）');
+        if(b.matches('[data-wy6-preview]'))toast('已打开论文预览（原型模拟）');
+        if(b.matches('[data-wy6-export]'))toast('已打开导出选项（原型模拟）');
+      },true);
+
+      document.addEventListener('keydown',e=>{
+        if(e.key==='Enter' && e.target?.id==='wy6Input'){
+          e.preventDefault();
+          document.querySelector('[data-wy6-send]')?.click();
+        }
+      });
+
+      setTimeout(()=>{
+        if(state.view==='reviewCreate') wy6ApplyForm();
+        if(state.view==='review' && state.analysisDone) document.querySelector('#workBody').innerHTML=wy6Writing();
+      },50);
+    })();
+  `;
+  d.body.appendChild(patch);
+});
+</script>
+
 </body>
 </html>
