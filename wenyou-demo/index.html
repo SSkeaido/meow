@@ -1073,5 +1073,80 @@ frame.addEventListener('load',()=>{
 });
 </script>
 
+
+<script>
+frame.addEventListener('load',()=>{
+  const d=frame.contentDocument;
+  if(!d || d.getElementById('wy-direct-resume-v9')) return;
+
+  const js=d.createElement('script');
+  js.id='wy-direct-resume-v9';
+  js.textContent=String.raw`
+    (function(){
+      function enterLatestReviewTask(){
+        /*
+          原型约定：
+          老用户“最近一次点击的任务” = 文献综述；
+          当前恢复状态 = 材料已完成、等待确认大纲。
+          因此登录后不经过旧工作台首页，直接进入新版大纲确认页。
+        */
+        try{
+          if(typeof v2Show==='function') v2Show('app');
+          else{
+            document.body.classList.remove('prelogin');
+            document.querySelectorAll('.onboarding-screen,.login-v2,.select-v2').forEach(x=>x.hidden=true);
+          }
+        }catch(e){
+          document.body.classList.remove('prelogin');
+        }
+
+        state.analysisDone=true;
+        state.outlineEdited=false;
+        state.view='review';
+
+        if(typeof renderAll==='function') renderAll();
+
+        setTimeout(()=>{
+          if(typeof window.__renderOutlineV8==='function'){
+            window.__renderOutlineV8();
+          }else if(typeof renderAll==='function'){
+            renderAll();
+          }
+        },30);
+
+        if(typeof toast==='function') toast('已恢复最近一次任务：文献综述');
+      }
+
+      /* 
+        关键修正：
+        旧用户点击“登录并进入工作台”时，在 capture 阶段截断旧逻辑，
+        避免旧逻辑先进入 home/开始任务页。
+      */
+      document.addEventListener('click',e=>{
+        const b=e.target.closest('button');
+        if(!b)return;
+
+        if(b.matches('[data-v2-login]')){
+          e.preventDefault();
+          e.stopImmediatePropagation();
+          enterLatestReviewTask();
+          return;
+        }
+
+        /* 兼容旧登录页按钮 */
+        if(b.matches('[data-onboard-login]')){
+          e.preventDefault();
+          e.stopImmediatePropagation();
+          enterLatestReviewTask();
+        }
+      },true);
+
+      window.__enterLatestReviewTaskV9=enterLatestReviewTask;
+    })();
+  `;
+  d.body.appendChild(js);
+});
+</script>
+
 </body>
 </html>
