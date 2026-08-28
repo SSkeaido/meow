@@ -1074,97 +1074,112 @@ frame.addEventListener('load',()=>{
 </script>
 
 
+
+
+
+
+
+
 <script>
 frame.addEventListener('load',()=>{
   const d=frame.contentDocument;
-  if(!d || d.getElementById('wy-remove-legacy-home-v9')) return;
+  if(!d || d.getElementById('wy-new-user-restore-v11')) return;
 
   const style=d.createElement('style');
-  style.id='wy-remove-legacy-home-v9';
+  style.id='wy-new-user-restore-v11';
   style.textContent=`
-    /* 旧版工作台不再作为一个版本共存：直接由新版导航壳替换 */
-    body:not(.prelogin) .project-switch,
-    body:not(.prelogin) .workspace>.tabs,
-    body:not(.prelogin) .notice{display:none!important}
+    /* =========================================================
+       V11 principles
+       1. prelogin/new-user selector remains exactly the prototype UI
+       2. old user and new user are different states
+       3. once inside the app, use the latest left-navigation language
+       4. review form keeps the latest requirements logic, only updates layout
+       5. outline remains the V8 three-column outline confirmation page
+       ========================================================= */
 
-    body:not(.prelogin):not(.task-setup):not(.wy-outline-v8) .main{
-      grid-template-columns:250px 380px minmax(520px,1fr)!important;
+    body.wy11-modern:not(.prelogin) .project-switch,
+    body.wy11-modern:not(.prelogin) .workspace>.tabs,
+    body.wy11-modern:not(.prelogin) .notice{display:none!important}
+    body.wy11-modern:not(.prelogin):not(.task-setup):not(.wy-outline-v8) .workspace{
+      grid-template-rows:1fr!important
     }
-    body:not(.prelogin):not(.task-setup):not(.wy-outline-v8) .workspace{
-      grid-template-rows:1fr!important;
+    body.wy11-modern:not(.prelogin):not(.task-setup):not(.wy-outline-v8) .main{
+      grid-template-columns:250px 380px minmax(520px,1fr)!important
     }
+    body.wy11-modern .chat-head [data-clear]{display:none!important}
 
-    /* 新版左栏 */
-    .wy9-sidebar{
-      height:100%;
-      display:flex;
-      flex-direction:column;
-      gap:18px;
+    /* ---------- Common latest left navigation ---------- */
+    .wy11-side-inner{height:100%;display:flex;flex-direction:column;gap:18px}
+    .wy11-side-title{font-size:12px;font-weight:800;color:#2d3240;padding:0 6px;margin-bottom:8px}
+    .wy11-topic{
+      width:100%;border:0;border-radius:8px;background:#f7f7fb;
+      padding:10px 11px;display:flex;align-items:center;justify-content:space-between;
+      gap:8px;text-align:left;font-size:10px;font-weight:700
     }
-    .wy9-section-title{
-      font-size:13px;
-      font-weight:800;
-      color:#2d3240;
-      padding:0 6px;
-      margin-bottom:8px;
+    .wy11-topic span:first-child{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .wy11-tree{display:grid;gap:4px;margin:7px 0 0 10px;padding-left:12px;border-left:1px solid #e2e5ed}
+    .wy11-nav{
+      width:100%;height:37px;border:0;border-radius:7px;background:transparent;
+      padding:0 10px;text-align:left;font-size:11px;color:#596174
     }
-    .wy9-topic{
-      width:100%;
-      border:0;
-      border-radius:8px;
-      background:#f7f7fb;
-      padding:10px 11px;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:8px;
-      text-align:left;
-      font-size:11px;
-      font-weight:700;
-    }
-    .wy9-topic span:first-child{
-      white-space:nowrap;
-      overflow:hidden;
-      text-overflow:ellipsis;
-    }
-    .wy9-tree{
-      display:grid;
-      gap:4px;
-      margin:7px 0 0 10px;
-      padding-left:12px;
-      border-left:1px solid #e2e5ed;
-    }
-    .wy9-nav{
-      width:100%;
-      height:37px;
-      border:0;
-      border-radius:7px;
-      background:transparent;
-      padding:0 10px;
-      text-align:left;
-      font-size:11px;
-      color:#596174;
-    }
-    .wy9-nav:hover{background:#f7f6fc;color:var(--purple)}
-    .wy9-nav.active{background:var(--purple-weak);color:var(--purple);font-weight:800}
-    .wy9-divider{height:1px;background:var(--line)}
-    .wy9-side-note{
-      margin-top:auto;
-      padding:10px;
-      border:1px solid var(--line);
-      border-radius:8px;
-      background:#fbfcff;
-      color:var(--muted);
-      font-size:9px;
-      line-height:1.55;
+    .wy11-nav:hover{background:#f7f6fc;color:var(--purple)}
+    .wy11-nav.active{background:var(--purple-weak);color:var(--purple);font-weight:800}
+    .wy11-nav.hint{color:#9298a7;cursor:default}
+    .wy11-divider{height:1px;background:var(--line)}
+    .wy11-side-note{
+      margin-top:auto;padding:10px;border:1px solid var(--line);border-radius:8px;
+      background:#fbfcff;color:var(--muted);font-size:9px;line-height:1.55
     }
 
-    /* 中栏统一命名为文优小助手 */
-    .chat-head span{font-size:15px}
-    .chat-head [data-clear]{display:none!important}
-    .wy9-home-removed{
-      max-width:930px;margin:0 auto;background:#fff;border:1px solid var(--line);
-      border-radius:9px;padding:18px;
+    /* ---------- Review form: latest left nav + wide form, no old right explainer ---------- */
+    body.wy11-review-form .project-switch,
+    body.wy11-review-form .sidebar,
+    body.wy11-review-form .chat,
+    body.wy11-review-form .workspace>.tabs{display:none!important}
+    body.wy11-review-form .main{display:block!important;height:calc(100vh - 64px)!important}
+    body.wy11-review-form .workspace{display:block!important;height:100%!important;border:0!important}
+    body.wy11-review-form .work-body{height:100%!important;padding:0!important;overflow:hidden!important;background:#f7f8fc!important}
+
+    .wy11-form-shell{height:100%;display:grid;grid-template-columns:250px minmax(0,1fr)}
+    .wy11-form-side{background:#fff;border-right:1px solid var(--line);padding:18px 14px;overflow:auto}
+    .wy11-form-main{overflow:auto;padding:28px 34px 48px;min-width:0}
+    .wy11-form-main .page-title{max-width:1080px;margin:0 auto 16px}
+    .wy11-form-main .create-card{max-width:1080px;margin:0 auto;border-radius:10px;padding:20px 22px}
+    .wy11-form-main .create-review-layout{display:block!important;max-width:none!important;margin:0!important}
+    .wy11-form-main .create-side{display:none!important}
+    .wy11-form-main .create-form-row{grid-template-columns:110px minmax(0,1fr)!important}
+    .wy11-form-main .create-form-row>label{font-size:12px}
+    .wy11-form-main .wy-create-footer{margin-top:20px}
+
+    /* ---------- Old-user home: same shell, different work state ---------- */
+    .wy11-old-home{max-width:980px;margin:0 auto;padding:3px 0 30px}
+    .wy11-old-kicker{font-size:11px;font-weight:800;color:var(--purple);margin-bottom:7px}
+    .wy11-old-home h1{margin:0;font-size:23px}
+    .wy11-old-home>p{margin:7px 0 18px;color:var(--muted);font-size:11px;line-height:1.65}
+    .wy11-old-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:13px}
+    .wy11-old-card{border:1px solid var(--line);border-radius:9px;background:#fff;padding:16px}
+    .wy11-old-card h2{margin:0 0 6px;font-size:15px}
+    .wy11-old-card>p{margin:0 0 12px;color:var(--muted);font-size:10px;line-height:1.6}
+    .wy11-resume-list{display:grid;gap:8px}
+    .wy11-resume{
+      width:100%;border:1px solid var(--line);border-radius:8px;background:#fcfdff;
+      padding:11px;text-align:left;display:grid;gap:4px
+    }
+    .wy11-resume.primary-task{border-color:#baaaff;background:var(--purple-weak)}
+    .wy11-resume b{font-size:11px}
+    .wy11-resume em{font-size:9px;color:var(--teal);font-style:normal}
+    .wy11-resume span{font-size:9px;color:var(--muted);line-height:1.45}
+    .wy11-old-stats{display:grid;grid-template-columns:repeat(2,1fr);gap:7px}
+    .wy11-old-stat{padding:10px;border:1px solid var(--line);border-radius:8px;background:#fbfcff}
+    .wy11-old-stat b{display:block;color:var(--purple);font-size:17px}
+    .wy11-old-stat span{font-size:9px;color:var(--muted)}
+
+    @media(max-width:1200px){
+      .wy11-form-shell{grid-template-columns:225px minmax(0,1fr)}
+      .wy11-form-main{padding:24px}
+    }
+    @media(max-width:1000px){
+      .wy11-old-grid{grid-template-columns:1fr}
     }
   `;
   d.head.appendChild(style);
@@ -1172,392 +1187,389 @@ frame.addEventListener('load',()=>{
   const js=d.createElement('script');
   js.textContent=String.raw`
     (function(){
-      function reviewTask(){
-        return state.tasks?.find(t=>t.type==='文献综述') || state.tasks?.find(t=>t.id==='review');
+      state.wy11UserMode=state.wy11UserMode||null;   // 'new' | 'old'
+      state.wy11NewTask=state.wy11NewTask||null;     // review | proposal | draft | null
+
+      function setUserMode(mode){
+        state.wy11UserMode=mode;
+        document.body.classList.add('wy11-modern');
       }
-      function topicTitle(){
-        return reviewTask()?.title || '低空经济发展的影响因素研究';
+
+      function reviewTitle(){
+        const formTitle=document.querySelector('#reviewTopic')?.value?.trim();
+        if(formTitle)return formTitle;
+        if(state.wy11UserMode==='old')return '低空经济发展的影响因素研究';
+        return state.tasks?.find(t=>t.type==='文献综述')?.title || '市场需求对中国省级旅游产业技术演化的影响';
       }
-      function activeForState(){
-        if(['library','notes','terms','reading','recommend'].includes(state.view)) return 'library';
-        if(state.view==='artifacts') return 'artifacts';
-        if(state.view==='proposal') return 'proposal';
-        if(state.view==='draft') return 'draft';
+
+      function activeNav(){
+        if(['library','notes','terms','reading','recommend'].includes(state.view))return 'library';
+        if(state.view==='artifacts')return 'artifacts';
+        if(state.view==='proposal')return 'proposal';
+        if(state.view==='draft')return 'draft';
+        if(state.view==='oldHome')return 'review';
         return 'review';
       }
 
-      function renderNewSidebar(){
-        if(document.body.classList.contains('prelogin') || document.body.classList.contains('task-setup') || document.body.classList.contains('wy-outline-v8')) return;
-        const side=document.querySelector('.sidebar');
-        if(!side)return;
+      function sideInner(activeOverride){
+        const active=activeOverride||activeNav();
+        const noTask=state.wy11UserMode==='new' && !state.wy11NewTask && ['recommend','library','notes','terms','reading','assets','artifacts'].includes(state.view);
+        const topic=noTask?'尚未创建写作任务':reviewTitle();
 
-        const active=activeForState();
-        side.innerHTML=
-          '<div class="wy9-sidebar">'+
-            '<div>'+
-              '<div class="wy9-section-title">任务类别</div>'+
-              '<button class="wy9-topic"><span>'+topicTitle()+'</span><span>⌃</span></button>'+
-              '<div class="wy9-tree">'+
-                '<button class="wy9-nav '+(active==='review'?'active':'')+'" data-wy9-nav="review">文献综述</button>'+
-                '<button class="wy9-nav '+(active==='proposal'?'active':'')+'" data-wy9-nav="proposal">开题报告</button>'+
-                '<button class="wy9-nav '+(active==='draft'?'active':'')+'" data-wy9-nav="draft">论文初稿</button>'+
-              '</div>'+
+        return '<div class="wy11-side-inner">'+
+          '<div>'+
+            '<div class="wy11-side-title">任务类别</div>'+
+            '<button class="wy11-topic"><span>'+topic+'</span><span>⌃</span></button>'+
+            '<div class="wy11-tree">'+
+              '<button class="wy11-nav '+(active==='review'?'active':'')+'" data-wy11-nav="review">文献综述</button>'+
+              '<button class="wy11-nav '+(active==='proposal'?'active':'')+'" data-wy11-nav="proposal">开题报告</button>'+
+              '<button class="wy11-nav '+(active==='draft'?'active':'')+'" data-wy11-nav="draft">论文初稿</button>'+
             '</div>'+
-            '<div class="wy9-divider"></div>'+
-            '<div>'+
-              '<div class="wy9-section-title">研究资产</div>'+
-              '<button class="wy9-nav '+(active==='library'?'active':'')+'" data-wy9-nav="library">文献库</button>'+
-              '<button class="wy9-nav '+(active==='artifacts'?'active':'')+'" data-wy9-nav="artifacts">学术成果</button>'+
-            '</div>'+
-            '<div class="wy9-side-note">旧版“我的写作任务 / 当前选题资产”导航已移除。任务按选题组织，研究资产只保留文献库与学术成果。</div>'+
-          '</div>';
-
-        const head=document.querySelector('.chat-head span');
-        if(head && !(state.view==='recommend' && state.wyFind?.stage==='workspace')) head.textContent='文优小助手';
+          '</div>'+
+          '<div class="wy11-divider"></div>'+
+          '<div>'+
+            '<div class="wy11-side-title">研究资产</div>'+
+            '<button class="wy11-nav '+(active==='library'?'active':'')+'" data-wy11-nav="library">文献库</button>'+
+            '<button class="wy11-nav '+(active==='artifacts'?'active':'')+'" data-wy11-nav="artifacts">学术成果</button>'+
+          '</div>'+
+          '<div class="wy11-side-note">'+
+            (state.wy11UserMode==='old'
+              ?'已有任务可以直接恢复到上次工作阶段；文献库和学术成果继续被不同任务复用。'
+              :'任务按研究选题组织；文献库和学术成果会随着研究过程逐步沉淀。')+
+          '</div>'+
+        '</div>';
       }
 
-      /* 不再存在“开始任务”旧首页。任何回到 home 的动作都恢复当前文献综述任务 */
-      function resumeCurrentReview(){
+      function applyCommonSidebar(){
+        if(document.body.classList.contains('prelogin'))return;
+        if(document.body.classList.contains('task-setup'))return;
+        if(document.body.classList.contains('wy-outline-v8'))return;
+        if(document.body.classList.contains('wy11-review-form'))return;
+
+        const side=document.querySelector('.sidebar');
+        if(side)side.innerHTML=sideInner();
+
+        const head=document.querySelector('.chat-head span');
+        if(head && !(state.view==='recommend' && state.wyFind?.stage==='workspace'))head.textContent='文优小助手';
+      }
+
+      function showNewUserSelector(){
+        document.body.classList.add('prelogin');
+        document.body.classList.remove('task-setup','wy-outline-v8','wy11-review-form');
+        const login=document.querySelector('#loginV2');
+        const select=document.querySelector('#selectV2');
+        if(login)login.hidden=true;
+        if(select)select.hidden=false;
+        document.querySelectorAll('.onboarding-screen').forEach(x=>x.hidden=true);
+      }
+
+      function enterApp(){
+        document.body.classList.remove('prelogin');
+        document.querySelectorAll('.onboarding-screen').forEach(x=>x.hidden=true);
+        const login=document.querySelector('#loginV2');
+        const select=document.querySelector('#selectV2');
+        if(login)login.hidden=true;
+        if(select)select.hidden=true;
+        document.body.classList.add('wy11-modern');
+      }
+
+      function renderOldHome(){
+        const wb=document.querySelector('#workBody');
+        if(!wb)return;
+        document.body.classList.remove('task-setup','wy-outline-v8','wy11-review-form');
+
+        wb.innerHTML=
+          '<div class="wy11-old-home">'+
+            '<div class="wy11-old-kicker">欢迎回来</div>'+
+            '<h1>继续你的研究任务</h1>'+
+            '<p>你已经有进行中的任务和研究资产。这里不是新用户的任务选择页，而是恢复已有工作、继续研究的工作台。</p>'+
+            '<div class="wy11-old-grid">'+
+              '<section class="wy11-old-card">'+
+                '<h2>进行中的任务</h2><p>点击任务即可恢复到对应阶段。</p>'+
+                '<div class="wy11-resume-list">'+
+                  '<button class="wy11-resume primary-task" data-wy11-resume="review"><b>文献综述 · 低空经济发展的影响因素研究</b><em>进行中 · 待确认大纲</em><span>材料准备已经完成，继续后直接进入大纲确认。</span></button>'+
+                  '<button class="wy11-resume" data-wy11-resume="proposal"><b>开题报告 · 低空经济发展的影响因素研究</b><em>未开始</em><span>可以直接调用当前研究资产开始。</span></button>'+
+                  '<button class="wy11-resume" data-wy11-resume="draft"><b>论文初稿 · 低空经济发展的影响因素研究</b><em>未开始</em><span>可独立创建，不要求先完成开题报告。</span></button>'+
+                '</div>'+
+              '</section>'+
+              '<section class="wy11-old-card">'+
+                '<h2>已有研究资产</h2><p>这些内容会继续被任务调用。</p>'+
+                '<div class="wy11-old-stats">'+
+                  '<div class="wy11-old-stat"><b>63</b><span>文献库</span></div>'+
+                  '<div class="wy11-old-stat"><b>31</b><span>批注</span></div>'+
+                  '<div class="wy11-old-stat"><b>14</b><span>术语</span></div>'+
+                  '<div class="wy11-old-stat"><b>3</b><span>学术成果</span></div>'+
+                '</div>'+
+                '<div class="actions" style="justify-content:flex-start;margin-top:12px">'+
+                  '<button class="small-btn primary" data-wy11-old-nav="library">打开文献库</button>'+
+                  '<button class="small-btn" data-wy11-old-nav="artifacts">查看学术成果</button>'+
+                  '<button class="small-btn" data-open-task>新建任务</button>'+
+                '</div>'+
+              '</section>'+
+            '</div>'+
+          '</div>';
+      }
+
+      function renderOldChat(){
+        const head=document.querySelector('.chat-head span');
+        if(head)head.textContent='文优小助手';
+        const list=document.querySelector('#chatList');
+        if(list)list.innerHTML=
+          '<div class="message">'+
+            '<div class="status-row"><span class="status-dot"></span><span>已恢复你的研究上下文</span></div>'+
+            '<p>上次停留在「文献综述 · 大纲确认」阶段。</p>'+
+            '<p class="muted">已有文献 63 篇 · 批注 31 条 · 术语 14 个 · 学术成果 3 项</p>'+
+            '<div class="message-actions"><button class="small-btn primary" data-wy11-resume="review">继续文献综述</button><button class="small-btn" data-wy11-old-nav="library">打开文献库</button></div>'+
+          '</div>'+
+          '<div class="message"><div class="status-row"><span class="status-dot"></span><span>你也可以开始新的任务</span></div><p>现有研究资产可以直接复用，不需要从头准备。</p></div>';
+      }
+
+      /* Current renderDoc already contains the Find Papers override. Keep it. */
+      const wy11OldRenderDoc=renderDoc;
+      renderDoc=function(){
+        if(state.view==='oldHome'){
+          renderOldHome();
+          document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));
+          return;
+        }
+        wy11OldRenderDoc();
+      };
+
+      /* Current renderChat already contains the Find Papers assistant. Keep it. */
+      const wy11OldRenderChat=renderChat;
+      renderChat=function(){
+        if(state.view==='oldHome'){
+          renderOldChat();
+          return;
+        }
+        wy11OldRenderChat();
+        const head=document.querySelector('.chat-head span');
+        if(head && !(state.view==='recommend' && state.wyFind?.stage==='workspace'))head.textContent='文优小助手';
+      };
+
+      const wy11OldRenderAll=renderAll;
+      renderAll=function(){
+        wy11OldRenderAll();
+        setTimeout(applyCommonSidebar,0);
+      };
+
+      /* ---------- Review form layout only; requirement logic remains untouched ---------- */
+      const wy11OldReviewCreate=renderReviewCreate;
+      renderReviewCreate=function(){
+        state.wy11NewTask=state.wy11NewTask||'review';
+        document.body.classList.add('wy11-modern','wy11-review-form','task-setup');
+        document.body.classList.remove('wy-outline-v8');
+
+        wy11OldReviewCreate();
+
+        setTimeout(()=>{
+          const wb=document.querySelector('#workBody');
+          if(!wb || wb.querySelector('.wy11-form-shell'))return;
+
+          const title=wb.querySelector('.page-title');
+          const layout=wb.querySelector('.create-review-layout');
+          const mainCard=layout?.querySelector('section.create-card');
+          if(!title || !mainCard)return;
+
+          const back=title.querySelector('[data-wy-review-back]');
+          if(back)back.textContent=state.wy11UserMode==='old'?'返回工作台':'返回任务选择';
+
+          const sub=title.querySelector('p');
+          if(sub)sub.textContent='填写本次文献综述要求，并让文献需求实时联动个人文献库。';
+
+          const shell=document.createElement('div');
+          shell.className='wy11-form-shell';
+
+          const side=document.createElement('aside');
+          side.className='wy11-form-side';
+          side.innerHTML=sideInner('review');
+
+          const main=document.createElement('section');
+          main.className='wy11-form-main';
+
+          wb.innerHTML='';
+          shell.appendChild(side);
+          shell.appendChild(main);
+          wb.appendChild(shell);
+          main.appendChild(title);
+          main.appendChild(mainCard);
+        },0);
+      };
+
+      function routeReview(){
+        state.wy11NewTask=state.wy11NewTask||'review';
+        document.body.classList.remove('wy11-review-form');
+        if(state.analysisDone){
+          state.view='review';
+          renderAll();
+        }else{
+          state.view='reviewCreate';
+          renderReviewCreate();
+        }
+      }
+
+      function routeFromNewSelector(label){
+        setUserMode('new');
+        enterApp();
+
+        if(label.includes('文献综述')){
+          state.wy11NewTask='review';
+          state.analysisDone=false;
+          state.outlineEdited=false;
+          state.view='reviewCreate';
+          renderReviewCreate();
+          return;
+        }
+        if(label.includes('开题报告')){
+          state.wy11NewTask='proposal';
+          state.view='proposal';
+          renderAll();
+          return;
+        }
+        if(label.includes('论文初稿')){
+          state.wy11NewTask='draft';
+          state.view='draft';
+          renderAll();
+          return;
+        }
+        if(label.includes('文献推荐')){
+          state.wy11NewTask=null;
+          state.view='recommend';
+          if(state.wyFind){state.wyFind.stage='setup';state.wyFind.page=0}
+          renderAll();
+          return;
+        }
+        if(label.includes('精读')){
+          state.wy11NewTask=null;
+          state.view='library';
+          renderAll();
+          return;
+        }
+        state.wy11NewTask=null;
+        state.view='assets';
+        renderAll();
+      }
+
+      function resumeOldReview(){
+        setUserMode('old');
+        enterApp();
+        document.body.classList.remove('wy11-review-form');
         state.analysisDone=true;
         state.outlineEdited=false;
         state.view='review';
         renderAll();
-        setTimeout(()=>{
-          if(typeof window.__renderOutlineV8==='function') window.__renderOutlineV8();
-        },0);
+        setTimeout(()=>window.__renderOutlineV8?.(),0);
       }
 
-      const oldRenderAll=renderAll;
-      renderAll=function(){
-        if(state.view==='home' && !document.body.classList.contains('prelogin')){
-          state.analysisDone=true;
-          state.outlineEdited=false;
-          state.view='review';
-        }
-        oldRenderAll();
-        setTimeout(renderNewSidebar,0);
-      };
-
-      /* 老用户登录：不进入旧“开始任务”页，直接 Resume 当前进行中的任务 */
+      /* Capture only entry/routing events where the base prototype would otherwise
+         show the legacy home. Do NOT change the selector UI itself. */
       document.addEventListener('click',e=>{
-        const b=e.target.closest('button');
+        const b=e.target.closest('button,[data-v2-option]');
         if(!b)return;
 
-        if(b.matches('[data-v2-login]')){
-          e.preventDefault();
-          e.stopImmediatePropagation();
-
-          document.body.classList.remove('prelogin');
-          document.querySelectorAll('.onboarding-screen').forEach(x=>x.hidden=true);
-          const login=document.querySelector('#loginV2');
-          const select=document.querySelector('#selectV2');
-          if(login) login.hidden=true;
-          if(select) select.hidden=true;
-
-          resumeCurrentReview();
-          toast('已恢复上次进行中的文献综述');
-        }
-
-        if(b.matches('[data-wy9-nav]')){
-          const v=b.dataset.wy9Nav;
-          if(v==='review'){
-            resumeCurrentReview();
-          }else{
-            state.view=v;
-            oldRenderAll();
-            setTimeout(renderNewSidebar,0);
-          }
-        }
-
-        /* 旧逻辑中任何“返回首页”按钮，现在都解释为返回当前任务，而不是展示旧首页 */
-        if(b.matches('[data-view="home"],[data-wy-review-back],[data-review-create-back]')){
-          e.preventDefault();
-          e.stopImmediatePropagation();
-          resumeCurrentReview();
-        }
-      },true);
-
-      /* 首次进入 app 后，保证不会闪回旧首页 */
-      setInterval(()=>{
-        if(!document.body.classList.contains('prelogin')){
-          if(state.view==='home'){
-            resumeCurrentReview();
-            return;
-          }
-          renderNewSidebar();
-        }
-      },250);
-    })();
-  `;
-  d.body.appendChild(js);
-});
-</script>
-
-
-<script>
-frame.addEventListener('load',()=>{
-  const d=frame.contentDocument;
-  if(!d || d.getElementById('wy-user-split-v10')) return;
-
-  const style=d.createElement('style');
-  style.id='wy-user-split-v10';
-  style.textContent=`
-    /* 两类用户共用新版三栏壳，但初始状态与文案不同 */
-    body.wy10-new-user:not(.task-setup):not(.wy-outline-v8) .project-switch,
-    body.wy10-new-user:not(.task-setup):not(.wy-outline-v8) .workspace>.tabs,
-    body.wy10-old-user:not(.task-setup):not(.wy-outline-v8) .project-switch,
-    body.wy10-old-user:not(.task-setup):not(.wy-outline-v8) .workspace>.tabs{display:none!important}
-
-    .wy10-welcome{
-      max-width:980px;margin:0 auto;padding:8px 0 30px;
-    }
-    .wy10-kicker{font-size:11px;font-weight:800;color:var(--purple);margin-bottom:7px}
-    .wy10-welcome h1{margin:0;font-size:23px}
-    .wy10-welcome>p{margin:7px 0 18px;color:var(--muted);font-size:11px;line-height:1.65}
-    .wy10-choice-grid{display:grid;grid-template-columns:1fr 1fr;gap:13px}
-    .wy10-choice-card{border:1px solid var(--line);border-radius:10px;background:#fff;padding:17px}
-    .wy10-choice-card.research{background:#fbfaff}
-    .wy10-choice-card h2{margin:0 0 5px;font-size:16px}
-    .wy10-choice-card p{margin:0 0 13px;color:var(--muted);font-size:10px;line-height:1.55}
-    .wy10-actions{display:grid;gap:8px}
-    .wy10-action{
-      width:100%;display:flex;align-items:center;gap:10px;padding:11px;
-      border:1px solid var(--line);border-radius:8px;background:#fff;text-align:left;
-    }
-    .wy10-action:hover{border-color:#a293e7;background:var(--purple-weak)}
-    .wy10-action strong{display:block;font-size:12px}
-    .wy10-action small{display:block;margin-top:3px;color:var(--muted);font-size:9px}
-    .wy10-icon{
-      width:29px;height:29px;border-radius:7px;display:grid;place-items:center;
-      background:var(--purple-weak);color:var(--purple);font-weight:800;font-size:11px;
-    }
-    .wy10-choice-card.research .wy10-icon{background:var(--teal-weak);color:var(--teal)}
-    .wy10-empty{
-      margin-top:14px;padding:12px;border:1px dashed #c9c1ef;border-radius:8px;
-      background:#fbfaff;color:#5e5195;font-size:10px;line-height:1.55;
-    }
-
-    .wy10-old-home{max-width:980px;margin:0 auto;padding-bottom:30px}
-    .wy10-old-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:13px}
-    .wy10-old-card{border:1px solid var(--line);border-radius:9px;background:#fff;padding:16px}
-    .wy10-old-card h2{margin:0 0 6px;font-size:15px}
-    .wy10-old-card>p{margin:0 0 12px;color:var(--muted);font-size:10px;line-height:1.6}
-    .wy10-task-resume{display:grid;gap:8px}
-    .wy10-resume-item{
-      width:100%;border:1px solid var(--line);border-radius:8px;background:#fcfdff;
-      padding:11px;text-align:left;display:grid;gap:4px;
-    }
-    .wy10-resume-item.active{border-color:#baaaff;background:var(--purple-weak)}
-    .wy10-resume-item b{font-size:11px}
-    .wy10-resume-item span{font-size:9px;color:var(--muted)}
-    .wy10-resume-item em{font-size:9px;color:var(--teal);font-style:normal}
-    .wy10-asset-stats{display:grid;grid-template-columns:repeat(2,1fr);gap:7px}
-    .wy10-asset-stat{padding:10px;border:1px solid var(--line);border-radius:8px;background:#fbfcff}
-    .wy10-asset-stat b{display:block;color:var(--purple);font-size:17px}
-    .wy10-asset-stat span{font-size:9px;color:var(--muted)}
-    @media(max-width:1000px){.wy10-choice-grid,.wy10-old-grid{grid-template-columns:1fr}}
-  `;
-  d.head.appendChild(style);
-
-  const js=d.createElement('script');
-  js.textContent=String.raw`
-    (function(){
-      window.__wy10UserMode = window.__wy10UserMode || null;
-
-      function setMode(mode){
-        window.__wy10UserMode=mode;
-        document.body.classList.toggle('wy10-new-user',mode==='new');
-        document.body.classList.toggle('wy10-old-user',mode==='old');
-      }
-
-      function renderNewUserHome(){
-        const wb=document.querySelector('#workBody');
-        if(!wb)return;
-        document.body.classList.remove('task-setup','wy-outline-v8');
-        setMode('new');
-
-        wb.innerHTML=
-          '<div class="wy10-welcome">'+
-            '<div class="wy10-kicker">第一次使用文优小助</div>'+
-            '<h1>你现在想完成什么？</h1>'+
-            '<p>新用户还没有历史任务与研究资产。先选择一个方向开始，后续文献、批注、术语和成果会自然沉淀。</p>'+
-            '<div class="wy10-choice-grid">'+
-              '<section class="wy10-choice-card">'+
-                '<h2>我要完成论文任务</h2>'+
-                '<p>适合已经有明确交付目标的用户。三个任务彼此独立，可以直接创建。</p>'+
-                '<div class="wy10-actions">'+
-                  '<button class="wy10-action" data-wy10-new-task="review"><span class="wy10-icon">综</span><span><strong>文献综述</strong><small>先填写综述要求，再检查文献材料</small></span></button>'+
-                  '<button class="wy10-action" data-wy10-new-task="proposal"><span class="wy10-icon">题</span><span><strong>开题报告</strong><small>基于选题创建开题任务</small></span></button>'+
-                  '<button class="wy10-action" data-wy10-new-task="draft"><span class="wy10-icon">稿</span><span><strong>论文初稿</strong><small>直接创建论文初稿任务</small></span></button>'+
-                '</div>'+
-              '</section>'+
-              '<section class="wy10-choice-card research">'+
-                '<h2>我要做研究准备</h2>'+
-                '<p>适合暂时没有明确 Deadline，先围绕选题发现、阅读并积累文献。</p>'+
-                '<div class="wy10-actions">'+
-                  '<button class="wy10-action" data-wy10-new-task="recommend"><span class="wy10-icon">找</span><span><strong>找文献</strong><small>从外部数据库建立候选文献池</small></span></button>'+
-                  '<button class="wy10-action" data-wy10-new-task="library"><span class="wy10-icon">读</span><span><strong>打开文献库</strong><small>开始积累、精读和管理研究材料</small></span></button>'+
-                '</div>'+
-                '<div class="wy10-empty">当前还没有历史研究资产。后续入库的文献、批注和术语会在这里持续积累。</div>'+
-              '</section>'+
-            '</div>'+
-          '</div>';
-
-        const side=document.querySelector('.sidebar');
-        if(side && typeof renderNewSidebar==='function') renderNewSidebar();
-        const head=document.querySelector('.chat-head span');
-        if(head)head.textContent='文优小助手';
-        const chat=document.querySelector('#chatList');
-        if(chat)chat.innerHTML=
-          '<div class="message"><div class="status-row"><span class="status-dot"></span><span>欢迎第一次使用文优小助</span></div><p>先告诉我你的目标。我可以从写作任务开始，也可以先帮你找文献。</p></div>';
-      }
-
-      function renderOldUserHome(){
-        const wb=document.querySelector('#workBody');
-        if(!wb)return;
-        document.body.classList.remove('task-setup','wy-outline-v8');
-        setMode('old');
-
-        wb.innerHTML=
-          '<div class="wy10-old-home">'+
-            '<div class="wy10-kicker">欢迎回来</div>'+
-            '<h1 style="margin:0;font-size:23px">继续你的研究任务</h1>'+
-            '<p style="margin:7px 0 18px;color:var(--muted);font-size:11px;line-height:1.65">你已经有进行中的任务和研究资产，可以直接恢复上次工作，也可以从已有资产创建新的任务。</p>'+
-            '<div class="wy10-old-grid">'+
-              '<section class="wy10-old-card"><h2>进行中的任务</h2><p>点击任务卡片恢复到上次工作阶段。</p>'+
-                '<div class="wy10-task-resume">'+
-                  '<button class="wy10-resume-item active" data-wy10-resume="review"><b>文献综述 · '+(state.tasks?.find(t=>t.type==='文献综述')?.title||'低空经济发展的影响因素研究')+'</b><em>进行中 · 待确认研究大纲</em><span>材料准备已完成，可以继续确认大纲并进入正文生成。</span></button>'+
-                  '<button class="wy10-resume-item" data-wy10-resume="proposal"><b>开题报告 · 低空经济发展的影响因素研究</b><em>未开始</em><span>可直接使用当前研究资产创建。</span></button>'+
-                '</div>'+
-              '</section>'+
-              '<section class="wy10-old-card"><h2>研究资产</h2><p>继续使用已积累的材料。</p><div class="wy10-asset-stats">'+
-                '<div class="wy10-asset-stat"><b>63</b><span>文献库</span></div>'+
-                '<div class="wy10-asset-stat"><b>31</b><span>批注</span></div>'+
-                '<div class="wy10-asset-stat"><b>14</b><span>术语</span></div>'+
-                '<div class="wy10-asset-stat"><b>3</b><span>学术成果</span></div>'+
-              '</div><div class="actions" style="justify-content:flex-start;margin-top:12px"><button class="small-btn primary" data-wy10-old-nav="library">打开文献库</button><button class="small-btn" data-wy10-old-nav="artifacts">查看学术成果</button></div></section>'+
-            '</div>'+
-          '</div>';
-
-        const side=document.querySelector('.sidebar');
-        if(side && typeof renderNewSidebar==='function') renderNewSidebar();
-        const head=document.querySelector('.chat-head span');
-        if(head)head.textContent='文优小助手';
-        const chat=document.querySelector('#chatList');
-        if(chat)chat.innerHTML=
-          '<div class="message"><div class="status-row"><span class="status-dot"></span><span>已恢复你的研究上下文</span></div><p>上次停留在文献综述的大纲确认阶段。</p><p class="muted">文献 63 篇 · 批注 31 条 · 术语 14 个 · 学术成果 3 项</p><div class="message-actions"><button class="small-btn primary" data-wy10-resume="review">继续文献综述</button></div></div>';
-      }
-
-      window.__wy10RenderNewUserHome=renderNewUserHome;
-      window.__wy10RenderOldUserHome=renderOldUserHome;
-
-      /* 覆盖 v9 将所有 home 强制改成 review 的行为 */
-      const oldRenderAllV10=renderAll;
-      renderAll=function(){
-        if(state.view==='home' && window.__wy10UserMode==='new'){
-          oldRenderAllV10();
-          setTimeout(renderNewUserHome,0);
-          return;
-        }
-        if(state.view==='home' && window.__wy10UserMode==='old'){
-          oldRenderAllV10();
-          setTimeout(renderOldUserHome,0);
-          return;
-        }
-        oldRenderAllV10();
-      };
-
-      document.addEventListener('click',e=>{
-        const b=e.target.closest('button');
-        if(!b)return;
-
-        /* 老用户入口：明确进入老用户首页，不直接进入新用户页面 */
-        if(b.matches('[data-v2-login]')){
-          e.preventDefault();
-          e.stopImmediatePropagation();
-
-          document.body.classList.remove('prelogin');
-          document.querySelectorAll('.onboarding-screen').forEach(x=>x.hidden=true);
-          const login=document.querySelector('#loginV2');
-          const select=document.querySelector('#selectV2');
-          if(login)login.hidden=true;
-          if(select)select.hidden=true;
-
-          setMode('old');
-          state.view='home';
-          setTimeout(renderOldUserHome,0);
-        }
-
-        /* 新用户入口：恢复原本的新用户任务选择逻辑 */
         if(b.matches('[data-v2-new]')){
+          setUserMode('new');
+          state.wy11NewTask=null;
+          /* Let the prototype's original handler show #selectV2 unchanged. */
+          return;
+        }
+
+        if(b.matches('[data-v2-login]')){
           e.preventDefault();
           e.stopImmediatePropagation();
-          setMode('new');
-
-          const login=document.querySelector('#loginV2');
-          const select=document.querySelector('#selectV2');
-          if(login)login.hidden=true;
-          if(select)select.hidden=false;
-          document.body.classList.add('prelogin');
-        }
-
-        /* 新用户选择页内的具体任务，进入真正的新用户任务创建/研究准备 */
-        if(b.matches('[data-v2-option]')){
-          setMode('new');
-        }
-
-        if(b.matches('[data-wy10-new-task]')){
-          const v=b.dataset.wy10NewTask;
-          setMode('new');
-          if(v==='review'){
-            state.analysisDone=false;
-            state.outlineEdited=false;
-            state.view='reviewCreate';
-            document.body.classList.add('task-setup');
-            renderReviewCreate();
-          }else if(v==='recommend'){
-            state.view='recommend';
-            if(state.wyFind){state.wyFind.stage='setup';state.wyFind.page=0}
-            renderAll();
-          }else{
-            state.view=v;
-            renderAll();
-          }
-        }
-
-        /* 老用户首页的 Resume */
-        if(b.matches('[data-wy10-resume]')){
-          const v=b.dataset.wy10Resume;
-          setMode('old');
-          if(v==='review'){
-            state.analysisDone=true;
-            state.outlineEdited=false;
-            state.view='review';
-            renderAll();
-            setTimeout(()=>window.__renderOutlineV8?.(),0);
-          }else{
-            state.view=v;
-            renderAll();
-          }
-        }
-
-        if(b.matches('[data-wy10-old-nav]')){
-          setMode('old');
-          state.view=b.dataset.wy10OldNav;
+          setUserMode('old');
+          enterApp();
+          state.view='oldHome';
           renderAll();
+          toast('欢迎回来，已载入你的历史任务与研究资产');
+          return;
+        }
+
+        if(b.matches('[data-v2-option]')){
+          e.preventDefault();
+          e.stopImmediatePropagation();
+          routeFromNewSelector(b.dataset.v2Option||b.innerText||'');
+          return;
+        }
+
+        if(b.matches('[data-wy-review-back]')){
+          e.preventDefault();
+          e.stopImmediatePropagation();
+          document.body.classList.remove('wy11-review-form','task-setup');
+          if(state.wy11UserMode==='old'){
+            state.view='oldHome';
+            renderAll();
+          }else{
+            showNewUserSelector();
+          }
+          return;
+        }
+
+        if(b.matches('[data-wy11-nav]')){
+          e.preventDefault();
+          e.stopImmediatePropagation();
+          const v=b.dataset.wy11Nav;
+          document.body.classList.remove('wy11-review-form','task-setup','wy-outline-v8');
+
+          if(v==='review'){
+            if(state.wy11UserMode==='old')resumeOldReview();
+            else routeReview();
+          }else{
+            if(state.wy11UserMode==='new' && ['proposal','draft'].includes(v))state.wy11NewTask=v;
+            state.view=v;
+            renderAll();
+          }
+          return;
+        }
+
+        if(b.matches('[data-wy11-resume]')){
+          e.preventDefault();
+          e.stopImmediatePropagation();
+          const v=b.dataset.wy11Resume;
+          if(v==='review')resumeOldReview();
+          else{
+            setUserMode('old');
+            state.view=v;
+            renderAll();
+          }
+          return;
+        }
+
+        if(b.matches('[data-wy11-old-nav]')){
+          e.preventDefault();
+          e.stopImmediatePropagation();
+          setUserMode('old');
+          state.view=b.dataset.wy11OldNav;
+          renderAll();
+          return;
         }
       },true);
 
-      /* 新用户完成 select-v2 后，不再被 v9 的 home 强制劫持 */
+      /* The prototype may call renderReviewCreate directly after entering from the
+         selector. Re-apply the latest form layout after any such render. */
       document.addEventListener('click',e=>{
         const b=e.target.closest('button');
         if(!b)return;
-        if(b.matches('[data-v2-continue]') && window.__wy10UserMode==='new'){
-          setTimeout(()=>{
-            if(state.view==='home') renderNewUserHome();
-          },0);
+
+        if(b.matches('[data-wy-review-primary],[data-wy-force-generate]')){
+          document.body.classList.remove('wy11-review-form');
+        }
+
+        if(b.matches('[data-wy-find-back-review]')){
+          setTimeout(()=>renderReviewCreate(),0);
+        }
+
+        if(b.matches('[data-wy8-confirm]')){
+          document.body.classList.remove('wy11-review-form');
         }
       },true);
+
+      /* Keep the common shell current after asynchronous search transitions. */
+      setInterval(()=>{
+        if(document.body.classList.contains('prelogin'))return;
+        document.body.classList.add('wy11-modern');
+        applyCommonSidebar();
+      },350);
     })();
   `;
   d.body.appendChild(js);
