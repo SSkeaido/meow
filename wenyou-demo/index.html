@@ -1,165 +1,267 @@
 <!doctype html>
 <html lang="zh-CN">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>文优小助 · 文献需求联动 Demo</title>
-<style>
-:root{--bg:#f7f8fc;--surface:#fff;--line:#e7e8ef;--text:#262938;--muted:#74798b;--purple:#6c4bd8;--purple2:#8a6be9;--purple-weak:#f3efff;--green:#19846f;--green-weak:#eaf7f3;--amber:#aa6a18;--amber-weak:#fff6e6;--red:#c65767;--shadow:0 14px 34px rgba(49,42,82,.12);font-family:"PingFang SC","Microsoft YaHei",system-ui,sans-serif}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);min-width:1100px}.app{min-height:100vh;display:grid;grid-template-rows:64px 1fr}.topbar{display:flex;align-items:center;gap:16px;padding:0 22px;background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}.brand{display:flex;align-items:center;gap:10px;font-weight:800;color:var(--purple);width:220px}.logo{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,var(--purple),var(--purple2));display:grid;place-items:center;color:#fff;font-weight:900}.project-pill{display:flex;align-items:center;gap:7px;padding:8px 12px;border:1px solid var(--line);border-radius:9px;background:#fbfbfe;font-size:12px}.project-pill span{color:var(--muted)}.top-actions{margin-left:auto;display:flex;gap:8px}.chip{border:0;border-radius:8px;background:#f3f4f8;padding:8px 10px;font-size:12px;color:#52586a}.layout{display:grid;grid-template-columns:238px 1fr;min-height:0}.sidebar{background:#fff;border-right:1px solid var(--line);padding:18px 14px;display:flex;flex-direction:column;gap:18px}.nav-group h3{font-size:12px;margin:0 0 8px;color:#8b90a0;font-weight:700}.nav-btn{width:100%;border:0;background:transparent;border-radius:9px;padding:10px 11px;text-align:left;font-size:13px;display:flex;align-items:center;gap:9px;color:#454a5a;cursor:pointer}.nav-btn:hover,.nav-btn.active{background:var(--purple-weak);color:var(--purple);font-weight:700}.nav-dot{width:26px;height:26px;border-radius:7px;background:#f1f2f6;display:grid;place-items:center;font-size:12px}.nav-btn.active .nav-dot{background:#e8e1ff}.sidebar-note{margin-top:auto;padding:12px;border:1px solid var(--line);border-radius:10px;background:#fafafe;font-size:11px;line-height:1.6;color:var(--muted)}.main{padding:24px 28px 40px;overflow:auto}.wrap{max-width:1120px;margin:0 auto}.breadcrumb{font-size:12px;color:var(--muted);margin-bottom:8px}.headline{display:flex;align-items:flex-start;justify-content:space-between;gap:20px;margin-bottom:18px}.headline h1{margin:0;font-size:24px}.headline p{margin:7px 0 0;font-size:13px;color:var(--muted)}.task-tabs{display:flex;gap:8px}.task-tab{border:1px solid var(--line);background:#fff;border-radius:8px;padding:8px 11px;font-size:12px;cursor:pointer}.task-tab.active{border-color:#bcaef4;background:var(--purple-weak);color:var(--purple);font-weight:700}.card{background:#fff;border:1px solid var(--line);border-radius:12px;box-shadow:0 1px 0 rgba(36,38,50,.02)}.form-card{padding:20px}.section{padding:2px 0 18px;border-bottom:1px solid #f0f1f5;margin-bottom:18px}.section:last-child{border-bottom:0;margin-bottom:0;padding-bottom:0}.section-title{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:12px}.section-title h2{font-size:15px;margin:0}.section-title small{color:var(--muted);font-size:11px}.field-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.field{display:grid;gap:7px}.field.full{grid-column:1/-1}.field label{font-size:12px;font-weight:700}.field label em{font-style:normal;color:var(--red);margin-left:2px}.input,select,textarea{width:100%;border:1px solid var(--line);border-radius:8px;background:#fff;color:var(--text);font:inherit;font-size:13px;outline:none}.input,select{height:40px;padding:0 11px}textarea{min-height:82px;padding:10px 11px;resize:vertical}.input:focus,select:focus,textarea:focus{border-color:#a994ef;box-shadow:0 0 0 3px rgba(108,75,216,.08)}.helper{font-size:11px;color:var(--muted);line-height:1.5}.req-head{display:grid;grid-template-columns:1fr auto;gap:14px;align-items:center}.req-summary{display:flex;align-items:center;gap:12px;flex-wrap:wrap}.req-number{display:flex;align-items:center;gap:8px}.req-number input{width:84px}.discipline{display:flex;align-items:center;gap:6px;font-size:11px;background:#f4f5f8;border-radius:7px;padding:7px 9px}.discipline b{color:var(--purple)}.expand-btn{border:1px solid var(--line);background:#fff;border-radius:8px;padding:8px 10px;font-size:12px;cursor:pointer}.requirements{margin-top:13px;border:1px solid #e6e0fb;border-radius:10px;background:#fbfaff;padding:13px;display:none}.requirements.open{display:block}.req-toolbar{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}.req-toolbar .note{font-size:11px;color:var(--muted)}.req-table{display:grid;gap:8px}.req-row{display:grid;grid-template-columns:minmax(150px,1.1fr) 110px 120px 108px;gap:8px;align-items:center;padding:10px;background:#fff;border:1px solid var(--line);border-radius:8px}.req-name b{display:block;font-size:12px}.req-name small{display:block;color:var(--muted);font-size:10px;margin-top:3px}.mini-input{height:32px;border:1px solid var(--line);border-radius:7px;padding:0 8px;width:100%;font-size:12px}.type-toggle{display:flex;background:#f1f2f6;border-radius:7px;padding:2px}.type-toggle button{border:0;background:transparent;border-radius:6px;padding:6px 7px;font-size:10px;color:#717789;cursor:pointer;flex:1}.type-toggle button.active{background:#fff;color:var(--purple);box-shadow:0 1px 3px rgba(40,42,60,.08);font-weight:700}.match{font-size:11px;text-align:right}.match strong{font-size:13px}.match.good{color:var(--green)}.match.warn{color:var(--amber)}.rule-tip{margin-top:10px;font-size:10px;line-height:1.5;color:var(--muted)}.check-card{margin-top:14px;border:1px solid #dcd7f3;border-radius:10px;padding:14px;background:linear-gradient(180deg,#fcfbff,#fafaff)}.check-top{display:flex;align-items:center;justify-content:space-between;gap:12px}.check-title{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:700}.spinner{width:15px;height:15px;border:2px solid #ddd6f7;border-top-color:var(--purple);border-radius:50%;animation:spin .8s linear infinite;display:none}.checking .spinner{display:inline-block}@keyframes spin{to{transform:rotate(360deg)}}.score{font-size:11px;color:var(--muted)}.progress{height:8px;border-radius:999px;background:#eceef4;overflow:hidden;margin:10px 0 11px}.progress i{display:block;height:100%;width:65%;background:linear-gradient(90deg,var(--purple),#9d85ef);transition:.3s}.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.metric{padding:9px;border-radius:8px;background:#fff;border:1px solid var(--line)}.metric b{font-size:18px;color:var(--purple);display:block}.metric span{font-size:10px;color:var(--muted)}.gap-box{margin-top:10px;padding:10px 11px;border-radius:8px;background:var(--amber-weak);color:#77511b;font-size:11px;line-height:1.6}.gap-box.good{background:var(--green-weak);color:#216b5e}.upload{border:1px dashed #c8c2e6;border-radius:10px;padding:15px;background:#fcfbff;display:flex;align-items:center;justify-content:space-between;gap:16px}.upload-copy b{font-size:12px}.upload-copy p{margin:5px 0 0;color:var(--muted);font-size:11px}.upload-actions{display:flex;gap:8px}.btn{border:0;border-radius:8px;padding:9px 12px;font-size:12px;cursor:pointer}.btn.primary{background:var(--purple);color:#fff;font-weight:700}.btn.secondary{background:var(--purple-weak);color:var(--purple)}.btn.ghost{background:#eef0f5;color:#52586a}.btn.outline{background:#fff;border:1px solid var(--line)}.upload-state{margin-top:10px;font-size:11px;color:var(--muted);display:none}.upload-state.show{display:block}.footer-bar{margin-top:16px;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:14px 16px;background:#fff;border:1px solid var(--line);border-radius:12px;position:sticky;bottom:14px;box-shadow:var(--shadow)}.footer-left{font-size:11px;color:var(--muted);line-height:1.5}.footer-actions{display:flex;gap:8px}.branch{display:none}.branch.active{display:block}.branch-card{padding:28px}.branch-card h2{margin:0 0 8px}.branch-card p{color:var(--muted);font-size:13px;line-height:1.7}.branch-map{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:18px 0}.node{padding:10px 12px;border:1px solid var(--line);background:#fff;border-radius:8px;font-size:12px}.node.active{border-color:#b9a9f1;background:var(--purple-weak);color:var(--purple);font-weight:700}.arrow{color:#aaa}.toast{position:fixed;right:22px;bottom:22px;background:#2e3140;color:#fff;padding:11px 14px;border-radius:9px;font-size:12px;box-shadow:var(--shadow);opacity:0;transform:translateY(8px);pointer-events:none;transition:.2s}.toast.show{opacity:1;transform:none}@media(max-width:1180px){.metrics{grid-template-columns:repeat(2,1fr)}.req-row{grid-template-columns:1fr 100px 116px}.match{grid-column:1/-1;text-align:left}.field-grid{grid-template-columns:1fr}}
-</style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>文优小助 Demo · 文献综述文献需求联动</title>
+  <style>
+    html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#f7f8fc}
+    iframe{border:0;width:100%;height:100%;display:block}
+  </style>
 </head>
 <body>
-<div class="app">
-  <header class="topbar">
-    <div class="brand"><div class="logo">文</div>文优小助</div>
-    <div class="project-pill"><span>当前选题</span><strong>低空经济发展的影响因素研究</strong> ▾</div>
-    <div class="top-actions"><button class="chip">帮助</button><button class="chip">旗舰版</button></div>
-  </header>
-  <div class="layout">
-    <aside class="sidebar">
-      <div class="nav-group"><h3>开始任务</h3>
-        <button class="nav-btn active" data-task="review"><span class="nav-dot">综</span>文献综述</button>
-        <button class="nav-btn" data-task="proposal"><span class="nav-dot">开</span>开题报告</button>
-        <button class="nav-btn" data-task="paper"><span class="nav-dot">稿</span>论文初稿</button>
-      </div>
-      <div class="nav-group"><h3>研究准备</h3><button class="nav-btn" id="navFind"><span class="nav-dot">搜</span>找文献</button></div>
-      <div class="nav-group"><h3>研究资产</h3><button class="nav-btn"><span class="nav-dot">库</span>文献库</button><button class="nav-btn"><span class="nav-dot">果</span>学术成果</button></div>
-      <div class="sidebar-note">本轮 Demo 聚焦：<br><b>任务文献需求 → 文献库匹配 → 上传补充 → 分流到找文献 / 生成 Paper</b></div>
-    </aside>
-    <main class="main">
-      <div class="wrap" id="formView">
-        <div class="breadcrumb">开始任务 / <span id="crumbTask">文献综述</span></div>
-        <div class="headline">
-          <div><h1 id="pageTitle">创建文献综述</h1><p>先描述任务。文优会根据任务类型与学科，自动推荐文献需求，并实时检查你的文献库。</p></div>
-          <div class="task-tabs"><button class="task-tab active" data-task="review">文献综述</button><button class="task-tab" data-task="proposal">开题报告</button><button class="task-tab" data-task="paper">论文初稿</button></div>
-        </div>
-        <div class="card form-card">
-          <section class="section">
-            <div class="section-title"><h2>任务信息</h2><small>与当前产品保持一致</small></div>
-            <div class="field-grid">
-              <div class="field full"><label>选题 / 标题 <em>*</em></label><input class="input" id="topic" value="低空经济发展的影响因素研究" /></div>
-              <div class="field"><label>研究方向 <em>*</em></label><input class="input" value="应用经济学 / 产业经济" /></div>
-              <div class="field"><label>字数要求</label><select id="wordCount"><option>3000 字</option><option selected>5000 字</option><option>8000 字</option><option>10000 字</option></select></div>
-              <div class="field full"><label>研究问题</label><textarea>低空经济发展受到哪些政策、产业、技术与制度因素影响？现有研究形成了哪些主要观点与不足？</textarea></div>
-            </div>
-          </section>
-
-          <section class="section">
-            <div class="section-title"><h2>文献需求 <span style="font-weight:400;color:#999;font-size:11px">（选填）</span></h2><small>系统根据任务类型推荐，可修改</small></div>
-            <div class="req-head">
-              <div class="req-summary">
-                <div class="req-number"><span style="font-size:12px">建议总量</span><input id="totalReq" class="input" type="number" min="0" max="80" value="20"><span style="font-size:12px">篇</span></div>
-                <div class="discipline">系统识别：<b id="disciplineLabel">经济 / 管理 / 社会科学</b></div>
-                <select id="discipline" style="width:170px;height:34px"><option value="econ">经济 / 管理 / 社会科学</option><option value="cs">计算机 / AI / 信息科学</option><option value="stem">理工 / 材料 / 环境</option><option value="med">医学 / 生命科学</option><option value="human">人文 / 法学 / 文史哲</option></select>
-              </div>
-              <button class="expand-btn" id="expandReq">展开详细要求 ▾</button>
-            </div>
-            <div class="requirements" id="requirements">
-              <div class="req-toolbar"><div class="note">按当前学科提供评价体系。同一篇论文可以同时满足多个非互斥条件。</div><button class="btn outline" id="resetReq">恢复系统建议</button></div>
-              <div class="req-table" id="reqTable"></div>
-              <div class="rule-tip">规则：每项独立判断；“必须满足”会影响任务是否达标，“优先满足”只用于建议补充。分区、收录体系、年份等条件不做简单数量相加。</div>
-            </div>
-
-            <div class="check-card" id="checkCard">
-              <div class="check-top"><div class="check-title"><span class="spinner"></span><span id="checkTitle">已连接你的文献库</span></div><div class="score" id="scoreText">13 / 20 篇可用</div></div>
-              <div class="progress"><i id="progressBar"></i></div>
-              <div class="metrics">
-                <div class="metric"><b id="libraryCount">63</b><span>个人文献库</span></div>
-                <div class="metric"><b id="topicCount">18</b><span>与选题相关</span></div>
-                <div class="metric"><b id="fullCount">13</b><span>全文解析完成</span></div>
-                <div class="metric"><b id="usableCount">13</b><span>本次可用</span></div>
-              </div>
-              <div class="gap-box" id="gapBox">当前还建议补充 <b>7 篇</b>。其中 SSCI 至少还缺 2 篇，JCR Q1–Q2 还缺 1 篇。</div>
-            </div>
-          </section>
-
-          <section class="section">
-            <div class="section-title"><h2>已有文献</h2><small>上传后与文献库查重，并重新计算需求满足度</small></div>
-            <div class="upload">
-              <div class="upload-copy"><b>上传本地文献</b><p>支持 PDF / RIS / BibTeX。只有“已入库 + 有全文 + 解析完成”的文献才计入本次可用数量。</p></div>
-              <div class="upload-actions"><button class="btn secondary" id="uploadBtn">模拟上传 4 篇 PDF</button><button class="btn outline" id="uploadMoreBtn">再上传 3 篇</button></div>
-            </div>
-            <div class="upload-state" id="uploadState"></div>
-          </section>
-        </div>
-
-        <div class="footer-bar">
-          <div class="footer-left" id="footerHint">当前材料未完全满足系统建议。你可以优先补充文献，也可以使用现有材料继续生成。</div>
-          <div class="footer-actions"><button class="btn ghost" id="forceGenerate">仍使用现有 13 篇生成</button><button class="btn primary" id="primaryCta">找文献</button></div>
-        </div>
-      </div>
-
-      <div class="wrap branch" id="branchView">
-        <div class="breadcrumb">当前任务 / 分支预留</div>
-        <div class="card branch-card">
-          <h2 id="branchTitle">下一分支</h2>
-          <p id="branchDesc"></p>
-          <div class="branch-map"><div class="node">填写任务</div><span class="arrow">→</span><div class="node">文献需求联动</div><span class="arrow">→</span><div class="node active" id="branchNode">找文献</div></div>
-          <button class="btn secondary" id="backBtn">返回文献需求节点</button>
-        </div>
-      </div>
-    </main>
-  </div>
-</div>
-<div class="toast" id="toast"></div>
+<iframe id="wenyouFrame" src="../wenyouxiaozhu-prototype.html" title="文优小助产品重构 Demo"></iframe>
 <script>
-const disciplineConfigs={
-  econ:[
-    {id:'ssci',name:'SSCI',desc:'社会科学引文索引',need:5,have:3,kind:'must'},
-    {id:'cssci',name:'CSSCI',desc:'中文社会科学引文索引',need:5,have:6,kind:'must'},
-    {id:'jcr12',name:'JCR Q1–Q2',desc:'JCR 高分区期刊',need:3,have:2,kind:'prefer'},
-    {id:'recent',name:'近 5 年',desc:'保证研究时效性',need:12,have:9,kind:'prefer'}],
-  cs:[
-    {id:'ccfab',name:'CCF A/B',desc:'计算机领域高质量会议 / 期刊',need:4,have:2,kind:'must'},
-    {id:'scie',name:'SCIE',desc:'Science Citation Index Expanded',need:8,have:5,kind:'must'},
-    {id:'jcr12',name:'JCR Q1–Q2',desc:'JCR 高分区期刊',need:4,have:2,kind:'prefer'},
-    {id:'recent',name:'近 5 年',desc:'快速变化领域优先新研究',need:14,have:10,kind:'prefer'}],
-  stem:[
-    {id:'scie',name:'SCIE',desc:'自然科学与工程主流收录',need:10,have:7,kind:'must'},
-    {id:'cas12',name:'中科院 1–2 区',desc:'按中科院期刊分区',need:5,have:3,kind:'prefer'},
-    {id:'ei',name:'EI Compendex',desc:'工程技术重要文献来源',need:5,have:4,kind:'prefer'},
-    {id:'recent',name:'近 5 年',desc:'保证研究时效性',need:12,have:9,kind:'prefer'}],
-  med:[
-    {id:'scie',name:'SCIE',desc:'医学 / 生命科学主流收录',need:10,have:7,kind:'must'},
-    {id:'jcr12',name:'JCR Q1–Q2',desc:'优先较高质量期刊',need:6,have:3,kind:'prefer'},
-    {id:'rct',name:'RCT / 系统综述',desc:'高证据等级研究类型',need:5,have:2,kind:'prefer'},
-    {id:'recent',name:'近 5 年',desc:'优先近期临床证据',need:12,have:8,kind:'prefer'}],
-  human:[
-    {id:'ahci',name:'A&HCI',desc:'艺术与人文引文索引',need:3,have:1,kind:'prefer'},
-    {id:'cssci',name:'CSSCI',desc:'中文社会科学引文索引',need:8,have:5,kind:'must'},
-    {id:'pkucore',name:'北大核心',desc:'中文核心期刊来源',need:8,have:6,kind:'prefer'},
-    {id:'recent',name:'近 8 年',desc:'兼顾经典与近期研究',need:10,have:8,kind:'prefer'}]
-};
-const taskDefaults={review:{name:'文献综述',total:20,title:'创建文献综述'},proposal:{name:'开题报告',total:15,title:'创建开题报告'},paper:{name:'论文初稿',total:25,title:'创建论文初稿'}};
-let state={task:'review',discipline:'econ',total:20,usable:13,topic:18,library:63,uploaded:0,rows:JSON.parse(JSON.stringify(disciplineConfigs.econ)),checking:false};
-const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
-function toast(msg){const t=$('#toast');t.textContent=msg;t.classList.add('show');clearTimeout(window._tt);window._tt=setTimeout(()=>t.classList.remove('show'),1800)}
-function renderRows(){const table=$('#reqTable');table.innerHTML='';state.rows.forEach((r,i)=>{const div=document.createElement('div');div.className='req-row';div.innerHTML=`<div class="req-name"><b>${r.name}</b><small>${r.desc}</small></div><div><input class="mini-input" type="number" min="0" max="${state.total}" value="${r.need}" data-i="${i}" data-role="need"></div><div class="type-toggle"><button type="button" class="${r.kind==='must'?'active':''}" data-i="${i}" data-kind="must">必须满足</button><button type="button" class="${r.kind==='prefer'?'active':''}" data-i="${i}" data-kind="prefer">优先满足</button></div><div class="match ${r.have>=r.need?'good':'warn'}"><strong>${r.have}</strong> / ≥${r.need}</div>`;table.appendChild(div)});
-  table.querySelectorAll('[data-role="need"]').forEach(inp=>inp.addEventListener('change',e=>{const i=+e.target.dataset.i;state.rows[i].need=Math.max(0,Math.min(state.total,+e.target.value||0));renderRows();queueCheck()}));
-  table.querySelectorAll('[data-kind]').forEach(btn=>btn.addEventListener('click',e=>{const i=+e.target.dataset.i;state.rows[i].kind=e.target.dataset.kind;renderRows();queueCheck()}));
-}
-function hardMissing(){return state.rows.filter(r=>r.kind==='must'&&r.have<r.need)}
-function isSatisfied(){return state.usable>=state.total && hardMissing().length===0}
-function gapText(){const totalGap=Math.max(0,state.total-state.usable), hard=hardMissing();if(isSatisfied())return `已满足本次任务的文献要求，可直接进入生成。`;
-  let parts=[];if(totalGap>0)parts.push(`总量还缺 ${totalGap} 篇`);hard.forEach(r=>parts.push(`${r.name} 至少还缺 ${r.need-r.have} 篇`));return `当前仍建议补充：${parts.join('；')}。`}
-function renderCheck(){const sat=isSatisfied();$('#libraryCount').textContent=state.library;$('#topicCount').textContent=state.topic;$('#fullCount').textContent=state.usable;$('#usableCount').textContent=state.usable;$('#scoreText').textContent=`${state.usable} / ${state.total} 篇可用`;$('#progressBar').style.width=Math.min(100,state.total?state.usable/state.total*100:100)+'%';$('#gapBox').className='gap-box'+(sat?' good':'');$('#gapBox').innerHTML=sat?'✓ '+gapText():'⚠ '+gapText();
-  const primary=$('#primaryCta'), secondary=$('#forceGenerate');if(sat){primary.textContent='开始生成';secondary.style.display='none';$('#footerHint').textContent='文献需求已满足。下一步进入生成 Paper 分支。'}else{primary.textContent='找文献';secondary.style.display='inline-block';secondary.textContent=`仍使用现有 ${state.usable} 篇生成`;$('#footerHint').textContent='当前材料未完全满足系统建议。你可以优先补充文献，也可以使用现有材料继续生成。'}
-}
-function queueCheck(){const card=$('#checkCard');card.classList.add('checking');$('#checkTitle').textContent='正在匹配你的文献库…';clearTimeout(window._checkTimer);window._checkTimer=setTimeout(()=>{card.classList.remove('checking');$('#checkTitle').textContent='已连接你的文献库';renderCheck()},550)}
-function setDiscipline(v){state.discipline=v;state.rows=JSON.parse(JSON.stringify(disciplineConfigs[v]));const label=$('#discipline').selectedOptions[0].textContent;$('#disciplineLabel').textContent=label;renderRows();queueCheck()}
-function setTask(t){state.task=t;const d=taskDefaults[t];state.total=d.total;$('#totalReq').value=d.total;$('#pageTitle').textContent=d.title;$('#crumbTask').textContent=d.name;$$('[data-task]').forEach(b=>b.classList.toggle('active',b.dataset.task===t));renderRows();queueCheck()}
-function branch(type){$('#formView').style.display='none';$('#branchView').classList.add('active');if(type==='find'){$('#branchTitle').textContent='下一分支：找文献';$('#branchDesc').textContent=`当前任务会携带“${$('#topic').value}”与文献缺口进入找文献：${gapText()}。下一轮我们继续设计推荐列表、Agent 交互、OA / 非 OA 全文入库与返回任务。`;$('#branchNode').textContent='找文献'}else{$('#branchTitle').textContent='下一分支：生成 Paper';$('#branchDesc').textContent=`当前任务将携带本次已满足 / 用户确认使用的材料进入生成分支。下一轮我们继续设计“本次任务材料 → 大纲 → 生成过程 → 正文”的完整链路。`;$('#branchNode').textContent='生成 Paper'}}
-$('#expandReq').addEventListener('click',()=>{const box=$('#requirements');box.classList.toggle('open');$('#expandReq').textContent=box.classList.contains('open')?'收起详细要求 ▴':'展开详细要求 ▾'});
-$('#discipline').addEventListener('change',e=>setDiscipline(e.target.value));
-$('#totalReq').addEventListener('change',e=>{state.total=Math.max(0,Math.min(80,+e.target.value||0));e.target.value=state.total;state.rows.forEach(r=>r.need=Math.min(r.need,state.total));renderRows();queueCheck()});
-$('#totalReq').addEventListener('blur',queueCheck);$('#topic').addEventListener('blur',queueCheck);$('#wordCount').addEventListener('change',queueCheck);
-$$('[data-task]').forEach(b=>b.addEventListener('click',()=>setTask(b.dataset.task)));
-$('#resetReq').addEventListener('click',()=>setDiscipline(state.discipline));
-function upload(n){const box=$('#uploadState');box.classList.add('show');box.textContent=`正在查重并解析 ${n} 篇文献…`;setTimeout(()=>{const add=Math.min(n,Math.max(0,80-state.library));state.library+=add;state.topic+=add;state.usable+=add;state.uploaded+=add;state.rows.forEach(r=>{if(r.id==='ssci'||r.id==='ccfab'||r.id==='scie'||r.id==='cssci')r.have+=Math.max(1,Math.floor(add/2));else if(r.id==='jcr12'||r.id==='cas12'||r.id==='rct')r.have+=Math.max(1,Math.floor(add/3));else if(r.id==='recent')r.have+=add;});box.textContent=`✓ 已新增并解析 ${add} 篇，已与文献库完成查重。系统正在重新计算需求满足度。`;renderRows();queueCheck()},700)}
-$('#uploadBtn').addEventListener('click',()=>upload(4));$('#uploadMoreBtn').addEventListener('click',()=>upload(3));
-$('#primaryCta').addEventListener('click',()=>branch(isSatisfied()?'generate':'find'));$('#forceGenerate').addEventListener('click',()=>branch('generate'));$('#navFind').addEventListener('click',()=>branch('find'));$('#backBtn').addEventListener('click',()=>{$('#branchView').classList.remove('active');$('#formView').style.display='block'});
-renderRows();renderCheck();
+const frame=document.getElementById('wenyouFrame');
+
+frame.addEventListener('load',()=>{
+  const d=frame.contentDocument;
+  if(!d || d.getElementById('wy-review-req-patch')) return;
+
+  const style=d.createElement('style');
+  style.id='wy-review-req-patch';
+  style.textContent=`
+    .wy-req-shell{display:grid;gap:11px}
+    .wy-req-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+    .wy-req-total{display:flex;align-items:center;gap:7px;font-size:11px}
+    .wy-req-total input{width:78px;height:34px;border:1px solid var(--line);border-radius:7px;padding:0 8px;font-size:12px}
+    .wy-system-rec{display:inline-flex;align-items:center;gap:5px;padding:6px 8px;border-radius:7px;background:var(--purple-weak);color:var(--purple);font-size:10px}
+    .wy-discipline{display:flex;align-items:center;gap:7px;font-size:11px}
+    .wy-discipline select{height:34px;border:1px solid var(--line);border-radius:7px;background:#fff;padding:0 9px;font-size:11px;min-width:180px}
+    .wy-expand{height:32px;padding:0 10px;border:1px solid var(--line);border-radius:7px;background:#fff;color:#525b70;font-size:10px}
+    .wy-req-detail{display:none;padding:11px;border:1px solid #ded8f8;border-radius:8px;background:#fbfaff}
+    .wy-req-detail.open{display:grid;gap:8px}
+    .wy-req-tip{color:var(--muted);font-size:10px;line-height:1.55}
+    .wy-req-row{display:grid;grid-template-columns:minmax(150px,1fr) 92px 118px 88px;gap:8px;align-items:center;padding:9px;border:1px solid var(--line);border-radius:7px;background:#fff}
+    .wy-req-name strong{display:block;font-size:11px}.wy-req-name small{display:block;margin-top:2px;color:var(--muted);font-size:9px}
+    .wy-req-row input{width:100%;height:30px;border:1px solid var(--line);border-radius:6px;padding:0 7px;font-size:11px}
+    .wy-kind{display:flex;padding:2px;border-radius:6px;background:#f0f2f6}
+    .wy-kind button{flex:1;border:0;background:transparent;border-radius:5px;padding:5px 4px;color:#788093;font-size:9px}
+    .wy-kind button.active{background:#fff;color:var(--purple);font-weight:700;box-shadow:0 1px 2px rgba(40,42,60,.08)}
+    .wy-match{text-align:right;font-size:10px;color:var(--muted)}.wy-match.good{color:var(--teal)}.wy-match.warn{color:var(--amber)}
+    .wy-library-check{border:1px solid #dcd6f5;border-radius:9px;background:#fcfbff;padding:12px}
+    .wy-check-head{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:11px}
+    .wy-spinner{width:13px;height:13px;border:2px solid #ddd7f4;border-top-color:var(--purple);border-radius:50%;display:none;animation:wyspin .7s linear infinite}
+    .wy-library-check.checking .wy-spinner{display:inline-block}@keyframes wyspin{to{transform:rotate(360deg)}}
+    .wy-check-title{display:flex;align-items:center;gap:7px;font-weight:700}
+    .wy-progress{height:6px;border-radius:999px;background:#eceef4;overflow:hidden;margin:9px 0}
+    .wy-progress i{display:block;height:100%;background:var(--purple);border-radius:999px;transition:.25s}
+    .wy-metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}
+    .wy-metric{padding:8px;border:1px solid var(--line);border-radius:7px;background:#fff}
+    .wy-metric b{display:block;color:var(--purple);font-size:16px}.wy-metric span{font-size:9px;color:var(--muted)}
+    .wy-gap{margin-top:9px;padding:9px 10px;border-radius:7px;background:var(--amber-weak);color:#77511b;font-size:10px;line-height:1.55}
+    .wy-gap.good{background:var(--teal-weak);color:#246a63}
+    .wy-upload{display:grid;gap:8px;padding:11px;border:1px dashed #b9afea;border-radius:7px;background:#fbfaff}
+    .wy-upload-head{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+    .wy-upload strong{font-size:11px;color:var(--purple)}.wy-upload small{font-size:9px;color:var(--muted);line-height:1.5}
+    .wy-upload-actions{display:flex;gap:7px;flex-wrap:wrap}
+    .wy-upload input[type=file]{display:none}
+    .wy-upload-status{font-size:10px;color:var(--muted)}
+    .wy-create-footer{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:15px;padding-top:14px;border-top:1px solid var(--line)}
+    .wy-create-footer .hint{max-width:58%;font-size:10px;color:var(--muted);line-height:1.55}
+    .wy-create-footer .actions{display:flex;gap:7px}
+    .wy-demo-btn{height:30px;padding:0 9px;border:1px dashed #bcb3e7;border-radius:7px;background:#fff;color:#6d5ab0;font-size:9px}
+    @media(max-width:900px){.wy-req-row{grid-template-columns:1fr 85px 110px}.wy-match{grid-column:1/-1;text-align:left}.wy-metrics{grid-template-columns:repeat(2,1fr)}.wy-create-footer{align-items:flex-start;flex-direction:column}.wy-create-footer .hint{max-width:none}}
+  `;
+  d.head.appendChild(style);
+
+  const patch=d.createElement('script');
+  patch.textContent=String.raw`
+    (function(){
+      const WY_DISCIPLINES={
+        econ:{
+          label:'经济 / 管理 / 社会科学',
+          reqs:[
+            {id:'ssci',name:'SSCI',desc:'社会科学引文索引',need:5,base:1,kind:'must'},
+            {id:'cssci',name:'CSSCI',desc:'中文社会科学引文索引',need:5,base:2,kind:'must'},
+            {id:'jcr12',name:'JCR Q1–Q2',desc:'JCR 高分区期刊',need:3,base:1,kind:'prefer'},
+            {id:'recent',name:'近 5 年',desc:'保证研究时效性',need:12,base:3,kind:'prefer'}
+          ]
+        },
+        cs:{
+          label:'计算机 / AI / 信息科学',
+          reqs:[
+            {id:'ccf',name:'CCF A/B',desc:'计算机高质量会议 / 期刊',need:4,base:1,kind:'must'},
+            {id:'scie',name:'SCIE',desc:'Science Citation Index Expanded',need:8,base:2,kind:'must'},
+            {id:'jcr12',name:'JCR Q1–Q2',desc:'JCR 高分区期刊',need:4,base:1,kind:'prefer'},
+            {id:'recent',name:'近 5 年',desc:'快速变化领域优先近期研究',need:14,base:3,kind:'prefer'}
+          ]
+        },
+        stem:{
+          label:'理工 / 材料 / 环境',
+          reqs:[
+            {id:'scie',name:'SCIE',desc:'自然科学与工程主流收录',need:10,base:2,kind:'must'},
+            {id:'cas12',name:'中科院 1–2 区',desc:'按中科院期刊分区',need:5,base:1,kind:'prefer'},
+            {id:'ei',name:'EI Compendex',desc:'工程技术重要文献来源',need:5,base:1,kind:'prefer'},
+            {id:'recent',name:'近 5 年',desc:'保证研究时效性',need:12,base:3,kind:'prefer'}
+          ]
+        },
+        med:{
+          label:'医学 / 生命科学',
+          reqs:[
+            {id:'scie',name:'SCIE',desc:'医学 / 生命科学主流收录',need:10,base:2,kind:'must'},
+            {id:'jcr12',name:'JCR Q1–Q2',desc:'优先较高质量期刊',need:6,base:1,kind:'prefer'},
+            {id:'rct',name:'RCT / 系统综述',desc:'高证据等级研究类型',need:5,base:1,kind:'prefer'},
+            {id:'recent',name:'近 5 年',desc:'优先近期临床证据',need:12,base:3,kind:'prefer'}
+          ]
+        },
+        human:{
+          label:'人文 / 法学 / 文史哲',
+          reqs:[
+            {id:'ahci',name:'A&HCI',desc:'艺术与人文引文索引',need:3,base:0,kind:'prefer'},
+            {id:'cssci',name:'CSSCI',desc:'中文社会科学引文索引',need:8,base:2,kind:'must'},
+            {id:'pkucore',name:'北大核心',desc:'中文核心期刊来源',need:8,base:2,kind:'prefer'},
+            {id:'recent',name:'近 8 年',desc:'兼顾经典与近期研究',need:10,base:3,kind:'prefer'}
+          ]
+        }
+      };
+
+      function wyInitState(){
+        state.wyReview=state.wyReview||{
+          total:20,
+          discipline:'econ',
+          uploaded:0,
+          duplicate:0,
+          expanded:false,
+          reqs:JSON.parse(JSON.stringify(WY_DISCIPLINES.econ.reqs))
+        };
+        return state.wyReview;
+      }
+      function wyHave(req){
+        const s=wyInitState(),u=s.uploaded;
+        if(req.id==='recent') return Math.min(s.total,req.base+Math.round(u*.8));
+        if(req.id==='ssci'||req.id==='scie'||req.id==='cssci') return Math.min(s.total,req.base+Math.floor(u/2));
+        if(req.id==='ccf'||req.id==='pkucore') return Math.min(s.total,req.base+Math.floor(u/3));
+        if(req.id==='jcr12'||req.id==='cas12'||req.id==='rct'||req.id==='ei'||req.id==='ahci') return Math.min(s.total,req.base+Math.floor(u/4));
+        return req.base;
+      }
+      function wyUsable(){return 3+wyInitState().uploaded}
+      function wyHardMissing(){
+        const s=wyInitState();
+        return s.reqs.filter(r=>r.kind==='must'&&wyHave(r)<r.need);
+      }
+      function wySatisfied(){
+        const s=wyInitState();
+        return wyUsable()>=s.total&&wyHardMissing().length===0;
+      }
+      function wyGapText(){
+        const s=wyInitState(),parts=[];
+        const g=Math.max(0,s.total-wyUsable());
+        if(g) parts.push('总量还缺 '+g+' 篇');
+        wyHardMissing().forEach(r=>parts.push(r.name+' 至少还缺 '+(r.need-wyHave(r))+' 篇'));
+        return parts.length?parts.join('；'):'已满足本次任务的必须要求';
+      }
+      function wyReqRows(){
+        const s=wyInitState();
+        return s.reqs.map((r,i)=>'<div class="wy-req-row"><div class="wy-req-name"><strong>'+r.name+'</strong><small>'+r.desc+'</small></div><input data-wy-need="'+i+'" type="number" min="0" max="'+s.total+'" value="'+r.need+'"><div class="wy-kind"><button type="button" class="'+(r.kind==='must'?'active':'')+'" data-wy-kind="'+i+'" data-kind="must">必须满足</button><button type="button" class="'+(r.kind==='prefer'?'active':'')+'" data-wy-kind="'+i+'" data-kind="prefer">优先满足</button></div><div class="wy-match '+(wyHave(r)>=r.need?'good':'warn')+'"><b>'+wyHave(r)+'</b> / ≥'+r.need+'</div></div>').join('');
+      }
+      function wyRequirementHTML(){
+        const s=wyInitState(),ok=wySatisfied(),usable=wyUsable();
+        return '<div class="wy-req-shell">'+
+          '<div class="wy-req-head"><div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap"><div class="wy-req-total"><span>文献需求</span><input id="wyTotal" type="number" min="0" max="80" value="'+s.total+'"><span>篇</span></div><span class="wy-system-rec">系统建议 · 文献综述 '+s.total+' 篇</span><div class="wy-discipline"><span>学科</span><select id="wyDiscipline">'+Object.entries(WY_DISCIPLINES).map(([k,v])=>'<option value="'+k+'" '+(k===s.discipline?'selected':'')+'>'+v.label+'</option>').join('')+'</select></div></div><button class="wy-expand" id="wyExpand">'+(s.expanded?'收起详细要求 ▴':'展开详细要求 ▾')+'</button></div>'+
+          '<div class="wy-req-detail '+(s.expanded?'open':'')+'" id="wyReqDetail"><div class="wy-req-tip">按学科提供质量评价项。同一篇论文可同时满足“收录体系 / 分区 / 年份”等多个非互斥条件；“必须满足”影响是否达标，“优先满足”只形成补充建议。</div>'+wyReqRows()+'</div>'+
+          '<div class="wy-library-check" id="wyLibraryCheck"><div class="wy-check-head"><div class="wy-check-title"><i class="wy-spinner"></i><span id="wyCheckTitle">已连接你的文献库</span></div><span>'+usable+' / '+s.total+' 篇可用</span></div><div class="wy-progress"><i style="width:'+Math.min(100,s.total?usable/s.total*100:100)+'%"></i></div><div class="wy-metrics"><div class="wy-metric"><b>63</b><span>个人文献库</span></div><div class="wy-metric"><b>6</b><span>与当前选题相关</span></div><div class="wy-metric"><b>3</b><span>库内全文解析完成</span></div><div class="wy-metric"><b>'+usable+'</b><span>本次可用</span></div></div><div class="wy-gap '+(ok?'good':'')+'">'+(ok?'✓ 已满足本次任务文献要求，可进入生成。':'⚠ 当前建议补充：'+wyGapText()+'。')+'</div></div>'+
+        '</div>';
+      }
+      function wyBind(){
+        const s=wyInitState();
+        const total=document.querySelector('#wyTotal');
+        if(total){
+          total.addEventListener('change',()=>{s.total=Math.max(0,Math.min(80,Number(total.value)||0));s.reqs.forEach(r=>r.need=Math.min(r.need,s.total));wyRecheck(true)});
+          total.addEventListener('blur',()=>wyRecheck(true));
+        }
+        const dis=document.querySelector('#wyDiscipline');
+        if(dis)dis.addEventListener('change',()=>{s.discipline=dis.value;s.reqs=JSON.parse(JSON.stringify(WY_DISCIPLINES[dis.value].reqs));wyRecheck(true)});
+        const exp=document.querySelector('#wyExpand');
+        if(exp)exp.addEventListener('click',()=>{s.expanded=!s.expanded;renderReviewCreate()});
+        document.querySelectorAll('[data-wy-need]').forEach(inp=>inp.addEventListener('change',()=>{const r=s.reqs[Number(inp.dataset.wyNeed)];r.need=Math.max(0,Math.min(s.total,Number(inp.value)||0));wyRecheck(true)}));
+        document.querySelectorAll('[data-wy-kind]').forEach(btn=>btn.addEventListener('click',()=>{s.reqs[Number(btn.dataset.wyKind)].kind=btn.dataset.kind;renderReviewCreate()}));
+        const file=document.querySelector('#wyUpload');
+        if(file)file.addEventListener('change',()=>{
+          const count=file.files?file.files.length:0;
+          const dup=count>=5?1:0;
+          s.duplicate=dup;
+          s.uploaded=Math.max(0,count-dup);
+          renderReviewCreate();
+          toast('已查重：'+s.uploaded+' 篇新增全文进入文献库'+(dup?'，'+dup+' 篇重复已忽略':''));
+        });
+      }
+      function wyRecheck(showLoading){
+        const card=document.querySelector('#wyLibraryCheck');
+        if(showLoading&&card){
+          card.classList.add('checking');
+          const t=document.querySelector('#wyCheckTitle');if(t)t.textContent='正在按选题和质量要求匹配文献库…';
+          setTimeout(()=>renderReviewCreate(),520);
+        }else renderReviewCreate();
+      }
+
+      enhanceReviewCreate=function(){};
+
+      renderReviewCreate=function(){
+        const s=wyInitState(),usable=wyUsable(),ok=wySatisfied();
+        document.querySelector('#workBody').innerHTML=
+          pageTitle('创建文献综述','保留当前任务填写方式，在文献需求处实时联动个人文献库。','<button class="ghost" data-wy-review-back>返回开始任务</button>')+
+          '<div class="create-review-layout"><section class="create-card"><h2>任务信息</h2><p>先补充本次综述的写作要求。文献需求为选填，系统会按任务类型给出默认建议。</p><div class="create-form">'+
+          '<div class="create-form-row"><label>当前选题</label><div class="topic-chip"><strong>市场需求对中国省级旅游产业技术演化的影响</strong><span>已关联</span></div></div>'+
+          '<div class="create-form-row"><label>* 标题</label><input id="reviewTopic" value="市场需求对中国省级旅游产业技术演化的影响"></div>'+
+          '<div class="create-form-row"><label>研究方向</label><input id="wyDirection" value="旅游产业技术演化与区域市场需求" placeholder="请输入研究方向"></div>'+
+          '<div class="create-form-row"><label>研究问题</label><textarea id="wyQuestion" placeholder="例如：市场需求如何影响省级旅游产业技术演化？">市场需求如何影响省级旅游产业技术演化？现有研究有哪些共同结论与不足？</textarea></div>'+
+          '<div class="create-form-row"><label>* 字数</label><div class="word-row"><input id="wyWords" value="5000"><span class="muted">字</span></div></div>'+
+          '<div class="create-form-row"><label>文献需求</label><div>'+wyRequirementHTML()+'</div></div>'+
+          '<div class="create-form-row"><label>上传相关文献</label><div class="wy-upload"><div class="wy-upload-head"><div><strong>上传全文后自动查重并进入文献库</strong><br><small>只有“已入库 + 有全文 + 解析完成”的文献才计入本次可用数量。</small></div><div class="wy-upload-actions"><label class="small-btn primary" for="wyUpload">选择本地文件</label><input id="wyUpload" type="file" accept=".pdf,.ris,.bib" multiple><button class="wy-demo-btn" type="button" data-wy-sim-upload>原型：模拟加入 8 篇</button></div></div><div class="wy-upload-status">'+(s.uploaded?'本次新增 '+s.uploaded+' 篇全文'+(s.duplicate?' · 已忽略 '+s.duplicate+' 篇重复文献':''):'尚未上传本次任务文献')+'</div></div></div>'+
+          '<div class="create-form-row"><label>可选成果</label><div class="asset-check"><label class="asset-check-row"><input type="checkbox"> 使用已有学术成果 <small>当前暂无可关联成果</small></label><button class="small-btn" data-view="artifacts">查看学术成果</button></div></div>'+
+          '</div><div class="wy-create-footer"><div class="hint">'+(ok?'文献数量与必须质量条件均已满足，可以开始生成。':'当前材料未完全满足要求。主操作优先补文献，但仍允许使用现有材料继续。')+'</div><div class="actions">'+(ok?'':'<button class="ghost" data-wy-force-generate>仍使用现有 '+usable+' 篇生成</button>')+'<button class="primary" data-wy-review-primary>'+(ok?'开始生成':'找文献')+'</button></div></div></section>'+
+          '<aside class="create-side"><section class="create-card"><h2>文献需求如何联动？</h2><p>系统不会把“文献需求”当作普通 Prompt，而是直接检查个人研究资产。</p><div class="prepare-list"><div class="prepare-step"><i>1</i><div><strong>按选题匹配文献库</strong><small>先从全局个人文献库找到当前任务相关论文</small></div></div><div class="prepare-step"><i>2</i><div><strong>只计算可用全文</strong><small>仅全文存在且解析完成的文献进入可用数量</small></div></div><div class="prepare-step"><i>3</i><div><strong>按学科检查质量要求</strong><small>经济社科、计算机、理工、医学、人文使用不同评价体系</small></div></div><div class="prepare-step"><i>4</i><div><strong>实时计算缺口</strong><small>上传文献后立即查重、入库并重新计算</small></div></div></div></section><div class="create-note">材料不足时进入「找文献」；满足要求或用户选择继续时进入「生成 Paper」。两个后续分支暂时沿用现有 Demo，下一轮再分别重构。</div></aside></div>';
+        document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('active',b.dataset.view==='review'));
+        wyBind();
+      };
+
+      document.addEventListener('change',e=>{
+        if(e.target.matches('#wyDirection,#wyQuestion,#wyWords')) wyRecheck(true);
+      });
+
+      document.addEventListener('click',e=>{
+        const b=e.target.closest('button');
+        if(!b)return;
+        if(b.matches('[data-wy-review-back]')){
+          document.body.classList.remove('task-setup');
+          state.view='home';
+          renderAll();
+        }
+        if(b.matches('[data-wy-sim-upload]')){
+          const s=wyInitState();
+          s.uploaded+=8;
+          renderReviewCreate();
+          toast('原型模拟：新增 8 篇全文，已重新计算文献需求');
+        }
+        if(b.matches('[data-wy-review-primary]')){
+          document.body.classList.remove('task-setup');
+          if(wySatisfied()){
+            state.analysisDone=true;
+            state.outlineEdited=false;
+            state.view='review';
+            toast('材料满足要求，进入生成 Paper 分支');
+            renderAll();
+          }else{
+            state.view='recommend';
+            state.wyReviewGap=wyGapText();
+            toast('当前材料不足，进入找文献分支');
+            renderAll();
+          }
+        }
+        if(b.matches('[data-wy-force-generate]')){
+          document.body.classList.remove('task-setup');
+          state.analysisDone=true;
+          state.outlineEdited=false;
+          state.view='review';
+          toast('已确认使用现有材料，进入生成 Paper 分支');
+          renderAll();
+        }
+      },true);
+    })();
+  `;
+  d.body.appendChild(patch);
+});
 </script>
 </body>
 </html>
