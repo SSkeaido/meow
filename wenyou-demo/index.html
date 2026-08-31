@@ -1303,6 +1303,9 @@ frame.addEventListener('load',()=>{
     .wy14-result-head .wy13-result-top{margin-bottom:0}
     .wy14-result-head .wy13-tabs{box-shadow:0 1px 2px rgba(40,42,60,.03)}
     .wy14-result-head .wy13-tab{cursor:pointer}
+    [data-wy15-result-panel]{scroll-behavior:auto}
+    [data-wy15-result-panel]>.wy13-section:first-child{animation:wy15panelin .12s ease-out}
+    @keyframes wy15panelin{from{opacity:.55;transform:translateY(2px)}to{opacity:1;transform:none}}
 
     /* ---------- setup ---------- */
     .wy13-page-shell{max-width:1040px;margin:0 auto;padding:28px 30px 50px}
@@ -1833,14 +1836,54 @@ frame.addEventListener('load',()=>{
         if(S().panel==='library')return '<div class="wy14-library-scroll">'+libraryHTML()+'</div>';
         const body=S().resultTab===0?fulfillmentHTML():S().resultTab===1?strategyHTML():candidatesHTML();
         const tabName=['需求满足情况','检索策略','候选文献'][S().resultTab]||'需求满足情况';
-        return '<div class="wy14-result-shell">'+
+        return '<div class="wy14-result-shell" data-wy15-results-shell>'+
           '<header class="wy14-result-head">'+
-            '<div class="wy14-result-title"><div><h2>找文献结果</h2><p>检索已完成 · 共形成 '+poolSize()+' 篇候选文献 · 当前正在查看「'+tabName+'」</p></div><span class="status-pill">当前可用 '+usableCount()+' / '+totalNeed()+'</span></div>'+
-            '<div class="wy13-result-top"><button class="wy13-arrow" data-wy13-prev '+(S().resultTab===0?'disabled':'')+'>‹</button><div class="wy13-tabs"><button class="wy13-tab '+(S().resultTab===0?'active':'')+'" data-wy13-tab="0">需求满足情况</button><button class="wy13-tab '+(S().resultTab===1?'active':'')+'" data-wy13-tab="1">检索策略</button><button class="wy13-tab '+(S().resultTab===2?'active':'')+'" data-wy13-tab="2">候选文献</button></div><button class="wy13-arrow" data-wy13-next '+(S().resultTab===2?'disabled':'')+'>›</button></div>'+
+            '<div class="wy14-result-title"><div><h2>找文献结果</h2><p data-wy15-view-label>检索已完成 · 共形成 '+poolSize()+' 篇候选文献 · 当前正在查看「'+tabName+'」</p></div><span class="status-pill">当前可用 '+usableCount()+' / '+totalNeed()+'</span></div>'+
+            '<div class="wy13-result-top"><button class="wy13-arrow" data-wy13-prev '+(S().resultTab===0?'disabled':'')+' aria-label="上一页">‹</button><div class="wy13-tabs"><button class="wy13-tab '+(S().resultTab===0?'active':'')+'" data-wy13-tab="0" aria-selected="'+(S().resultTab===0?'true':'false')+'">需求满足情况</button><button class="wy13-tab '+(S().resultTab===1?'active':'')+'" data-wy13-tab="1" aria-selected="'+(S().resultTab===1?'true':'false')+'">检索策略</button><button class="wy13-tab '+(S().resultTab===2?'active':'')+'" data-wy13-tab="2" aria-selected="'+(S().resultTab===2?'true':'false')+'">候选文献</button></div><button class="wy13-arrow" data-wy13-next '+(S().resultTab===2?'disabled':'')+' aria-label="下一页">›</button></div>'+
           '</header>'+
-          '<div class="wy14-result-scroll" data-wy14-result-scroll>'+body+'</div>'+
+          '<div class="wy14-result-scroll" data-wy14-result-scroll data-wy15-result-panel>'+body+'</div>'+
           '<footer class="wy14-result-foot">'+globalCTA()+'</footer>'+
         '</div>';
+      }
+
+      /* ---------- V15: local router for the three right-side result views ---------- */
+      function wy15ResultBody(tab){
+        if(tab===1)return strategyHTML();
+        if(tab===2)return candidatesHTML();
+        return fulfillmentHTML();
+      }
+      function wy15ResultName(tab){
+        return ['需求满足情况','检索策略','候选文献'][tab]||'需求满足情况';
+      }
+      function switchFindResultView(tab){
+        const s=S();
+        if(state.view!=='recommend' || s.stage!=='workspace' || s.panel==='library')return false;
+
+        const next=Math.max(0,Math.min(2,Number(tab)||0));
+        s.resultTab=next;
+
+        const panel=document.querySelector('[data-wy15-result-panel]');
+        if(!panel)return false;
+
+        /* Only replace the right-side content panel. Left nav, assistant, header and footer remain mounted. */
+        panel.innerHTML=wy15ResultBody(next);
+        panel.scrollTop=0;
+
+        document.querySelectorAll('[data-wy13-tab]').forEach(btn=>{
+          const active=Number(btn.dataset.wy13Tab)===next;
+          btn.classList.toggle('active',active);
+          btn.setAttribute('aria-selected',active?'true':'false');
+        });
+
+        const prev=document.querySelector('[data-wy13-prev]');
+        const nextBtn=document.querySelector('[data-wy13-next]');
+        if(prev)prev.disabled=next===0;
+        if(nextBtn)nextBtn.disabled=next===2;
+
+        const label=document.querySelector('[data-wy15-view-label]');
+        if(label)label.textContent='检索已完成 · 共形成 '+poolSize()+' 篇候选文献 · 当前正在查看「'+wy15ResultName(next)+'」';
+
+        return true;
       }
 
       /* ---------- library inside same workspace ---------- */
@@ -2049,9 +2092,21 @@ frame.addEventListener('load',()=>{
         if(b.matches('[data-wy13-explain]')){S().explain=!S().explain;renderAll()}
         if(b.matches('[data-wy13-start-search]'))startRunning();
 
-        if(b.matches('[data-wy13-tab]')){S().resultTab=Number(b.dataset.wy13Tab);renderAll()}
-        if(b.matches('[data-wy13-prev]')){S().resultTab=Math.max(0,S().resultTab-1);renderAll()}
-        if(b.matches('[data-wy13-next]')){S().resultTab=Math.min(2,S().resultTab+1);renderAll()}
+        if(b.matches('[data-wy13-tab]')){
+          e.preventDefault();e.stopImmediatePropagation();
+          switchFindResultView(Number(b.dataset.wy13Tab));
+          return;
+        }
+        if(b.matches('[data-wy13-prev]')){
+          e.preventDefault();e.stopImmediatePropagation();
+          switchFindResultView(S().resultTab-1);
+          return;
+        }
+        if(b.matches('[data-wy13-next]')){
+          e.preventDefault();e.stopImmediatePropagation();
+          switchFindResultView(S().resultTab+1);
+          return;
+        }
         if(b.matches('[data-wy13-bulk-oa]'))bulkOA();
         if(b.matches('[data-wy13-upload-batch]'))uploadBatch();
         if(b.matches('[data-wy13-export-list]'))exportList();
