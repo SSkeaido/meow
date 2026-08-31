@@ -76,6 +76,591 @@ body.prelogin .app-topbar{display:none}.brand{display:flex;align-items:center;ga
 .placeholder{max-width:900px;margin:0 auto;padding:22px;border:1px solid var(--line);border-radius:10px;background:#fff}.placeholder h1{font-size:21px;margin:0 0 7px}.placeholder p{font-size:11px;color:var(--muted);line-height:1.6}
 dialog{border:0;border-radius:12px;padding:0;box-shadow:var(--shadow);width:min(620px,calc(100vw - 40px))}dialog::backdrop{background:rgba(26,29,42,.42)}.dialog-card{padding:20px}.dialog-card h2{font-size:16px;margin:0 0 7px}.dialog-card p{font-size:10px;color:var(--muted)}.task-type-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:14px}.task-type-card{padding:14px;border:1px solid var(--line);border-radius:9px;background:#fff}.task-type-card:hover{border-color:#a596e9;background:var(--purple-weak)}.task-type-card b{font-size:12px}.task-type-card span{display:block;color:var(--muted);font-size:9px;line-height:1.45;margin-top:5px}.dialog-actions{display:flex;justify-content:flex-end;gap:7px;margin-top:14px}.toast-root{position:fixed;right:20px;bottom:20px;display:grid;gap:8px;z-index:99}.toast{background:#2c3140;color:#fff;border-radius:8px;padding:10px 12px;box-shadow:var(--shadow);font-size:10px;animation:toastin .16s ease-out}@keyframes toastin{from{transform:translateY(8px);opacity:0}to{transform:none;opacity:1}}
 @media(max-width:1260px){.workspace-three{grid-template-columns:225px 340px minmax(500px,1fr)}.selector-grid{grid-template-columns:1fr 1fr 280px}.review-main{padding:24px}.writing-grid{grid-template-columns:60px 340px minmax(600px,1fr)}}
+
+/* ===== 新用户教程：登录页 -> 教程 -> 任务选择 ===== */
+.tutorial-screen{
+  background:
+    radial-gradient(circle at 50% 36%,rgba(101,71,216,.085),transparent 30%),
+    radial-gradient(circle at 86% 78%,rgba(20,129,125,.045),transparent 25%),
+    linear-gradient(135deg,#fbfaff,#f7f8fc 52%,#eef8f7);
+}
+.tutorial-wrap{
+  max-width:1120px;
+  min-height:100vh;
+  margin:0 auto;
+  padding:28px 30px 22px;
+  display:grid;
+  grid-template-rows:auto minmax(0,1fr) auto;
+  gap:14px;
+}
+.tutorial-top{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:18px;
+}
+.tutorial-brand{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  color:var(--purple);
+  font-weight:900;
+  font-size:18px;
+}
+.tutorial-skip{
+  height:36px;
+  padding:0 13px;
+  border:1px solid #dcd7ef;
+  border-radius:9px;
+  background:rgba(255,255,255,.9);
+  color:#766d9b;
+  font-size:11px;
+  font-weight:800;
+}
+.tutorial-stage{
+  min-height:0;
+  position:relative;
+  display:grid;
+  align-items:center;
+}
+.tutorial-slide{
+  display:none;
+  width:100%;
+}
+.tutorial-slide.active{
+  display:block;
+  animation:tutorialIn .34s cubic-bezier(.2,.8,.2,1) both;
+}
+@keyframes tutorialIn{
+  from{opacity:0;transform:translateY(8px) scale(.994)}
+  to{opacity:1;transform:none}
+}
+.tutorial-head{
+  text-align:center;
+  max-width:920px;
+  margin:0 auto 24px;
+}
+.tutorial-eyebrow{
+  color:var(--purple);
+  font-size:11px;
+  font-weight:900;
+  letter-spacing:.55px;
+}
+.tutorial-title{
+  margin-top:9px;
+  color:#40366e;
+  font-size:32px;
+  line-height:1.3;
+  font-weight:900;
+}
+.tutorial-subtitle{
+  margin:10px auto 0;
+  max-width:760px;
+  color:#9299aa;
+  font-size:12px;
+  line-height:1.6;
+}
+.tutorial-entry-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:22px;
+  max-width:920px;
+  margin:0 auto;
+}
+.tutorial-entry{
+  min-height:305px;
+  padding:22px 24px;
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:15px;
+  box-shadow:0 15px 34px rgba(43,47,71,.07);
+}
+.tutorial-entry.research{
+  border-color:#d7ebe8;
+  background:linear-gradient(180deg,#fbfefd,#fff);
+}
+.tutorial-entry-icon{
+  width:44px;height:44px;border-radius:12px;
+  display:grid;place-items:center;
+  background:var(--purple-weak);color:var(--purple);
+  font-size:18px;font-weight:900;
+}
+.tutorial-entry.research .tutorial-entry-icon{
+  background:var(--teal-weak);color:var(--teal);
+}
+.tutorial-entry h2{
+  margin:15px 0 0;
+  font-size:20px;
+  color:var(--ink);
+}
+.tutorial-entry-list{
+  display:grid;
+  gap:9px;
+  margin-top:17px;
+}
+.tutorial-entry-item{
+  min-height:54px;
+  padding:9px 12px;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:flex-start;
+  gap:4px;
+  border:1px solid #edf0f6;
+  border-radius:9px;
+  background:#fafbfe;
+}
+.tutorial-entry.research .tutorial-entry-item{
+  border-color:#dcefeb;
+  background:#fbfefd;
+}
+.tutorial-entry-item b{
+  color:var(--ink);
+  font-size:12px;
+}
+.tutorial-entry-item b.purple{color:var(--purple)}
+.tutorial-entry-item b.green{color:var(--teal)}
+.tutorial-entry-item small{
+  color:#a6afbf;
+  font-size:9px;
+  line-height:1.35;
+}
+.tutorial-flow{
+  max-width:1020px;
+  margin:0 auto;
+  display:grid;
+  grid-template-columns:repeat(7,minmax(0,1fr));
+  gap:8px;
+  align-items:center;
+}
+.tutorial-flow.three{
+  max-width:860px;
+  grid-template-columns:1fr 54px 1fr 54px 1fr;
+  gap:12px;
+}
+.tutorial-flow-card{
+  min-height:210px;
+  padding:18px 16px;
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:14px;
+  box-shadow:0 13px 30px rgba(43,47,71,.06);
+}
+.tutorial-flow-card .num{
+  width:27px;height:27px;border-radius:8px;
+  display:grid;place-items:center;
+  background:var(--purple-weak);color:var(--purple);
+  font-size:10px;font-weight:900;
+}
+.tutorial-flow.three .tutorial-flow-card .num{
+  background:var(--teal-weak);color:var(--teal);
+}
+.tutorial-flow-card h3{
+  margin:14px 0 0;
+  font-size:16px;
+  color:var(--ink);
+}
+.tutorial-flow-card h3.green{color:var(--teal)}
+.tutorial-flow-card p{
+  min-height:46px;
+  margin:8px 0 0;
+  color:#a5aebe;
+  font-size:9px;
+  line-height:1.55;
+}
+.tutorial-mini{
+  margin-top:14px;
+  min-height:54px;
+  padding:10px;
+  border:1px solid #ebe7fb;
+  border-radius:9px;
+  background:#faf9ff;
+  color:#a4acbc;
+  font-size:9px;
+  line-height:1.45;
+}
+.tutorial-flow.three .tutorial-mini{
+  border-color:#e1f0ee;
+  background:#fbfefd;
+}
+.tutorial-mini b{color:var(--ink);font-size:11px}
+.tutorial-mini b.purple{color:var(--purple)}
+.tutorial-mini b.green{color:var(--teal)}
+.tutorial-mini .gray{color:#a3acbd}
+.tutorial-arrow{
+  text-align:center;
+  color:#aaa1cb;
+  font-size:20px;
+}
+.tutorial-flow.three .tutorial-arrow{color:#9cc0bb}
+.tutorial-page-note{
+  margin-top:15px;
+  text-align:center;
+  color:#9a92bc;
+  font-size:10px;
+}
+.tutorial-assets{
+  max-width:900px;
+  margin:0 auto;
+  padding:18px;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:18px;
+}
+.tutorial-asset-card{
+  min-height:290px;
+  padding:20px;
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:14px;
+  box-shadow:0 13px 30px rgba(43,47,71,.05);
+}
+.tutorial-asset-card.results{
+  border-color:#d8d1f8;
+  background:linear-gradient(180deg,#fbfaff,#fff);
+}
+.tutorial-asset-card.library{border-color:#d7e9e7}
+.tutorial-asset-card h3{
+  margin:0;
+  font-size:20px;
+  color:#443b73;
+}
+.tutorial-asset-card>p{
+  margin:8px 0 0;
+  color:#a5aebe;
+  font-size:9px;
+  line-height:1.55;
+}
+.tutorial-result-list{
+  display:grid;
+  gap:8px;
+  margin-top:17px;
+}
+.tutorial-result-row{
+  min-height:45px;
+  padding:10px 12px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+  border:1px solid #ece9fa;
+  border-radius:9px;
+  background:#fff;
+}
+.tutorial-result-row b{font-size:11px;color:#4e457c}
+.tutorial-result-row span{font-size:8px;color:#b0b7c5}
+.tutorial-library-metrics{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:9px;
+  margin-top:17px;
+}
+.tutorial-library-metric{
+  padding:11px;
+  border:1px solid #e9edef;
+  border-radius:9px;
+  background:#fbfcfd;
+}
+.tutorial-library-metric b{
+  display:block;
+  color:#3e665f;
+  font-size:18px;
+}
+.tutorial-library-metric small{
+  display:block;
+  margin-top:4px;
+  color:#a6afbf;
+  font-size:8px;
+}
+.tutorial-derived-label{
+  margin-top:15px;
+  color:#9ea7b7;
+  font-size:9px;
+}
+.tutorial-derived{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:9px;
+  margin-top:8px;
+}
+.tutorial-derived-card{
+  min-height:64px;
+  padding:11px;
+  border-radius:9px;
+}
+.tutorial-derived-card.notes{
+  border:1px solid #d8ece9;
+  background:#fbfefd;
+}
+.tutorial-derived-card.terms{
+  border:1px solid #ddd8fa;
+  background:#fcfbff;
+}
+.tutorial-derived-card b{
+  color:#4d447c;
+  font-size:11px;
+}
+.tutorial-derived-card small{
+  display:block;
+  margin-top:4px;
+  color:#a8b0bf;
+  font-size:8px;
+}
+.tutorial-reuse{
+  max-width:780px;
+  margin:0 auto;
+  display:grid;
+  grid-template-columns:1fr 62px 1fr;
+  gap:18px;
+  align-items:center;
+}
+.tutorial-reuse-card{
+  min-height:225px;
+  padding:22px;
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:14px;
+  box-shadow:0 13px 30px rgba(43,47,71,.06);
+}
+.tutorial-reuse-card h3{margin:0;font-size:18px;color:#443b73}
+.tutorial-reuse-card p{
+  margin:9px 0 0;
+  color:#a5aebe;
+  font-size:9px;
+  line-height:1.55;
+}
+.tutorial-tags{
+  display:flex;
+  gap:7px;
+  flex-wrap:wrap;
+  margin-top:16px;
+}
+.tutorial-tag{
+  padding:6px 8px;
+  border-radius:8px;
+  background:#f6f4ff;
+  color:#6557a1;
+  font-size:9px;
+  font-weight:800;
+}
+.tutorial-status{
+  display:inline-flex;
+  margin-top:16px;
+  padding:6px 9px;
+  border-radius:999px;
+  background:var(--teal-weak);
+  color:var(--teal);
+  font-size:9px;
+  font-weight:800;
+}
+.tutorial-brand-line{
+  margin-top:17px;
+  text-align:center;
+  color:#6559a5;
+  font-size:12px;
+  font-weight:900;
+}
+.tutorial-footer{
+  display:grid;
+  grid-template-columns:160px 1fr 160px;
+  align-items:center;
+  gap:12px;
+}
+.tutorial-foot-side{
+  display:flex;
+  align-items:center;
+}
+.tutorial-foot-side.right{justify-content:flex-end}
+.tutorial-btn{
+  height:36px;
+  padding:0 13px;
+  border:1px solid #ddd8f1;
+  border-radius:9px;
+  background:#fff;
+  color:#6559a5;
+  font-size:10px;
+  font-weight:800;
+}
+.tutorial-btn.primary{
+  background:var(--purple);
+  border-color:var(--purple);
+  color:#fff;
+}
+.tutorial-btn:disabled{opacity:.3}
+.tutorial-dots{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  gap:9px;
+}
+.tutorial-dot{
+  width:7px;height:7px;padding:0;border-radius:999px;
+  background:#cbd0df;
+  transition:.2s ease;
+}
+.tutorial-dot.active{width:26px;background:var(--purple)}
+.tutorial-counter{
+  text-align:center;
+  margin-bottom:5px;
+  color:#a5abb9;
+  font-size:9px;
+}
+
+
+/* ===== 新用户任务选择：7 状态 ===== */
+.ns-shell{
+  max-width:1120px;
+  min-height:100vh;
+  margin:0 auto;
+  padding:30px 30px 22px;
+  position:relative;
+}
+.ns-brand{
+  display:flex;align-items:center;gap:10px;
+  color:var(--purple);font-weight:900;font-size:19px;
+}
+.ns-stage{
+  position:relative;
+  height:620px;
+  margin-top:14px;
+}
+.ns-head-default{
+  position:absolute;left:50%;top:28px;transform:translateX(-50%);
+  width:900px;text-align:center;
+  opacity:1;transition:.42s ease;
+}
+.ns-head-default h1{margin:0;font-size:31px;line-height:1.28}
+.ns-head-default p{margin:10px 0 0;color:var(--muted);font-size:11px}
+.ns-head-focus{
+  position:absolute;left:62px;top:34px;width:950px;
+  opacity:0;transform:translateY(7px);pointer-events:none;
+  transition:.42s ease;
+}
+.ns-head-focus .ns-crumb{font-size:10px;color:var(--muted);font-weight:700}
+.ns-head-focus h1{margin:6px 0 0;font-size:25px;color:#40366e}
+.ns-head-focus p{margin:7px 0 0;font-size:10px;color:#969eaf}
+.ns-job{
+  position:absolute;top:150px;width:410px;height:388px;
+  padding:22px 23px;
+  border:1px solid var(--line);border-radius:17px;
+  background:rgba(255,255,255,.97);
+  box-shadow:0 17px 38px rgba(42,46,70,.08);
+  transition:
+    left .58s cubic-bezier(.2,.8,.2,1),
+    top .58s cubic-bezier(.2,.8,.2,1),
+    width .58s cubic-bezier(.2,.8,.2,1),
+    height .58s cubic-bezier(.2,.8,.2,1),
+    opacity .38s ease,
+    transform .58s cubic-bezier(.2,.8,.2,1),
+    border-color .3s ease,
+    background .3s ease;
+}
+.ns-job.writing{left:105px}
+.ns-job.research{left:605px;border-color:#d8ebe8;background:linear-gradient(180deg,#fbfefd,#fff)}
+.ns-job-icon{
+  width:46px;height:46px;border-radius:13px;
+  display:grid;place-items:center;
+  background:var(--purple-weak);color:var(--purple);
+  font-size:18px;font-weight:900;
+  transition:.35s ease;
+}
+.ns-job.research .ns-job-icon{background:var(--teal-weak);color:var(--teal)}
+.ns-job h2{margin:15px 0 0;font-size:21px}
+.ns-job-desc{margin:7px 0 0;color:var(--muted);font-size:10px;line-height:1.55;transition:.3s ease}
+.ns-task-list{display:grid;gap:9px;margin-top:18px}
+.ns-task{
+  width:100%;min-height:68px;padding:11px 12px;
+  display:grid;grid-template-columns:1fr auto;align-items:center;gap:10px;
+  border:1px solid #edf0f6;border-radius:10px;background:#fafbfe;text-align:left;
+  cursor:pointer;transition:.22s ease;
+}
+.ns-job.research .ns-task{background:#fbfefd;border-color:#e1efed}
+.ns-task:hover{transform:translateY(-1px);border-color:#c8bdf3;background:#fff}
+.ns-job.research .ns-task:hover{border-color:#acd7d1}
+.ns-task-copy b{display:block;font-size:11px;color:var(--ink)}
+.ns-task-copy small{display:block;margin-top:4px;font-size:9px;color:#9ba4b5}
+.ns-task-arrow{font-size:15px;color:#aaa}
+.ns-task.active{
+  border-color:#a998ed;background:var(--purple-weak);
+  box-shadow:0 7px 17px rgba(101,71,216,.07)
+}
+.ns-job.research .ns-task.active{
+  border-color:#8ccdc5;background:var(--teal-weak);
+  box-shadow:0 7px 17px rgba(20,129,125,.06)
+}
+
+/* 聚焦态和默认态使用明显不同的构图 */
+.ns-stage.focus .ns-head-default{opacity:0;transform:translate(-50%,-7px);pointer-events:none}
+.ns-stage.focus .ns-head-focus{opacity:1;transform:none;pointer-events:auto}
+.ns-stage.focus .ns-job{
+  top:128px;width:275px;height:430px;padding:18px 16px;
+}
+.ns-stage.focus .ns-job-icon{width:38px;height:38px;border-radius:10px;font-size:15px}
+.ns-stage.focus .ns-job h2{margin-top:11px;font-size:17px}
+.ns-stage.focus .ns-job-desc{opacity:0;height:0;margin:0;overflow:hidden}
+.ns-stage.focus .ns-task-list{margin-top:14px;gap:8px}
+.ns-stage.focus .ns-task{min-height:66px;padding:10px}
+.ns-stage.focus .ns-task-copy small{font-size:8px}
+.ns-stage.focus .ns-job.selected{left:62px;opacity:1;transform:none;z-index:8}
+.ns-stage.focus .ns-job.hidden-left{opacity:0;transform:translateX(-125px) scale(.96);pointer-events:none}
+.ns-stage.focus .ns-job.hidden-right{opacity:0;transform:translateX(125px) scale(.96);pointer-events:none}
+
+/* 说明页永远固定右侧 */
+.ns-detail{
+  position:absolute;left:370px;top:110px;width:690px;height:465px;
+  padding:25px 28px;
+  border:1px solid var(--line);border-radius:17px;
+  background:rgba(255,255,255,.98);
+  box-shadow:0 21px 46px rgba(42,46,70,.10);
+  opacity:0;transform:translateX(32px) scale(.986);
+  pointer-events:none;transition:.48s cubic-bezier(.2,.8,.2,1);
+}
+.ns-stage.focus .ns-detail{opacity:1;transform:none;pointer-events:auto}
+.ns-detail.research{border-color:#d8ebe8}
+.ns-detail-top{display:flex;align-items:flex-start;justify-content:space-between;gap:16px}
+.ns-detail-kicker{font-size:10px;font-weight:900;color:var(--purple)}
+.ns-detail.research .ns-detail-kicker{color:var(--teal)}
+.ns-detail-title{margin:7px 0 0;font-size:27px;line-height:1.25;color:#302a54}
+.ns-detail-intro{margin:8px 0 0;max-width:515px;color:#8e97a8;font-size:10px;line-height:1.6}
+.ns-back{
+  height:32px;padding:0 10px;border:1px solid #dfdaef;border-radius:8px;
+  background:#fff;color:#74699b;font-size:9px;font-weight:800;cursor:pointer
+}
+.ns-detail-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:20px}
+.ns-detail-card{
+  min-height:112px;padding:13px;border:1px solid #eceef4;border-radius:11px;background:#fbfcfe
+}
+.ns-detail-card b{display:block;font-size:11px;color:#3f3868}
+.ns-detail-card p{margin:7px 0 0;color:#9aa3b4;font-size:9px;line-height:1.55}
+.ns-detail.research .ns-detail-card{border-color:#e1efed;background:#fbfefd}
+.ns-detail-flow{
+  margin-top:16px;padding:13px 14px;border:1px solid #e8e4f7;border-radius:11px;background:#faf9ff
+}
+.ns-detail.research .ns-detail-flow{border-color:#dfeeed;background:#fbfefd}
+.ns-detail-flow-title{font-size:10px;font-weight:900;color:#4d447b}
+.ns-detail.research .ns-detail-flow-title{color:#2b7770}
+.ns-flow-line{margin-top:9px;display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.ns-flow-node{
+  padding:6px 8px;border-radius:7px;background:#fff;border:1px solid #ece9f9;
+  font-size:9px;color:#5f5879;font-weight:800
+}
+.ns-detail.research .ns-flow-node{border-color:#dcece9;color:#356f69}
+.ns-flow-arrow{color:#aaa3c5;font-size:10px}
+.ns-detail-bottom{
+  position:absolute;left:28px;right:28px;bottom:22px;
+  display:flex;align-items:center;justify-content:space-between;gap:16px
+}
+.ns-detail-note{max-width:455px;font-size:9px;color:#9aa1af;line-height:1.5}
+.ns-detail-cta{
+  height:36px;padding:0 14px;border-radius:8px;
+  background:var(--purple);color:#fff;font-size:10px;font-weight:900;
+}
+.ns-detail.research .ns-detail-cta{background:var(--teal)}
+.ns-back-login{
+  position:absolute;left:62px;bottom:4px;
+  color:var(--purple);font-size:10px;font-weight:800;
+}
+
 </style></head><body class="prelogin"><header class="app-topbar"><a class="brand" href="#old-home"><span class="brand-mark">文</span><span>文优小助 PRO</span></a><div class="top-actions"><span class="chip teal">研究资产 63</span><span class="chip amber">1300 文优币</span><span class="chip">免费会员 · 去升级</span><span class="chip">C001510</span></div></header><section id="splash" class="screen splash-screen" data-route="splash">
   <div class="splash-center">
     <div class="splash-logo">文</div>
@@ -83,11 +668,398 @@ dialog{border:0;border-radius:12px;padding:0;box-shadow:var(--shadow);width:min(
     <div class="splash-sub">正在载入你的学术研究工作台</div>
     <div class="splash-progress"><i></i></div>
   </div>
-</section><section id="login" class="screen prelogin-screen" data-route="login"><div class="prelogin-wrap"><div class="prelogin-brand"><span class="brand-mark">文</span><span>文优小助 PRO</span></div><div class="login-shell"><div class="login-copy"><h1>把论文任务和研究资产<br>放进同一个工作台</h1><p>从找文献、全文阅读，到文献综述、开题报告和论文初稿，文优小助围绕同一研究选题持续复用你的材料。</p><div class="login-features"><div class="login-feature"><b>学术任务</b><span>文献综述、开题报告、论文初稿独立创建。</span></div><div class="login-feature"><b>研究资产</b><span>文献、批注、术语和成果持续沉淀。</span></div><div class="login-feature"><b>文优小助手</b><span>在任务中理解上下文并协助推进下一步。</span></div></div></div><div class="login-card"><h2>登录文优小助</h2><p>旧用户会恢复已有任务与研究资产。</p><div class="field"><label>账号</label><input class="input" value="C001510"></div><div class="field"><label>密码</label><input class="input" type="password" value="12345678"></div><a class="primary full" href="#old-home">登录并继续研究</a><div class="login-divider">或者</div><a class="ghost full" href="#new-select">新用户，先选择任务</a></div></div></div></section><section id="new-select" class="screen prelogin-screen" data-route="new-select"><div class="prelogin-wrap"><div class="prelogin-brand"><span class="brand-mark">文</span><span>文优小助 PRO</span></div><div class="selector-head"><h1>你现在想完成什么？</h1><p>先选择当前目标，进入任务后再逐步补充研究资产。</p></div><div class="selector-grid"><section class="selector-card"><h2>我要完成论文任务</h2><p>从写作目标出发，系统自动检查并调用已有材料。</p><div class="selector-actions"><a class="selector-item" href="#review-create" data-preview="文献综述|整理研究现状、理论脉络和研究空白。系统会先检查现有文献是否满足本次要求。"><span class="selector-icon">综</span><span><strong>文献综述</strong><small>研究现状、理论脉络与研究空白</small></span><em>›</em></a><a class="selector-item" href="#proposal" data-preview="开题报告|形成研究背景、问题、方法、创新点和研究计划，并可复用已有综述成果。"><span class="selector-icon">题</span><span><strong>开题报告</strong><small>形成选题依据、方法与计划</small></span><em>›</em></a><a class="selector-item" href="#draft" data-preview="论文初稿|根据研究资产与已有成果生成章节正文，并持续保留引用入口。"><span class="selector-icon">稿</span><span><strong>论文初稿</strong><small>基于研究资产开始章节写作</small></span><em>›</em></a></div></section><section class="selector-card research"><h2>我要做研究准备</h2><p>先发现、阅读和沉淀文献，材料会持续进入研究资产。</p><div class="selector-actions"><a class="selector-item" href="#find-setup" data-preview="文献推荐与 Agent 检索|围绕研究问题建立候选文献池，并区分候选供给与真正可用全文。"><span class="selector-icon">找</span><span><strong>文献推荐与 Agent 检索</strong><small>建立候选池并补齐全文</small></span><em>›</em></a><a class="selector-item" href="#library" data-preview="全文精读与 AI 问答|从个人文献库进入全文阅读、问答、批注和术语沉淀。"><span class="selector-icon">读</span><span><strong>全文精读与 AI 问答</strong><small>围绕全文阅读与提问</small></span><em>›</em></a><a class="selector-item" href="#library" data-preview="批注、术语与引用沉淀|研究过程中的批注、术语与引用会持续沉淀在研究资产中。"><span class="selector-icon">注</span><span><strong>批注、术语与引用沉淀</strong><small>积累可复用研究上下文</small></span><em>›</em></a></div></section><aside class="selector-preview"><span class="preview-badge">当前预览</span><h3 id="previewTitle" style="margin-top:10px">文献综述</h3><p id="previewText" style="font-size:11px;color:var(--muted);line-height:1.6">整理研究现状、理论脉络和研究空白。系统会先检查现有文献是否满足本次要求。</p><div class="preview-list"><div class="preview-step"><i>1</i><span>填写本次任务要求</span></div><div class="preview-step"><i>2</i><span>检查研究资产与材料缺口</span></div><div class="preview-step"><i>3</i><span>进入任务工作台持续推进</span></div></div><a class="text-link" href="#login" style="display:inline-block;margin-top:18px">← 返回登录</a></aside></div></div></section><section id="old-home" class="screen app-screen" data-route="old-home"><div class="workspace-three"><aside class="sidebar"><div><div class="side-title">任务类别</div><button class="new-task" data-open-task>＋ 创建任务</button><div class="topic-btn"><span>市场需求对中国省级旅游产业技术演化的影响</span><span>⌃</span></div><div class="side-tree"><a class="side-nav active" href="#review-create"><span>文献综述</span></a><a class="side-nav" href="#proposal"><span>开题报告</span></a><a class="side-nav" href="#draft"><span>论文初稿</span></a></div></div><div class="side-divider"></div><div><div class="side-title">研究资产</div><a class="side-nav" href="#library"><span>文献库</span><span><span class="count">63</span><span class="library-delta">+18</span></span></a><a class="side-nav" href="#artifacts"><span>学术成果</span><span class="count">3</span></a></div><div class="side-note">任务按研究选题组织；文献库和学术成果作为长期研究资产，在不同任务中持续复用。</div></aside><section class="assistant"><header class="assistant-head"><h2>文优小助手 ✦</h2><small>欢迎回来 · 当前选题已载入</small></header><div class="assistant-body"><div class="message"><div class="status-row"><span class="status-dot"></span><span>已恢复研究上下文</span></div><p>欢迎回来。上次离开时，文献综述已经生成大纲，正在等待你确认。</p></div><div class="assistant-card"><h3>当前选题资产</h3><div class="metrics"><div class="metric"><b>63</b><span>文献</span></div><div class="metric"><b>31</b><span>批注</span></div><div class="metric"><b>14</b><span>术语</span></div><div class="metric"><b>3</b><span>学术成果</span></div></div></div></div><footer class="assistant-compose"><textarea placeholder="例如：继续上次的文献综述"></textarea><div class="compose-row"><span>Enter 发送 · Shift+Enter 换行</span><button class="primary" data-toast="原型：消息已发送">发送</button></div></footer></section><main class="right-pane"><div class="right-scroll"><div class="old-home"><div class="old-kicker">欢迎回来</div><h1>继续你的研究任务</h1><p>系统已经恢复上次工作状态。已有任务会直接回到真实进度，不要求从头开始。</p><div class="old-grid"><section class="old-card"><h2>进行中的任务</h2><p>点击后继续到上次工作阶段。</p><div class="resume-list"><a class="resume primary-task" href="#outline"><b>文献综述 · 市场需求对中国省级旅游产业技术演化的影响</b><em>进行中 · 待确认大纲</em><span>已完成材料准备，下一步确认大纲后进入正文生成。</span></a><a class="resume" href="#proposal"><b>开题报告</b><em>未开始</em><span>可直接使用当前选题的文献、批注、术语与已有成果。</span></a><a class="resume" href="#draft"><b>论文初稿</b><em>未开始</em><span>创建后按需选择研究资产，不强制顺序。</span></a></div></section><section class="old-card"><h2>研究资产</h2><p>资产会被不同任务复用。</p><div class="stat-grid"><div class="stat"><b>63</b><span>文献</span></div><div class="stat"><b>31</b><span>批注</span></div><div class="stat"><b>14</b><span>术语</span></div><div class="stat"><b>3</b><span>学术成果</span></div></div></section></div></div></div></main></div></section><section id="review-create" class="screen app-screen" data-route="review-create"><div class="workspace-two"><aside class="sidebar"><div><div class="side-title">任务类别</div><button class="new-task" data-open-task>＋ 创建任务</button><div class="topic-btn"><span>市场需求对中国省级旅游产业技术演化的影响</span><span>⌃</span></div><div class="side-tree"><a class="side-nav active" href="#review-create"><span>文献综述</span></a><a class="side-nav" href="#proposal"><span>开题报告</span></a><a class="side-nav" href="#draft"><span>论文初稿</span></a></div></div><div class="side-divider"></div><div><div class="side-title">研究资产</div><a class="side-nav" href="#library"><span>文献库</span><span><span class="count">63</span><span class="library-delta">+18</span></span></a><a class="side-nav" href="#artifacts"><span>学术成果</span><span class="count">3</span></a></div><div class="side-note">任务按研究选题组织；文献库和学术成果作为长期研究资产，在不同任务中持续复用。</div></aside><main class="review-main"><div class="page-title"><div><h1>创建文献综述</h1><p>填写本次写作要求，文献需求会用于检查现有文献库，并决定是否需要进入找文献。</p></div><a class="ghost" href="#new-select">返回任务选择</a></div><section class="review-card"><div class="form-row"><label>当前选题</label><div class="topic-chip"><strong>市场需求对中国省级旅游产业技术演化的影响</strong><span>已关联</span></div></div><div class="form-row"><label>* 标题</label><input class="input" value="市场需求对中国省级旅游产业技术演化的影响"></div><div class="form-row"><label>研究方向</label><input class="input" value="旅游产业技术演化与区域市场需求"></div><div class="form-row"><label>研究问题</label><textarea class="textarea">市场需求如何影响省级旅游产业技术演化？现有研究有哪些共同结论与不足？</textarea></div><div class="form-row"><label>* 字数</label><div style="display:flex;gap:8px;align-items:center"><input class="input" style="width:130px" value="5000"><span class="muted" style="font-size:10px">字</span></div></div><div class="form-row"><label>文献需求</label><div class="req-shell"><div class="req-head"><strong style="font-size:11px">本次目标 20 篇</strong><span class="status-pill">经济 / 管理 / 社会科学</span></div><div class="req-summary"><div class="req-chip"><b>20</b><span>目标全文</span></div><div class="req-chip"><b>≥ 5</b><span>SSCI · 必须</span></div><div class="req-chip"><b>≥ 5</b><span>CSSCI · 必须</span></div><div class="req-chip"><b>≥ 3</b><span>JCR Q1–Q2 · 优先</span></div></div><div class="library-check"><div style="display:flex;justify-content:space-between;font-size:9px"><b>已连接你的文献库</b><span>3 / 20 篇可用</span></div><div class="progress"><i style="width:15%"></i></div><div class="check-grid"><div class="check-metric"><b>63</b><span>文献库总量</span></div><div class="check-metric"><b>6</b><span>选题相关</span></div><div class="check-metric"><b>3</b><span>全文可用</span></div><div class="check-metric"><b>1 / 5</b><span>SSCI</span></div></div><div class="gap">当前材料未完全满足要求：总量还缺 17 篇；SSCI 至少还缺 4 篇；CSSCI 至少还缺 3 篇。</div></div></div></div><div class="form-row"><label>上传相关文献</label><div class="upload-box"><div><strong>上传全文后自动查重并进入文献库</strong><small>只有“已入库 + 有全文 + 解析完成”的文献才计入本次可用数量。</small></div><button class="small-btn primary-lite" data-toast="原型：打开本地文件选择器">选择本地文件</button></div></div><div class="form-row"><label>可选成果</label><label style="font-size:10px"><input type="checkbox"> 使用已有学术成果 <span class="muted">当前暂无可关联成果</span></label></div><div class="form-footer"><div class="hint">当前材料未完全满足要求。主操作优先补文献，但也允许用户承担风险，直接使用现有材料继续。</div><div class="actions"><a class="ghost" href="#outline">仍使用现有 3 篇生成</a><a class="primary" href="#find-setup">找文献</a></div></div></section></main></div></section><section id="find-setup" class="screen app-screen" data-route="find-setup"><div class="workspace-full"><div class="find-page"><div class="find-page-head"><div><h1>找文献 · 检索设置</h1><p>系统已继承当前文献综述的选题、研究问题和文献需求。这里只需要微调 Search Agent 的检索参数。</p></div><a class="ghost" href="#review-create">返回文献综述</a></div><section class="find-card"><h2 style="font-size:15px;margin:0 0 5px">检索需求</h2><p style="margin:0 0 12px;color:var(--muted);font-size:9px">检索阶段先建立候选文献池，真正进入写作的材料仍需获取全文并完成内容筛选。</p><div class="find-block"><div class="find-block-head"><div><strong>研究选题</strong><small>从当前文献综述继承</small></div></div><div class="topic-chip"><strong>市场需求对中国省级旅游产业技术演化的影响</strong><span>已继承</span></div></div><div class="find-block"><div class="find-block-head"><div><strong>系统生成的检索关键词</strong><small>基于标题、研究方向和研究问题生成</small></div><button class="small-btn" data-toast="已扩展中英文同义词与相关检索词">AI 优化关键词</button></div><div class="keyword-list"><span class="keyword">旅游市场需求</span><span class="keyword">技术演化</span><span class="keyword">数字化转型</span><span class="keyword">区域差异</span><span class="keyword">产业政策</span><span class="keyword">tourism technology adoption</span></div></div><div class="find-block"><div class="find-block-head"><div><strong>文献需求</strong><small>直接继承上一页</small></div><button class="small-btn" data-toast="原型：文献需求可在这里调整">调整文献需求</button></div><div class="req-summary"><div class="req-chip"><b>20</b><span>目标全文</span></div><div class="req-chip"><b>≥ 5</b><span>SSCI · 必须</span></div><div class="req-chip"><b>≥ 5</b><span>CSSCI · 必须</span></div><div class="req-chip"><b>≥ 3</b><span>JCR Q1–Q2 · 优先</span></div></div></div><div class="find-block"><div class="find-block-head"><div><strong>检索数据库</strong><small>开放学术元数据 + 已授权中文学术数据源</small></div></div><div class="db-grid"><label class="db"><input type="checkbox" checked><span><b>OpenAlex</b><small>开放学术元数据</small></span></label><label class="db"><input type="checkbox" checked><span><b>Semantic Scholar</b><small>语义检索与引文元数据</small></span></label><label class="db"><input type="checkbox" checked><span><b>Crossref</b><small>DOI 与出版元数据</small></span></label><label class="db"><input type="checkbox" checked><span><b>中文学术数据库</b><small>授权数据源 / 用户可访问来源</small></span></label></div></div><div class="find-block"><div class="find-block-head"><div><strong>检索强度</strong><small>强度影响查询扩展范围和候选池规模</small></div></div><div class="intensity"><button class="intensity-card" data-intensity><b>快速</b><small>目标需求 × 2<br>适合快速补充</small></button><button class="intensity-card active" data-intensity><b>标准 · 推荐</b><small>目标需求 × 3<br>兼顾覆盖与等待时间</small></button><button class="intensity-card" data-intensity><b>深度</b><small>目标需求 × 4<br>扩大查询与主题覆盖</small></button></div><div class="why-box"><div style="display:flex;justify-content:space-between;gap:10px"><span><b style="color:#514295">为什么候选文献会多于最终需求？</b>　Metadata / 摘要只能完成候选初筛，获取全文后还要做内容相关性筛选。</span><button class="text-link" data-why>了解筛选过程 ›</button></div><div class="why-flow" id="whyFlow"><span class="why-node">多数据库检索</span>→<span class="why-node">Metadata 去重初筛</span>→<span class="why-node">形成 2–4 倍候选池</span>→<span class="why-node">获取全文</span>→<span class="why-node">内容筛选</span></div></div><div class="estimate">预计形成约 <b>60 篇候选文献</b>。候选数只是检索供给，不等于最终可用于当前任务的全文数量。</div></div><div class="find-foot"><a class="primary" href="#find-running">开始检索</a></div></section></div></div></section><section id="find-running" class="screen app-screen" data-route="find-running"><div class="workspace-full"><div class="running-wrap"><div class="running-hero"><h1>正在检索文献</h1><p>正在根据你的文献综述要求建立候选文献池。检索完成后会自动进入结果工作台。</p></div><section class="run-card"><div class="run-progress"><i id="runBar" style="width:18%"></i></div><div class="run-list"><div class="run-step" data-run-step="0"><i>1</i><div><strong>生成检索式</strong><small>根据选题拆解中英文关键词与查询组合</small></div></div><div class="run-step" data-run-step="1"><i>2</i><div><strong>多数据库检索</strong><small>并行检索已选择的数据源</small></div></div><div class="run-step" data-run-step="2"><i>3</i><div><strong>Metadata 归一化与去重</strong><small>合并 DOI、标题、作者和年份信息</small></div></div><div class="run-step" data-run-step="3"><i>4</i><div><strong>按文献要求筛选</strong><small>应用 SSCI / CSSCI / JCR / 年份等条件</small></div></div><div class="run-step" data-run-step="4"><i>5</i><div><strong>主题聚类与候选排序</strong><small>形成结构化候选文献池</small></div></div></div><div class="run-live"><span>当前阶段：<b id="runStage">生成检索式</b></span><span>当前已保留 <b id="runCount">12</b> 条候选记录</span></div><div class="actions" style="margin-top:12px"><a class="small-btn" href="#find-setup">取消检索</a><a class="small-btn primary-lite" href="#find-demand">立即查看结果</a></div></section></div></div></section><section id="find-demand" class="screen app-screen" data-route="find-demand"><div class="workspace-three"><aside class="sidebar"><div><div class="side-title">任务类别</div><button class="new-task" data-open-task>＋ 创建任务</button><div class="topic-btn"><span>市场需求对中国省级旅游产业技术演化的影响</span><span>⌃</span></div><div class="side-tree"><a class="side-nav active" href="#review-create"><span>文献综述</span></a><a class="side-nav" href="#proposal"><span>开题报告</span></a><a class="side-nav" href="#draft"><span>论文初稿</span></a></div></div><div class="side-divider"></div><div><div class="side-title">研究资产</div><a class="side-nav" href="#library"><span>文献库</span><span><span class="count">63</span><span class="library-delta">+18</span></span></a><a class="side-nav" href="#artifacts"><span>学术成果</span><span class="count">3</span></a></div><div class="side-note">任务按研究选题组织；文献库和学术成果作为长期研究资产，在不同任务中持续复用。</div></aside><section class="assistant"><header class="assistant-head"><h2>文优小助手 ✦</h2><small>检索已完成 · 当前选题已载入</small></header><div class="assistant-body"><div class="message"><div class="status-row"><span class="status-dot"></span><span>检索已完成</span></div><p>共形成 60 篇候选文献，覆盖 5 个检索方向。</p><p>当前已有 <b>13 / 20</b> 篇全文可用于本次文献综述；总量还缺 7 篇可用全文，SSCI 还缺 2 篇。</p><div class="assistant-actions"><button class="small-btn primary-lite" data-toast="已更新检索策略：多找政策机制">多找政策机制</button><button class="small-btn" data-toast="已更新检索策略：优先 CSSCI">优先 CSSCI</button><button class="small-btn" data-toast="已更新检索策略：只看近三年">只看近三年</button></div></div></div><footer class="assistant-compose"><textarea placeholder="例如：国际经验少一点，多找政策机制相关研究"></textarea><div class="compose-row"><span>Enter 发送 · Shift+Enter 换行</span><button class="primary" data-toast="原型：消息已发送">发送</button></div></footer></section><main class="right-pane"><div class="result-shell"><header class="result-head"><div class="result-title"><div><h2>找文献结果</h2><p>检索已完成 · 共形成 60 篇候选文献 · 当前正在查看「需求满足情况」</p></div><span class="status-pill">当前可用 13 / 20</span></div><nav class="result-tabs"><a class="result-tab active" href="#find-demand">需求满足情况</a><a class="result-tab " href="#find-strategy">检索策略</a><a class="result-tab " href="#find-candidates">候选文献</a></nav></header><div class="result-content"><section class="result-section"><div class="overview"><div><h2>本次文献需求满足情况</h2><p>候选池回答“系统找到了什么”，当前全文回答“真正已经可以进入当前任务的材料有多少”。</p></div><div class="overview-score"><strong>13 / 20</strong><small>当前可用全文</small></div></div><table class="demand-table"><thead><tr><th>文献要求</th><th>我的需求</th><th>候选池</th><th>可一键获取</th><th>需自行下载</th><th>当前可用全文</th><th>状态</th></tr></thead><tbody><tr><td><b>总文献</b></td><td>20</td><td>60</td><td>18</td><td>42</td><td>13</td><td class="warn">还缺 7</td></tr><tr><td><b>SSCI</b></td><td>≥ 5 · 必须</td><td>18</td><td>6</td><td>12</td><td>3</td><td class="warn">还缺 2</td></tr><tr><td><b>CSSCI</b></td><td>≥ 5 · 必须</td><td>16</td><td>2</td><td>14</td><td>5</td><td class="ok">已满足</td></tr><tr><td><b>JCR Q1–Q2</b></td><td>≥ 3 · 优先</td><td>12</td><td>4</td><td>8</td><td>2</td><td class="warn">还缺 1</td></tr></tbody></table></section><section class="result-section"><h3>全文获取</h3><div class="full-grid"><div class="full-card"><span class="mini-badge oa">OA / 可直接获取</span><div class="big">18</div><small>获取后会依次查重、入库、解析，并重新判断是否纳入本次任务。</small><button class="small-btn primary-lite" data-toggle-label="已入库" data-library-add="18">一键入库</button></div><div class="full-card"><span class="mini-badge warn">需自行获取全文</span><div class="big">42</div><small>先导出待下载清单并在校内数据库 / 来源页下载 PDF；下载完成后回到文优，通过文献库完成导入、匹配与解析。</small><div class="actions" style="justify-content:flex-start"><button class="small-btn" data-export-list>导出文献 List</button><a class="small-btn primary-lite" href="#library-import">导入到文献库</a></div></div></div></section><section class="result-section"><h3>当前结论</h3><div class="conclusion ">目前仍不足：总量还缺 7 篇可用全文；SSCI 还缺 2 篇。继续入库或上传全文后，系统会重新计算。</div></section></div><footer class="result-foot"><div class="global-cta"><small>当前 13 / 20 篇；总量还缺 7 篇可用全文；SSCI 还缺 2 篇。</small><button class="disabled-btn" disabled>需要继续补充文献</button></div></footer></div></main></div></section><section id="find-strategy" class="screen app-screen" data-route="find-strategy"><div class="workspace-three"><aside class="sidebar"><div><div class="side-title">任务类别</div><button class="new-task" data-open-task>＋ 创建任务</button><div class="topic-btn"><span>市场需求对中国省级旅游产业技术演化的影响</span><span>⌃</span></div><div class="side-tree"><a class="side-nav active" href="#review-create"><span>文献综述</span></a><a class="side-nav" href="#proposal"><span>开题报告</span></a><a class="side-nav" href="#draft"><span>论文初稿</span></a></div></div><div class="side-divider"></div><div><div class="side-title">研究资产</div><a class="side-nav" href="#library"><span>文献库</span><span><span class="count">63</span><span class="library-delta">+18</span></span></a><a class="side-nav" href="#artifacts"><span>学术成果</span><span class="count">3</span></a></div><div class="side-note">任务按研究选题组织；文献库和学术成果作为长期研究资产，在不同任务中持续复用。</div></aside><section class="assistant"><header class="assistant-head"><h2>文优小助手 ✦</h2><small>检索已完成 · 当前选题已载入</small></header><div class="assistant-body"><div class="message"><div class="status-row"><span class="status-dot"></span><span>检索已完成</span></div><p>共形成 60 篇候选文献，覆盖 5 个检索方向。</p><p>当前已有 <b>13 / 20</b> 篇全文可用于本次文献综述；总量还缺 7 篇可用全文，SSCI 还缺 2 篇。</p><div class="assistant-actions"><button class="small-btn primary-lite" data-toast="已更新检索策略：多找政策机制">多找政策机制</button><button class="small-btn" data-toast="已更新检索策略：优先 CSSCI">优先 CSSCI</button><button class="small-btn" data-toast="已更新检索策略：只看近三年">只看近三年</button></div></div></div><footer class="assistant-compose"><textarea placeholder="例如：国际经验少一点，多找政策机制相关研究"></textarea><div class="compose-row"><span>Enter 发送 · Shift+Enter 换行</span><button class="primary" data-toast="原型：消息已发送">发送</button></div></footer></section><main class="right-pane"><div class="result-shell"><header class="result-head"><div class="result-title"><div><h2>找文献结果</h2><p>检索已完成 · 共形成 60 篇候选文献 · 当前正在查看「检索策略」</p></div><span class="status-pill">当前可用 13 / 20</span></div><nav class="result-tabs"><a class="result-tab " href="#find-demand">需求满足情况</a><a class="result-tab active" href="#find-strategy">检索策略</a><a class="result-tab " href="#find-candidates">候选文献</a></nav></header><div class="result-content"><section class="result-section"><h2>系统检索策略</h2><p>这是系统实际执行的结构化 Search Plan，用来解释选题如何被拆成可检索的研究方向。</p></section><div class="cluster-grid"><article class="cluster"><div class="cluster-head"><div><h3>市场需求与消费升级</h3><span class="muted" style="font-size:8px">建议最终覆盖约 5 篇</span></div><span class="cluster-count">16 篇</span></div><div class="query-list"><span class="query">旅游市场需求 技术升级</span><span class="query">消费升级 旅游数字化</span><span class="query">tourism demand technology adoption</span></div><div class="cluster-foot"><span>OpenAlex · Semantic Scholar · 中文学术数据库</span><span>Metadata 聚类</span></div></article><article class="cluster"><div class="cluster-head"><div><h3>技术创新与数字化转型</h3><span class="muted" style="font-size:8px">建议最终覆盖约 4 篇</span></div><span class="cluster-count">14 篇</span></div><div class="query-list"><span class="query">旅游产业 技术创新</span><span class="query">数字化转型 旅游产业</span><span class="query">tourism digital transformation</span></div><div class="cluster-foot"><span>OpenAlex · Crossref · 中文学术数据库</span><span>Metadata 聚类</span></div></article><article class="cluster"><div class="cluster-head"><div><h3>区域差异与空间演化</h3><span class="muted" style="font-size:8px">建议最终覆盖约 4 篇</span></div><span class="cluster-count">12 篇</span></div><div class="query-list"><span class="query">省级旅游产业 区域差异</span><span class="query">空间分异 技术演化</span><span class="query">regional tourism innovation</span></div><div class="cluster-foot"><span>OpenAlex · 中文学术数据库</span><span>Metadata 聚类</span></div></article><article class="cluster"><div class="cluster-head"><div><h3>产业政策与治理机制</h3><span class="muted" style="font-size:8px">建议最终覆盖约 4 篇</span></div><span class="cluster-count">10 篇</span></div><div class="query-list"><span class="query">旅游产业 政策机制</span><span class="query">地方治理 技术扩散</span><span class="query">tourism policy innovation</span></div><div class="cluster-foot"><span>Semantic Scholar · 中文学术数据库</span><span>Metadata 聚类</span></div></article><article class="cluster"><div class="cluster-head"><div><h3>产业组织与绩效</h3><span class="muted" style="font-size:8px">建议最终覆盖约 3 篇</span></div><span class="cluster-count">8 篇</span></div><div class="query-list"><span class="query">旅游产业组织 技术绩效</span><span class="query">市场结构 创新绩效</span><span class="query">tourism industry performance</span></div><div class="cluster-foot"><span>Crossref · 中文学术数据库</span><span>Metadata 聚类</span></div></article></div><section class="result-section" style="margin-top:10px"><h3>策略可继续修改</h3><p>在中间「文优小助手」中输入“多找政策机制”“优先 CSSCI”“只看近三年”等，正式产品会用新策略更新候选池。</p><button class="small-btn" data-toast="原型：按当前策略重新检索">按当前策略重新检索</button></section></div><footer class="result-foot"><div class="global-cta"><small>当前 13 / 20 篇；总量还缺 7 篇可用全文；SSCI 还缺 2 篇。</small><button class="disabled-btn" disabled>需要继续补充文献</button></div></footer></div></main></div></section><section id="find-candidates" class="screen app-screen" data-route="find-candidates"><div class="workspace-three"><aside class="sidebar"><div><div class="side-title">任务类别</div><button class="new-task" data-open-task>＋ 创建任务</button><div class="topic-btn"><span>市场需求对中国省级旅游产业技术演化的影响</span><span>⌃</span></div><div class="side-tree"><a class="side-nav active" href="#review-create"><span>文献综述</span></a><a class="side-nav" href="#proposal"><span>开题报告</span></a><a class="side-nav" href="#draft"><span>论文初稿</span></a></div></div><div class="side-divider"></div><div><div class="side-title">研究资产</div><a class="side-nav" href="#library"><span>文献库</span><span><span class="count">63</span><span class="library-delta">+18</span></span></a><a class="side-nav" href="#artifacts"><span>学术成果</span><span class="count">3</span></a></div><div class="side-note">任务按研究选题组织；文献库和学术成果作为长期研究资产，在不同任务中持续复用。</div></aside><section class="assistant"><header class="assistant-head"><h2>文优小助手 ✦</h2><small>检索已完成 · 当前选题已载入</small></header><div class="assistant-body"><div class="message"><div class="status-row"><span class="status-dot"></span><span>检索已完成</span></div><p>共形成 60 篇候选文献，覆盖 5 个检索方向。</p><p>当前已有 <b>13 / 20</b> 篇全文可用于本次文献综述；总量还缺 7 篇可用全文，SSCI 还缺 2 篇。</p><div class="assistant-actions"><button class="small-btn primary-lite" data-toast="已更新检索策略：多找政策机制">多找政策机制</button><button class="small-btn" data-toast="已更新检索策略：优先 CSSCI">优先 CSSCI</button><button class="small-btn" data-toast="已更新检索策略：只看近三年">只看近三年</button></div></div></div><footer class="assistant-compose"><textarea placeholder="例如：国际经验少一点，多找政策机制相关研究"></textarea><div class="compose-row"><span>Enter 发送 · Shift+Enter 换行</span><button class="primary" data-toast="原型：消息已发送">发送</button></div></footer></section><main class="right-pane"><div class="result-shell"><header class="result-head"><div class="result-title"><div><h2>找文献结果</h2><p>检索已完成 · 共形成 60 篇候选文献 · 当前正在查看「候选文献」</p></div><span class="status-pill">当前可用 13 / 20</span></div><nav class="result-tabs"><a class="result-tab " href="#find-demand">需求满足情况</a><a class="result-tab " href="#find-strategy">检索策略</a><a class="result-tab active" href="#find-candidates">候选文献</a></nav></header><div class="result-content"><section class="result-section"><h2>候选文献</h2><p>按 Search Cluster 分组。此阶段展示 Metadata、文献层次、摘要匹配和全文获取状态，不把候选文献直接解释为正文证据。</p></section><section class="paper-cluster"><div class="paper-cluster-head"><h3>市场需求与消费升级</h3><span>建议最终覆盖 5 篇</span></div><article class="paper-card"><div><h4>Tourism demand upgrading and digital technology adoption: Evidence from regional markets</h4><div class="paper-meta">Liu, Chen & Wang · 2025 · Tourism Management<br>来源：OpenAlex / 中文学术数据库 · 摘要可用</div><div class="levels"><span class="level">SSCI</span><span class="level">JCR Q1</span><span class="level">近5年</span><span class="level fit">可补当前缺口</span></div></div><div class="paper-side"><span class="mini-badge oa">OA 可获取</span><button class="small-btn primary-lite" data-toggle-label="已入库 · 解析中">一键入库</button></div></article><article class="paper-card"><div><h4>市场需求升级与旅游产业技术创新：来自省级面板数据的证据</h4><div class="paper-meta">王宁，赵辰 · 2024 · 旅游学刊<br>来源：OpenAlex / 中文学术数据库 · 摘要可用</div><div class="levels"><span class="level">CSSCI</span><span class="level">北大核心</span><span class="level">近5年</span><span class="level fit">可补当前缺口</span></div></div><div class="paper-side"><span class="mini-badge warn">需自行获取</span><button class="small-btn" data-toast="原型：跳转来源数据库">前往来源下载</button><a class="small-btn primary-lite" href="#library-import">导入到文献库</a></div></article></section><section class="paper-cluster"><div class="paper-cluster-head"><h3>技术创新与数字化转型</h3><span>建议最终覆盖 4 篇</span></div><article class="paper-card"><div><h4>Digital transformation, innovation capability and tourism industry productivity</h4><div class="paper-meta">Huang & Li · 2024 · Information & Management<br>来源：OpenAlex / 中文学术数据库 · 摘要可用</div><div class="levels"><span class="level">SSCI</span><span class="level">JCR Q1</span><span class="level">近5年</span><span class="level fit">可补当前缺口</span></div></div><div class="paper-side"><span class="mini-badge oa">OA 可获取</span><button class="small-btn primary-lite" data-toggle-label="已入库 · 解析中">一键入库</button></div></article><article class="paper-card"><div><h4>数字技术赋能旅游产业高质量发展的机制研究</h4><div class="paper-meta">周敏，孙凯 · 2023 · 经济地理<br>来源：OpenAlex / 中文学术数据库 · 摘要可用</div><div class="levels"><span class="level">CSSCI</span><span class="level">北大核心</span><span class="level">近5年</span><span class="level fit">可补当前缺口</span></div></div><div class="paper-side"><span class="mini-badge warn">需自行获取</span><button class="small-btn" data-toast="原型：跳转来源数据库">前往来源下载</button><a class="small-btn primary-lite" href="#library-import">导入到文献库</a></div></article></section><section class="paper-cluster"><div class="paper-cluster-head"><h3>区域差异与空间演化</h3><span>建议最终覆盖 4 篇</span></div><article class="paper-card"><div><h4>Regional heterogeneity in tourism innovation: A spatial panel analysis</h4><div class="paper-meta">Smith, Zhao & Park · 2023 · Annals of Tourism Research<br>来源：OpenAlex / 中文学术数据库 · 摘要可用</div><div class="levels"><span class="level">SSCI</span><span class="level">JCR Q1</span><span class="level">近5年</span><span class="level fit">可补当前缺口</span></div></div><div class="paper-side"><span class="mini-badge oa">OA 可获取</span><button class="small-btn primary-lite" data-toggle-label="已入库 · 解析中">一键入库</button></div></article></section><section class="paper-cluster"><div class="paper-cluster-head"><h3>产业政策与治理机制</h3><span>建议最终覆盖 4 篇</span></div><article class="paper-card"><div><h4>Policy support, institutional environment and technology diffusion in tourism</h4><div class="paper-meta">Hughes & Martin · 2024 · Research Policy<br>来源：OpenAlex / 中文学术数据库 · 摘要可用</div><div class="levels"><span class="level">SSCI</span><span class="level">JCR Q1</span><span class="level">近5年</span><span class="level fit">可补当前缺口</span></div></div><div class="paper-side"><span class="mini-badge oa">OA 可获取</span><button class="small-btn primary-lite" data-toggle-label="已入库 · 解析中">一键入库</button></div></article><article class="paper-card"><div><h4>地方治理能力、产业政策与旅游技术扩散</h4><div class="paper-meta">陈立，郭宇 · 2024 · 公共管理学报<br>来源：OpenAlex / 中文学术数据库 · 摘要可用</div><div class="levels"><span class="level">CSSCI</span><span class="level">北大核心</span><span class="level">近5年</span><span class="level fit">可补当前缺口</span></div></div><div class="paper-side"><span class="mini-badge warn">需自行获取</span><button class="small-btn" data-toast="原型：跳转来源数据库">前往来源下载</button><a class="small-btn primary-lite" href="#library-import">导入到文献库</a></div></article></section><section class="paper-cluster"><div class="paper-cluster-head"><h3>产业组织与绩效</h3><span>建议最终覆盖 3 篇</span></div><article class="paper-card"><div><h4>Market structure and innovation performance in tourism industries</h4><div class="paper-meta">Garcia & Lee · 2022 · TFSC<br>来源：OpenAlex / 中文学术数据库 · 摘要可用</div><div class="levels"><span class="level">SSCI</span><span class="level">JCR Q1</span><span class="level">近5年</span><span class="level fit">可补当前缺口</span></div></div><div class="paper-side"><span class="mini-badge oa">OA 可获取</span><button class="small-btn primary-lite" data-toggle-label="已入库 · 解析中">一键入库</button></div></article></section></div><footer class="result-foot"><div class="global-cta"><small>当前 13 / 20 篇；总量还缺 7 篇可用全文；SSCI 还缺 2 篇。</small><button class="disabled-btn" disabled>需要继续补充文献</button></div></footer></div></main></div></section><section id="find-demand-ready" class="screen app-screen" data-route="find-demand-ready"><div class="workspace-three"><aside class="sidebar"><div><div class="side-title">任务类别</div><button class="new-task" data-open-task>＋ 创建任务</button><div class="topic-btn"><span>市场需求对中国省级旅游产业技术演化的影响</span><span>⌃</span></div><div class="side-tree"><a class="side-nav active" href="#review-create"><span>文献综述</span></a><a class="side-nav" href="#proposal"><span>开题报告</span></a><a class="side-nav" href="#draft"><span>论文初稿</span></a></div></div><div class="side-divider"></div><div><div class="side-title">研究资产</div><a class="side-nav" href="#library"><span>文献库</span><span class="count">71</span></a><a class="side-nav" href="#artifacts"><span>学术成果</span><span class="count">3</span></a></div><div class="side-note">任务按研究选题组织；文献库和学术成果作为长期研究资产，在不同任务中持续复用。</div></aside><section class="assistant"><header class="assistant-head"><h2>文优小助手 ✦</h2><small>检索已完成 · 当前选题已载入</small></header><div class="assistant-body"><div class="message"><div class="status-row"><span class="status-dot"></span><span>检索已完成</span></div><p>共形成 60 篇候选文献，覆盖 5 个检索方向。</p><p>当前已有 <b>28 / 20</b> 篇全文可用于本次文献综述，数量与必须条件均有冗余。</p><div class="assistant-actions"><button class="small-btn primary-lite" data-toast="已更新检索策略：多找政策机制">多找政策机制</button><button class="small-btn" data-toast="已更新检索策略：优先 CSSCI">优先 CSSCI</button><button class="small-btn" data-toast="已更新检索策略：只看近三年">只看近三年</button></div></div></div><footer class="assistant-compose"><textarea placeholder="例如：国际经验少一点，多找政策机制相关研究"></textarea><div class="compose-row"><span>Enter 发送 · Shift+Enter 换行</span><button class="primary" data-toast="原型：消息已发送">发送</button></div></footer></section><main class="right-pane"><div class="result-shell"><header class="result-head"><div class="result-title"><div><h2>找文献结果</h2><p>检索已完成 · 共形成 60 篇候选文献 · 当前正在查看「需求满足情况」</p></div><span class="status-pill">当前可用 28 / 20</span></div><nav class="result-tabs"><a class="result-tab active" href="#find-demand-ready">需求满足情况</a><a class="result-tab " href="#find-strategy-ready">检索策略</a><a class="result-tab " href="#find-candidates-ready">候选文献</a></nav></header><div class="result-content"><section class="result-section"><div class="overview"><div><h2>本次文献需求满足情况</h2><p>候选池回答“系统找到了什么”，当前全文回答“真正已经可以进入当前任务的材料有多少”。</p></div><div class="overview-score"><strong>28 / 20</strong><small>当前可用全文</small></div></div><table class="demand-table"><thead><tr><th>文献要求</th><th>我的需求</th><th>候选池</th><th>可一键获取</th><th>需自行下载</th><th>当前可用全文</th><th>状态</th></tr></thead><tbody><tr><td><b>总文献</b></td><td>20</td><td>60</td><td>18</td><td>42</td><td>28</td><td class="ok">数量已达标</td></tr><tr><td><b>SSCI</b></td><td>≥ 5 · 必须</td><td>18</td><td>6</td><td>12</td><td>7</td><td class="ok">已满足</td></tr><tr><td><b>CSSCI</b></td><td>≥ 5 · 必须</td><td>16</td><td>2</td><td>14</td><td>8</td><td class="ok">已满足</td></tr><tr><td><b>JCR Q1–Q2</b></td><td>≥ 3 · 优先</td><td>12</td><td>4</td><td>8</td><td>5</td><td class="ok">已满足</td></tr></tbody></table></section><section class="result-section"><h3>全文获取</h3><div class="full-grid"><div class="full-card"><span class="mini-badge oa">OA / 可直接获取</span><div class="big">10</div><small>获取后会依次查重、入库、解析，并重新判断是否纳入本次任务。</small><button class="small-btn primary-lite" data-toggle-label="已入库">一键入库</button></div><div class="full-card"><span class="mini-badge warn">需自行获取全文</span><div class="big">34</div><small>先导出待下载清单并在校内数据库 / 来源页下载 PDF；下载完成后回到文优，通过文献库完成导入、匹配与解析。</small><div class="actions" style="justify-content:flex-start"><button class="small-btn" data-export-list>导出文献 List</button><a class="small-btn primary-lite" href="#library-import">导入到文献库</a></div></div></div></section><section class="result-section"><h3>当前结论</h3><div class="conclusion good">当前全文与必须质量条件均有较充分冗余，可以继续进入文献综述。</div></section></div><footer class="result-foot"><div class="global-cta"><small>当前 28 篇可用全文，数量与必须质量条件均有充分冗余。</small><a class="primary" href="#outline">继续文献综述</a></div></footer></div></main></div></section><section id="find-strategy-ready" class="screen app-screen" data-route="find-strategy-ready"><div class="workspace-three"><aside class="sidebar"><div><div class="side-title">任务类别</div><button class="new-task" data-open-task>＋ 创建任务</button><div class="topic-btn"><span>市场需求对中国省级旅游产业技术演化的影响</span><span>⌃</span></div><div class="side-tree"><a class="side-nav active" href="#review-create"><span>文献综述</span></a><a class="side-nav" href="#proposal"><span>开题报告</span></a><a class="side-nav" href="#draft"><span>论文初稿</span></a></div></div><div class="side-divider"></div><div><div class="side-title">研究资产</div><a class="side-nav" href="#library"><span>文献库</span><span class="count">71</span></a><a class="side-nav" href="#artifacts"><span>学术成果</span><span class="count">3</span></a></div><div class="side-note">任务按研究选题组织；文献库和学术成果作为长期研究资产，在不同任务中持续复用。</div></aside><section class="assistant"><header class="assistant-head"><h2>文优小助手 ✦</h2><small>检索已完成 · 当前选题已载入</small></header><div class="assistant-body"><div class="message"><div class="status-row"><span class="status-dot"></span><span>检索已完成</span></div><p>共形成 60 篇候选文献，覆盖 5 个检索方向。</p><p>当前已有 <b>28 / 20</b> 篇全文可用于本次文献综述，数量与必须条件均有冗余。</p><div class="assistant-actions"><button class="small-btn primary-lite" data-toast="已更新检索策略：多找政策机制">多找政策机制</button><button class="small-btn" data-toast="已更新检索策略：优先 CSSCI">优先 CSSCI</button><button class="small-btn" data-toast="已更新检索策略：只看近三年">只看近三年</button></div></div></div><footer class="assistant-compose"><textarea placeholder="例如：国际经验少一点，多找政策机制相关研究"></textarea><div class="compose-row"><span>Enter 发送 · Shift+Enter 换行</span><button class="primary" data-toast="原型：消息已发送">发送</button></div></footer></section><main class="right-pane"><div class="result-shell"><header class="result-head"><div class="result-title"><div><h2>找文献结果</h2><p>检索已完成 · 共形成 60 篇候选文献 · 当前正在查看「检索策略」</p></div><span class="status-pill">当前可用 28 / 20</span></div><nav class="result-tabs"><a class="result-tab " href="#find-demand-ready">需求满足情况</a><a class="result-tab active" href="#find-strategy-ready">检索策略</a><a class="result-tab " href="#find-candidates-ready">候选文献</a></nav></header><div class="result-content"><section class="result-section"><h2>系统检索策略</h2><p>这是系统实际执行的结构化 Search Plan，用来解释选题如何被拆成可检索的研究方向。</p></section><div class="cluster-grid"><article class="cluster"><div class="cluster-head"><div><h3>市场需求与消费升级</h3><span class="muted" style="font-size:8px">建议最终覆盖约 5 篇</span></div><span class="cluster-count">16 篇</span></div><div class="query-list"><span class="query">旅游市场需求 技术升级</span><span class="query">消费升级 旅游数字化</span><span class="query">tourism demand technology adoption</span></div><div class="cluster-foot"><span>OpenAlex · Semantic Scholar · 中文学术数据库</span><span>Metadata 聚类</span></div></article><article class="cluster"><div class="cluster-head"><div><h3>技术创新与数字化转型</h3><span class="muted" style="font-size:8px">建议最终覆盖约 4 篇</span></div><span class="cluster-count">14 篇</span></div><div class="query-list"><span class="query">旅游产业 技术创新</span><span class="query">数字化转型 旅游产业</span><span class="query">tourism digital transformation</span></div><div class="cluster-foot"><span>OpenAlex · Crossref · 中文学术数据库</span><span>Metadata 聚类</span></div></article><article class="cluster"><div class="cluster-head"><div><h3>区域差异与空间演化</h3><span class="muted" style="font-size:8px">建议最终覆盖约 4 篇</span></div><span class="cluster-count">12 篇</span></div><div class="query-list"><span class="query">省级旅游产业 区域差异</span><span class="query">空间分异 技术演化</span><span class="query">regional tourism innovation</span></div><div class="cluster-foot"><span>OpenAlex · 中文学术数据库</span><span>Metadata 聚类</span></div></article><article class="cluster"><div class="cluster-head"><div><h3>产业政策与治理机制</h3><span class="muted" style="font-size:8px">建议最终覆盖约 4 篇</span></div><span class="cluster-count">10 篇</span></div><div class="query-list"><span class="query">旅游产业 政策机制</span><span class="query">地方治理 技术扩散</span><span class="query">tourism policy innovation</span></div><div class="cluster-foot"><span>Semantic Scholar · 中文学术数据库</span><span>Metadata 聚类</span></div></article><article class="cluster"><div class="cluster-head"><div><h3>产业组织与绩效</h3><span class="muted" style="font-size:8px">建议最终覆盖约 3 篇</span></div><span class="cluster-count">8 篇</span></div><div class="query-list"><span class="query">旅游产业组织 技术绩效</span><span class="query">市场结构 创新绩效</span><span class="query">tourism industry performance</span></div><div class="cluster-foot"><span>Crossref · 中文学术数据库</span><span>Metadata 聚类</span></div></article></div><section class="result-section" style="margin-top:10px"><h3>策略可继续修改</h3><p>在中间「文优小助手」中输入“多找政策机制”“优先 CSSCI”“只看近三年”等，正式产品会用新策略更新候选池。</p><button class="small-btn" data-toast="原型：按当前策略重新检索">按当前策略重新检索</button></section></div><footer class="result-foot"><div class="global-cta"><small>当前 28 篇可用全文，数量与必须质量条件均有充分冗余。</small><a class="primary" href="#outline">继续文献综述</a></div></footer></div></main></div></section><section id="find-candidates-ready" class="screen app-screen" data-route="find-candidates-ready"><div class="workspace-three"><aside class="sidebar"><div><div class="side-title">任务类别</div><button class="new-task" data-open-task>＋ 创建任务</button><div class="topic-btn"><span>市场需求对中国省级旅游产业技术演化的影响</span><span>⌃</span></div><div class="side-tree"><a class="side-nav active" href="#review-create"><span>文献综述</span></a><a class="side-nav" href="#proposal"><span>开题报告</span></a><a class="side-nav" href="#draft"><span>论文初稿</span></a></div></div><div class="side-divider"></div><div><div class="side-title">研究资产</div><a class="side-nav" href="#library"><span>文献库</span><span class="count">71</span></a><a class="side-nav" href="#artifacts"><span>学术成果</span><span class="count">3</span></a></div><div class="side-note">任务按研究选题组织；文献库和学术成果作为长期研究资产，在不同任务中持续复用。</div></aside><section class="assistant"><header class="assistant-head"><h2>文优小助手 ✦</h2><small>检索已完成 · 当前选题已载入</small></header><div class="assistant-body"><div class="message"><div class="status-row"><span class="status-dot"></span><span>检索已完成</span></div><p>共形成 60 篇候选文献，覆盖 5 个检索方向。</p><p>当前已有 <b>28 / 20</b> 篇全文可用于本次文献综述，数量与必须条件均有冗余。</p><div class="assistant-actions"><button class="small-btn primary-lite" data-toast="已更新检索策略：多找政策机制">多找政策机制</button><button class="small-btn" data-toast="已更新检索策略：优先 CSSCI">优先 CSSCI</button><button class="small-btn" data-toast="已更新检索策略：只看近三年">只看近三年</button></div></div></div><footer class="assistant-compose"><textarea placeholder="例如：国际经验少一点，多找政策机制相关研究"></textarea><div class="compose-row"><span>Enter 发送 · Shift+Enter 换行</span><button class="primary" data-toast="原型：消息已发送">发送</button></div></footer></section><main class="right-pane"><div class="result-shell"><header class="result-head"><div class="result-title"><div><h2>找文献结果</h2><p>检索已完成 · 共形成 60 篇候选文献 · 当前正在查看「候选文献」</p></div><span class="status-pill">当前可用 28 / 20</span></div><nav class="result-tabs"><a class="result-tab " href="#find-demand-ready">需求满足情况</a><a class="result-tab " href="#find-strategy-ready">检索策略</a><a class="result-tab active" href="#find-candidates-ready">候选文献</a></nav></header><div class="result-content"><section class="result-section"><h2>候选文献</h2><p>按 Search Cluster 分组。此阶段展示 Metadata、文献层次、摘要匹配和全文获取状态，不把候选文献直接解释为正文证据。</p></section><section class="paper-cluster"><div class="paper-cluster-head"><h3>市场需求与消费升级</h3><span>建议最终覆盖 5 篇</span></div><article class="paper-card"><div><h4>Tourism demand upgrading and digital technology adoption: Evidence from regional markets</h4><div class="paper-meta">Liu, Chen & Wang · 2025 · Tourism Management<br>来源：OpenAlex / 中文学术数据库 · 摘要可用</div><div class="levels"><span class="level">SSCI</span><span class="level">JCR Q1</span><span class="level">近5年</span><span class="level fit">可补当前缺口</span></div></div><div class="paper-side"><span class="mini-badge oa">已入库 · 本次可用</span><a class="small-btn" href="#library">在文献库查看</a></div></article><article class="paper-card"><div><h4>市场需求升级与旅游产业技术创新：来自省级面板数据的证据</h4><div class="paper-meta">王宁，赵辰 · 2024 · 旅游学刊<br>来源：OpenAlex / 中文学术数据库 · 摘要可用</div><div class="levels"><span class="level">CSSCI</span><span class="level">北大核心</span><span class="level">近5年</span><span class="level fit">可补当前缺口</span></div></div><div class="paper-side"><span class="mini-badge warn">需自行获取</span><button class="small-btn" data-toast="原型：跳转来源数据库">前往来源下载</button><a class="small-btn primary-lite" href="#library-import">导入到文献库</a></div></article></section><section class="paper-cluster"><div class="paper-cluster-head"><h3>技术创新与数字化转型</h3><span>建议最终覆盖 4 篇</span></div><article class="paper-card"><div><h4>Digital transformation, innovation capability and tourism industry productivity</h4><div class="paper-meta">Huang & Li · 2024 · Information & Management<br>来源：OpenAlex / 中文学术数据库 · 摘要可用</div><div class="levels"><span class="level">SSCI</span><span class="level">JCR Q1</span><span class="level">近5年</span><span class="level fit">可补当前缺口</span></div></div><div class="paper-side"><span class="mini-badge oa">已入库 · 本次可用</span><a class="small-btn" href="#library">在文献库查看</a></div></article><article class="paper-card"><div><h4>数字技术赋能旅游产业高质量发展的机制研究</h4><div class="paper-meta">周敏，孙凯 · 2023 · 经济地理<br>来源：OpenAlex / 中文学术数据库 · 摘要可用</div><div class="levels"><span class="level">CSSCI</span><span class="level">北大核心</span><span class="level">近5年</span><span class="level fit">可补当前缺口</span></div></div><div class="paper-side"><span class="mini-badge warn">需自行获取</span><button class="small-btn" data-toast="原型：跳转来源数据库">前往来源下载</button><a class="small-btn primary-lite" href="#library-import">导入到文献库</a></div></article></section><section class="paper-cluster"><div class="paper-cluster-head"><h3>区域差异与空间演化</h3><span>建议最终覆盖 4 篇</span></div><article class="paper-card"><div><h4>Regional heterogeneity in tourism innovation: A spatial panel analysis</h4><div class="paper-meta">Smith, Zhao & Park · 2023 · Annals of Tourism Research<br>来源：OpenAlex / 中文学术数据库 · 摘要可用</div><div class="levels"><span class="level">SSCI</span><span class="level">JCR Q1</span><span class="level">近5年</span><span class="level fit">可补当前缺口</span></div></div><div class="paper-side"><span class="mini-badge oa">已入库 · 本次可用</span><a class="small-btn" href="#library">在文献库查看</a></div></article></section><section class="paper-cluster"><div class="paper-cluster-head"><h3>产业政策与治理机制</h3><span>建议最终覆盖 4 篇</span></div><article class="paper-card"><div><h4>Policy support, institutional environment and technology diffusion in tourism</h4><div class="paper-meta">Hughes & Martin · 2024 · Research Policy<br>来源：OpenAlex / 中文学术数据库 · 摘要可用</div><div class="levels"><span class="level">SSCI</span><span class="level">JCR Q1</span><span class="level">近5年</span><span class="level fit">可补当前缺口</span></div></div><div class="paper-side"><span class="mini-badge oa">已入库 · 本次可用</span><a class="small-btn" href="#library">在文献库查看</a></div></article><article class="paper-card"><div><h4>地方治理能力、产业政策与旅游技术扩散</h4><div class="paper-meta">陈立，郭宇 · 2024 · 公共管理学报<br>来源：OpenAlex / 中文学术数据库 · 摘要可用</div><div class="levels"><span class="level">CSSCI</span><span class="level">北大核心</span><span class="level">近5年</span><span class="level fit">可补当前缺口</span></div></div><div class="paper-side"><span class="mini-badge warn">需自行获取</span><button class="small-btn" data-toast="原型：跳转来源数据库">前往来源下载</button><a class="small-btn primary-lite" href="#library-import">导入到文献库</a></div></article></section><section class="paper-cluster"><div class="paper-cluster-head"><h3>产业组织与绩效</h3><span>建议最终覆盖 3 篇</span></div><article class="paper-card"><div><h4>Market structure and innovation performance in tourism industries</h4><div class="paper-meta">Garcia & Lee · 2022 · TFSC<br>来源：OpenAlex / 中文学术数据库 · 摘要可用</div><div class="levels"><span class="level">SSCI</span><span class="level">JCR Q1</span><span class="level">近5年</span><span class="level fit">可补当前缺口</span></div></div><div class="paper-side"><span class="mini-badge oa">已入库 · 本次可用</span><a class="small-btn" href="#library">在文献库查看</a></div></article></section></div><footer class="result-foot"><div class="global-cta"><small>当前 28 篇可用全文，数量与必须质量条件均有充分冗余。</small><a class="primary" href="#outline">继续文献综述</a></div></footer></div></main></div></section><section id="library" class="screen app-screen" data-route="library"><div class="workspace-three"><aside class="sidebar"><div><div class="side-title">任务类别</div><button class="new-task" data-open-task>＋ 创建任务</button><div class="topic-btn"><span>市场需求对中国省级旅游产业技术演化的影响</span><span>⌃</span></div><div class="side-tree"><a class="side-nav" href="#review-create"><span>文献综述</span></a><a class="side-nav" href="#proposal"><span>开题报告</span></a><a class="side-nav" href="#draft"><span>论文初稿</span></a></div></div><div class="side-divider"></div><div><div class="side-title">研究资产</div><a class="side-nav active" href="#library"><span>文献库</span><span class="count">63</span></a><a class="side-nav" href="#artifacts"><span>学术成果</span><span class="count">3</span></a></div><div class="side-note">任务按研究选题组织；文献库和学术成果作为长期研究资产，在不同任务中持续复用。</div></aside><section class="assistant"><header class="assistant-head"><h2>文优小助手 ✦</h2><small>文献库 · 当前选题已载入</small></header><div class="assistant-body"><div class="message"><div class="status-row"><span class="status-dot"></span><span>正在查看文献库</span></div><p>从找文献结果执行的入库、下载清单和上传动作都沉淀在这里。</p><div class="metrics"><div class="metric"><b>63</b><span>文献库</span></div><div class="metric"><b>42</b><span>待获取全文</span></div><div class="metric"><b>13</b><span>当前任务可用</span></div><div class="metric"><b>1</b><span>解析失败</span></div></div><div class="assistant-actions"><a class="small-btn primary-lite" href="#find-demand">返回找文献结果</a></div></div></div><footer class="assistant-compose"><textarea placeholder="例如：帮我看看刚入库的文献是否适合当前综述"></textarea><div class="compose-row"><span>Enter 发送 · Shift+Enter 换行</span><button class="primary" data-toast="原型：消息已发送">发送</button></div></footer></section><main class="right-pane"><div class="library-shell"><header class="library-head"><div><h2>文献库 · 63 篇</h2><p>这里是工作台内的完整文献库。Find Papers 的入库、下载清单和全文解析会持续沉淀到这里。</p></div><div class="actions"><a class="small-btn primary-lite" href="#library-import">上传文献</a><a class="small-btn" href="#find-demand">返回找文献结果</a></div></header><nav class="library-tabs"><a class="library-tab active" href="#library"><span><b>63</b>全部文献</span></a><a class="library-tab" href="#library"><span><b>42</b>待获取全文</span></a><a class="library-tab" href="#library"><span><b>0</b>解析中</span></a><a class="library-tab" href="#library"><span><b>1</b>解析失败</span></a></nav><section class="library-section"><div class="library-section-head"><h3>全部文献</h3><small>按选题、全文状态和引用情况管理研究资产</small></div><div class="library-list"><article class="library-item"><div><h4>低空经济发展的制度适配与政策机制研究</h4><p>王婷婷，李明 · 2024 · 全文已解析 · 当前任务相关</p></div><span class="mini-badge oa">已有资产</span></article><article class="library-item"><div><h4>中国省域低空经济发展的空间分异与影响因素</h4><p>刘洋，周敏 · 2023 · 全文已解析 · 当前任务相关</p></div><span class="mini-badge oa">已有资产</span></article><article class="library-item"><div><h4>旅游产业技术演化的区域差异研究</h4><p>赵晨 · 2024 · 全文已解析 · 未纳入当前任务</p></div><span class="mini-badge">仅入库</span></article></div></section></div></main></div></section><section id="library-import" class="screen app-screen" data-route="library-import"><div class="workspace-three"><aside class="sidebar"><div><div class="side-title">任务类别</div><button class="new-task" data-open-task>＋ 创建任务</button><div class="topic-btn"><span>市场需求对中国省级旅游产业技术演化的影响</span><span>⌃</span></div><div class="side-tree"><a class="side-nav" href="#review-create"><span>文献综述</span></a><a class="side-nav" href="#proposal"><span>开题报告</span></a><a class="side-nav" href="#draft"><span>论文初稿</span></a></div></div><div class="side-divider"></div><div><div class="side-title">研究资产</div><a class="side-nav active" href="#library"><span>文献库</span><span class="count">63</span></a><a class="side-nav" href="#artifacts"><span>学术成果</span><span class="count">3</span></a></div><div class="side-note">任务按研究选题组织；文献库和学术成果作为长期研究资产，在不同任务中持续复用。</div></aside><section class="assistant"><header class="assistant-head"><h2>文优小助手 ✦</h2><small>导入文献 · 当前选题已载入</small></header><div class="assistant-body"><div class="message"><div class="status-row"><span class="status-dot"></span><span>正在导入文献</span></div><p>你正在为当前文献综述补充无法直接获取的全文。PDF 会先匹配候选文献，再查重、入库、解析。</p><div class="metrics"><div class="metric"><b>42</b><span>待补全文</span></div><div class="metric"><b>63</b><span>当前文献库</span></div><div class="metric"><b>13</b><span>任务可用</span></div><div class="metric"><b>0</b><span>本次上传</span></div></div></div></div><footer class="assistant-compose"><textarea placeholder="例如：帮我检查刚导入的 PDF"></textarea><div class="compose-row"><span>Enter 发送 · Shift+Enter 换行</span><button class="primary" data-toast="原型：消息已发送">发送</button></div></footer></section><main class="right-pane"><div class="library-shell"><header class="library-head"><div><h2>文献库 · 63 篇</h2><p>当前处于“导入文献”状态，保留本次文献综述的补全文上下文。</p></div><div class="actions"><a class="small-btn" href="#library">查看文献库</a><a class="small-btn" href="#find-demand">返回找文献结果</a></div></header><nav class="library-tabs"><a class="library-tab active" href="#library"><span><b>63</b>全部文献</span></a><a class="library-tab" href="#library"><span><b>42</b>待获取全文</span></a><a class="library-tab" href="#library"><span><b>0</b>解析中</span></a><a class="library-tab" href="#library"><span><b>1</b>解析失败</span></a></nav><section class="import-context"><div class="context-top"><div><h3>导入文献 · 当前文献综述补全文</h3><p>来自当前 Find Papers 结果。上传后会先匹配候选文献，再查重、入库、解析，最后判断是否计入本次任务。</p></div><div class="context-stat"><b>42</b>待补全文</div></div><div class="dropzone" id="dropzone"><strong>把刚刚下载的 PDF 拖到这里</strong><p>或选择本地文件。系统会优先依据 DOI、标题、作者与年份，把 PDF 自动关联到刚才导出的候选文献清单。</p><input id="pdfInput" type="file" accept=".pdf,application/pdf" multiple hidden><button class="small-btn primary-lite" data-pick-pdf>选择本地 PDF</button><button class="small-btn" data-sim-import>原型：模拟上传 8 篇</button><div class="match-hint"><span>DOI 匹配</span><span>标题匹配</span><span>作者 / 年份辅助</span><span>重复文献自动忽略</span></div></div></section><section class="library-section"><div class="library-section-head"><h3>本次上传</h3><small>尚未选择本地 PDF</small></div><div style="padding:18px;text-align:center;border:1px dashed #c9c1ef;border-radius:8px;color:var(--muted);font-size:9px">下载完成后可一次选择多篇 PDF。</div></section></div></main></div></section><section id="library-imported" class="screen app-screen" data-route="library-imported"><div class="workspace-three"><aside class="sidebar"><div><div class="side-title">任务类别</div><button class="new-task" data-open-task>＋ 创建任务</button><div class="topic-btn"><span>市场需求对中国省级旅游产业技术演化的影响</span><span>⌃</span></div><div class="side-tree"><a class="side-nav" href="#review-create"><span>文献综述</span></a><a class="side-nav" href="#proposal"><span>开题报告</span></a><a class="side-nav" href="#draft"><span>论文初稿</span></a></div></div><div class="side-divider"></div><div><div class="side-title">研究资产</div><a class="side-nav active" href="#library"><span>文献库</span><span class="count">71</span></a><a class="side-nav" href="#artifacts"><span>学术成果</span><span class="count">3</span></a></div><div class="side-note">任务按研究选题组织；文献库和学术成果作为长期研究资产，在不同任务中持续复用。</div></aside><section class="assistant"><header class="assistant-head"><h2>文优小助手 ✦</h2><small>导入完成 · 当前选题已载入</small></header><div class="assistant-body"><div class="message"><div class="status-row"><span class="status-dot"></span><span>导入完成</span></div><p>8 篇 PDF 已匹配候选清单并进入文献库，其中 7 篇解析成功，6 篇通过当前任务筛选。</p><div class="metrics"><div class="metric"><b>71</b><span>文献库</span></div><div class="metric"><b>34</b><span>待补全文</span></div><div class="metric"><b>28</b><span>当前任务可用</span></div><div class="metric"><b>1</b><span>解析失败</span></div></div></div></div><footer class="assistant-compose"><textarea placeholder="例如：检查解析失败的那一篇"></textarea><div class="compose-row"><span>Enter 发送 · Shift+Enter 换行</span><button class="primary" data-toast="原型：消息已发送">发送</button></div></footer></section><main class="right-pane"><div class="library-shell"><header class="library-head"><div><h2>文献库 · 71 篇</h2><p>导入结果已沉淀到个人文献库，并完成当前任务适用性判断。</p></div><div class="actions"><a class="small-btn" href="#library">继续查看文献库</a><a class="small-btn primary-lite" href="#find-demand-ready">查看更新后的找文献结果</a></div></header><nav class="library-tabs"><a class="library-tab active" href="#library"><span><b>71</b>全部文献</span></a><a class="library-tab" href="#library"><span><b>34</b>待获取全文</span></a><a class="library-tab" href="#library"><span><b>0</b>解析中</span></a><a class="library-tab" href="#library"><span><b>1</b>解析失败</span></a></nav><section class="import-context"><div class="context-top"><div><h3>本次导入完成</h3><p>8 篇 PDF 已匹配候选清单并进入文献库，其中 7 篇解析成功，6 篇通过当前任务筛选。</p></div><div class="context-stat"><b>28</b>任务可用</div></div><div class="conclusion good">文献库 63 → 71；当前任务可用全文 13 → 28。现在已经具备较充分冗余，可以返回找文献结果继续文献综述。</div></section><section class="library-section"><div class="library-section-head"><h3>本次上传</h3><small>展示部分结果</small></div><div class="import-rows"><article class="import-row"><div><h4>政策支持与旅游技术扩散.pdf</h4><p>已匹配：Policy support, institutional environment and technology diffusion in tourism</p></div><span class="mini-badge oa">已入库 · 本次可用</span></article><article class="import-row"><div><h4>市场需求升级与技术创新.pdf</h4><p>已匹配候选文献 · 全文已解析</p></div><span class="mini-badge oa">已入库 · 本次可用</span></article><article class="import-row"><div><h4>regional-tourism-innovation.pdf</h4><p>已匹配候选文献 · 全文已解析</p></div><span class="mini-badge">已入库 · 不纳入本次任务</span></article><article class="import-row"><div><h4>tourism-policy-scan.pdf</h4><p>已入库，但未能正确提取全文内容</p></div><span class="mini-badge warn">解析失败</span></article></div></section></div></main></div></section><section id="outline" class="screen app-screen" data-route="outline"><div class="workspace-three"><aside class="sidebar"><div><div class="side-title">任务类别</div><button class="new-task" data-open-task>＋ 创建任务</button><div class="topic-btn"><span>市场需求对中国省级旅游产业技术演化的影响</span><span>⌃</span></div><div class="side-tree"><a class="side-nav active" href="#review-create"><span>文献综述</span></a><a class="side-nav" href="#proposal"><span>开题报告</span></a><a class="side-nav" href="#draft"><span>论文初稿</span></a></div></div><div class="side-divider"></div><div><div class="side-title">研究资产</div><a class="side-nav" href="#library"><span>文献库</span><span class="count">71</span></a><a class="side-nav" href="#artifacts"><span>学术成果</span><span class="count">3</span></a></div><div class="side-note">任务按研究选题组织；文献库和学术成果作为长期研究资产，在不同任务中持续复用。</div></aside><section class="assistant"><header class="assistant-head"><h2>文优小助手 ✦</h2><small>等待确认 · 当前选题已载入</small></header><div class="assistant-body"><div class="message"><div class="status-row"><span class="status-dot"></span><span>等待确认大纲</span></div><p>材料准备完成。我已经根据研究问题和文献结构生成大纲，你可以直接确认，也可以先修改章节。</p></div><div class="assistant-card"><h3>当前任务进度</h3><div class="progress-steps"><div class="progress-step done"><i>✓</i><span>匹配文献</span></div><div class="progress-step done"><i>✓</i><span>读取批注</span></div><div class="progress-step done"><i>✓</i><span>加载术语</span></div><div class="progress-step done"><i>✓</i><span>构建任务材料</span></div><div class="progress-step current"><i>5</i><span>确认研究大纲</span></div><div class="progress-step"><i>6</i><span>撰写正文</span></div></div></div><div class="assistant-card"><h3>本次任务材料</h3><div class="metrics"><div class="metric"><b>28</b><span>可用全文</span></div><div class="metric"><b>26</b><span>相关批注</span></div><div class="metric"><b>14</b><span>核心术语</span></div><div class="metric"><b>3</b><span>学术成果</span></div></div></div></div><footer class="assistant-compose"><textarea placeholder="例如：把政策机制部分拆得更细一些"></textarea><div class="compose-row"><span>Enter 发送 · Shift+Enter 换行</span><button class="primary" data-toast="原型：消息已发送">发送</button></div></footer></section><main class="right-pane"><section class="outline-pane"><header class="outline-head"><div><h1>大纲方案</h1><p>基于 28 篇全文文献、26 条批注和 14 个核心术语生成，可直接轻量编辑。</p></div><div class="actions"><span class="status-pill">等待确认</span><button class="small-btn" data-toast="原型：已重新生成大纲">重新生成大纲</button></div></header><div class="outline-scroll"><div class="outline-list"><div class="outline-row "><div class="drag">⋮⋮</div><input class="outline-input" value="1 绪论"><button class="small-btn" data-toast="原型：章节已删除">删除</button></div><div class="outline-row child"><div class="drag">⋮⋮</div><input class="outline-input" value="1.1 研究背景与意义"><button class="small-btn" data-toast="原型：章节已删除">删除</button></div><div class="outline-row child"><div class="drag">⋮⋮</div><input class="outline-input" value="1.2 国内外研究现状"><button class="small-btn" data-toast="原型：章节已删除">删除</button></div><div class="outline-row "><div class="drag">⋮⋮</div><input class="outline-input" value="2 理论基础与概念界定"><button class="small-btn" data-toast="原型：章节已删除">删除</button></div><div class="outline-row child"><div class="drag">⋮⋮</div><input class="outline-input" value="2.1 核心概念"><button class="small-btn" data-toast="原型：章节已删除">删除</button></div><div class="outline-row child"><div class="drag">⋮⋮</div><input class="outline-input" value="2.2 理论基础"><button class="small-btn" data-toast="原型：章节已删除">删除</button></div><div class="outline-row "><div class="drag">⋮⋮</div><input class="outline-input" value="3 主要影响因素分析"><button class="small-btn" data-toast="原型：章节已删除">删除</button></div><div class="outline-row child"><div class="drag">⋮⋮</div><input class="outline-input" value="3.1 政策与制度环境"><button class="small-btn" data-toast="原型：章节已删除">删除</button></div><div class="outline-row child"><div class="drag">⋮⋮</div><input class="outline-input" value="3.2 市场需求"><button class="small-btn" data-toast="原型：章节已删除">删除</button></div><div class="outline-row child"><div class="drag">⋮⋮</div><input class="outline-input" value="3.3 技术创新"><button class="small-btn" data-toast="原型：章节已删除">删除</button></div><div class="outline-row child"><div class="drag">⋮⋮</div><input class="outline-input" value="3.4 区域基础条件"><button class="small-btn" data-toast="原型：章节已删除">删除</button></div><div class="outline-row "><div class="drag">⋮⋮</div><input class="outline-input" value="4 研究不足与未来方向"><button class="small-btn" data-toast="原型：章节已删除">删除</button></div><div class="outline-row "><div class="drag">⋮⋮</div><input class="outline-input" value="5 结论"><button class="small-btn" data-toast="原型：章节已删除">删除</button></div></div><button class="small-btn primary-lite" style="display:flex;margin:10px auto" data-toast="原型：已添加章节">＋ 添加章节</button></div><footer class="outline-foot"><small>确认后将正式进入正文生成阶段，文优小助手会继续显示生成进度。</small><div class="actions"><button class="ghost" data-toast="原型：已重新生成大纲">重新生成大纲</button><a class="primary" href="#writing">确认大纲并生成正文</a></div></footer></section></main></div></section><section id="writing" class="screen app-screen" data-route="writing"><div class="writing-grid"><aside class="rail"><a class="active" href="#writing">文</a><a href="#library">库</a><a href="#artifacts">成</a><a href="#outline">纲</a></aside><section class="assistant"><header class="assistant-head"><h2>文优小助手 ✦</h2><small>正在生成 · 当前选题已载入</small></header><div class="assistant-body"><div class="message"><div class="status-row"><span class="status-dot"></span><span>正在撰写正文</span></div><p>大纲已确认，正在生成 1.1 研究背景与意义。引用会优先使用已解析全文。</p></div><div class="assistant-card"><h3>生成进度</h3><div class="progress-steps"><div class="progress-step done"><i>✓</i><span>匹配文献</span></div><div class="progress-step done"><i>✓</i><span>构建材料</span></div><div class="progress-step done"><i>✓</i><span>确认大纲</span></div><div class="progress-step current"><i>6</i><span>撰写正文</span></div></div></div><div class="assistant-actions"><button class="small-btn primary-lite" data-toast="已打开本次任务材料">查看本次任务材料</button><a class="small-btn" href="#outline">调整大纲</a><a class="small-btn" href="#find-demand">补充文献</a></div></div><footer class="assistant-compose"><textarea placeholder="例如：第一段更强调研究意义"></textarea><div class="compose-row"><span>Enter 发送 · Shift+Enter 换行</span><button class="primary" data-toast="原型：消息已发送">发送</button></div></footer></section><main class="editor"><header class="editor-head"><div><h2>文献综述 · 市场需求对中国省级旅游产业技术演化的影响</h2><span class="muted" style="font-size:8px">自动保存 · 正在生成</span></div><div class="actions"><button class="small-btn" data-toast="已保存为学术成果">保存为成果物</button><button class="small-btn">预览</button><button class="small-btn primary-lite" data-toast="原型：已导出文档">导出</button></div></header><nav class="editor-tabs"><span class="editor-tab active">论文编辑</span><span class="editor-tab">执行计划</span><a class="editor-tab" href="#outline">大纲方案</a></nav><div class="paper-editor"><article class="paper-page"><h1>市场需求对中国省级旅游产业技术演化的影响：文献综述</h1><h2>1. 引言</h2><p>中国旅游产业正处于由规模扩张向质量提升转型的关键阶段。市场需求结构变化不仅影响产业资源配置，也持续推动地方技术能力、数字化基础设施与治理机制演化。</p><h2>1.1 研究背景与意义</h2><p>近年来，区域旅游消费需求呈现结构升级和数字化转型并行的趋势。既有研究普遍关注技术创新、产业政策与市场环境之间的关系，但对省级旅游市场需求如何影响技术演化路径仍缺少系统梳理。</p><p class="muted">文优小助手正在继续生成下一段……</p></article></div><footer class="editor-foot"><span>引用 6 篇 / 8 处</span><span>当前字数 1,286 / 5,000</span></footer></main></div></section><section id="proposal" class="screen app-screen" data-route="proposal"><div class="workspace-three"><aside class="sidebar"><div><div class="side-title">任务类别</div><button class="new-task" data-open-task>＋ 创建任务</button><div class="topic-btn"><span>市场需求对中国省级旅游产业技术演化的影响</span><span>⌃</span></div><div class="side-tree"><a class="side-nav" href="#review-create"><span>文献综述</span></a><a class="side-nav active" href="#proposal"><span>开题报告</span></a><a class="side-nav" href="#draft"><span>论文初稿</span></a></div></div><div class="side-divider"></div><div><div class="side-title">研究资产</div><a class="side-nav" href="#library"><span>文献库</span><span><span class="count">63</span><span class="library-delta">+18</span></span></a><a class="side-nav" href="#artifacts"><span>学术成果</span><span class="count">3</span></a></div><div class="side-note">任务按研究选题组织；文献库和学术成果作为长期研究资产，在不同任务中持续复用。</div></aside><section class="assistant"><header class="assistant-head"><h2>文优小助手 ✦</h2><small>任务助手 · 当前选题已载入</small></header><div class="assistant-body"><div class="message"><div class="status-row"><span class="status-dot"></span><span>当前任务</span></div><p>该任务会复用当前选题下已有研究资产。</p></div></div><footer class="assistant-compose"><textarea placeholder="告诉文优小助手你接下来想做什么"></textarea><div class="compose-row"><span>Enter 发送 · Shift+Enter 换行</span><button class="primary" data-toast="原型：消息已发送">发送</button></div></footer></section><main class="right-pane"><div class="right-scroll"><div class="placeholder"><h1>开题报告</h1><p>该任务继续沿用同一套“任务类别 + 研究资产 + 文优小助手 + 右侧任务工作区”的结构。本轮静态 Demo 重点打磨文献综述主链路，因此这里保留为可点击占位页。</p><div class="actions" style="justify-content:flex-start;margin-top:14px"><a class="primary" href="#review-create">查看文献综述主链路</a><a class="ghost" href="#old-home">返回工作台</a></div></div></div></main></div></section><section id="draft" class="screen app-screen" data-route="draft"><div class="workspace-three"><aside class="sidebar"><div><div class="side-title">任务类别</div><button class="new-task" data-open-task>＋ 创建任务</button><div class="topic-btn"><span>市场需求对中国省级旅游产业技术演化的影响</span><span>⌃</span></div><div class="side-tree"><a class="side-nav" href="#review-create"><span>文献综述</span></a><a class="side-nav" href="#proposal"><span>开题报告</span></a><a class="side-nav active" href="#draft"><span>论文初稿</span></a></div></div><div class="side-divider"></div><div><div class="side-title">研究资产</div><a class="side-nav" href="#library"><span>文献库</span><span><span class="count">63</span><span class="library-delta">+18</span></span></a><a class="side-nav" href="#artifacts"><span>学术成果</span><span class="count">3</span></a></div><div class="side-note">任务按研究选题组织；文献库和学术成果作为长期研究资产，在不同任务中持续复用。</div></aside><section class="assistant"><header class="assistant-head"><h2>文优小助手 ✦</h2><small>任务助手 · 当前选题已载入</small></header><div class="assistant-body"><div class="message"><div class="status-row"><span class="status-dot"></span><span>当前任务</span></div><p>该任务会复用当前选题下已有研究资产。</p></div></div><footer class="assistant-compose"><textarea placeholder="告诉文优小助手你接下来想做什么"></textarea><div class="compose-row"><span>Enter 发送 · Shift+Enter 换行</span><button class="primary" data-toast="原型：消息已发送">发送</button></div></footer></section><main class="right-pane"><div class="right-scroll"><div class="placeholder"><h1>论文初稿</h1><p>该任务继续沿用同一套“任务类别 + 研究资产 + 文优小助手 + 右侧任务工作区”的结构。本轮静态 Demo 重点打磨文献综述主链路，因此这里保留为可点击占位页。</p><div class="actions" style="justify-content:flex-start;margin-top:14px"><a class="primary" href="#review-create">查看文献综述主链路</a><a class="ghost" href="#old-home">返回工作台</a></div></div></div></main></div></section><section id="artifacts" class="screen app-screen" data-route="artifacts"><div class="workspace-three"><aside class="sidebar"><div><div class="side-title">任务类别</div><button class="new-task" data-open-task>＋ 创建任务</button><div class="topic-btn"><span>市场需求对中国省级旅游产业技术演化的影响</span><span>⌃</span></div><div class="side-tree"><a class="side-nav" href="#review-create"><span>文献综述</span></a><a class="side-nav" href="#proposal"><span>开题报告</span></a><a class="side-nav" href="#draft"><span>论文初稿</span></a></div></div><div class="side-divider"></div><div><div class="side-title">研究资产</div><a class="side-nav" href="#library"><span>文献库</span><span><span class="count">63</span><span class="library-delta">+18</span></span></a><a class="side-nav active" href="#artifacts"><span>学术成果</span><span class="count">3</span></a></div><div class="side-note">任务按研究选题组织；文献库和学术成果作为长期研究资产，在不同任务中持续复用。</div></aside><section class="assistant"><header class="assistant-head"><h2>文优小助手 ✦</h2><small>任务助手 · 当前选题已载入</small></header><div class="assistant-body"><div class="message"><div class="status-row"><span class="status-dot"></span><span>当前任务</span></div><p>该任务会复用当前选题下已有研究资产。</p></div></div><footer class="assistant-compose"><textarea placeholder="告诉文优小助手你接下来想做什么"></textarea><div class="compose-row"><span>Enter 发送 · Shift+Enter 换行</span><button class="primary" data-toast="原型：消息已发送">发送</button></div></footer></section><main class="right-pane"><div class="right-scroll"><div class="placeholder"><h1>学术成果</h1><p>这里沉淀已经完成或保存的文献综述、开题报告和论文初稿，可被后续任务复用。</p><div class="stat-grid" style="margin-top:14px"><div class="stat"><b>1</b><span>文献综述</span></div><div class="stat"><b>1</b><span>开题报告</span></div><div class="stat"><b>1</b><span>论文初稿</span></div><div class="stat"><b>3</b><span>成果总数</span></div></div></div></div></main></div></section><dialog id="taskDialog"><div class="dialog-card"><h2>创建任务</h2><p>写作任务彼此独立，不强制按“综述 → 开题 → 初稿”的顺序完成。</p><div class="task-type-grid"><a class="task-type-card" href="#review-create" data-close-dialog><b>文献综述</b><span>整理研究现状、理论脉络和研究空白。</span></a><a class="task-type-card" href="#proposal" data-close-dialog><b>开题报告</b><span>形成研究背景、方法、创新点和计划。</span></a><a class="task-type-card" href="#draft" data-close-dialog><b>论文初稿</b><span>基于研究资产与已有成果开始章节写作。</span></a></div><div class="dialog-actions"><button class="ghost" data-close-dialog>取消</button></div></div></dialog><div class="toast-root" id="toastRoot"></div><script>
+</section><section id="login" class="screen prelogin-screen" data-route="login"><div class="prelogin-wrap"><div class="prelogin-brand"><span class="brand-mark">文</span><span>文优小助 PRO</span></div><div class="login-shell"><div class="login-copy"><h1>把论文任务和研究资产<br>放进同一个工作台</h1><p>从找文献、全文阅读，到文献综述、开题报告和论文初稿，文优小助围绕同一研究选题持续复用你的材料。</p><div class="login-features"><div class="login-feature"><b>学术任务</b><span>文献综述、开题报告、论文初稿独立创建。</span></div><div class="login-feature"><b>研究资产</b><span>文献、批注、术语和成果持续沉淀。</span></div><div class="login-feature"><b>文优小助手</b><span>在任务中理解上下文并协助推进下一步。</span></div></div></div><div class="login-card"><h2>登录文优小助</h2><p>旧用户会恢复已有任务与研究资产。</p><div class="field"><label>账号</label><input class="input" value="C001510"></div><div class="field"><label>密码</label><input class="input" type="password" value="12345678"></div><a class="primary full" href="#old-home">登录并继续研究</a><div class="login-divider">或者</div><a class="ghost full" href="#tutorial">新用户，先选择任务</a></div></div></div></section>
+<section id="tutorial" class="screen prelogin-screen tutorial-screen" data-route="tutorial">
+  <div class="tutorial-wrap">
+    <header class="tutorial-top">
+      <div class="tutorial-brand"><span class="brand-mark">文</span><span>文优小助 PRO</span></div>
+      <a class="tutorial-skip" href="#new-select">跳过教程</a>
+    </header>
+
+    <div class="tutorial-stage">
+      <section class="tutorial-slide active" data-tutorial-slide="0">
+        <div class="tutorial-head">
+          <div class="tutorial-eyebrow">围绕同一个研究主题</div>
+          <div class="tutorial-title">写作与研究，都可以从这里着手</div>
+        </div>
+        <div class="tutorial-entry-grid">
+          <article class="tutorial-entry">
+            <div class="tutorial-entry-icon">写</div>
+            <h2>论文任务</h2>
+            <div class="tutorial-entry-list">
+              <div class="tutorial-entry-item"><b class="purple">文献综述</b><small>梳理研究脉络与主要观点</small></div>
+              <div class="tutorial-entry-item"><b>开题报告</b><small>明确研究问题、方法与计划</small></div>
+              <div class="tutorial-entry-item"><b>论文初稿</b><small>基于已有材料完成初稿</small></div>
+            </div>
+          </article>
+          <article class="tutorial-entry research">
+            <div class="tutorial-entry-icon">研</div>
+            <h2>深入研究</h2>
+            <div class="tutorial-entry-list">
+              <div class="tutorial-entry-item"><b>文献检索</b><small>围绕研究问题发现相关文献</small></div>
+              <div class="tutorial-entry-item"><b class="green">全文精读</b><small>结合全文与 AI 问答深入理解</small></div>
+              <div class="tutorial-entry-item"><b>沉淀术语 / 批注</b><small>保存关键概念与阅读思考</small></div>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="tutorial-slide" data-tutorial-slide="1">
+        <div class="tutorial-head">
+          <div class="tutorial-eyebrow">完成论文任务</div>
+          <div class="tutorial-title">不是从空白开始，而是从已有研究积累开始</div>
+          <div class="tutorial-subtitle">系统按这次任务重新组装材料，你只需要确认方向与内容。</div>
+        </div>
+        <div class="tutorial-flow">
+          <article class="tutorial-flow-card">
+            <div class="num">1</div>
+            <h3>选择任务</h3>
+            <p>以当前目标开始，不要求先完成其他论文任务。</p>
+            <div class="tutorial-mini"><b class="purple">文献综述</b></div>
+          </article>
+          <div class="tutorial-arrow">→</div>
+          <article class="tutorial-flow-card">
+            <div class="num">2</div>
+            <h3>组装材料</h3>
+            <p>自动调用与本次选题相关的已有研究积累。</p>
+            <div class="tutorial-mini"><b>研究材料</b><br><span class="gray">全文 · 批注 · 术语</span></div>
+          </article>
+          <div class="tutorial-arrow">→</div>
+          <article class="tutorial-flow-card">
+            <div class="num">3</div>
+            <h3>确认大纲</h3>
+            <p>先确认研究结构，再进入正文生成。</p>
+            <div class="tutorial-mini"><b>大纲</b><br><span class="gray">可调整 · 可重排</span></div>
+          </article>
+          <div class="tutorial-arrow">→</div>
+          <article class="tutorial-flow-card">
+            <div class="num">4</div>
+            <h3>生成正文</h3>
+            <p>正文引用继续关联到所使用的研究材料。</p>
+            <div class="tutorial-mini"><b>正文</b> + <b>引用</b></div>
+          </article>
+        </div>
+        <div class="tutorial-page-note">论文任务之间彼此独立，但都可以复用已经积累的研究材料。</div>
+      </section>
+
+      <section class="tutorial-slide" data-tutorial-slide="2">
+        <div class="tutorial-head">
+          <div class="tutorial-eyebrow">继续深入研究</div>
+          <div class="tutorial-title">先把问题研究清楚，也可以</div>
+          <div class="tutorial-subtitle">研究不只是写作前的准备，也可以成为独立、持续的工作过程。</div>
+        </div>
+        <div class="tutorial-flow three">
+          <article class="tutorial-flow-card">
+            <div class="num">1</div>
+            <h3>文献检索</h3>
+            <p>围绕研究问题发现相关文献。</p>
+            <div class="tutorial-mini"><b>找文献</b><br><span class="gray">检索策略 · 候选池</span></div>
+          </article>
+          <div class="tutorial-arrow">→</div>
+          <article class="tutorial-flow-card">
+            <div class="num">2</div>
+            <h3 class="green">全文精读</h3>
+            <p>结合全文与 AI 问答深入理解。</p>
+            <div class="tutorial-mini"><b class="green">读文献</b><br><span class="gray">AI 问答</span></div>
+          </article>
+          <div class="tutorial-arrow">→</div>
+          <article class="tutorial-flow-card">
+            <div class="num">3</div>
+            <h3>沉淀术语 / 批注</h3>
+            <p>保存关键概念与阅读思考。</p>
+            <div class="tutorial-mini"><b>批注</b> · <b>术语</b> · <span class="gray">引用</span></div>
+          </article>
+        </div>
+        <div class="tutorial-page-note">你可以停留在研究阶段，也可以在任何时候从研究积累进入新的论文任务。</div>
+      </section>
+
+      <section class="tutorial-slide" data-tutorial-slide="3">
+        <div class="tutorial-head">
+          <div class="tutorial-eyebrow">长期研究资产</div>
+          <div class="tutorial-title">研究积累会被留下来</div>
+          <div class="tutorial-subtitle">学术成果与文献库是两个一级资产，批注和术语从文献阅读与解析中继续沉淀。</div>
+        </div>
+        <div class="tutorial-assets">
+          <article class="tutorial-asset-card results">
+            <h3>学术成果</h3>
+            <p>论文任务完成后的结果，继续成为后续研究与写作可以使用的成果。</p>
+            <div class="tutorial-result-list">
+              <div class="tutorial-result-row"><b>文献综述</b><span>已完成</span></div>
+              <div class="tutorial-result-row"><b>开题报告</b><span>可继续创建</span></div>
+              <div class="tutorial-result-row"><b>论文初稿</b><span>可继续创建</span></div>
+            </div>
+          </article>
+          <article class="tutorial-asset-card library">
+            <h3>文献库</h3>
+            <p>全文文献是研究材料的核心载体，阅读过程中的理解继续沉淀在这里。</p>
+            <div class="tutorial-library-metrics">
+              <div class="tutorial-library-metric"><b>63</b><small>全文文献</small></div>
+              <div class="tutorial-library-metric"><b>18</b><small>当前选题相关</small></div>
+            </div>
+            <div class="tutorial-derived-label">从文献阅读与解析中继续沉淀：</div>
+            <div class="tutorial-derived">
+              <div class="tutorial-derived-card notes"><b>批注 31</b><small>AI 与人工阅读痕迹</small></div>
+              <div class="tutorial-derived-card terms"><b>术语 14</b><small>核心概念与研究语境</small></div>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="tutorial-slide" data-tutorial-slide="4">
+        <div class="tutorial-head">
+          <div class="tutorial-eyebrow">持续复用</div>
+          <div class="tutorial-title">下一次任务，不必重新从零开始</div>
+          <div class="tutorial-subtitle">新的任务会重新调用已有研究积累，并按当前目标重新组装材料。</div>
+        </div>
+        <div class="tutorial-reuse">
+          <article class="tutorial-reuse-card">
+            <h3>已有研究积累</h3>
+            <p>之前留下的文献、批注、术语和学术成果仍然存在。</p>
+            <div class="tutorial-tags">
+              <span class="tutorial-tag">文献 63</span>
+              <span class="tutorial-tag">批注 31</span>
+              <span class="tutorial-tag">术语 14</span>
+              <span class="tutorial-tag">成果 3</span>
+            </div>
+          </article>
+          <div class="tutorial-arrow">→</div>
+          <article class="tutorial-reuse-card">
+            <h3>新的论文任务</h3>
+            <p>系统根据这一次目标重新恢复研究上下文，并重新组装任务材料。</p>
+            <span class="tutorial-status">已载入研究积累</span>
+          </article>
+        </div>
+        <div class="tutorial-brand-line">让每一次研究积累，持续服务下一次学术任务</div>
+      </section>
+    </div>
+
+    <footer>
+      <div class="tutorial-counter" id="tutorialCounter">1 / 5</div>
+      <div class="tutorial-footer">
+        <div class="tutorial-foot-side"><button class="tutorial-btn" data-tutorial-prev disabled>‹ 上一页</button></div>
+        <div class="tutorial-dots">
+          <button class="tutorial-dot active" data-tutorial-page="0" aria-label="第1页"></button>
+          <button class="tutorial-dot" data-tutorial-page="1" aria-label="第2页"></button>
+          <button class="tutorial-dot" data-tutorial-page="2" aria-label="第3页"></button>
+          <button class="tutorial-dot" data-tutorial-page="3" aria-label="第4页"></button>
+          <button class="tutorial-dot" data-tutorial-page="4" aria-label="第5页"></button>
+        </div>
+        <div class="tutorial-foot-side right"><button class="tutorial-btn primary" data-tutorial-next>下一页 ›</button></div>
+      </div>
+    </footer>
+  </div>
+</section>
+
+<section id="new-select" class="screen prelogin-screen" data-route="new-select">
+  <div class="ns-shell">
+    <div class="ns-brand"><span class="brand-mark">文</span><span>文优小助 PRO</span></div>
+
+    <section id="nsStage" class="ns-stage">
+      <header class="ns-head-default">
+        <h1>你现在想完成什么？</h1>
+        <p>先选择一个方向，再进入具体任务。</p>
+      </header>
+
+      <header class="ns-head-focus">
+        <div class="ns-crumb" id="nsCrumb">论文任务 / 文献综述</div>
+        <h1 id="nsHeading">文献综述</h1>
+        <p>当前已进入具体任务说明，左侧保留当前类别，右侧展开任务详情。</p>
+      </header>
+
+      <article id="nsWriting" class="ns-job writing">
+        <div class="ns-job-icon">写</div>
+        <h2>论文任务</h2>
+        <p class="ns-job-desc">从写作目标出发，直接创建当前论文任务。</p>
+        <div class="ns-task-list">
+          <button class="ns-task" data-ns-task="review">
+            <span class="ns-task-copy"><b>文献综述</b><small>梳理研究脉络与主要观点</small></span><span class="ns-task-arrow">›</span>
+          </button>
+          <button class="ns-task" data-ns-task="proposal">
+            <span class="ns-task-copy"><b>开题报告</b><small>明确研究问题、方法与计划</small></span><span class="ns-task-arrow">›</span>
+          </button>
+          <button class="ns-task" data-ns-task="draft">
+            <span class="ns-task-copy"><b>论文初稿</b><small>基于已有材料完成初稿</small></span><span class="ns-task-arrow">›</span>
+          </button>
+        </div>
+      </article>
+
+      <article id="nsResearch" class="ns-job research">
+        <div class="ns-job-icon">研</div>
+        <h2>深入研究</h2>
+        <p class="ns-job-desc">不急着写论文，也可以先持续推进研究过程。</p>
+        <div class="ns-task-list">
+          <button class="ns-task" data-ns-task="search">
+            <span class="ns-task-copy"><b>文献检索</b><small>围绕研究问题发现相关文献</small></span><span class="ns-task-arrow">›</span>
+          </button>
+          <button class="ns-task" data-ns-task="reading">
+            <span class="ns-task-copy"><b>全文精读</b><small>结合全文与 AI 问答深入理解</small></span><span class="ns-task-arrow">›</span>
+          </button>
+          <button class="ns-task" data-ns-task="notes">
+            <span class="ns-task-copy"><b>沉淀术语 / 批注</b><small>保存关键概念与阅读思考</small></span><span class="ns-task-arrow">›</span>
+          </button>
+        </div>
+      </article>
+
+      <section id="nsDetail" class="ns-detail">
+        <div class="ns-detail-top">
+          <div>
+            <div class="ns-detail-kicker" id="nsKicker">论文任务</div>
+            <h2 class="ns-detail-title" id="nsTitle">文献综述</h2>
+            <p class="ns-detail-intro" id="nsIntro"></p>
+          </div>
+          <button class="ns-back" data-ns-back>← 返回选择</button>
+        </div>
+
+        <div class="ns-detail-grid" id="nsGrid"></div>
+
+        <div class="ns-detail-flow">
+          <div class="ns-detail-flow-title">这项任务会怎么推进</div>
+          <div class="ns-flow-line" id="nsFlow"></div>
+        </div>
+
+        <div class="ns-detail-bottom">
+          <div class="ns-detail-note" id="nsNote"></div>
+          <a class="ns-detail-cta" id="nsCta" href="#review-create">开始创建</a>
+        </div>
+      </section>
+
+      <a class="ns-back-login" href="#login">← 返回登录</a>
+    </section>
+  </div>
+</section>
+<section id="old-home" class="screen app-screen" data-route="old-home"><div class="workspace-three"><aside class="sidebar"><div><div class="side-title">任务类别</div><button class="new-task" data-open-task>＋ 创建任务</button><div class="topic-btn"><span>市场需求对中国省级旅游产业技术演化的影响</span><span>⌃</span></div><div class="side-tree"><a class="side-nav active" href="#review-create"><span>文献综述</span></a><a class="side-nav" href="#proposal"><span>开题报告</span></a><a class="side-nav" href="#draft"><span>论文初稿</span></a></div></div><div class="side-divider"></div><div><div class="side-title">研究资产</div><a class="side-nav" href="#library"><span>文献库</span><span><span class="count">63</span><span class="library-delta">+18</span></span></a><a class="side-nav" href="#artifacts"><span>学术成果</span><span class="count">3</span></a></div><div class="side-note">任务按研究选题组织；文献库和学术成果作为长期研究资产，在不同任务中持续复用。</div></aside><section class="assistant"><header class="assistant-head"><h2>文优小助手 ✦</h2><small>欢迎回来 · 当前选题已载入</small></header><div class="assistant-body"><div class="message"><div class="status-row"><span class="status-dot"></span><span>已恢复研究上下文</span></div><p>欢迎回来。上次离开时，文献综述已经生成大纲，正在等待你确认。</p></div><div class="assistant-card"><h3>当前选题资产</h3><div class="metrics"><div class="metric"><b>63</b><span>文献</span></div><div class="metric"><b>31</b><span>批注</span></div><div class="metric"><b>14</b><span>术语</span></div><div class="metric"><b>3</b><span>学术成果</span></div></div></div></div><footer class="assistant-compose"><textarea placeholder="例如：继续上次的文献综述"></textarea><div class="compose-row"><span>Enter 发送 · Shift+Enter 换行</span><button class="primary" data-toast="原型：消息已发送">发送</button></div></footer></section><main class="right-pane"><div class="right-scroll"><div class="old-home"><div class="old-kicker">欢迎回来</div><h1>继续你的研究任务</h1><p>系统已经恢复上次工作状态。已有任务会直接回到真实进度，不要求从头开始。</p><div class="old-grid"><section class="old-card"><h2>进行中的任务</h2><p>点击后继续到上次工作阶段。</p><div class="resume-list"><a class="resume primary-task" href="#outline"><b>文献综述 · 市场需求对中国省级旅游产业技术演化的影响</b><em>进行中 · 待确认大纲</em><span>已完成材料准备，下一步确认大纲后进入正文生成。</span></a><a class="resume" href="#proposal"><b>开题报告</b><em>未开始</em><span>可直接使用当前选题的文献、批注、术语与已有成果。</span></a><a class="resume" href="#draft"><b>论文初稿</b><em>未开始</em><span>创建后按需选择研究资产，不强制顺序。</span></a></div></section><section class="old-card"><h2>研究资产</h2><p>资产会被不同任务复用。</p><div class="stat-grid"><div class="stat"><b>63</b><span>文献</span></div><div class="stat"><b>31</b><span>批注</span></div><div class="stat"><b>14</b><span>术语</span></div><div class="stat"><b>3</b><span>学术成果</span></div></div></section></div></div></div></main></div></section><section id="review-create" class="screen app-screen" data-route="review-create"><div class="workspace-two"><aside class="sidebar"><div><div class="side-title">任务类别</div><button class="new-task" data-open-task>＋ 创建任务</button><div class="topic-btn"><span>市场需求对中国省级旅游产业技术演化的影响</span><span>⌃</span></div><div class="side-tree"><a class="side-nav active" href="#review-create"><span>文献综述</span></a><a class="side-nav" href="#proposal"><span>开题报告</span></a><a class="side-nav" href="#draft"><span>论文初稿</span></a></div></div><div class="side-divider"></div><div><div class="side-title">研究资产</div><a class="side-nav" href="#library"><span>文献库</span><span><span class="count">63</span><span class="library-delta">+18</span></span></a><a class="side-nav" href="#artifacts"><span>学术成果</span><span class="count">3</span></a></div><div class="side-note">任务按研究选题组织；文献库和学术成果作为长期研究资产，在不同任务中持续复用。</div></aside><main class="review-main"><div class="page-title"><div><h1>创建文献综述</h1><p>填写本次写作要求，文献需求会用于检查现有文献库，并决定是否需要进入找文献。</p></div><a class="ghost" href="#new-select">返回任务选择</a></div><section class="review-card"><div class="form-row"><label>当前选题</label><div class="topic-chip"><strong>市场需求对中国省级旅游产业技术演化的影响</strong><span>已关联</span></div></div><div class="form-row"><label>* 标题</label><input class="input" value="市场需求对中国省级旅游产业技术演化的影响"></div><div class="form-row"><label>研究方向</label><input class="input" value="旅游产业技术演化与区域市场需求"></div><div class="form-row"><label>研究问题</label><textarea class="textarea">市场需求如何影响省级旅游产业技术演化？现有研究有哪些共同结论与不足？</textarea></div><div class="form-row"><label>* 字数</label><div style="display:flex;gap:8px;align-items:center"><input class="input" style="width:130px" value="5000"><span class="muted" style="font-size:10px">字</span></div></div><div class="form-row"><label>文献需求</label><div class="req-shell"><div class="req-head"><strong style="font-size:11px">本次目标 20 篇</strong><span class="status-pill">经济 / 管理 / 社会科学</span></div><div class="req-summary"><div class="req-chip"><b>20</b><span>目标全文</span></div><div class="req-chip"><b>≥ 5</b><span>SSCI · 必须</span></div><div class="req-chip"><b>≥ 5</b><span>CSSCI · 必须</span></div><div class="req-chip"><b>≥ 3</b><span>JCR Q1–Q2 · 优先</span></div></div><div class="library-check"><div style="display:flex;justify-content:space-between;font-size:9px"><b>已连接你的文献库</b><span>3 / 20 篇可用</span></div><div class="progress"><i style="width:15%"></i></div><div class="check-grid"><div class="check-metric"><b>63</b><span>文献库总量</span></div><div class="check-metric"><b>6</b><span>选题相关</span></div><div class="check-metric"><b>3</b><span>全文可用</span></div><div class="check-metric"><b>1 / 5</b><span>SSCI</span></div></div><div class="gap">当前材料未完全满足要求：总量还缺 17 篇；SSCI 至少还缺 4 篇；CSSCI 至少还缺 3 篇。</div></div></div></div><div class="form-row"><label>上传相关文献</label><div class="upload-box"><div><strong>上传全文后自动查重并进入文献库</strong><small>只有“已入库 + 有全文 + 解析完成”的文献才计入本次可用数量。</small></div><button class="small-btn primary-lite" data-toast="原型：打开本地文件选择器">选择本地文件</button></div></div><div class="form-row"><label>可选成果</label><label style="font-size:10px"><input type="checkbox"> 使用已有学术成果 <span class="muted">当前暂无可关联成果</span></label></div><div class="form-footer"><div class="hint">当前材料未完全满足要求。主操作优先补文献，但也允许用户承担风险，直接使用现有材料继续。</div><div class="actions"><a class="ghost" href="#outline">仍使用现有 3 篇生成</a><a class="primary" href="#find-setup">找文献</a></div></div></section></main></div></section><section id="find-setup" class="screen app-screen" data-route="find-setup"><div class="workspace-two"><aside class="sidebar"><div><div class="side-title">任务类别</div><button class="new-task" data-open-task>＋ 创建任务</button><div class="topic-btn"><span>市场需求对中国省级旅游产业技术演化的影响</span><span>⌃</span></div><div class="side-tree"><a class="side-nav active" href="#review-create"><span>文献综述</span></a><a class="side-nav" href="#proposal"><span>开题报告</span></a><a class="side-nav" href="#draft"><span>论文初稿</span></a></div></div><div class="side-divider"></div><div><div class="side-title">研究资产</div><a class="side-nav" href="#library"><span>文献库</span><span><span class="count">63</span><span class="library-delta">+18</span></span></a><a class="side-nav" href="#artifacts"><span>学术成果</span><span class="count">3</span></a></div><div class="side-note">任务按研究选题组织；文献库和学术成果作为长期研究资产，在不同任务中持续复用。</div></aside><main style="min-width:0;min-height:0;overflow:auto;background:var(--bg)"><div class="find-page"><div class="find-page-head"><div><h1>找文献 · 检索设置</h1><p>系统已继承当前文献综述的选题、研究问题和文献需求。这里只需要微调 Search Agent 的检索参数。</p></div><a class="ghost" href="#review-create">返回文献综述</a></div><section class="find-card"><h2 style="font-size:15px;margin:0 0 5px">检索需求</h2><p style="margin:0 0 12px;color:var(--muted);font-size:9px">检索阶段先建立候选文献池，真正进入写作的材料仍需获取全文并完成内容筛选。</p><div class="find-block"><div class="find-block-head"><div><strong>研究选题</strong><small>从当前文献综述继承</small></div></div><div class="topic-chip"><strong>市场需求对中国省级旅游产业技术演化的影响</strong><span>已继承</span></div></div><div class="find-block"><div class="find-block-head"><div><strong>系统生成的检索关键词</strong><small>基于标题、研究方向和研究问题生成</small></div><button class="small-btn" data-toast="已扩展中英文同义词与相关检索词">AI 优化关键词</button></div><div class="keyword-list"><span class="keyword">旅游市场需求</span><span class="keyword">技术演化</span><span class="keyword">数字化转型</span><span class="keyword">区域差异</span><span class="keyword">产业政策</span><span class="keyword">tourism technology adoption</span></div></div><div class="find-block"><div class="find-block-head"><div><strong>文献需求</strong><small>直接继承上一页</small></div><button class="small-btn" data-toast="原型：文献需求可在这里调整">调整文献需求</button></div><div class="req-summary"><div class="req-chip"><b>20</b><span>目标全文</span></div><div class="req-chip"><b>≥ 5</b><span>SSCI · 必须</span></div><div class="req-chip"><b>≥ 5</b><span>CSSCI · 必须</span></div><div class="req-chip"><b>≥ 3</b><span>JCR Q1–Q2 · 优先</span></div></div></div><div class="find-block"><div class="find-block-head"><div><strong>检索数据库</strong><small>开放学术元数据 + 已授权中文学术数据源</small></div></div><div class="db-grid"><label class="db"><input type="checkbox" checked><span><b>OpenAlex</b><small>开放学术元数据</small></span></label><label class="db"><input type="checkbox" checked><span><b>Semantic Scholar</b><small>语义检索与引文元数据</small></span></label><label class="db"><input type="checkbox" checked><span><b>Crossref</b><small>DOI 与出版元数据</small></span></label><label class="db"><input type="checkbox" checked><span><b>中文学术数据库</b><small>授权数据源 / 用户可访问来源</small></span></label></div></div><div class="find-block"><div class="find-block-head"><div><strong>检索强度</strong><small>强度影响查询扩展范围和候选池规模</small></div></div><div class="intensity"><button class="intensity-card" data-intensity><b>快速</b><small>目标需求 × 2<br>适合快速补充</small></button><button class="intensity-card active" data-intensity><b>标准 · 推荐</b><small>目标需求 × 3<br>兼顾覆盖与等待时间</small></button><button class="intensity-card" data-intensity><b>深度</b><small>目标需求 × 4<br>扩大查询与主题覆盖</small></button></div><div class="why-box"><div style="display:flex;justify-content:space-between;gap:10px"><span><b style="color:#514295">为什么候选文献会多于最终需求？</b>　Metadata / 摘要只能完成候选初筛，获取全文后还要做内容相关性筛选。</span><button class="text-link" data-why>了解筛选过程 ›</button></div><div class="why-flow" id="whyFlow"><span class="why-node">多数据库检索</span>→<span class="why-node">Metadata 去重初筛</span>→<span class="why-node">形成 2–4 倍候选池</span>→<span class="why-node">获取全文</span>→<span class="why-node">内容筛选</span></div></div><div class="estimate">预计形成约 <b>60 篇候选文献</b>。候选数只是检索供给，不等于最终可用于当前任务的全文数量。</div></div><div class="find-foot"><a class="primary" href="#find-running">开始检索</a></div></section></div></main></div></section><section id="find-running" class="screen app-screen" data-route="find-running"><div class="workspace-full"><div class="running-wrap"><div class="running-hero"><h1>正在检索文献</h1><p>正在根据你的文献综述要求建立候选文献池。检索完成后会自动进入结果工作台。</p></div><section class="run-card"><div class="run-progress"><i id="runBar" style="width:18%"></i></div><div class="run-list"><div class="run-step" data-run-step="0"><i>1</i><div><strong>生成检索式</strong><small>根据选题拆解中英文关键词与查询组合</small></div></div><div class="run-step" data-run-step="1"><i>2</i><div><strong>多数据库检索</strong><small>并行检索已选择的数据源</small></div></div><div class="run-step" data-run-step="2"><i>3</i><div><strong>Metadata 归一化与去重</strong><small>合并 DOI、标题、作者和年份信息</small></div></div><div class="run-step" data-run-step="3"><i>4</i><div><strong>按文献要求筛选</strong><small>应用 SSCI / CSSCI / JCR / 年份等条件</small></div></div><div class="run-step" data-run-step="4"><i>5</i><div><strong>主题聚类与候选排序</strong><small>形成结构化候选文献池</small></div></div></div><div class="run-live"><span>当前阶段：<b id="runStage">生成检索式</b></span><span>当前已保留 <b id="runCount">12</b> 条候选记录</span></div><div class="actions" style="margin-top:12px"><a class="small-btn" href="#find-setup">取消检索</a><a class="small-btn primary-lite" href="#find-demand">立即查看结果</a></div></section></div></div></section><section id="find-demand" class="screen app-screen" data-route="find-demand"><div class="workspace-three"><aside class="sidebar"><div><div class="side-title">任务类别</div><button class="new-task" data-open-task>＋ 创建任务</button><div class="topic-btn"><span>市场需求对中国省级旅游产业技术演化的影响</span><span>⌃</span></div><div class="side-tree"><a class="side-nav active" href="#review-create"><span>文献综述</span></a><a class="side-nav" href="#proposal"><span>开题报告</span></a><a class="side-nav" href="#draft"><span>论文初稿</span></a></div></div><div class="side-divider"></div><div><div class="side-title">研究资产</div><a class="side-nav" href="#library"><span>文献库</span><span><span class="count">63</span><span class="library-delta">+18</span></span></a><a class="side-nav" href="#artifacts"><span>学术成果</span><span class="count">3</span></a></div><div class="side-note">任务按研究选题组织；文献库和学术成果作为长期研究资产，在不同任务中持续复用。</div></aside><section class="assistant"><header class="assistant-head"><h2>文优小助手 ✦</h2><small>检索已完成 · 当前选题已载入</small></header><div class="assistant-body"><div class="message"><div class="status-row"><span class="status-dot"></span><span>检索已完成</span></div><p>共形成 60 篇候选文献，覆盖 5 个检索方向。</p><p>当前已有 <b>13 / 20</b> 篇全文可用于本次文献综述；总量还缺 7 篇可用全文，SSCI 还缺 2 篇。</p><div class="assistant-actions"><button class="small-btn primary-lite" data-toast="已更新检索策略：多找政策机制">多找政策机制</button><button class="small-btn" data-toast="已更新检索策略：优先 CSSCI">优先 CSSCI</button><button class="small-btn" data-toast="已更新检索策略：只看近三年">只看近三年</button></div></div></div><footer class="assistant-compose"><textarea placeholder="例如：国际经验少一点，多找政策机制相关研究"></textarea><div class="compose-row"><span>Enter 发送 · Shift+Enter 换行</span><button class="primary" data-toast="原型：消息已发送">发送</button></div></footer></section><main class="right-pane"><div class="result-shell"><header class="result-head"><div class="result-title"><div><h2>找文献结果</h2><p>检索已完成 · 共形成 60 篇候选文献 · 当前正在查看「需求满足情况」</p></div><span class="status-pill">当前可用 13 / 20</span></div><nav class="result-tabs"><a class="result-tab active" href="#find-demand">需求满足情况</a><a class="result-tab " href="#find-strategy">检索策略</a><a class="result-tab " href="#find-candidates">候选文献</a></nav></header><div class="result-content"><section class="result-section"><div class="overview"><div><h2>本次文献需求满足情况</h2><p>候选池回答“系统找到了什么”，当前全文回答“真正已经可以进入当前任务的材料有多少”。</p></div><div class="overview-score"><strong>13 / 20</strong><small>当前可用全文</small></div></div><table class="demand-table"><thead><tr><th>文献要求</th><th>我的需求</th><th>候选池</th><th>可一键获取</th><th>需自行下载</th><th>当前可用全文</th><th>状态</th></tr></thead><tbody><tr><td><b>总文献</b></td><td>20</td><td>60</td><td>18</td><td>42</td><td>13</td><td class="warn">还缺 7</td></tr><tr><td><b>SSCI</b></td><td>≥ 5 · 必须</td><td>18</td><td>6</td><td>12</td><td>3</td><td class="warn">还缺 2</td></tr><tr><td><b>CSSCI</b></td><td>≥ 5 · 必须</td><td>16</td><td>2</td><td>14</td><td>5</td><td class="ok">已满足</td></tr><tr><td><b>JCR Q1–Q2</b></td><td>≥ 3 · 优先</td><td>12</td><td>4</td><td>8</td><td>2</td><td class="warn">还缺 1</td></tr></tbody></table></section><section class="result-section"><h3>全文获取</h3><div class="full-grid"><div class="full-card"><span class="mini-badge oa">OA / 可直接获取</span><div class="big">18</div><small>获取后会依次查重、入库、解析，并重新判断是否纳入本次任务。</small><button class="small-btn primary-lite" data-toggle-label="已入库" data-library-add="18">一键入库</button></div><div class="full-card"><span class="mini-badge warn">需自行获取全文</span><div class="big">42</div><small>先导出待下载清单并在校内数据库 / 来源页下载 PDF；下载完成后回到文优，通过文献库完成导入、匹配与解析。</small><div class="actions" style="justify-content:flex-start"><button class="small-btn" data-export-list>导出文献 List</button><a class="small-btn primary-lite" href="#library-import">导入到文献库</a></div></div></div></section><section class="result-section"><h3>当前结论</h3><div class="conclusion ">目前仍不足：总量还缺 7 篇可用全文；SSCI 还缺 2 篇。继续入库或上传全文后，系统会重新计算。</div></section></div><footer class="result-foot"><div class="global-cta"><small>当前 13 / 20 篇；总量还缺 7 篇可用全文；SSCI 还缺 2 篇。</small><button class="disabled-btn" disabled>需要继续补充文献</button></div></footer></div></main></div></section><section id="find-strategy" class="screen app-screen" data-route="find-strategy"><div class="workspace-three"><aside class="sidebar"><div><div class="side-title">任务类别</div><button class="new-task" data-open-task>＋ 创建任务</button><div class="topic-btn"><span>市场需求对中国省级旅游产业技术演化的影响</span><span>⌃</span></div><div class="side-tree"><a class="side-nav active" href="#review-create"><span>文献综述</span></a><a class="side-nav" href="#proposal"><span>开题报告</span></a><a class="side-nav" href="#draft"><span>论文初稿</span></a></div></div><div class="side-divider"></div><div><div class="side-title">研究资产</div><a class="side-nav" href="#library"><span>文献库</span><span><span class="count">63</span><span class="library-delta">+18</span></span></a><a class="side-nav" href="#artifacts"><span>学术成果</span><span class="count">3</span></a></div><div class="side-note">任务按研究选题组织；文献库和学术成果作为长期研究资产，在不同任务中持续复用。</div></aside><section class="assistant"><header class="assistant-head"><h2>文优小助手 ✦</h2><small>检索已完成 · 当前选题已载入</small></header><div class="assistant-body"><div class="message"><div class="status-row"><span class="status-dot"></span><span>检索已完成</span></div><p>共形成 60 篇候选文献，覆盖 5 个检索方向。</p><p>当前已有 <b>13 / 20</b> 篇全文可用于本次文献综述；总量还缺 7 篇可用全文，SSCI 还缺 2 篇。</p><div class="assistant-actions"><button class="small-btn primary-lite" data-toast="已更新检索策略：多找政策机制">多找政策机制</button><button class="small-btn" data-toast="已更新检索策略：优先 CSSCI">优先 CSSCI</button><button class="small-btn" data-toast="已更新检索策略：只看近三年">只看近三年</button></div></div></div><footer class="assistant-compose"><textarea placeholder="例如：国际经验少一点，多找政策机制相关研究"></textarea><div class="compose-row"><span>Enter 发送 · Shift+Enter 换行</span><button class="primary" data-toast="原型：消息已发送">发送</button></div></footer></section><main class="right-pane"><div class="result-shell"><header class="result-head"><div class="result-title"><div><h2>找文献结果</h2><p>检索已完成 · 共形成 60 篇候选文献 · 当前正在查看「检索策略」</p></div><span class="status-pill">当前可用 13 / 20</span></div><nav class="result-tabs"><a class="result-tab " href="#find-demand">需求满足情况</a><a class="result-tab active" href="#find-strategy">检索策略</a><a class="result-tab " href="#find-candidates">候选文献</a></nav></header><div class="result-content"><section class="result-section"><h2>系统检索策略</h2><p>这是系统实际执行的结构化 Search Plan，用来解释选题如何被拆成可检索的研究方向。</p></section><div class="cluster-grid"><article class="cluster"><div class="cluster-head"><div><h3>市场需求与消费升级</h3><span class="muted" style="font-size:8px">建议最终覆盖约 5 篇</span></div><span class="cluster-count">16 篇</span></div><div class="query-list"><span class="query">旅游市场需求 技术升级</span><span class="query">消费升级 旅游数字化</span><span class="query">tourism demand technology adoption</span></div><div class="cluster-foot"><span>OpenAlex · Semantic Scholar · 中文学术数据库</span><span>Metadata 聚类</span></div></article><article class="cluster"><div class="cluster-head"><div><h3>技术创新与数字化转型</h3><span class="muted" style="font-size:8px">建议最终覆盖约 4 篇</span></div><span class="cluster-count">14 篇</span></div><div class="query-list"><span class="query">旅游产业 技术创新</span><span class="query">数字化转型 旅游产业</span><span class="query">tourism digital transformation</span></div><div class="cluster-foot"><span>OpenAlex · Crossref · 中文学术数据库</span><span>Metadata 聚类</span></div></article><article class="cluster"><div class="cluster-head"><div><h3>区域差异与空间演化</h3><span class="muted" style="font-size:8px">建议最终覆盖约 4 篇</span></div><span class="cluster-count">12 篇</span></div><div class="query-list"><span class="query">省级旅游产业 区域差异</span><span class="query">空间分异 技术演化</span><span class="query">regional tourism innovation</span></div><div class="cluster-foot"><span>OpenAlex · 中文学术数据库</span><span>Metadata 聚类</span></div></article><article class="cluster"><div class="cluster-head"><div><h3>产业政策与治理机制</h3><span class="muted" style="font-size:8px">建议最终覆盖约 4 篇</span></div><span class="cluster-count">10 篇</span></div><div class="query-list"><span class="query">旅游产业 政策机制</span><span class="query">地方治理 技术扩散</span><span class="query">tourism policy innovation</span></div><div class="cluster-foot"><span>Semantic Scholar · 中文学术数据库</span><span>Metadata 聚类</span></div></article><article class="cluster"><div class="cluster-head"><div><h3>产业组织与绩效</h3><span class="muted" style="font-size:8px">建议最终覆盖约 3 篇</span></div><span class="cluster-count">8 篇</span></div><div class="query-list"><span class="query">旅游产业组织 技术绩效</span><span class="query">市场结构 创新绩效</span><span class="query">tourism industry performance</span></div><div class="cluster-foot"><span>Crossref · 中文学术数据库</span><span>Metadata 聚类</span></div></article></div><section class="result-section" style="margin-top:10px"><h3>策略可继续修改</h3><p>在中间「文优小助手」中输入“多找政策机制”“优先 CSSCI”“只看近三年”等，正式产品会用新策略更新候选池。</p><button class="small-btn" data-toast="原型：按当前策略重新检索">按当前策略重新检索</button></section></div><footer class="result-foot"><div class="global-cta"><small>当前 13 / 20 篇；总量还缺 7 篇可用全文；SSCI 还缺 2 篇。</small><button class="disabled-btn" disabled>需要继续补充文献</button></div></footer></div></main></div></section><section id="find-candidates" class="screen app-screen" data-route="find-candidates"><div class="workspace-three"><aside class="sidebar"><div><div class="side-title">任务类别</div><button class="new-task" data-open-task>＋ 创建任务</button><div class="topic-btn"><span>市场需求对中国省级旅游产业技术演化的影响</span><span>⌃</span></div><div class="side-tree"><a class="side-nav active" href="#review-create"><span>文献综述</span></a><a class="side-nav" href="#proposal"><span>开题报告</span></a><a class="side-nav" href="#draft"><span>论文初稿</span></a></div></div><div class="side-divider"></div><div><div class="side-title">研究资产</div><a class="side-nav" href="#library"><span>文献库</span><span><span class="count">63</span><span class="library-delta">+18</span></span></a><a class="side-nav" href="#artifacts"><span>学术成果</span><span class="count">3</span></a></div><div class="side-note">任务按研究选题组织；文献库和学术成果作为长期研究资产，在不同任务中持续复用。</div></aside><section class="assistant"><header class="assistant-head"><h2>文优小助手 ✦</h2><small>检索已完成 · 当前选题已载入</small></header><div class="assistant-body"><div class="message"><div class="status-row"><span class="status-dot"></span><span>检索已完成</span></div><p>共形成 60 篇候选文献，覆盖 5 个检索方向。</p><p>当前已有 <b>13 / 20</b> 篇全文可用于本次文献综述；总量还缺 7 篇可用全文，SSCI 还缺 2 篇。</p><div class="assistant-actions"><button class="small-btn primary-lite" data-toast="已更新检索策略：多找政策机制">多找政策机制</button><button class="small-btn" data-toast="已更新检索策略：优先 CSSCI">优先 CSSCI</button><button class="small-btn" data-toast="已更新检索策略：只看近三年">只看近三年</button></div></div></div><footer class="assistant-compose"><textarea placeholder="例如：国际经验少一点，多找政策机制相关研究"></textarea><div class="compose-row"><span>Enter 发送 · Shift+Enter 换行</span><button class="primary" data-toast="原型：消息已发送">发送</button></div></footer></section><main class="right-pane"><div class="result-shell"><header class="result-head"><div class="result-title"><div><h2>找文献结果</h2><p>检索已完成 · 共形成 60 篇候选文献 · 当前正在查看「候选文献」</p></div><span class="status-pill">当前可用 13 / 20</span></div><nav class="result-tabs"><a class="result-tab " href="#find-demand">需求满足情况</a><a class="result-tab " href="#find-strategy">检索策略</a><a class="result-tab active" href="#find-candidates">候选文献</a></nav></header><div class="result-content"><section class="result-section"><h2>候选文献</h2><p>按 Search Cluster 分组。此阶段展示 Metadata、文献层次、摘要匹配和全文获取状态，不把候选文献直接解释为正文证据。</p></section><section class="paper-cluster"><div class="paper-cluster-head"><h3>市场需求与消费升级</h3><span>建议最终覆盖 5 篇</span></div><article class="paper-card"><div><h4>Tourism demand upgrading and digital technology adoption: Evidence from regional markets</h4><div class="paper-meta">Liu, Chen & Wang · 2025 · Tourism Management<br>来源：OpenAlex / 中文学术数据库 · 摘要可用</div><div class="levels"><span class="level">SSCI</span><span class="level">JCR Q1</span><span class="level">近5年</span><span class="level fit">可补当前缺口</span></div></div><div class="paper-side"><span class="mini-badge oa">OA 可获取</span><button class="small-btn primary-lite" data-toggle-label="已入库 · 解析中">一键入库</button></div></article><article class="paper-card"><div><h4>市场需求升级与旅游产业技术创新：来自省级面板数据的证据</h4><div class="paper-meta">王宁，赵辰 · 2024 · 旅游学刊<br>来源：OpenAlex / 中文学术数据库 · 摘要可用</div><div class="levels"><span class="level">CSSCI</span><span class="level">北大核心</span><span class="level">近5年</span><span class="level fit">可补当前缺口</span></div></div><div class="paper-side"><span class="mini-badge warn">需自行获取</span><button class="small-btn" data-toast="原型：跳转来源数据库">前往来源下载</button><a class="small-btn primary-lite" href="#library-import">导入到文献库</a></div></article></section><section class="paper-cluster"><div class="paper-cluster-head"><h3>技术创新与数字化转型</h3><span>建议最终覆盖 4 篇</span></div><article class="paper-card"><div><h4>Digital transformation, innovation capability and tourism industry productivity</h4><div class="paper-meta">Huang & Li · 2024 · Information & Management<br>来源：OpenAlex / 中文学术数据库 · 摘要可用</div><div class="levels"><span class="level">SSCI</span><span class="level">JCR Q1</span><span class="level">近5年</span><span class="level fit">可补当前缺口</span></div></div><div class="paper-side"><span class="mini-badge oa">OA 可获取</span><button class="small-btn primary-lite" data-toggle-label="已入库 · 解析中">一键入库</button></div></article><article class="paper-card"><div><h4>数字技术赋能旅游产业高质量发展的机制研究</h4><div class="paper-meta">周敏，孙凯 · 2023 · 经济地理<br>来源：OpenAlex / 中文学术数据库 · 摘要可用</div><div class="levels"><span class="level">CSSCI</span><span class="level">北大核心</span><span class="level">近5年</span><span class="level fit">可补当前缺口</span></div></div><div class="paper-side"><span class="mini-badge warn">需自行获取</span><button class="small-btn" data-toast="原型：跳转来源数据库">前往来源下载</button><a class="small-btn primary-lite" href="#library-import">导入到文献库</a></div></article></section><section class="paper-cluster"><div class="paper-cluster-head"><h3>区域差异与空间演化</h3><span>建议最终覆盖 4 篇</span></div><article class="paper-card"><div><h4>Regional heterogeneity in tourism innovation: A spatial panel analysis</h4><div class="paper-meta">Smith, Zhao & Park · 2023 · Annals of Tourism Research<br>来源：OpenAlex / 中文学术数据库 · 摘要可用</div><div class="levels"><span class="level">SSCI</span><span class="level">JCR Q1</span><span class="level">近5年</span><span class="level fit">可补当前缺口</span></div></div><div class="paper-side"><span class="mini-badge oa">OA 可获取</span><button class="small-btn primary-lite" data-toggle-label="已入库 · 解析中">一键入库</button></div></article></section><section class="paper-cluster"><div class="paper-cluster-head"><h3>产业政策与治理机制</h3><span>建议最终覆盖 4 篇</span></div><article class="paper-card"><div><h4>Policy support, institutional environment and technology diffusion in tourism</h4><div class="paper-meta">Hughes & Martin · 2024 · Research Policy<br>来源：OpenAlex / 中文学术数据库 · 摘要可用</div><div class="levels"><span class="level">SSCI</span><span class="level">JCR Q1</span><span class="level">近5年</span><span class="level fit">可补当前缺口</span></div></div><div class="paper-side"><span class="mini-badge oa">OA 可获取</span><button class="small-btn primary-lite" data-toggle-label="已入库 · 解析中">一键入库</button></div></article><article class="paper-card"><div><h4>地方治理能力、产业政策与旅游技术扩散</h4><div class="paper-meta">陈立，郭宇 · 2024 · 公共管理学报<br>来源：OpenAlex / 中文学术数据库 · 摘要可用</div><div class="levels"><span class="level">CSSCI</span><span class="level">北大核心</span><span class="level">近5年</span><span class="level fit">可补当前缺口</span></div></div><div class="paper-side"><span class="mini-badge warn">需自行获取</span><button class="small-btn" data-toast="原型：跳转来源数据库">前往来源下载</button><a class="small-btn primary-lite" href="#library-import">导入到文献库</a></div></article></section><section class="paper-cluster"><div class="paper-cluster-head"><h3>产业组织与绩效</h3><span>建议最终覆盖 3 篇</span></div><article class="paper-card"><div><h4>Market structure and innovation performance in tourism industries</h4><div class="paper-meta">Garcia & Lee · 2022 · TFSC<br>来源：OpenAlex / 中文学术数据库 · 摘要可用</div><div class="levels"><span class="level">SSCI</span><span class="level">JCR Q1</span><span class="level">近5年</span><span class="level fit">可补当前缺口</span></div></div><div class="paper-side"><span class="mini-badge oa">OA 可获取</span><button class="small-btn primary-lite" data-toggle-label="已入库 · 解析中">一键入库</button></div></article></section></div><footer class="result-foot"><div class="global-cta"><small>当前 13 / 20 篇；总量还缺 7 篇可用全文；SSCI 还缺 2 篇。</small><button class="disabled-btn" disabled>需要继续补充文献</button></div></footer></div></main></div></section><section id="find-demand-ready" class="screen app-screen" data-route="find-demand-ready"><div class="workspace-three"><aside class="sidebar"><div><div class="side-title">任务类别</div><button class="new-task" data-open-task>＋ 创建任务</button><div class="topic-btn"><span>市场需求对中国省级旅游产业技术演化的影响</span><span>⌃</span></div><div class="side-tree"><a class="side-nav active" href="#review-create"><span>文献综述</span></a><a class="side-nav" href="#proposal"><span>开题报告</span></a><a class="side-nav" href="#draft"><span>论文初稿</span></a></div></div><div class="side-divider"></div><div><div class="side-title">研究资产</div><a class="side-nav" href="#library"><span>文献库</span><span class="count">71</span></a><a class="side-nav" href="#artifacts"><span>学术成果</span><span class="count">3</span></a></div><div class="side-note">任务按研究选题组织；文献库和学术成果作为长期研究资产，在不同任务中持续复用。</div></aside><section class="assistant"><header class="assistant-head"><h2>文优小助手 ✦</h2><small>检索已完成 · 当前选题已载入</small></header><div class="assistant-body"><div class="message"><div class="status-row"><span class="status-dot"></span><span>检索已完成</span></div><p>共形成 60 篇候选文献，覆盖 5 个检索方向。</p><p>当前已有 <b>28 / 20</b> 篇全文可用于本次文献综述，数量与必须条件均有冗余。</p><div class="assistant-actions"><button class="small-btn primary-lite" data-toast="已更新检索策略：多找政策机制">多找政策机制</button><button class="small-btn" data-toast="已更新检索策略：优先 CSSCI">优先 CSSCI</button><button class="small-btn" data-toast="已更新检索策略：只看近三年">只看近三年</button></div></div></div><footer class="assistant-compose"><textarea placeholder="例如：国际经验少一点，多找政策机制相关研究"></textarea><div class="compose-row"><span>Enter 发送 · Shift+Enter 换行</span><button class="primary" data-toast="原型：消息已发送">发送</button></div></footer></section><main class="right-pane"><div class="result-shell"><header class="result-head"><div class="result-title"><div><h2>找文献结果</h2><p>检索已完成 · 共形成 60 篇候选文献 · 当前正在查看「需求满足情况」</p></div><span class="status-pill">当前可用 28 / 20</span></div><nav class="result-tabs"><a class="result-tab active" href="#find-demand-ready">需求满足情况</a><a class="result-tab " href="#find-strategy-ready">检索策略</a><a class="result-tab " href="#find-candidates-ready">候选文献</a></nav></header><div class="result-content"><section class="result-section"><div class="overview"><div><h2>本次文献需求满足情况</h2><p>候选池回答“系统找到了什么”，当前全文回答“真正已经可以进入当前任务的材料有多少”。</p></div><div class="overview-score"><strong>28 / 20</strong><small>当前可用全文</small></div></div><table class="demand-table"><thead><tr><th>文献要求</th><th>我的需求</th><th>候选池</th><th>可一键获取</th><th>需自行下载</th><th>当前可用全文</th><th>状态</th></tr></thead><tbody><tr><td><b>总文献</b></td><td>20</td><td>60</td><td>18</td><td>42</td><td>28</td><td class="ok">数量已达标</td></tr><tr><td><b>SSCI</b></td><td>≥ 5 · 必须</td><td>18</td><td>6</td><td>12</td><td>7</td><td class="ok">已满足</td></tr><tr><td><b>CSSCI</b></td><td>≥ 5 · 必须</td><td>16</td><td>2</td><td>14</td><td>8</td><td class="ok">已满足</td></tr><tr><td><b>JCR Q1–Q2</b></td><td>≥ 3 · 优先</td><td>12</td><td>4</td><td>8</td><td>5</td><td class="ok">已满足</td></tr></tbody></table></section><section class="result-section"><h3>全文获取</h3><div class="full-grid"><div class="full-card"><span class="mini-badge oa">OA / 可直接获取</span><div class="big">10</div><small>获取后会依次查重、入库、解析，并重新判断是否纳入本次任务。</small><button class="small-btn primary-lite" data-toggle-label="已入库">一键入库</button></div><div class="full-card"><span class="mini-badge warn">需自行获取全文</span><div class="big">34</div><small>先导出待下载清单并在校内数据库 / 来源页下载 PDF；下载完成后回到文优，通过文献库完成导入、匹配与解析。</small><div class="actions" style="justify-content:flex-start"><button class="small-btn" data-export-list>导出文献 List</button><a class="small-btn primary-lite" href="#library-import">导入到文献库</a></div></div></div></section><section class="result-section"><h3>当前结论</h3><div class="conclusion good">当前全文与必须质量条件均有较充分冗余，可以继续进入文献综述。</div></section></div><footer class="result-foot"><div class="global-cta"><small>当前 28 篇可用全文，数量与必须质量条件均有充分冗余。</small><a class="primary" href="#outline">继续文献综述</a></div></footer></div></main></div></section><section id="find-strategy-ready" class="screen app-screen" data-route="find-strategy-ready"><div class="workspace-three"><aside class="sidebar"><div><div class="side-title">任务类别</div><button class="new-task" data-open-task>＋ 创建任务</button><div class="topic-btn"><span>市场需求对中国省级旅游产业技术演化的影响</span><span>⌃</span></div><div class="side-tree"><a class="side-nav active" href="#review-create"><span>文献综述</span></a><a class="side-nav" href="#proposal"><span>开题报告</span></a><a class="side-nav" href="#draft"><span>论文初稿</span></a></div></div><div class="side-divider"></div><div><div class="side-title">研究资产</div><a class="side-nav" href="#library"><span>文献库</span><span class="count">71</span></a><a class="side-nav" href="#artifacts"><span>学术成果</span><span class="count">3</span></a></div><div class="side-note">任务按研究选题组织；文献库和学术成果作为长期研究资产，在不同任务中持续复用。</div></aside><section class="assistant"><header class="assistant-head"><h2>文优小助手 ✦</h2><small>检索已完成 · 当前选题已载入</small></header><div class="assistant-body"><div class="message"><div class="status-row"><span class="status-dot"></span><span>检索已完成</span></div><p>共形成 60 篇候选文献，覆盖 5 个检索方向。</p><p>当前已有 <b>28 / 20</b> 篇全文可用于本次文献综述，数量与必须条件均有冗余。</p><div class="assistant-actions"><button class="small-btn primary-lite" data-toast="已更新检索策略：多找政策机制">多找政策机制</button><button class="small-btn" data-toast="已更新检索策略：优先 CSSCI">优先 CSSCI</button><button class="small-btn" data-toast="已更新检索策略：只看近三年">只看近三年</button></div></div></div><footer class="assistant-compose"><textarea placeholder="例如：国际经验少一点，多找政策机制相关研究"></textarea><div class="compose-row"><span>Enter 发送 · Shift+Enter 换行</span><button class="primary" data-toast="原型：消息已发送">发送</button></div></footer></section><main class="right-pane"><div class="result-shell"><header class="result-head"><div class="result-title"><div><h2>找文献结果</h2><p>检索已完成 · 共形成 60 篇候选文献 · 当前正在查看「检索策略」</p></div><span class="status-pill">当前可用 28 / 20</span></div><nav class="result-tabs"><a class="result-tab " href="#find-demand-ready">需求满足情况</a><a class="result-tab active" href="#find-strategy-ready">检索策略</a><a class="result-tab " href="#find-candidates-ready">候选文献</a></nav></header><div class="result-content"><section class="result-section"><h2>系统检索策略</h2><p>这是系统实际执行的结构化 Search Plan，用来解释选题如何被拆成可检索的研究方向。</p></section><div class="cluster-grid"><article class="cluster"><div class="cluster-head"><div><h3>市场需求与消费升级</h3><span class="muted" style="font-size:8px">建议最终覆盖约 5 篇</span></div><span class="cluster-count">16 篇</span></div><div class="query-list"><span class="query">旅游市场需求 技术升级</span><span class="query">消费升级 旅游数字化</span><span class="query">tourism demand technology adoption</span></div><div class="cluster-foot"><span>OpenAlex · Semantic Scholar · 中文学术数据库</span><span>Metadata 聚类</span></div></article><article class="cluster"><div class="cluster-head"><div><h3>技术创新与数字化转型</h3><span class="muted" style="font-size:8px">建议最终覆盖约 4 篇</span></div><span class="cluster-count">14 篇</span></div><div class="query-list"><span class="query">旅游产业 技术创新</span><span class="query">数字化转型 旅游产业</span><span class="query">tourism digital transformation</span></div><div class="cluster-foot"><span>OpenAlex · Crossref · 中文学术数据库</span><span>Metadata 聚类</span></div></article><article class="cluster"><div class="cluster-head"><div><h3>区域差异与空间演化</h3><span class="muted" style="font-size:8px">建议最终覆盖约 4 篇</span></div><span class="cluster-count">12 篇</span></div><div class="query-list"><span class="query">省级旅游产业 区域差异</span><span class="query">空间分异 技术演化</span><span class="query">regional tourism innovation</span></div><div class="cluster-foot"><span>OpenAlex · 中文学术数据库</span><span>Metadata 聚类</span></div></article><article class="cluster"><div class="cluster-head"><div><h3>产业政策与治理机制</h3><span class="muted" style="font-size:8px">建议最终覆盖约 4 篇</span></div><span class="cluster-count">10 篇</span></div><div class="query-list"><span class="query">旅游产业 政策机制</span><span class="query">地方治理 技术扩散</span><span class="query">tourism policy innovation</span></div><div class="cluster-foot"><span>Semantic Scholar · 中文学术数据库</span><span>Metadata 聚类</span></div></article><article class="cluster"><div class="cluster-head"><div><h3>产业组织与绩效</h3><span class="muted" style="font-size:8px">建议最终覆盖约 3 篇</span></div><span class="cluster-count">8 篇</span></div><div class="query-list"><span class="query">旅游产业组织 技术绩效</span><span class="query">市场结构 创新绩效</span><span class="query">tourism industry performance</span></div><div class="cluster-foot"><span>Crossref · 中文学术数据库</span><span>Metadata 聚类</span></div></article></div><section class="result-section" style="margin-top:10px"><h3>策略可继续修改</h3><p>在中间「文优小助手」中输入“多找政策机制”“优先 CSSCI”“只看近三年”等，正式产品会用新策略更新候选池。</p><button class="small-btn" data-toast="原型：按当前策略重新检索">按当前策略重新检索</button></section></div><footer class="result-foot"><div class="global-cta"><small>当前 28 篇可用全文，数量与必须质量条件均有充分冗余。</small><a class="primary" href="#outline">继续文献综述</a></div></footer></div></main></div></section><section id="find-candidates-ready" class="screen app-screen" data-route="find-candidates-ready"><div class="workspace-three"><aside class="sidebar"><div><div class="side-title">任务类别</div><button class="new-task" data-open-task>＋ 创建任务</button><div class="topic-btn"><span>市场需求对中国省级旅游产业技术演化的影响</span><span>⌃</span></div><div class="side-tree"><a class="side-nav active" href="#review-create"><span>文献综述</span></a><a class="side-nav" href="#proposal"><span>开题报告</span></a><a class="side-nav" href="#draft"><span>论文初稿</span></a></div></div><div class="side-divider"></div><div><div class="side-title">研究资产</div><a class="side-nav" href="#library"><span>文献库</span><span class="count">71</span></a><a class="side-nav" href="#artifacts"><span>学术成果</span><span class="count">3</span></a></div><div class="side-note">任务按研究选题组织；文献库和学术成果作为长期研究资产，在不同任务中持续复用。</div></aside><section class="assistant"><header class="assistant-head"><h2>文优小助手 ✦</h2><small>检索已完成 · 当前选题已载入</small></header><div class="assistant-body"><div class="message"><div class="status-row"><span class="status-dot"></span><span>检索已完成</span></div><p>共形成 60 篇候选文献，覆盖 5 个检索方向。</p><p>当前已有 <b>28 / 20</b> 篇全文可用于本次文献综述，数量与必须条件均有冗余。</p><div class="assistant-actions"><button class="small-btn primary-lite" data-toast="已更新检索策略：多找政策机制">多找政策机制</button><button class="small-btn" data-toast="已更新检索策略：优先 CSSCI">优先 CSSCI</button><button class="small-btn" data-toast="已更新检索策略：只看近三年">只看近三年</button></div></div></div><footer class="assistant-compose"><textarea placeholder="例如：国际经验少一点，多找政策机制相关研究"></textarea><div class="compose-row"><span>Enter 发送 · Shift+Enter 换行</span><button class="primary" data-toast="原型：消息已发送">发送</button></div></footer></section><main class="right-pane"><div class="result-shell"><header class="result-head"><div class="result-title"><div><h2>找文献结果</h2><p>检索已完成 · 共形成 60 篇候选文献 · 当前正在查看「候选文献」</p></div><span class="status-pill">当前可用 28 / 20</span></div><nav class="result-tabs"><a class="result-tab " href="#find-demand-ready">需求满足情况</a><a class="result-tab " href="#find-strategy-ready">检索策略</a><a class="result-tab active" href="#find-candidates-ready">候选文献</a></nav></header><div class="result-content"><section class="result-section"><h2>候选文献</h2><p>按 Search Cluster 分组。此阶段展示 Metadata、文献层次、摘要匹配和全文获取状态，不把候选文献直接解释为正文证据。</p></section><section class="paper-cluster"><div class="paper-cluster-head"><h3>市场需求与消费升级</h3><span>建议最终覆盖 5 篇</span></div><article class="paper-card"><div><h4>Tourism demand upgrading and digital technology adoption: Evidence from regional markets</h4><div class="paper-meta">Liu, Chen & Wang · 2025 · Tourism Management<br>来源：OpenAlex / 中文学术数据库 · 摘要可用</div><div class="levels"><span class="level">SSCI</span><span class="level">JCR Q1</span><span class="level">近5年</span><span class="level fit">可补当前缺口</span></div></div><div class="paper-side"><span class="mini-badge oa">已入库 · 本次可用</span><a class="small-btn" href="#library">在文献库查看</a></div></article><article class="paper-card"><div><h4>市场需求升级与旅游产业技术创新：来自省级面板数据的证据</h4><div class="paper-meta">王宁，赵辰 · 2024 · 旅游学刊<br>来源：OpenAlex / 中文学术数据库 · 摘要可用</div><div class="levels"><span class="level">CSSCI</span><span class="level">北大核心</span><span class="level">近5年</span><span class="level fit">可补当前缺口</span></div></div><div class="paper-side"><span class="mini-badge warn">需自行获取</span><button class="small-btn" data-toast="原型：跳转来源数据库">前往来源下载</button><a class="small-btn primary-lite" href="#library-import">导入到文献库</a></div></article></section><section class="paper-cluster"><div class="paper-cluster-head"><h3>技术创新与数字化转型</h3><span>建议最终覆盖 4 篇</span></div><article class="paper-card"><div><h4>Digital transformation, innovation capability and tourism industry productivity</h4><div class="paper-meta">Huang & Li · 2024 · Information & Management<br>来源：OpenAlex / 中文学术数据库 · 摘要可用</div><div class="levels"><span class="level">SSCI</span><span class="level">JCR Q1</span><span class="level">近5年</span><span class="level fit">可补当前缺口</span></div></div><div class="paper-side"><span class="mini-badge oa">已入库 · 本次可用</span><a class="small-btn" href="#library">在文献库查看</a></div></article><article class="paper-card"><div><h4>数字技术赋能旅游产业高质量发展的机制研究</h4><div class="paper-meta">周敏，孙凯 · 2023 · 经济地理<br>来源：OpenAlex / 中文学术数据库 · 摘要可用</div><div class="levels"><span class="level">CSSCI</span><span class="level">北大核心</span><span class="level">近5年</span><span class="level fit">可补当前缺口</span></div></div><div class="paper-side"><span class="mini-badge warn">需自行获取</span><button class="small-btn" data-toast="原型：跳转来源数据库">前往来源下载</button><a class="small-btn primary-lite" href="#library-import">导入到文献库</a></div></article></section><section class="paper-cluster"><div class="paper-cluster-head"><h3>区域差异与空间演化</h3><span>建议最终覆盖 4 篇</span></div><article class="paper-card"><div><h4>Regional heterogeneity in tourism innovation: A spatial panel analysis</h4><div class="paper-meta">Smith, Zhao & Park · 2023 · Annals of Tourism Research<br>来源：OpenAlex / 中文学术数据库 · 摘要可用</div><div class="levels"><span class="level">SSCI</span><span class="level">JCR Q1</span><span class="level">近5年</span><span class="level fit">可补当前缺口</span></div></div><div class="paper-side"><span class="mini-badge oa">已入库 · 本次可用</span><a class="small-btn" href="#library">在文献库查看</a></div></article></section><section class="paper-cluster"><div class="paper-cluster-head"><h3>产业政策与治理机制</h3><span>建议最终覆盖 4 篇</span></div><article class="paper-card"><div><h4>Policy support, institutional environment and technology diffusion in tourism</h4><div class="paper-meta">Hughes & Martin · 2024 · Research Policy<br>来源：OpenAlex / 中文学术数据库 · 摘要可用</div><div class="levels"><span class="level">SSCI</span><span class="level">JCR Q1</span><span class="level">近5年</span><span class="level fit">可补当前缺口</span></div></div><div class="paper-side"><span class="mini-badge oa">已入库 · 本次可用</span><a class="small-btn" href="#library">在文献库查看</a></div></article><article class="paper-card"><div><h4>地方治理能力、产业政策与旅游技术扩散</h4><div class="paper-meta">陈立，郭宇 · 2024 · 公共管理学报<br>来源：OpenAlex / 中文学术数据库 · 摘要可用</div><div class="levels"><span class="level">CSSCI</span><span class="level">北大核心</span><span class="level">近5年</span><span class="level fit">可补当前缺口</span></div></div><div class="paper-side"><span class="mini-badge warn">需自行获取</span><button class="small-btn" data-toast="原型：跳转来源数据库">前往来源下载</button><a class="small-btn primary-lite" href="#library-import">导入到文献库</a></div></article></section><section class="paper-cluster"><div class="paper-cluster-head"><h3>产业组织与绩效</h3><span>建议最终覆盖 3 篇</span></div><article class="paper-card"><div><h4>Market structure and innovation performance in tourism industries</h4><div class="paper-meta">Garcia & Lee · 2022 · TFSC<br>来源：OpenAlex / 中文学术数据库 · 摘要可用</div><div class="levels"><span class="level">SSCI</span><span class="level">JCR Q1</span><span class="level">近5年</span><span class="level fit">可补当前缺口</span></div></div><div class="paper-side"><span class="mini-badge oa">已入库 · 本次可用</span><a class="small-btn" href="#library">在文献库查看</a></div></article></section></div><footer class="result-foot"><div class="global-cta"><small>当前 28 篇可用全文，数量与必须质量条件均有充分冗余。</small><a class="primary" href="#outline">继续文献综述</a></div></footer></div></main></div></section><section id="library" class="screen app-screen" data-route="library"><div class="workspace-three"><aside class="sidebar"><div><div class="side-title">任务类别</div><button class="new-task" data-open-task>＋ 创建任务</button><div class="topic-btn"><span>市场需求对中国省级旅游产业技术演化的影响</span><span>⌃</span></div><div class="side-tree"><a class="side-nav" href="#review-create"><span>文献综述</span></a><a class="side-nav" href="#proposal"><span>开题报告</span></a><a class="side-nav" href="#draft"><span>论文初稿</span></a></div></div><div class="side-divider"></div><div><div class="side-title">研究资产</div><a class="side-nav active" href="#library"><span>文献库</span><span class="count">63</span></a><a class="side-nav" href="#artifacts"><span>学术成果</span><span class="count">3</span></a></div><div class="side-note">任务按研究选题组织；文献库和学术成果作为长期研究资产，在不同任务中持续复用。</div></aside><section class="assistant"><header class="assistant-head"><h2>文优小助手 ✦</h2><small>文献库 · 当前选题已载入</small></header><div class="assistant-body"><div class="message"><div class="status-row"><span class="status-dot"></span><span>正在查看文献库</span></div><p>从找文献结果执行的入库、下载清单和上传动作都沉淀在这里。</p><div class="metrics"><div class="metric"><b>63</b><span>文献库</span></div><div class="metric"><b>42</b><span>待获取全文</span></div><div class="metric"><b>13</b><span>当前任务可用</span></div><div class="metric"><b>1</b><span>解析失败</span></div></div><div class="assistant-actions"><a class="small-btn primary-lite" href="#find-demand">返回找文献结果</a></div></div></div><footer class="assistant-compose"><textarea placeholder="例如：帮我看看刚入库的文献是否适合当前综述"></textarea><div class="compose-row"><span>Enter 发送 · Shift+Enter 换行</span><button class="primary" data-toast="原型：消息已发送">发送</button></div></footer></section><main class="right-pane"><div class="library-shell"><header class="library-head"><div><h2>文献库 · 63 篇</h2><p>这里是工作台内的完整文献库。Find Papers 的入库、下载清单和全文解析会持续沉淀到这里。</p></div><div class="actions"><a class="small-btn primary-lite" href="#library-import">上传文献</a><a class="small-btn" href="#find-demand">返回找文献结果</a></div></header><nav class="library-tabs"><a class="library-tab active" href="#library"><span><b>63</b>全部文献</span></a><a class="library-tab" href="#library"><span><b>42</b>待获取全文</span></a><a class="library-tab" href="#library"><span><b>0</b>解析中</span></a><a class="library-tab" href="#library"><span><b>1</b>解析失败</span></a></nav><section class="library-section"><div class="library-section-head"><h3>全部文献</h3><small>按选题、全文状态和引用情况管理研究资产</small></div><div class="library-list"><article class="library-item"><div><h4>低空经济发展的制度适配与政策机制研究</h4><p>王婷婷，李明 · 2024 · 全文已解析 · 当前任务相关</p></div><span class="mini-badge oa">已有资产</span></article><article class="library-item"><div><h4>中国省域低空经济发展的空间分异与影响因素</h4><p>刘洋，周敏 · 2023 · 全文已解析 · 当前任务相关</p></div><span class="mini-badge oa">已有资产</span></article><article class="library-item"><div><h4>旅游产业技术演化的区域差异研究</h4><p>赵晨 · 2024 · 全文已解析 · 未纳入当前任务</p></div><span class="mini-badge">仅入库</span></article></div></section></div></main></div></section><section id="library-import" class="screen app-screen" data-route="library-import"><div class="workspace-three"><aside class="sidebar"><div><div class="side-title">任务类别</div><button class="new-task" data-open-task>＋ 创建任务</button><div class="topic-btn"><span>市场需求对中国省级旅游产业技术演化的影响</span><span>⌃</span></div><div class="side-tree"><a class="side-nav" href="#review-create"><span>文献综述</span></a><a class="side-nav" href="#proposal"><span>开题报告</span></a><a class="side-nav" href="#draft"><span>论文初稿</span></a></div></div><div class="side-divider"></div><div><div class="side-title">研究资产</div><a class="side-nav active" href="#library"><span>文献库</span><span class="count">63</span></a><a class="side-nav" href="#artifacts"><span>学术成果</span><span class="count">3</span></a></div><div class="side-note">任务按研究选题组织；文献库和学术成果作为长期研究资产，在不同任务中持续复用。</div></aside><section class="assistant"><header class="assistant-head"><h2>文优小助手 ✦</h2><small>导入文献 · 当前选题已载入</small></header><div class="assistant-body"><div class="message"><div class="status-row"><span class="status-dot"></span><span>正在导入文献</span></div><p>你正在为当前文献综述补充无法直接获取的全文。PDF 会先匹配候选文献，再查重、入库、解析。</p><div class="metrics"><div class="metric"><b>42</b><span>待补全文</span></div><div class="metric"><b>63</b><span>当前文献库</span></div><div class="metric"><b>13</b><span>任务可用</span></div><div class="metric"><b>0</b><span>本次上传</span></div></div></div></div><footer class="assistant-compose"><textarea placeholder="例如：帮我检查刚导入的 PDF"></textarea><div class="compose-row"><span>Enter 发送 · Shift+Enter 换行</span><button class="primary" data-toast="原型：消息已发送">发送</button></div></footer></section><main class="right-pane"><div class="library-shell"><header class="library-head"><div><h2>文献库 · 63 篇</h2><p>当前处于“导入文献”状态，保留本次文献综述的补全文上下文。</p></div><div class="actions"><a class="small-btn" href="#library">查看文献库</a><a class="small-btn" href="#find-demand">返回找文献结果</a></div></header><nav class="library-tabs"><a class="library-tab active" href="#library"><span><b>63</b>全部文献</span></a><a class="library-tab" href="#library"><span><b>42</b>待获取全文</span></a><a class="library-tab" href="#library"><span><b>0</b>解析中</span></a><a class="library-tab" href="#library"><span><b>1</b>解析失败</span></a></nav><section class="import-context"><div class="context-top"><div><h3>导入文献 · 当前文献综述补全文</h3><p>来自当前 Find Papers 结果。上传后会先匹配候选文献，再查重、入库、解析，最后判断是否计入本次任务。</p></div><div class="context-stat"><b>42</b>待补全文</div></div><div class="dropzone" id="dropzone"><strong>把刚刚下载的 PDF 拖到这里</strong><p>或选择本地文件。系统会优先依据 DOI、标题、作者与年份，把 PDF 自动关联到刚才导出的候选文献清单。</p><input id="pdfInput" type="file" accept=".pdf,application/pdf" multiple hidden><button class="small-btn primary-lite" data-pick-pdf>选择本地 PDF</button><button class="small-btn" data-sim-import>原型：模拟上传 8 篇</button><div class="match-hint"><span>DOI 匹配</span><span>标题匹配</span><span>作者 / 年份辅助</span><span>重复文献自动忽略</span></div></div></section><section class="library-section"><div class="library-section-head"><h3>本次上传</h3><small>尚未选择本地 PDF</small></div><div style="padding:18px;text-align:center;border:1px dashed #c9c1ef;border-radius:8px;color:var(--muted);font-size:9px">下载完成后可一次选择多篇 PDF。</div></section></div></main></div></section><section id="library-imported" class="screen app-screen" data-route="library-imported"><div class="workspace-three"><aside class="sidebar"><div><div class="side-title">任务类别</div><button class="new-task" data-open-task>＋ 创建任务</button><div class="topic-btn"><span>市场需求对中国省级旅游产业技术演化的影响</span><span>⌃</span></div><div class="side-tree"><a class="side-nav" href="#review-create"><span>文献综述</span></a><a class="side-nav" href="#proposal"><span>开题报告</span></a><a class="side-nav" href="#draft"><span>论文初稿</span></a></div></div><div class="side-divider"></div><div><div class="side-title">研究资产</div><a class="side-nav active" href="#library"><span>文献库</span><span class="count">71</span></a><a class="side-nav" href="#artifacts"><span>学术成果</span><span class="count">3</span></a></div><div class="side-note">任务按研究选题组织；文献库和学术成果作为长期研究资产，在不同任务中持续复用。</div></aside><section class="assistant"><header class="assistant-head"><h2>文优小助手 ✦</h2><small>导入完成 · 当前选题已载入</small></header><div class="assistant-body"><div class="message"><div class="status-row"><span class="status-dot"></span><span>导入完成</span></div><p>8 篇 PDF 已匹配候选清单并进入文献库，其中 7 篇解析成功，6 篇通过当前任务筛选。</p><div class="metrics"><div class="metric"><b>71</b><span>文献库</span></div><div class="metric"><b>34</b><span>待补全文</span></div><div class="metric"><b>28</b><span>当前任务可用</span></div><div class="metric"><b>1</b><span>解析失败</span></div></div></div></div><footer class="assistant-compose"><textarea placeholder="例如：检查解析失败的那一篇"></textarea><div class="compose-row"><span>Enter 发送 · Shift+Enter 换行</span><button class="primary" data-toast="原型：消息已发送">发送</button></div></footer></section><main class="right-pane"><div class="library-shell"><header class="library-head"><div><h2>文献库 · 71 篇</h2><p>导入结果已沉淀到个人文献库，并完成当前任务适用性判断。</p></div><div class="actions"><a class="small-btn" href="#library">继续查看文献库</a><a class="small-btn primary-lite" href="#find-demand-ready">查看更新后的找文献结果</a></div></header><nav class="library-tabs"><a class="library-tab active" href="#library"><span><b>71</b>全部文献</span></a><a class="library-tab" href="#library"><span><b>34</b>待获取全文</span></a><a class="library-tab" href="#library"><span><b>0</b>解析中</span></a><a class="library-tab" href="#library"><span><b>1</b>解析失败</span></a></nav><section class="import-context"><div class="context-top"><div><h3>本次导入完成</h3><p>8 篇 PDF 已匹配候选清单并进入文献库，其中 7 篇解析成功，6 篇通过当前任务筛选。</p></div><div class="context-stat"><b>28</b>任务可用</div></div><div class="conclusion good">文献库 63 → 71；当前任务可用全文 13 → 28。现在已经具备较充分冗余，可以返回找文献结果继续文献综述。</div></section><section class="library-section"><div class="library-section-head"><h3>本次上传</h3><small>展示部分结果</small></div><div class="import-rows"><article class="import-row"><div><h4>政策支持与旅游技术扩散.pdf</h4><p>已匹配：Policy support, institutional environment and technology diffusion in tourism</p></div><span class="mini-badge oa">已入库 · 本次可用</span></article><article class="import-row"><div><h4>市场需求升级与技术创新.pdf</h4><p>已匹配候选文献 · 全文已解析</p></div><span class="mini-badge oa">已入库 · 本次可用</span></article><article class="import-row"><div><h4>regional-tourism-innovation.pdf</h4><p>已匹配候选文献 · 全文已解析</p></div><span class="mini-badge">已入库 · 不纳入本次任务</span></article><article class="import-row"><div><h4>tourism-policy-scan.pdf</h4><p>已入库，但未能正确提取全文内容</p></div><span class="mini-badge warn">解析失败</span></article></div></section></div></main></div></section><section id="outline" class="screen app-screen" data-route="outline"><div class="workspace-three"><aside class="sidebar"><div><div class="side-title">任务类别</div><button class="new-task" data-open-task>＋ 创建任务</button><div class="topic-btn"><span>市场需求对中国省级旅游产业技术演化的影响</span><span>⌃</span></div><div class="side-tree"><a class="side-nav active" href="#review-create"><span>文献综述</span></a><a class="side-nav" href="#proposal"><span>开题报告</span></a><a class="side-nav" href="#draft"><span>论文初稿</span></a></div></div><div class="side-divider"></div><div><div class="side-title">研究资产</div><a class="side-nav" href="#library"><span>文献库</span><span class="count">71</span></a><a class="side-nav" href="#artifacts"><span>学术成果</span><span class="count">3</span></a></div><div class="side-note">任务按研究选题组织；文献库和学术成果作为长期研究资产，在不同任务中持续复用。</div></aside><section class="assistant"><header class="assistant-head"><h2>文优小助手 ✦</h2><small>等待确认 · 当前选题已载入</small></header><div class="assistant-body"><div class="message"><div class="status-row"><span class="status-dot"></span><span>等待确认大纲</span></div><p>材料准备完成。我已经根据研究问题和文献结构生成大纲，你可以直接确认，也可以先修改章节。</p></div><div class="assistant-card"><h3>当前任务进度</h3><div class="progress-steps"><div class="progress-step done"><i>✓</i><span>匹配文献</span></div><div class="progress-step done"><i>✓</i><span>读取批注</span></div><div class="progress-step done"><i>✓</i><span>加载术语</span></div><div class="progress-step done"><i>✓</i><span>构建任务材料</span></div><div class="progress-step current"><i>5</i><span>确认研究大纲</span></div><div class="progress-step"><i>6</i><span>撰写正文</span></div></div></div><div class="assistant-card"><h3>本次任务材料</h3><div class="metrics"><div class="metric"><b>28</b><span>可用全文</span></div><div class="metric"><b>26</b><span>相关批注</span></div><div class="metric"><b>14</b><span>核心术语</span></div><div class="metric"><b>3</b><span>学术成果</span></div></div></div></div><footer class="assistant-compose"><textarea placeholder="例如：把政策机制部分拆得更细一些"></textarea><div class="compose-row"><span>Enter 发送 · Shift+Enter 换行</span><button class="primary" data-toast="原型：消息已发送">发送</button></div></footer></section><main class="right-pane"><section class="outline-pane"><header class="outline-head"><div><h1>大纲方案</h1><p>基于 28 篇全文文献、26 条批注和 14 个核心术语生成，可直接轻量编辑。</p></div><div class="actions"><span class="status-pill">等待确认</span><button class="small-btn" data-toast="原型：已重新生成大纲">重新生成大纲</button></div></header><div class="outline-scroll"><div class="outline-list"><div class="outline-row "><div class="drag">⋮⋮</div><input class="outline-input" value="1 绪论"><button class="small-btn" data-toast="原型：章节已删除">删除</button></div><div class="outline-row child"><div class="drag">⋮⋮</div><input class="outline-input" value="1.1 研究背景与意义"><button class="small-btn" data-toast="原型：章节已删除">删除</button></div><div class="outline-row child"><div class="drag">⋮⋮</div><input class="outline-input" value="1.2 国内外研究现状"><button class="small-btn" data-toast="原型：章节已删除">删除</button></div><div class="outline-row "><div class="drag">⋮⋮</div><input class="outline-input" value="2 理论基础与概念界定"><button class="small-btn" data-toast="原型：章节已删除">删除</button></div><div class="outline-row child"><div class="drag">⋮⋮</div><input class="outline-input" value="2.1 核心概念"><button class="small-btn" data-toast="原型：章节已删除">删除</button></div><div class="outline-row child"><div class="drag">⋮⋮</div><input class="outline-input" value="2.2 理论基础"><button class="small-btn" data-toast="原型：章节已删除">删除</button></div><div class="outline-row "><div class="drag">⋮⋮</div><input class="outline-input" value="3 主要影响因素分析"><button class="small-btn" data-toast="原型：章节已删除">删除</button></div><div class="outline-row child"><div class="drag">⋮⋮</div><input class="outline-input" value="3.1 政策与制度环境"><button class="small-btn" data-toast="原型：章节已删除">删除</button></div><div class="outline-row child"><div class="drag">⋮⋮</div><input class="outline-input" value="3.2 市场需求"><button class="small-btn" data-toast="原型：章节已删除">删除</button></div><div class="outline-row child"><div class="drag">⋮⋮</div><input class="outline-input" value="3.3 技术创新"><button class="small-btn" data-toast="原型：章节已删除">删除</button></div><div class="outline-row child"><div class="drag">⋮⋮</div><input class="outline-input" value="3.4 区域基础条件"><button class="small-btn" data-toast="原型：章节已删除">删除</button></div><div class="outline-row "><div class="drag">⋮⋮</div><input class="outline-input" value="4 研究不足与未来方向"><button class="small-btn" data-toast="原型：章节已删除">删除</button></div><div class="outline-row "><div class="drag">⋮⋮</div><input class="outline-input" value="5 结论"><button class="small-btn" data-toast="原型：章节已删除">删除</button></div></div><button class="small-btn primary-lite" style="display:flex;margin:10px auto" data-toast="原型：已添加章节">＋ 添加章节</button></div><footer class="outline-foot"><small>确认后将正式进入正文生成阶段，文优小助手会继续显示生成进度。</small><div class="actions"><button class="ghost" data-toast="原型：已重新生成大纲">重新生成大纲</button><a class="primary" href="#writing">确认大纲并生成正文</a></div></footer></section></main></div></section><section id="writing" class="screen app-screen" data-route="writing"><div class="writing-grid"><aside class="rail"><a class="active" href="#writing">文</a><a href="#library">库</a><a href="#artifacts">成</a><a href="#outline">纲</a></aside><section class="assistant"><header class="assistant-head"><h2>文优小助手 ✦</h2><small>正在生成 · 当前选题已载入</small></header><div class="assistant-body"><div class="message"><div class="status-row"><span class="status-dot"></span><span>正在撰写正文</span></div><p>大纲已确认，正在生成 1.1 研究背景与意义。引用会优先使用已解析全文。</p></div><div class="assistant-card"><h3>生成进度</h3><div class="progress-steps"><div class="progress-step done"><i>✓</i><span>匹配文献</span></div><div class="progress-step done"><i>✓</i><span>构建材料</span></div><div class="progress-step done"><i>✓</i><span>确认大纲</span></div><div class="progress-step current"><i>6</i><span>撰写正文</span></div></div></div><div class="assistant-actions"><button class="small-btn primary-lite" data-toast="已打开本次任务材料">查看本次任务材料</button><a class="small-btn" href="#outline">调整大纲</a><a class="small-btn" href="#find-demand">补充文献</a></div></div><footer class="assistant-compose"><textarea placeholder="例如：第一段更强调研究意义"></textarea><div class="compose-row"><span>Enter 发送 · Shift+Enter 换行</span><button class="primary" data-toast="原型：消息已发送">发送</button></div></footer></section><main class="editor"><header class="editor-head"><div><h2>文献综述 · 市场需求对中国省级旅游产业技术演化的影响</h2><span class="muted" style="font-size:8px">自动保存 · 正在生成</span></div><div class="actions"><button class="small-btn" data-toast="已保存为学术成果">保存为成果物</button><button class="small-btn">预览</button><button class="small-btn primary-lite" data-toast="原型：已导出文档">导出</button></div></header><nav class="editor-tabs"><span class="editor-tab active">论文编辑</span><span class="editor-tab">执行计划</span><a class="editor-tab" href="#outline">大纲方案</a></nav><div class="paper-editor"><article class="paper-page"><h1>市场需求对中国省级旅游产业技术演化的影响：文献综述</h1><h2>1. 引言</h2><p>中国旅游产业正处于由规模扩张向质量提升转型的关键阶段。市场需求结构变化不仅影响产业资源配置，也持续推动地方技术能力、数字化基础设施与治理机制演化。</p><h2>1.1 研究背景与意义</h2><p>近年来，区域旅游消费需求呈现结构升级和数字化转型并行的趋势。既有研究普遍关注技术创新、产业政策与市场环境之间的关系，但对省级旅游市场需求如何影响技术演化路径仍缺少系统梳理。</p><p class="muted">文优小助手正在继续生成下一段……</p></article></div><footer class="editor-foot"><span>引用 6 篇 / 8 处</span><span>当前字数 1,286 / 5,000</span></footer></main></div></section><section id="proposal" class="screen app-screen" data-route="proposal"><div class="workspace-three"><aside class="sidebar"><div><div class="side-title">任务类别</div><button class="new-task" data-open-task>＋ 创建任务</button><div class="topic-btn"><span>市场需求对中国省级旅游产业技术演化的影响</span><span>⌃</span></div><div class="side-tree"><a class="side-nav" href="#review-create"><span>文献综述</span></a><a class="side-nav active" href="#proposal"><span>开题报告</span></a><a class="side-nav" href="#draft"><span>论文初稿</span></a></div></div><div class="side-divider"></div><div><div class="side-title">研究资产</div><a class="side-nav" href="#library"><span>文献库</span><span><span class="count">63</span><span class="library-delta">+18</span></span></a><a class="side-nav" href="#artifacts"><span>学术成果</span><span class="count">3</span></a></div><div class="side-note">任务按研究选题组织；文献库和学术成果作为长期研究资产，在不同任务中持续复用。</div></aside><section class="assistant"><header class="assistant-head"><h2>文优小助手 ✦</h2><small>任务助手 · 当前选题已载入</small></header><div class="assistant-body"><div class="message"><div class="status-row"><span class="status-dot"></span><span>当前任务</span></div><p>该任务会复用当前选题下已有研究资产。</p></div></div><footer class="assistant-compose"><textarea placeholder="告诉文优小助手你接下来想做什么"></textarea><div class="compose-row"><span>Enter 发送 · Shift+Enter 换行</span><button class="primary" data-toast="原型：消息已发送">发送</button></div></footer></section><main class="right-pane"><div class="right-scroll"><div class="placeholder"><h1>开题报告</h1><p>该任务继续沿用同一套“任务类别 + 研究资产 + 文优小助手 + 右侧任务工作区”的结构。本轮静态 Demo 重点打磨文献综述主链路，因此这里保留为可点击占位页。</p><div class="actions" style="justify-content:flex-start;margin-top:14px"><a class="primary" href="#review-create">查看文献综述主链路</a><a class="ghost" href="#old-home">返回工作台</a></div></div></div></main></div></section><section id="draft" class="screen app-screen" data-route="draft"><div class="workspace-three"><aside class="sidebar"><div><div class="side-title">任务类别</div><button class="new-task" data-open-task>＋ 创建任务</button><div class="topic-btn"><span>市场需求对中国省级旅游产业技术演化的影响</span><span>⌃</span></div><div class="side-tree"><a class="side-nav" href="#review-create"><span>文献综述</span></a><a class="side-nav" href="#proposal"><span>开题报告</span></a><a class="side-nav active" href="#draft"><span>论文初稿</span></a></div></div><div class="side-divider"></div><div><div class="side-title">研究资产</div><a class="side-nav" href="#library"><span>文献库</span><span><span class="count">63</span><span class="library-delta">+18</span></span></a><a class="side-nav" href="#artifacts"><span>学术成果</span><span class="count">3</span></a></div><div class="side-note">任务按研究选题组织；文献库和学术成果作为长期研究资产，在不同任务中持续复用。</div></aside><section class="assistant"><header class="assistant-head"><h2>文优小助手 ✦</h2><small>任务助手 · 当前选题已载入</small></header><div class="assistant-body"><div class="message"><div class="status-row"><span class="status-dot"></span><span>当前任务</span></div><p>该任务会复用当前选题下已有研究资产。</p></div></div><footer class="assistant-compose"><textarea placeholder="告诉文优小助手你接下来想做什么"></textarea><div class="compose-row"><span>Enter 发送 · Shift+Enter 换行</span><button class="primary" data-toast="原型：消息已发送">发送</button></div></footer></section><main class="right-pane"><div class="right-scroll"><div class="placeholder"><h1>论文初稿</h1><p>该任务继续沿用同一套“任务类别 + 研究资产 + 文优小助手 + 右侧任务工作区”的结构。本轮静态 Demo 重点打磨文献综述主链路，因此这里保留为可点击占位页。</p><div class="actions" style="justify-content:flex-start;margin-top:14px"><a class="primary" href="#review-create">查看文献综述主链路</a><a class="ghost" href="#old-home">返回工作台</a></div></div></div></main></div></section><section id="artifacts" class="screen app-screen" data-route="artifacts"><div class="workspace-three"><aside class="sidebar"><div><div class="side-title">任务类别</div><button class="new-task" data-open-task>＋ 创建任务</button><div class="topic-btn"><span>市场需求对中国省级旅游产业技术演化的影响</span><span>⌃</span></div><div class="side-tree"><a class="side-nav" href="#review-create"><span>文献综述</span></a><a class="side-nav" href="#proposal"><span>开题报告</span></a><a class="side-nav" href="#draft"><span>论文初稿</span></a></div></div><div class="side-divider"></div><div><div class="side-title">研究资产</div><a class="side-nav" href="#library"><span>文献库</span><span><span class="count">63</span><span class="library-delta">+18</span></span></a><a class="side-nav active" href="#artifacts"><span>学术成果</span><span class="count">3</span></a></div><div class="side-note">任务按研究选题组织；文献库和学术成果作为长期研究资产，在不同任务中持续复用。</div></aside><section class="assistant"><header class="assistant-head"><h2>文优小助手 ✦</h2><small>任务助手 · 当前选题已载入</small></header><div class="assistant-body"><div class="message"><div class="status-row"><span class="status-dot"></span><span>当前任务</span></div><p>该任务会复用当前选题下已有研究资产。</p></div></div><footer class="assistant-compose"><textarea placeholder="告诉文优小助手你接下来想做什么"></textarea><div class="compose-row"><span>Enter 发送 · Shift+Enter 换行</span><button class="primary" data-toast="原型：消息已发送">发送</button></div></footer></section><main class="right-pane"><div class="right-scroll"><div class="placeholder"><h1>学术成果</h1><p>这里沉淀已经完成或保存的文献综述、开题报告和论文初稿，可被后续任务复用。</p><div class="stat-grid" style="margin-top:14px"><div class="stat"><b>1</b><span>文献综述</span></div><div class="stat"><b>1</b><span>开题报告</span></div><div class="stat"><b>1</b><span>论文初稿</span></div><div class="stat"><b>3</b><span>成果总数</span></div></div></div></div></main></div></section><dialog id="taskDialog"><div class="dialog-card"><h2>创建任务</h2><p>写作任务彼此独立，不强制按“综述 → 开题 → 初稿”的顺序完成。</p><div class="task-type-grid"><a class="task-type-card" href="#review-create" data-close-dialog><b>文献综述</b><span>整理研究现状、理论脉络和研究空白。</span></a><a class="task-type-card" href="#proposal" data-close-dialog><b>开题报告</b><span>形成研究背景、方法、创新点和计划。</span></a><a class="task-type-card" href="#draft" data-close-dialog><b>论文初稿</b><span>基于研究资产与已有成果开始章节写作。</span></a></div><div class="dialog-actions"><button class="ghost" data-close-dialog>取消</button></div></div></dialog><div class="toast-root" id="toastRoot"></div><script>
 (() => {
+
+  const NS_DATA={
+    review:{
+      group:'writing',kicker:'论文任务',title:'文献综述',route:'#review-create',cta:'创建文献综述',
+      intro:'围绕一个明确研究问题，梳理已有研究现状、理论脉络、主要争议与研究空白。',
+      cards:[
+        ['明确写作要求','填写标题、研究问题、字数与本次文献要求。'],
+        ['组装研究材料','检查文献库、批注、术语与已有成果，补齐材料缺口。'],
+        ['确认后再生成','先确认研究大纲，再进入正文生成与引用组织。']
+      ],
+      flow:['填写要求','检查材料','确认大纲','生成正文'],
+      note:'论文任务彼此独立，不要求先完成开题或初稿。'
+    },
+    proposal:{
+      group:'writing',kicker:'论文任务',title:'开题报告',route:'#proposal',cta:'创建开题报告',
+      intro:'围绕研究背景、问题、方法、创新点与计划形成可继续推进的开题方案。',
+      cards:[
+        ['形成选题依据','整理研究背景、研究价值与问题来源。'],
+        ['明确研究设计','组织研究问题、方法、数据与分析计划。'],
+        ['复用已有成果','可调用已有综述、文献与研究积累，不从零开始。']
+      ],
+      flow:['确定问题','调用研究积累','组织方法与计划','生成开题'],
+      note:'开题报告可以直接创建，也可以按需复用已有文献综述。'
+    },
+    draft:{
+      group:'writing',kicker:'论文任务',title:'论文初稿',route:'#draft',cta:'创建论文初稿',
+      intro:'从当前章节目标出发，调用研究材料与已有成果，逐步形成可编辑的论文正文。',
+      cards:[
+        ['确定章节目标','选择本次需要完成的章节与写作范围。'],
+        ['调用研究资产','使用相关全文、批注、术语和已有学术成果。'],
+        ['保持过程可控','确认章节结构后生成正文，并继续保留引用入口。']
+      ],
+      flow:['选择章节','组装材料','确认结构','生成初稿'],
+      note:'论文初稿不要求先完成文献综述或开题报告。'
+    },
+    search:{
+      group:'research',kicker:'深入研究',title:'文献检索',route:'#find-setup',cta:'开始文献检索',
+      intro:'围绕研究问题建立检索策略与候选文献池，再逐步获取真正可用的全文。',
+      cards:[
+        ['生成检索策略','从研究问题拆解关键词、查询组合与检索范围。'],
+        ['形成候选池','跨数据库发现候选文献，并完成 Metadata 去重与聚类。'],
+        ['获取可用全文','区分可直接获取与需自行下载的文献，持续沉淀进文献库。']
+      ],
+      flow:['研究问题','找文献','候选池','全文入库'],
+      note:'候选文献不等于正文证据，只有获取全文并解析后才进入后续研究。'
+    },
+    reading:{
+      group:'research',kicker:'深入研究',title:'全文精读',route:'#library',cta:'进入全文精读',
+      intro:'从文献库进入全文阅读，结合 AI 问答追问关键观点、方法、证据与结论。',
+      cards:[
+        ['直接读全文','基于已解析全文查看结构、段落与关键内容。'],
+        ['结合 AI 问答','围绕原文追问概念、机制、方法与证据。'],
+        ['把理解留下来','阅读过程中产生的批注与术语继续沉淀。']
+      ],
+      flow:['打开全文','读文献','AI 问答','留下批注'],
+      note:'精读不是一次性聊天，它会继续写入你的研究积累。'
+    },
+    notes:{
+      group:'research',kicker:'深入研究',title:'沉淀术语 / 批注',route:'#library',cta:'查看研究积累',
+      intro:'把阅读中真正重要的概念、判断和引用线索保存下来，形成可复用的研究上下文。',
+      cards:[
+        ['沉淀关键概念','把核心术语与概念定义保留下来，逐步形成研究语境。'],
+        ['保存阅读判断','人工与 AI 批注共同保留，避免重要理解散落在聊天里。'],
+        ['服务后续任务','未来写综述、开题或初稿时，可以继续调用这些研究积累。']
+      ],
+      flow:['阅读原文','记录批注','确认术语','后续复用'],
+      note:'批注与术语从文献阅读与解析过程中产生，属于文献库里的派生研究资产。'
+    }
+  };
+  let nsCurrent=null;
+  function nsReset(){
+    nsCurrent=null;
+    const stage=document.getElementById('nsStage');
+    const writing=document.getElementById('nsWriting');
+    const research=document.getElementById('nsResearch');
+    if(!stage||!writing||!research)return;
+    stage.classList.remove('focus');
+    writing.className='ns-job writing';
+    research.className='ns-job research';
+    document.querySelectorAll('[data-ns-task]').forEach(b=>b.classList.remove('active'));
+  }
+  function nsSelect(key){
+    const d=NS_DATA[key];
+    const stage=document.getElementById('nsStage');
+    const writing=document.getElementById('nsWriting');
+    const research=document.getElementById('nsResearch');
+    const detail=document.getElementById('nsDetail');
+    if(!d||!stage||!writing||!research||!detail)return;
+    nsCurrent=key;
+    stage.classList.add('focus');
+    if(d.group==='writing'){
+      writing.className='ns-job writing selected';
+      research.className='ns-job research hidden-right';
+    }else{
+      writing.className='ns-job writing hidden-left';
+      research.className='ns-job research selected';
+    }
+    detail.classList.toggle('research',d.group==='research');
+    document.getElementById('nsCrumb').textContent=d.kicker+' / '+d.title;
+    document.getElementById('nsHeading').textContent=d.title;
+    document.getElementById('nsKicker').textContent=d.kicker;
+    document.getElementById('nsTitle').textContent=d.title;
+    document.getElementById('nsIntro').textContent=d.intro;
+    document.getElementById('nsNote').textContent=d.note;
+    const cta=document.getElementById('nsCta');
+    cta.textContent=d.cta;
+    cta.setAttribute('href',d.route);
+    document.getElementById('nsGrid').innerHTML=d.cards.map(x=>'<article class="ns-detail-card"><b>'+x[0]+'</b><p>'+x[1]+'</p></article>').join('');
+    document.getElementById('nsFlow').innerHTML=d.flow.map((x,i)=>(i?'<span class="ns-flow-arrow">→</span>':'')+'<span class="ns-flow-node">'+x+'</span>').join('');
+    document.querySelectorAll('[data-ns-task]').forEach(b=>b.classList.toggle('active',b.dataset.nsTask===key));
+  }
+
   const screens=[...document.querySelectorAll('.screen')];
   const appRoutes=new Set(screens.filter(s=>s.classList.contains('app-screen')).map(s=>s.id));
   let runTimer=null, runInterval=null, splashTimer=null;
+
+  let tutorialPage=0;
+  function setTutorialPage(index){
+    const slides=[...document.querySelectorAll('[data-tutorial-slide]')];
+    if(!slides.length)return;
+    tutorialPage=Math.max(0,Math.min(slides.length-1,index));
+    slides.forEach((s,i)=>s.classList.toggle('active',i===tutorialPage));
+    document.querySelectorAll('[data-tutorial-page]').forEach((d,i)=>d.classList.toggle('active',i===tutorialPage));
+    const prev=document.querySelector('[data-tutorial-prev]');
+    const next=document.querySelector('[data-tutorial-next]');
+    const counter=document.getElementById('tutorialCounter');
+    if(prev)prev.disabled=tutorialPage===0;
+    if(next)next.textContent=tutorialPage===slides.length-1?'开始使用文优小助':'下一页 ›';
+    if(counter)counter.textContent=(tutorialPage+1)+' / '+slides.length;
+  }
+
   function route(){
     const id=(location.hash||'#splash').slice(1);
     const target=document.getElementById(id)||document.getElementById('login');
@@ -98,6 +1070,8 @@ dialog{border:0;border-radius:12px;padding:0;box-shadow:var(--shadow);width:min(
     clearInterval(runInterval);clearTimeout(runTimer);clearTimeout(splashTimer);
     if(target.id==='find-running') startRun();
     if(target.id==='splash') startSplash();
+    if(target.id==='tutorial') setTutorialPage(0);
+    if(target.id==='new-select') nsReset();
   }
   function startSplash(){
     const splash=document.getElementById('splash');
@@ -125,6 +1099,21 @@ dialog{border:0;border-radius:12px;padding:0;box-shadow:var(--shadow);width:min(
   }
   window.addEventListener('hashchange',route);route();
   document.addEventListener('click',e=>{
+    const nsTask=e.target.closest('[data-ns-task]');
+    if(nsTask){nsSelect(nsTask.dataset.nsTask);return}
+    const nsBack=e.target.closest('[data-ns-back]');
+    if(nsBack){nsReset();return}
+    const tutorialDot=e.target.closest('[data-tutorial-page]');
+    if(tutorialDot){setTutorialPage(Number(tutorialDot.dataset.tutorialPage));return}
+    const tutorialPrev=e.target.closest('[data-tutorial-prev]');
+    if(tutorialPrev){if(tutorialPage>0)setTutorialPage(tutorialPage-1);return}
+    const tutorialNext=e.target.closest('[data-tutorial-next]');
+    if(tutorialNext){
+      const total=document.querySelectorAll('[data-tutorial-slide]').length;
+      if(tutorialPage<total-1)setTutorialPage(tutorialPage+1);
+      else location.hash='new-select';
+      return
+    }
     const open=e.target.closest('[data-open-task]');if(open){document.getElementById('taskDialog')?.showModal();return}
     const close=e.target.closest('[data-close-dialog]');if(close){document.getElementById('taskDialog')?.close()}
     const t=e.target.closest('[data-toast]');if(t){toast(t.dataset.toast)}
