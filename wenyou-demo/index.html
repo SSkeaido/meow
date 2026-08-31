@@ -264,364 +264,7 @@ frame.addEventListener('load',()=>{
 });
 </script>
 
-<script>
-frame.addEventListener('load',()=>{
-  const d=frame.contentDocument;
-  if(!d || d.getElementById('wy-find-branch-patch')) return;
 
-  const style=d.createElement('style');
-  style.id='wy-find-branch-patch';
-  style.textContent=`
-    .wy-find-config{max-width:930px;margin:0 auto}
-    .wy-find-config-grid{display:grid;grid-template-columns:minmax(0,1.18fr) minmax(280px,.82fr);gap:14px}
-    .wy-find-card{background:#fff;border:1px solid var(--line);border-radius:9px;padding:16px}
-    .wy-find-card h2{margin:0 0 5px;font-size:15px}.wy-find-card>p{margin:0 0 13px;color:var(--muted);font-size:10px;line-height:1.6}
-    .wy-find-block{padding:12px 0;border-bottom:1px solid #f0f1f5}.wy-find-block:last-child{border-bottom:0}
-    .wy-find-block-head{display:flex;justify-content:space-between;gap:10px;align-items:flex-start;margin-bottom:9px}
-    .wy-find-block-head strong{font-size:11px}.wy-find-block-head small{display:block;color:var(--muted);font-size:9px;margin-top:3px}
-    .wy-keywords{display:flex;gap:6px;flex-wrap:wrap}.wy-keyword{padding:5px 7px;border-radius:6px;background:#f4f2fb;color:#594b91;font-size:9px}
-    .wy-req-summary{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}.wy-req-chip{padding:8px;border:1px solid var(--line);border-radius:7px;background:#fcfdff}
-    .wy-req-chip b{display:block;color:var(--purple);font-size:13px}.wy-req-chip span{font-size:9px;color:var(--muted)}
-    .wy-db-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:7px}
-    .wy-db{display:flex;gap:8px;align-items:flex-start;padding:9px;border:1px solid var(--line);border-radius:7px;background:#fff;font-size:10px}
-    .wy-db input{accent-color:var(--purple);margin-top:2px}.wy-db b{display:block;font-size:10px}.wy-db small{display:block;color:var(--muted);font-size:9px;margin-top:2px}
-    .wy-intensity{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}.wy-intensity-btn{padding:10px;border:1px solid var(--line);border-radius:8px;background:#fff;text-align:left}
-    .wy-intensity-btn.active{border-color:#b6a9ec;background:var(--purple-weak)}.wy-intensity-btn b{display:block;font-size:11px}.wy-intensity-btn small{display:block;color:var(--muted);font-size:9px;line-height:1.45;margin-top:4px}
-    .wy-find-estimate{margin-top:9px;padding:9px;border-radius:7px;background:var(--teal-weak);color:#306e66;font-size:10px;line-height:1.55}
-    .wy-search-run{max-width:830px;margin:0 auto}.wy-run-hero{text-align:center;padding:20px 0 12px}.wy-run-hero h2{margin:0;font-size:20px}.wy-run-hero p{color:var(--muted);font-size:10px}
-    .wy-run-list{display:grid;gap:8px;margin-top:13px}.wy-run-item{display:flex;gap:10px;align-items:flex-start;padding:10px;border:1px solid var(--line);border-radius:7px;background:#fff}
-    .wy-run-item i{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;background:#eef0f4;color:#8b91a0;font-style:normal;font-size:10px}
-    .wy-run-item.done i{background:var(--teal);color:#fff}.wy-run-item.current{border-color:#c9bef5;background:#fbfaff}.wy-run-item.current i{background:var(--purple);color:#fff}
-    .wy-run-item strong{font-size:10px}.wy-run-item small{display:block;color:var(--muted);font-size:9px;margin-top:3px}
-    .wy-find-work{position:relative;max-width:100%;padding-bottom:72px}
-    .wy-find-top{display:grid;grid-template-columns:34px minmax(0,1fr) 34px;align-items:center;gap:7px;margin-bottom:11px}
-    .wy-find-tabs{display:grid;grid-template-columns:repeat(3,1fr);border:1px solid var(--line);border-radius:8px;background:#fff;padding:3px}
-    .wy-find-tab{height:34px;border:0;background:transparent;border-radius:6px;font-size:10px;color:var(--muted)}
-    .wy-find-tab.active{background:var(--purple-weak);color:var(--purple);font-weight:700}
-    .wy-page-arrow{width:34px;height:34px;border:1px solid var(--line);border-radius:8px;background:#fff;color:var(--purple);font-size:16px}.wy-page-arrow:disabled{visibility:hidden}
-    .wy-find-section{background:#fff;border:1px solid var(--line);border-radius:9px;padding:14px;margin-bottom:10px}
-    .wy-find-section h2{margin:0;font-size:14px}.wy-find-section h3{margin:0 0 8px;font-size:12px}.wy-find-section p{font-size:10px;color:var(--muted);line-height:1.6}
-    .wy-overview{display:grid;grid-template-columns:1fr auto;gap:12px;align-items:start}.wy-overview-score strong{font-size:26px;color:var(--purple)}.wy-overview-score small{display:block;color:var(--muted);font-size:9px}
-    .wy-demand-table{width:100%;border-collapse:collapse;margin-top:10px;font-size:9px}.wy-demand-table th,.wy-demand-table td{padding:8px 6px;border-bottom:1px solid var(--line);text-align:left}
-    .wy-demand-table th{color:var(--muted);font-weight:600;background:#fafbfe}.wy-status-ok{color:var(--teal);font-weight:700}.wy-status-gap{color:var(--amber);font-weight:700}
-    .wy-fulltext-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}.wy-fulltext-card{border:1px solid var(--line);border-radius:8px;padding:12px;background:#fcfdff}
-    .wy-fulltext-card .big{font-size:21px;color:var(--purple);font-weight:800}.wy-fulltext-card small{display:block;color:var(--muted);font-size:9px;line-height:1.5;margin:3px 0 9px}
-    .wy-db-breakdown{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:9px}.wy-db-pill{padding:4px 6px;border-radius:5px;background:#f0f2f6;color:#5e6678;font-size:8px}
-    .wy-cluster-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}.wy-cluster{border:1px solid var(--line);border-radius:8px;padding:11px;background:#fff}
-    .wy-cluster-head{display:flex;justify-content:space-between;gap:7px}.wy-cluster h3{margin:0;font-size:11px}.wy-cluster-count{color:var(--purple);font-weight:800;font-size:11px}
-    .wy-query-list{display:flex;gap:5px;flex-wrap:wrap;margin-top:7px}.wy-query{padding:4px 6px;border-radius:5px;background:#f5f3fd;color:#5d5190;font-size:8px}
-    .wy-cluster-foot{display:flex;justify-content:space-between;gap:8px;margin-top:8px;color:var(--muted);font-size:8px}
-    .wy-paper-cluster{margin-bottom:13px}.wy-paper-cluster-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:7px}
-    .wy-paper-cluster-head h3{font-size:12px;margin:0}.wy-paper-cluster-head span{font-size:9px;color:var(--muted)}
-    .wy-paper-card{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:9px;padding:11px;border:1px solid var(--line);border-radius:8px;background:#fff;margin-bottom:7px}
-    .wy-paper-card h4{margin:0;font-size:11px;line-height:1.45}.wy-paper-meta{margin-top:5px;color:#596175;font-size:9px;line-height:1.55}
-    .wy-levels{display:flex;gap:5px;flex-wrap:wrap;margin-top:6px}.wy-level{padding:3px 5px;border-radius:5px;background:#f1effc;color:#5f4ea1;font-size:8px}.wy-level.fit{background:var(--teal-weak);color:var(--teal)}
-    .wy-paper-side{display:grid;align-content:start;justify-items:end;gap:6px;min-width:105px}.wy-full-status{font-size:8px;padding:4px 6px;border-radius:5px}.wy-full-status.oa{background:var(--teal-weak);color:var(--teal)}.wy-full-status.external{background:var(--amber-weak);color:var(--amber)}
-    .wy-search-adjust{padding:10px;border:1px solid #dcd6f7;border-radius:8px;background:#fbfaff}.wy-search-adjust b{font-size:10px;color:var(--purple)}.wy-search-adjust p{font-size:9px;color:var(--muted);margin:4px 0 0}
-    .wy-global-cta{position:sticky;bottom:0;z-index:4;margin-top:12px;padding:10px 12px;border:1px solid var(--line);border-radius:9px;background:rgba(255,255,255,.96);box-shadow:0 -8px 24px rgba(46,43,67,.08);display:flex;justify-content:space-between;align-items:center;gap:12px}
-    .wy-global-cta small{color:var(--muted);font-size:9px;line-height:1.45}.wy-global-cta .actions{display:flex;gap:7px}.wy-disabled{height:35px;padding:0 13px;border:0;border-radius:8px;background:#e5e7ec;color:#9ba1ad;font-size:10px;cursor:not-allowed}
-    .wy-funnel-wrap{display:grid;grid-template-columns:minmax(260px,.95fr) 1.05fr;gap:16px;align-items:center}.wy-funnel{display:grid;justify-items:center;gap:5px;padding:8px}
-    .wy-funnel-step{height:52px;display:grid;place-items:center;text-align:center;color:#fff;font-size:9px;line-height:1.3;border-radius:6px;clip-path:polygon(8% 0,92% 0,82% 100%,18% 100%);background:linear-gradient(135deg,#7962dc,#9b89ee)}
-    .wy-funnel-step:nth-child(1){width:100%}.wy-funnel-step:nth-child(2){width:82%;opacity:.92}.wy-funnel-step:nth-child(3){width:64%;opacity:.84}.wy-funnel-step:nth-child(4){width:48%;opacity:.76}
-    .wy-risk-copy h3{margin:0 0 7px;font-size:13px}.wy-risk-copy p{font-size:10px;line-height:1.65;color:var(--muted)}.wy-risk-reasons{display:grid;gap:5px;margin-top:8px}.wy-risk-reason{padding:7px 8px;border-radius:6px;background:#f7f8fb;font-size:9px;color:#596175}
-    @media(max-width:1000px){.wy-find-config-grid,.wy-funnel-wrap{grid-template-columns:1fr}.wy-db-grid,.wy-cluster-grid{grid-template-columns:1fr}.wy-req-summary,.wy-metrics{grid-template-columns:repeat(2,1fr)}.wy-fulltext-grid{grid-template-columns:1fr}}
-  `;
-  d.head.appendChild(style);
-
-  const patch=d.createElement('script');
-  patch.textContent=String.raw`
-    (function(){
-      const WY_FIND_CLUSTERS=[
-        {id:'demand',name:'市场需求与消费升级',count:16,keep:5,queries:['旅游市场需求 技术升级','消费升级 旅游数字化','tourism demand technology adoption'],db:'OpenAlex · Semantic Scholar · 中文库'},
-        {id:'tech',name:'技术创新与数字化转型',count:14,keep:4,queries:['旅游产业 技术创新','数字化转型 旅游产业','tourism digital transformation'],db:'OpenAlex · Crossref · 中文库'},
-        {id:'region',name:'区域差异与空间演化',count:12,keep:4,queries:['省级旅游产业 区域差异','空间分异 技术演化','regional tourism innovation'],db:'OpenAlex · 中文库'},
-        {id:'policy',name:'产业政策与治理机制',count:10,keep:4,queries:['旅游产业 政策机制','地方治理 技术扩散','tourism policy innovation'],db:'Semantic Scholar · 中文库'},
-        {id:'industry',name:'产业组织与绩效',count:8,keep:3,queries:['旅游产业组织 技术绩效','市场结构 创新绩效','tourism industry performance'],db:'Crossref · 中文库'}
-      ];
-      const WY_FIND_PAPERS=[
-        {id:'f1',cluster:'demand',title:'Tourism demand upgrading and digital technology adoption: Evidence from regional markets',authors:'Liu, Chen & Wang',year:'2025',venue:'Tourism Management',doi:'10.1016/j.tourman.2025.mock01',levels:['SSCI','JCR Q1','近5年'],db:'Semantic Scholar',abstract:true,oa:true,fit:['SSCI','JCR Q1–Q2']},
-        {id:'f2',cluster:'demand',title:'市场需求升级与旅游产业技术创新：来自省级面板数据的证据',authors:'王宁，赵辰',year:'2024',venue:'旅游学刊',doi:'10.mock/cnki.2024.021',levels:['CSSCI','北大核心','近5年'],db:'中文数据库',abstract:true,oa:false,fit:['CSSCI','近5年']},
-        {id:'f3',cluster:'tech',title:'Digital transformation, innovation capability and tourism industry productivity',authors:'Huang & Li',year:'2024',venue:'Information & Management',doi:'10.1016/j.im.2024.mock02',levels:['SSCI','JCR Q1','近5年'],db:'OpenAlex',abstract:true,oa:true,fit:['SSCI','JCR Q1–Q2']},
-        {id:'f4',cluster:'tech',title:'数字技术赋能旅游产业高质量发展的机制研究',authors:'周敏，孙凯',year:'2023',venue:'经济地理',doi:'10.mock/cnki.2023.066',levels:['CSSCI','北大核心','近5年'],db:'中文数据库',abstract:true,oa:false,fit:['CSSCI','近5年']},
-        {id:'f5',cluster:'region',title:'Regional heterogeneity in tourism innovation: A spatial panel analysis',authors:'Smith, Zhao & Park',year:'2023',venue:'Annals of Tourism Research',doi:'10.1016/j.annals.2023.mock03',levels:['SSCI','JCR Q1','近5年'],db:'OpenAlex',abstract:true,oa:true,fit:['SSCI','JCR Q1–Q2']},
-        {id:'f6',cluster:'region',title:'中国旅游产业技术效率的空间分异及其驱动因素',authors:'刘洋，周敏',year:'2022',venue:'地理研究',doi:'10.mock/cnki.2022.108',levels:['CSSCI','CSCD','近5年'],db:'中文数据库',abstract:true,oa:false,fit:['CSSCI','近5年']},
-        {id:'f7',cluster:'policy',title:'Policy support, institutional environment and technology diffusion in tourism',authors:'Hughes & Martin',year:'2024',venue:'Research Policy',doi:'10.1016/j.respol.2024.mock04',levels:['SSCI','JCR Q1','近5年'],db:'Crossref',abstract:true,oa:true,fit:['SSCI','JCR Q1–Q2']},
-        {id:'f8',cluster:'policy',title:'地方治理能力、产业政策与旅游技术扩散',authors:'陈立，郭宇',year:'2024',venue:'公共管理学报',doi:'10.mock/cnki.2024.031',levels:['CSSCI','北大核心','近5年'],db:'中文数据库',abstract:true,oa:false,fit:['CSSCI','近5年']},
-        {id:'f9',cluster:'industry',title:'Market structure and innovation performance in tourism industries',authors:'Garcia & Lee',year:'2022',venue:'Technological Forecasting & Social Change',doi:'10.1016/j.techfore.2022.mock05',levels:['SSCI','JCR Q1','近5年'],db:'Semantic Scholar',abstract:true,oa:true,fit:['SSCI','JCR Q1–Q2']},
-        {id:'f10',cluster:'industry',title:'旅游产业组织演化、竞争结构与技术绩效',authors:'李卓，杨帆',year:'2021',venue:'科研管理',doi:'10.mock/cnki.2021.087',levels:['CSSCI','北大核心','近5年'],db:'中文数据库',abstract:true,oa:false,fit:['CSSCI','近5年']}
-      ];
-
-      function wyFindInit(){
-        if(!state.wyReview){
-          state.wyReview={total:20,discipline:'econ',uploaded:0,duplicate:0,expanded:false,reqs:[
-            {id:'ssci',name:'SSCI',desc:'社会科学引文索引',need:5,base:1,kind:'must'},
-            {id:'cssci',name:'CSSCI',desc:'中文社会科学引文索引',need:5,base:2,kind:'must'},
-            {id:'jcr12',name:'JCR Q1–Q2',desc:'JCR 高分区期刊',need:3,base:1,kind:'prefer'},
-            {id:'recent',name:'近 5 年',desc:'保证研究时效性',need:12,base:3,kind:'prefer'}
-          ]};
-        }
-        if(!state.wyFind){
-          state.wyFind={
-            stage:'setup',page:0,intensity:'standard',runStep:0,searchRevision:0,
-            dbs:{openalex:true,semantic:true,crossref:true,cnki:true,wanfang:true,vip:false,pubmed:false,arxiv:false},
-            importedOA:0,uploadedExternal:0,downloadList:0,lastAgentUpdate:'',
-            importedPaperIds:{}
-          };
-        }
-        return state.wyFind;
-      }
-      function wyMultiplier(){const f=wyFindInit();return f.intensity==='quick'?2:f.intensity==='deep'?4:3}
-      function wyPool(){return Math.max(20,(state.wyReview.total||20)*wyMultiplier())}
-      function wyScale(n){return Math.max(1,Math.round(n*wyPool()/60))}
-      function wyOACount(){return Math.round(wyPool()*.30)}
-      function wyExternalCount(){return wyPool()-wyOACount()}
-      function wyBaseFull(){return 3+(Number(state.wyReview.uploaded)||0)}
-      function wyCurrentFull(){const f=wyFindInit();return wyBaseFull()+f.importedOA+f.uploadedExternal}
-      function wyReqCandidate(req){
-        const pool=wyPool();
-        if(req.id==='ssci'||req.name==='SSCI')return Math.round(pool*.30);
-        if(req.id==='cssci'||req.name==='CSSCI')return Math.round(pool*.27);
-        if(req.id==='jcr12'||req.name.indexOf('JCR')>-1)return Math.round(pool*.20);
-        if(req.id==='recent'||req.name.indexOf('近')===0)return Math.round(pool*.73);
-        return Math.round(pool*.22);
-      }
-      function wyReqOA(req){return Math.max(1,Math.round(wyReqCandidate(req)*.30))}
-      function wyReqExternal(req){return Math.max(0,wyReqCandidate(req)-wyReqOA(req))}
-      function wyReqCurrent(req){
-        const f=wyFindInit(),extra=f.importedOA+f.uploadedExternal,base=Number(req.base)||0;
-        if(req.id==='recent'||req.name.indexOf('近')===0)return Math.min(wyCurrentFull(),base+Math.round(extra*.78));
-        if(req.id==='ssci'||req.id==='cssci'||req.id==='scie'||req.name==='SSCI'||req.name==='CSSCI'||req.name==='SCIE')return Math.min(wyCurrentFull(),base+Math.floor(extra*.30));
-        if(req.id==='jcr12'||req.name.indexOf('JCR')>-1)return Math.min(wyCurrentFull(),base+Math.floor(extra*.22));
-        return Math.min(wyCurrentFull(),base+Math.floor(extra*.20));
-      }
-      function wyFindHardMissing(){return state.wyReview.reqs.filter(r=>r.kind==='must'&&wyReqCurrent(r)<r.need)}
-      function wyFindStatus(){
-        const total=Number(state.wyReview.total)||20,current=wyCurrentFull(),hard=wyFindHardMissing();
-        if(current<total||hard.length)return 'insufficient';
-        const safe=Math.ceil(total/.75);
-        return current<safe?'critical':'safe';
-      }
-      function wyFindGap(){
-        const parts=[],total=Number(state.wyReview.total)||20,current=wyCurrentFull();
-        if(current<total)parts.push('总量还缺 '+(total-current)+' 篇可用全文');
-        wyFindHardMissing().forEach(r=>parts.push(r.name+' 还缺 '+(r.need-wyReqCurrent(r))+' 篇'));
-        return parts.join('；')||'数量与必须质量条件已经满足';
-      }
-      function wySearchContext(){return state.wyReviewGap?'为当前文献综述补充文献':'围绕当前选题发现文献'}
-      function wySearchRequirements(){
-        const reqs=state.wyReview.reqs.filter(r=>r.need>0);
-        return '<div class="wy-req-summary"><div class="wy-req-chip"><b>'+state.wyReview.total+'</b><span>目标全文文献</span></div>'+reqs.slice(0,3).map(r=>'<div class="wy-req-chip"><b>≥'+r.need+'</b><span>'+r.name+' · '+(r.kind==='must'?'必须':'优先')+'</span></div>').join('')+'</div>';
-      }
-      function wySearchSetup(){
-        const f=wyFindInit(),pool=wyPool();
-        document.body.classList.add('task-setup');
-        return pageTitle('找文献 · 检索设置',wySearchContext()+'。检索阶段不受当前文献库数量限制，而是重新建立完整候选池。','<button class="ghost" data-wy-find-back-review>返回文献综述</button>')+
-          '<div class="wy-find-config"><div class="wy-find-config-grid"><section class="wy-find-card"><h2>检索需求</h2><p>系统已继承选题、研究问题和文献需求，你可以在开始检索前继续调整。</p>'+
-          '<div class="wy-find-block"><div class="wy-find-block-head"><div><strong>研究选题</strong><small>从文献综述任务继承</small></div></div><div class="topic-chip"><strong>市场需求对中国省级旅游产业技术演化的影响</strong><span>已继承</span></div></div>'+
-          '<div class="wy-find-block"><div class="wy-find-block-head"><div><strong>系统生成的检索关键词</strong><small>基于选题、研究方向和研究问题</small></div><button class="small-btn" data-wy-keyword-refresh>AI 优化关键词</button></div><div class="wy-keywords"><span class="wy-keyword">旅游市场需求</span><span class="wy-keyword">技术演化</span><span class="wy-keyword">数字化转型</span><span class="wy-keyword">区域差异</span><span class="wy-keyword">产业政策</span><span class="wy-keyword">tourism technology adoption</span></div></div>'+
-          '<div class="wy-find-block"><div class="wy-find-block-head"><div><strong>文献需求</strong><small>直接继承上一页，可在这里修改数量和硬性要求</small></div></div>'+wySearchRequirements()+'<div class="actions" style="justify-content:flex-start;margin-top:8px"><button class="small-btn" data-wy-find-edit-req>调整文献需求</button></div><div id="wyFindReqEdit"></div></div>'+
-          '<div class="wy-find-block"><div class="wy-find-block-head"><div><strong>检索数据库</strong><small>外文开放数据库 + 中文数据库（原型示意）</small></div></div><div class="wy-db-grid">'+
-            [['openalex','OpenAlex','开放学术元数据'],['semantic','Semantic Scholar','语义检索与引文元数据'],['crossref','Crossref','DOI 与出版元数据'],['cnki','知网','中文数据库 · 规划接入'],['wanfang','万方','中文数据库 · 规划接入'],['vip','维普','中文数据库 · 规划接入'],['pubmed','PubMed','医学方向可选'],['arxiv','arXiv','预印本方向可选']].map(x=>'<label class="wy-db"><input type="checkbox" data-wy-db="'+x[0]+'" '+(f.dbs[x[0]]?'checked':'')+'><span><b>'+x[1]+'</b><small>'+x[2]+'</small></span></label>').join('')+
-          '</div></div>'+
-          '<div class="wy-find-block"><div class="wy-find-block-head"><div><strong>检索强度</strong><small>强度影响查询组合、候选池规模和等待时间</small></div></div><div class="wy-intensity">'+
-            '<button class="wy-intensity-btn '+(f.intensity==='quick'?'active':'')+'" data-wy-intensity="quick"><b>快速</b><small>目标需求 × 2<br>预计 10–20 秒</small></button>'+
-            '<button class="wy-intensity-btn '+(f.intensity==='standard'?'active':'')+'" data-wy-intensity="standard"><b>标准 · 推荐</b><small>目标需求 × 3<br>预计 30–60 秒</small></button>'+
-            '<button class="wy-intensity-btn '+(f.intensity==='deep'?'active':'')+'" data-wy-intensity="deep"><b>深度</b><small>目标需求 × 4<br>预计 1–3 分钟</small></button>'+
-          '</div><div class="wy-find-estimate">预计形成约 <b>'+pool+' 篇候选文献</b>。候选池主要依据元数据和可用摘要初筛，全文相关性将在入库解析后再次判断。</div></div>'+
-          '<div class="actions" style="justify-content:flex-end;margin-top:13px"><button class="primary" data-wy-start-search>开始检索</button></div></section>'+
-          '<aside class="wy-find-card"><h2>为什么候选数高于最终需求？</h2><p>检索阶段只能判断“值得获取全文”，不能确认正文一定能用于写作。</p>'+
-          '<div class="prepare-list"><div class="prepare-step"><i>1</i><div><strong>多数据库广泛检索</strong><small>原始结果可能达到数百篇</small></div></div><div class="prepare-step"><i>2</i><div><strong>Metadata 去重和初筛</strong><small>根据题目、关键词、年份和文献层次筛选</small></div></div><div class="prepare-step"><i>3</i><div><strong>形成 2–4 倍候选池</strong><small>为后续全文筛选保留冗余</small></div></div><div class="prepare-step"><i>4</i><div><strong>获取全文后再次筛选</strong><small>真正进入写作的文献必须全文解析可用</small></div></div></div></aside></div></div>';
-      }
-      function wySearchRunning(){
-        const f=wyFindInit(),steps=[
-          ['生成检索式','根据选题拆解中英文关键词与查询组合'],
-          ['多数据库检索','并行查询已选择的外文与中文数据库'],
-          ['Metadata 归一化与去重','合并 DOI、标题、作者与年份信息'],
-          ['文献层次筛选','按 SSCI / CSSCI / JCR 等需求筛选'],
-          ['主题聚类与相关性排序','形成结构化候选文献池']
-        ];
-        document.body.classList.add('task-setup');
-        return pageTitle('正在检索文献','本次检索目标约 '+wyPool()+' 篇候选文献。','')+
-          '<section class="surface wy-search-run"><div class="wy-run-hero"><h2>正在建立候选文献池</h2><p>检索过程只使用元数据与可用摘要，不把候选论文直接视为最终写作材料。</p></div><div class="progress"><i style="width:'+Math.min(100,(f.runStep+1)/steps.length*100)+'%"></i></div><div class="wy-run-list">'+steps.map((s,i)=>'<div class="wy-run-item '+(i<f.runStep?'done':i===f.runStep?'current':'')+'"><i>'+(i<f.runStep?'✓':i+1)+'</i><div><strong>'+s[0]+'</strong><small>'+s[1]+'</small></div></div>').join('')+'</div></section>';
-      }
-      function wyDemandRows(){
-        return state.wyReview.reqs.filter(r=>r.need>0).map(r=>{
-          const c=wyReqCandidate(r),cur=wyReqCurrent(r),ok=cur>=r.need;
-          return '<tr><td><b>'+r.name+'</b><br><span class="muted">'+(r.kind==='must'?'必须满足':'优先满足')+'</span></td><td>≥ '+r.need+'</td><td>'+c+'</td><td>'+wyReqOA(r)+'</td><td>'+wyReqExternal(r)+'</td><td>'+cur+'</td><td class="'+(ok?'wy-status-ok':'wy-status-gap')+'">'+(ok?'已满足':'还缺 '+(r.need-cur))+'</td></tr>';
-        }).join('');
-      }
-      function wyL1(){
-        const status=wyFindStatus(),f=wyFindInit(),current=wyCurrentFull(),total=state.wyReview.total;
-        return '<section class="wy-find-section"><div class="wy-overview"><div><h2>本次文献需求满足情况</h2><p>候选池回答“系统找到了什么”，当前全文回答“真正已经可以进入任务的材料有多少”。</p></div><div class="wy-overview-score"><strong>'+current+' / '+total+'</strong><small>当前可用全文</small></div></div>'+
-          '<table class="wy-demand-table"><thead><tr><th>文献要求</th><th>我的需求</th><th>候选池</th><th>可一键获取</th><th>需自行下载</th><th>当前全文</th><th>状态</th></tr></thead><tbody><tr><td><b>总文献</b></td><td>'+total+'</td><td>'+wyPool()+'</td><td>'+wyOACount()+'</td><td>'+wyExternalCount()+'</td><td>'+current+'</td><td class="'+(current>=total?'wy-status-ok':'wy-status-gap')+'">'+(current>=total?'数量已达标':'还缺 '+(total-current))+'</td></tr>'+wyDemandRows()+'</tbody></table></section>'+
-          '<section class="wy-find-section"><h3>全文获取方式</h3><div class="wy-fulltext-grid"><div class="wy-fulltext-card"><span class="wy-full-status oa">OA / 可直接获取</span><div class="big">'+Math.max(0,wyOACount()-f.importedOA)+'</div><small>平台可直接取得全文，入库后自动查重、解析并计入本次任务。</small><button class="small-btn primary" data-wy-bulk-oa '+(f.importedOA?'disabled':'')+'>'+(f.importedOA?'已一键入库 '+f.importedOA+' 篇':'一键入库')+'</button></div>'+
-          '<div class="wy-fulltext-card"><span class="wy-full-status external">需前往数据库获取</span><div class="big">'+wyExternalCount()+'</div><small>系统保留完整 Metadata，用户可导出清单后前往对应数据库下载全文。</small><div class="wy-db-breakdown"><span class="wy-db-pill">知网 '+Math.round(wyExternalCount()*.42)+'</span><span class="wy-db-pill">万方 '+Math.round(wyExternalCount()*.28)+'</span><span class="wy-db-pill">其他 '+Math.round(wyExternalCount()*.30)+'</span></div><div class="actions" style="justify-content:flex-start"><button class="small-btn" data-wy-export-list>导出文献 List</button><button class="small-btn primary" data-wy-upload-external>上传已下载全文</button></div></div></div></section>'+
-          '<section class="wy-find-section"><h3>当前结论</h3><div class="wy-gap '+(status==='safe'?'good':'')+'">'+(status==='insufficient'?'目前仍不足：'+wyFindGap()+'。':status==='critical'?'已经达到表面文献需求，但全文内容筛选后仍可能低于需求，继续时会进行风险提示。':'已有较充分的全文冗余，可继续进入文献综述。')+'</div></section>';
-      }
-      function wyL2(){
-        const scale=wyPool()/60;
-        return '<section class="wy-find-section"><h2>系统检索策略</h2><p>以下内容是结构化 Search Plan，不是模型隐式推理。它告诉用户系统如何把选题拆成可检索的研究方向。</p></section>'+
-          '<div class="wy-cluster-grid">'+WY_FIND_CLUSTERS.map(c=>'<article class="wy-cluster"><div class="wy-cluster-head"><div><h3>'+c.name+'</h3><span class="muted">建议最终覆盖约 '+c.keep+' 篇</span></div><span class="wy-cluster-count">'+Math.round(c.count*scale)+' 篇</span></div><div class="wy-query-list">'+c.queries.map(q=>'<span class="wy-query">'+q+'</span>').join('')+'</div><div class="wy-cluster-foot"><span>'+c.db+'</span><span>Metadata 聚类</span></div></article>').join('')+'</div>'+
-          '<section class="wy-find-section" style="margin-top:10px"><h3>策略可继续修改</h3><p>'+(wyFindInit().lastAgentUpdate?'<b style="color:var(--purple)">最近调整：</b>'+wyFindInit().lastAgentUpdate:'在中间「文献助手」中输入：少一点国际研究、多找政策机制、只看 CSSCI 等。系统会更新检索策略并刷新候选池。')+'</p><div class="actions" style="justify-content:flex-start"><button class="small-btn" data-wy-rerun-search>按当前策略重新检索</button></div></section>';
-      }
-      function wyPaperActions(p){
-        const f=wyFindInit(),bulkDone=f.importedOA>=wyOACount(),imported=bulkDone||!!f.importedPaperIds[p.id];
-        if(p.oa)return '<span class="wy-full-status oa">OA 可获取</span><button class="small-btn primary" data-wy-import-paper="'+p.id+'" '+(imported?'disabled':'')+'>'+(imported?'已入库':'一键入库')+'</button>';
-        return '<span class="wy-full-status external">需自行获取</span><button class="small-btn" data-wy-download-paper="'+p.id+'">加入下载清单</button>';
-      }
-      function wyL3(){
-        const scale=wyPool()/60;
-        return '<section class="wy-find-section"><h2>候选文献</h2><p>按检索主题聚类。此阶段仅展示 Metadata、文献层次、摘要可用状态和全文获取方式，不把候选文献解释为全文证据。</p></section>'+
-          WY_FIND_CLUSTERS.map(c=>'<section class="wy-paper-cluster"><div class="wy-paper-cluster-head"><h3>'+c.name+'</h3><span>候选 '+Math.round(c.count*scale)+' · 建议最终覆盖 '+c.keep+'</span></div>'+
-            WY_FIND_PAPERS.filter(p=>p.cluster===c.id).map(p=>'<article class="wy-paper-card"><div><h4>'+p.title+'</h4><div class="wy-paper-meta">'+p.authors+' · '+p.year+' · '+p.venue+'<br>DOI：'+p.doi+' · 来源：'+p.db+' · '+(p.abstract?'摘要可用':'仅基础 Metadata')+'</div><div class="wy-levels">'+p.levels.map(x=>'<span class="wy-level">'+x+'</span>').join('')+p.fit.map(x=>'<span class="wy-level fit">可补 '+x+'</span>').join('')+'</div></div><div class="wy-paper-side">'+wyPaperActions(p)+'</div></article>').join('')+
-          '</section>').join('');
-      }
-      function wyGlobalCTA(){
-        const status=wyFindStatus(),current=wyCurrentFull(),total=state.wyReview.total,safe=Math.ceil(total/.75);
-        if(status==='insufficient')return '<div class="wy-global-cta"><small>当前 '+current+' / '+total+' 篇；'+wyFindGap()+'。</small><div class="actions"><button class="wy-disabled" disabled>需要继续补充文献</button></div></div>';
-        if(status==='critical')return '<div class="wy-global-cta"><small>当前 '+current+' 篇已达到基本要求，但低于建议安全储备 '+safe+' 篇。</small><div class="actions"><button class="primary" data-wy-continue-review>继续文献综述</button></div></div>';
-        return '<div class="wy-global-cta"><small>当前 '+current+' 篇，数量与必须质量要求均有较充分冗余。</small><div class="actions"><button class="primary" data-wy-continue-review>继续文献综述</button></div></div>';
-      }
-      function wyWorkspace(){
-        const f=wyFindInit(),page=f.page;
-        document.body.classList.remove('task-setup');
-        const body=page===0?wyL1():page===1?wyL2():wyL3();
-        return '<div class="wy-find-work"><div class="wy-find-top"><button class="wy-page-arrow" data-wy-find-prev '+(page===0?'disabled':'')+'>‹</button><div class="wy-find-tabs"><button class="wy-find-tab '+(page===0?'active':'')+'" data-wy-find-page="0">需求满足情况</button><button class="wy-find-tab '+(page===1?'active':'')+'" data-wy-find-page="1">检索策略</button><button class="wy-find-tab '+(page===2?'active':'')+'" data-wy-find-page="2">候选文献</button></div><button class="wy-page-arrow" data-wy-find-next '+(page===2?'disabled':'')+'>›</button></div>'+body+wyGlobalCTA()+'</div>';
-      }
-      function wyRenderRecommend(){
-        const f=wyFindInit();
-        if(f.stage==='setup')return wySearchSetup();
-        if(f.stage==='running')return wySearchRunning();
-        return wyWorkspace();
-      }
-
-      const wyOldRenderRecommend=renderRecommend;
-      renderRecommend=function(){
-        return wyRenderRecommend();
-      };
-
-      const wyOldRenderChat=renderChat;
-      renderChat=function(){
-        const f=wyFindInit();
-        const head=document.querySelector('.chat-head span');
-        if(state.view==='recommend'&&f.stage==='workspace'){
-          if(head)head.textContent='文献助手';
-          document.querySelector('#chatList').innerHTML=
-            '<div class="message"><div class="status-row"><span class="status-dot"></span><span>候选池已建立</span></div><p>当前候选 '+wyPool()+' 篇，已按 5 个检索方向聚类。</p><p class="muted">你可以继续修改检索策略，例如“多找政策机制”“只看 CSSCI”“近三年的多一点”。</p><div class="message-actions"><button class="small-btn primary" data-wy-agent-prompt="多找政策与治理机制">多找政策机制</button><button class="small-btn" data-wy-agent-prompt="只看 CSSCI">优先 CSSCI</button></div></div>'+
-            (f.lastAgentUpdate?'<div class="message user">'+f.lastAgentUpdate+'</div><div class="message"><p>已更新检索策略，候选文献与主题覆盖已重新排序。</p></div>':'');
-          return;
-        }
-        if(head)head.textContent='任务助手';
-        wyOldRenderChat();
-      };
-
-      function wyStartRunning(){
-        const f=wyFindInit();
-        f.stage='running';f.runStep=0;renderAll();
-        const tick=()=>{
-          if(state.view!=='recommend'||f.stage!=='running')return;
-          f.runStep++;
-          if(f.runStep>=5){
-            f.stage='workspace';f.page=0;document.body.classList.remove('task-setup');renderAll();toast('检索完成：已建立 '+wyPool()+' 篇候选文献池');
-          }else{renderAll();setTimeout(tick,420)}
-        };
-        setTimeout(tick,420);
-      }
-      function wyExportList(){
-        const rows=[['Title','Authors','Year','Venue','DOI','Database','Literature level','Cluster']];
-        WY_FIND_PAPERS.filter(p=>!p.oa).forEach(p=>rows.push([p.title,p.authors,p.year,p.venue,p.doi,p.db,p.levels.join(' / '),WY_FIND_CLUSTERS.find(c=>c.id===p.cluster)?.name||'']));
-        const csv=rows.map(r=>r.map(x=>'"'+String(x).replaceAll('"','""')+'"').join(',')).join('\\n');
-        const blob=new Blob(['\\uFEFF'+csv],{type:'text/csv;charset=utf-8'});
-        const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='文优小助_待下载文献List.csv';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);
-        toast('已导出待下载文献 List');
-      }
-      function wyRiskModal(){
-        const current=wyCurrentFull(),low=Math.floor(current*.75),high=Math.max(low,Math.floor(current*.9));
-        document.querySelector('#modalTitle').textContent='当前文献数量处于临界区间';
-        document.querySelector('#modalBody').innerHTML='<div class="wy-funnel-wrap"><div class="wy-funnel"><div class="wy-funnel-step"><b>Metadata 候选池</b><br>'+wyPool()+' 篇</div><div class="wy-funnel-step"><b>已获取全文</b><br>'+current+' 篇</div><div class="wy-funnel-step"><b>全文解析 + 内容筛选</b><br>预计保留 '+low+'–'+high+' 篇</div><div class="wy-funnel-step"><b>最终写作材料</b><br>目标 ≥ '+state.wyReview.total+' 篇</div></div><div class="wy-risk-copy"><h3>为什么还要提醒？</h3><p>候选文献最初主要依据题目、关键词、书目信息和可用摘要筛选。进入全文解析后，部分论文可能因为正文与研究问题不匹配而被移出任务。</p><div class="wy-risk-reasons"><div class="wy-risk-reason">Metadata 相关，但正文研究对象不一致</div><div class="wy-risk-reason">只有背景提及，无法作为主要写作材料</div><div class="wy-risk-reason">与其他论文重复，最终只保留更强证据</div></div></div></div>';
-        document.querySelector('#modalFoot').innerHTML='<button class="ghost" data-wy-risk-more>继续补充文献</button><button class="primary" data-wy-risk-ack>是的，我已知晓</button>';
-        document.querySelector('#modal').classList.add('open');
-      }
-      function wyContinueReview(){
-        const f=wyFindInit();
-        state.wyReview.uploaded=Math.max(Number(state.wyReview.uploaded)||0,f.importedOA+f.uploadedExternal);
-        state.analysisDone=true;state.outlineEdited=false;state.view='review';
-        document.body.classList.remove('task-setup');
-        renderAll();
-        toast('已返回文献综述，进入生成 Paper 分支');
-      }
-
-      document.addEventListener('click',e=>{
-        const b=e.target.closest('button');if(!b)return;
-        if(b.matches('[data-wy-find-back-review]')){document.body.classList.remove('task-setup');state.view='reviewCreate';renderReviewCreate()}
-        if(b.matches('[data-wy-intensity]')){wyFindInit().intensity=b.dataset.wyIntensity;renderAll()}
-        if(b.matches('[data-wy-db]')){}
-        if(b.matches('[data-wy-keyword-refresh]'))toast('已根据研究问题扩展中英文关键词与同义词');
-        if(b.matches('[data-wy-find-edit-req]')){
-          const box=document.querySelector('#wyFindReqEdit');
-          if(box)box.innerHTML='<div style="margin-top:8px;padding:10px;border:1px solid var(--line);border-radius:7px;background:#fff"><div class="search-row"><input class="input" id="wyFindTotal" type="number" min="1" max="80" value="'+state.wyReview.total+'"><span class="muted" style="align-self:center">篇总需求</span></div><div style="display:grid;gap:6px;margin-top:8px">'+state.wyReview.reqs.map((r,i)=>'<div style="display:grid;grid-template-columns:1fr 80px 110px;gap:7px;align-items:center"><span style="font-size:10px">'+r.name+'</span><input class="input" style="height:30px" data-wy-find-req-need="'+i+'" type="number" min="0" value="'+r.need+'"><select class="input" style="height:30px" data-wy-find-req-kind="'+i+'"><option value="must" '+(r.kind==='must'?'selected':'')+'>必须满足</option><option value="prefer" '+(r.kind==='prefer'?'selected':'')+'>优先满足</option></select></div>').join('')+'</div><div class="actions" style="justify-content:flex-end;margin-top:8px"><button class="small-btn primary" data-wy-save-find-req>保存文献需求</button></div></div>';
-        }
-        if(b.matches('[data-wy-save-find-req]')){
-          const n=Number(document.querySelector('#wyFindTotal')?.value)||20;
-          state.wyReview.total=Math.max(1,Math.min(80,n));
-          document.querySelectorAll('[data-wy-find-req-need]').forEach(x=>{const r=state.wyReview.reqs[Number(x.dataset.wyFindReqNeed)];if(r)r.need=Math.max(0,Math.min(state.wyReview.total,Number(x.value)||0))});
-          document.querySelectorAll('[data-wy-find-req-kind]').forEach(x=>{const r=state.wyReview.reqs[Number(x.dataset.wyFindReqKind)];if(r)r.kind=x.value});
-          renderAll();toast('已更新检索使用的文献需求');
-        }
-        if(b.matches('[data-wy-start-search]'))wyStartRunning();
-        if(b.matches('[data-wy-find-page]')){wyFindInit().page=Number(b.dataset.wyFindPage);renderAll()}
-        if(b.matches('[data-wy-find-prev]')){wyFindInit().page=Math.max(0,wyFindInit().page-1);renderAll()}
-        if(b.matches('[data-wy-find-next]')){wyFindInit().page=Math.min(2,wyFindInit().page+1);renderAll()}
-        if(b.matches('[data-wy-bulk-oa]')){const f=wyFindInit();f.importedOA=wyOACount();renderAll();toast('正在一键获取 OA 全文：查重 → 入库 → 解析完成')}
-        if(b.matches('[data-wy-upload-external]')){wyFindInit().uploadedExternal+=7;renderAll();toast('原型模拟：上传 7 篇已下载全文，已解析并重新计算需求')}
-        if(b.matches('[data-wy-export-list]'))wyExportList();
-        if(b.matches('[data-wy-import-paper]')){
-          const f=wyFindInit(),id=b.dataset.wyImportPaper;
-          if(!f.importedPaperIds[id]&&f.importedOA<wyOACount()){f.importedPaperIds[id]=true;f.importedOA=Math.min(wyOACount(),f.importedOA+1);renderAll();toast('全文已一键入库并完成解析')}
-        }
-        if(b.matches('[data-wy-download-paper]')){wyFindInit().downloadList+=1;toast('已加入下载清单 · 当前 '+wyFindInit().downloadList+' 篇')}
-        if(b.matches('[data-wy-rerun-search]')){wyFindInit().stage='running';wyFindInit().runStep=0;wyStartRunning()}
-        if(b.matches('[data-wy-agent-prompt]')){wyFindInit().lastAgentUpdate=b.dataset.wyAgentPrompt;wyFindInit().searchRevision++;renderAll();toast('已根据要求更新检索策略')}
-        if(b.matches('[data-wy-continue-review]')){
-          const s=wyFindStatus();
-          if(s==='critical')wyRiskModal();else if(s==='safe')wyContinueReview();
-        }
-        if(b.matches('[data-wy-risk-more]')){document.querySelector('#modal').classList.remove('open');wyFindInit().page=0;renderAll()}
-        if(b.matches('[data-wy-risk-ack]')){document.querySelector('#modal').classList.remove('open');wyContinueReview()}
-      },true);
-
-      document.addEventListener('change',e=>{
-        if(e.target.matches('[data-wy-db]'))wyFindInit().dbs[e.target.dataset.wyDb]=e.target.checked;
-      });
-
-      document.addEventListener('click',e=>{
-        const b=e.target.closest('button');
-        if(!b||!b.matches('[data-send]'))return;
-        const f=wyFindInit();
-        if(state.view==='recommend'&&f.stage==='workspace'){
-          e.preventDefault();e.stopImmediatePropagation();
-          const txt=document.querySelector('#composer')?.value.trim();
-          if(txt){
-            f.lastAgentUpdate=txt;f.searchRevision++;
-            const input=document.querySelector('#composer');if(input)input.value='';
-            renderAll();toast('文献助手已更新检索策略');
-          }
-        }
-      },true);
-
-      const wyOldRenderDoc=renderDoc;
-      renderDoc=function(){
-        wyOldRenderDoc();
-        if(state.view==='recommend'){
-          document.querySelector('#workBody').innerHTML=renderRecommend();
-          document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('active',b.dataset.view==='library'));
-        }
-      };
-    })();
-  `;
-  d.body.appendChild(patch);
-});
-</script>
 
 
 <script>
@@ -1579,69 +1222,871 @@ frame.addEventListener('load',()=>{
 </script>
 
 
+
+
+
 <script>
 frame.addEventListener('load',()=>{
   const d=frame.contentDocument;
-  if(!d || d.getElementById('wy-find-lifecycle-fix-v12')) return;
+  if(!d || d.getElementById('wy-find-v13')) return;
+
+  const style=d.createElement('style');
+  style.id='wy-find-v13';
+  style.textContent=`
+    /* =========================================================
+       FIND PAPERS V13
+       setup/running = independent full-width execution pages
+       results = three-column workspace
+       candidate -> library -> task material linkage
+       ========================================================= */
+
+    body.wy13-find-setup .project-switch,
+    body.wy13-find-running .project-switch,
+    body.wy13-find-setup .sidebar,
+    body.wy13-find-setup .chat,
+    body.wy13-find-running .sidebar,
+    body.wy13-find-running .chat,
+    body.wy13-find-setup .workspace>.tabs,
+    body.wy13-find-running .workspace>.tabs{display:none!important}
+
+    body.wy13-find-setup .main,
+    body.wy13-find-running .main{display:block!important;height:calc(100vh - 64px)!important}
+    body.wy13-find-setup .workspace,
+    body.wy13-find-running .workspace{display:block!important;height:100%!important;border:0!important}
+    body.wy13-find-setup .work-body,
+    body.wy13-find-running .work-body{
+      height:100%!important;overflow:auto!important;padding:0!important;background:#f7f8fc!important
+    }
+
+    body.wy13-find-results .project-switch,
+    body.wy13-find-results .workspace>.tabs,
+    body.wy13-find-results .notice{display:none!important}
+    body.wy13-find-results .main{
+      display:grid!important;
+      grid-template-columns:250px 380px minmax(520px,1fr)!important;
+      height:calc(100vh - 64px)!important
+    }
+    body.wy13-find-results .workspace{grid-template-rows:1fr!important}
+    body.wy13-find-results .work-body{
+      height:100%;overflow:auto;padding:16px 18px 34px;background:#f7f8fc
+    }
+
+    /* ---------- setup ---------- */
+    .wy13-page-shell{max-width:1040px;margin:0 auto;padding:28px 30px 50px}
+    .wy13-page-head{
+      display:flex;align-items:flex-start;justify-content:space-between;gap:18px;margin-bottom:15px
+    }
+    .wy13-page-head h1{margin:0;font-size:21px}
+    .wy13-page-head p{margin:6px 0 0;color:var(--muted);font-size:11px;line-height:1.6}
+    .wy13-setup-card{
+      background:#fff;border:1px solid var(--line);border-radius:10px;padding:20px 22px
+    }
+    .wy13-setup-card>h2{margin:0 0 5px;font-size:15px}
+    .wy13-setup-card>p{margin:0 0 12px;color:var(--muted);font-size:10px;line-height:1.6}
+    .wy13-block{padding:14px 0;border-bottom:1px solid #f0f1f5}
+    .wy13-block:last-of-type{border-bottom:0}
+    .wy13-block-head{
+      display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:9px
+    }
+    .wy13-block-head strong{font-size:11px}
+    .wy13-block-head small{display:block;color:var(--muted);font-size:9px;margin-top:3px}
+    .wy13-topic-chip{
+      padding:10px 11px;border:1px solid #d9d3f7;border-radius:7px;background:#fbfaff;
+      display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:10px
+    }
+    .wy13-topic-chip b{color:#514295}
+    .wy13-keywords{display:flex;gap:6px;flex-wrap:wrap}
+    .wy13-keyword{padding:5px 7px;border-radius:6px;background:#f4f2fb;color:#594b91;font-size:9px}
+    .wy13-req-summary{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}
+    .wy13-req-chip{padding:8px;border:1px solid var(--line);border-radius:7px;background:#fcfdff}
+    .wy13-req-chip b{display:block;color:var(--purple);font-size:13px}
+    .wy13-req-chip span{font-size:8px;color:var(--muted)}
+    .wy13-db-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:7px}
+    .wy13-db{
+      display:flex;gap:8px;align-items:flex-start;padding:9px;border:1px solid var(--line);
+      border-radius:7px;background:#fff;font-size:10px
+    }
+    .wy13-db input{accent-color:var(--purple);margin-top:2px}
+    .wy13-db b{display:block;font-size:10px}
+    .wy13-db small{display:block;color:var(--muted);font-size:8px;margin-top:2px}
+    .wy13-intensity{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
+    .wy13-intensity-btn{
+      padding:10px;border:1px solid var(--line);border-radius:8px;background:#fff;text-align:left
+    }
+    .wy13-intensity-btn.active{border-color:#b6a9ec;background:var(--purple-weak)}
+    .wy13-intensity-btn b{display:block;font-size:11px}
+    .wy13-intensity-btn small{display:block;color:var(--muted);font-size:8px;line-height:1.5;margin-top:4px}
+    .wy13-why{
+      margin-top:9px;padding:9px 10px;border:1px solid #e6e1f7;border-radius:7px;
+      background:#fbfaff;font-size:9px;color:#5f6072;line-height:1.55
+    }
+    .wy13-why-head{display:flex;align-items:center;justify-content:space-between;gap:10px}
+    .wy13-why-head b{color:#514295}
+    .wy13-link-btn{border:0;background:transparent;color:var(--purple);font-size:9px;padding:0}
+    .wy13-why-flow{
+      display:none;margin-top:9px;padding-top:9px;border-top:1px solid #e5e0f7;
+      align-items:center;gap:5px;flex-wrap:wrap
+    }
+    .wy13-why-flow.open{display:flex}
+    .wy13-why-node{padding:5px 7px;border-radius:6px;background:#fff;border:1px solid var(--line);font-size:8px}
+    .wy13-why-arrow{color:#aaa;font-size:9px}
+    .wy13-estimate{
+      margin-top:9px;padding:9px;border-radius:7px;background:var(--teal-weak);
+      color:#306e66;font-size:9px;line-height:1.55
+    }
+    .wy13-setup-foot{display:flex;justify-content:flex-end;margin-top:14px}
+    .wy13-req-editor{
+      margin-top:8px;padding:10px;border:1px solid var(--line);border-radius:7px;background:#fafbfe
+    }
+    .wy13-req-edit-row{
+      display:grid;grid-template-columns:1fr 85px 110px;gap:7px;align-items:center;margin-top:6px
+    }
+
+    /* ---------- running ---------- */
+    .wy13-running-shell{max-width:820px;margin:0 auto;padding:34px 30px 50px}
+    .wy13-running-hero{text-align:center;margin-bottom:17px}
+    .wy13-running-hero h1{margin:0;font-size:21px}
+    .wy13-running-hero p{margin:7px 0 0;color:var(--muted);font-size:10px;line-height:1.6}
+    .wy13-running-card{
+      background:#fff;border:1px solid var(--line);border-radius:10px;padding:18px
+    }
+    .wy13-progressbar{height:7px;border-radius:999px;background:#eceef4;overflow:hidden;margin-bottom:14px}
+    .wy13-progressbar i{display:block;height:100%;background:var(--purple);border-radius:999px;transition:.25s}
+    .wy13-run-list{display:grid;gap:8px}
+    .wy13-run-step{
+      display:flex;gap:10px;align-items:flex-start;padding:10px;border:1px solid var(--line);
+      border-radius:8px;background:#fff
+    }
+    .wy13-run-step i{
+      width:22px;height:22px;border-radius:50%;display:grid;place-items:center;
+      background:#eef0f4;color:#8b91a0;font-style:normal;font-size:9px;flex:0 0 auto
+    }
+    .wy13-run-step.done i{background:var(--teal);color:#fff}
+    .wy13-run-step.current{border-color:#c9bef5;background:#fbfaff}
+    .wy13-run-step.current i{background:var(--purple);color:#fff}
+    .wy13-run-step strong{font-size:10px}
+    .wy13-run-step small{display:block;color:var(--muted);font-size:8px;line-height:1.5;margin-top:3px}
+    .wy13-run-live{
+      margin-top:12px;padding:10px 11px;border-radius:8px;background:#f7f8fb;
+      display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:9px
+    }
+    .wy13-run-live b{color:var(--purple);font-size:14px}
+
+    /* ---------- results chrome ---------- */
+    .wy13-side{height:100%;display:flex;flex-direction:column;gap:18px}
+    .wy13-side-title{font-size:12px;font-weight:800;color:#2d3240;padding:0 6px;margin-bottom:8px}
+    .wy13-new-task{
+      width:100%;height:38px;border:0;border-radius:8px;background:var(--purple);
+      color:#fff;font-size:11px;font-weight:700;margin-bottom:9px
+    }
+    .wy13-side-topic{
+      width:100%;border:0;border-radius:8px;background:#f7f7fb;padding:10px 11px;
+      display:flex;align-items:center;justify-content:space-between;gap:8px;text-align:left;
+      font-size:10px;font-weight:700
+    }
+    .wy13-side-topic span:first-child{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .wy13-tree{display:grid;gap:4px;margin:7px 0 0 10px;padding-left:12px;border-left:1px solid #e2e5ed}
+    .wy13-nav{
+      width:100%;height:37px;border:0;border-radius:7px;background:transparent;
+      padding:0 10px;text-align:left;font-size:11px;color:#596174;
+      display:flex;align-items:center;justify-content:space-between;gap:7px
+    }
+    .wy13-nav:hover{background:#f7f6fc;color:var(--purple)}
+    .wy13-nav.active{background:var(--purple-weak);color:var(--purple);font-weight:800}
+    .wy13-nav .count{color:inherit;font-size:9px}
+    .wy13-flash{
+      display:inline-flex;padding:2px 5px;border-radius:5px;background:var(--teal-weak);
+      color:var(--teal);font-size:8px;font-weight:800
+    }
+    .wy13-divider{height:1px;background:var(--line)}
+    .wy13-side-note{
+      margin-top:auto;padding:10px;border:1px solid var(--line);border-radius:8px;
+      background:#fbfcff;color:var(--muted);font-size:9px;line-height:1.55
+    }
+
+    .wy13-result-top{
+      display:grid;grid-template-columns:34px minmax(0,1fr) 34px;gap:7px;align-items:center;margin-bottom:10px
+    }
+    .wy13-tabs{
+      display:grid;grid-template-columns:repeat(3,1fr);border:1px solid var(--line);
+      border-radius:8px;background:#fff;padding:3px
+    }
+    .wy13-tab{height:34px;border:0;background:transparent;border-radius:6px;font-size:10px;color:var(--muted)}
+    .wy13-tab.active{background:var(--purple-weak);color:var(--purple);font-weight:800}
+    .wy13-arrow{
+      width:34px;height:34px;border:1px solid var(--line);border-radius:8px;background:#fff;
+      color:var(--purple);font-size:15px
+    }
+    .wy13-arrow:disabled{visibility:hidden}
+    .wy13-section{
+      background:#fff;border:1px solid var(--line);border-radius:9px;padding:14px;margin-bottom:10px
+    }
+    .wy13-section h2{margin:0;font-size:14px}
+    .wy13-section h3{margin:0 0 8px;font-size:11px}
+    .wy13-section p{font-size:9px;color:var(--muted);line-height:1.6}
+    .wy13-overview{display:grid;grid-template-columns:1fr auto;gap:12px;align-items:start}
+    .wy13-overview-score strong{font-size:25px;color:var(--purple)}
+    .wy13-overview-score small{display:block;color:var(--muted);font-size:8px;text-align:right}
+    .wy13-demand-table{width:100%;border-collapse:collapse;margin-top:10px;font-size:9px}
+    .wy13-demand-table th,.wy13-demand-table td{
+      padding:8px 6px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top
+    }
+    .wy13-demand-table th{color:var(--muted);font-weight:600;background:#fafbfe}
+    .wy13-ok{color:var(--teal);font-weight:800}
+    .wy13-gap-status{color:var(--amber);font-weight:800}
+    .wy13-full-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+    .wy13-full-card{border:1px solid var(--line);border-radius:8px;padding:12px;background:#fcfdff}
+    .wy13-full-card .big{font-size:21px;color:var(--purple);font-weight:800}
+    .wy13-full-card small{display:block;color:var(--muted);font-size:8px;line-height:1.5;margin:4px 0 9px}
+    .wy13-status-badge{
+      display:inline-flex;padding:4px 6px;border-radius:5px;font-size:8px;
+      background:#f0f2f6;color:#667084
+    }
+    .wy13-status-badge.oa{background:var(--teal-weak);color:var(--teal)}
+    .wy13-status-badge.warn{background:var(--amber-weak);color:var(--amber)}
+    .wy13-status-badge.purple{background:var(--purple-weak);color:var(--purple)}
+    .wy13-conclusion{
+      padding:9px 10px;border-radius:7px;background:var(--amber-weak);color:#77511b;
+      font-size:9px;line-height:1.55
+    }
+    .wy13-conclusion.good{background:var(--teal-weak);color:#246a63}
+    .wy13-clusters{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+    .wy13-cluster{border:1px solid var(--line);border-radius:8px;padding:11px;background:#fff}
+    .wy13-cluster-head{display:flex;justify-content:space-between;gap:8px}
+    .wy13-cluster h3{margin:0;font-size:11px}
+    .wy13-cluster-count{font-size:11px;color:var(--purple);font-weight:800}
+    .wy13-query-list{display:flex;gap:5px;flex-wrap:wrap;margin-top:7px}
+    .wy13-query{padding:4px 6px;border-radius:5px;background:#f5f3fd;color:#5d5190;font-size:8px}
+    .wy13-cluster-foot{display:flex;justify-content:space-between;gap:8px;margin-top:8px;color:var(--muted);font-size:8px}
+    .wy13-paper-cluster{margin-bottom:13px}
+    .wy13-paper-cluster-head{display:flex;justify-content:space-between;gap:10px;margin-bottom:7px}
+    .wy13-paper-cluster-head h3{font-size:12px;margin:0}
+    .wy13-paper-cluster-head span{font-size:8px;color:var(--muted)}
+    .wy13-paper-card{
+      display:grid;grid-template-columns:minmax(0,1fr) 124px;gap:10px;padding:11px;
+      border:1px solid var(--line);border-radius:8px;background:#fff;margin-bottom:7px
+    }
+    .wy13-paper-card h4{margin:0;font-size:11px;line-height:1.45}
+    .wy13-paper-meta{margin-top:5px;color:#596175;font-size:8px;line-height:1.55}
+    .wy13-levels{display:flex;gap:5px;flex-wrap:wrap;margin-top:6px}
+    .wy13-level{padding:3px 5px;border-radius:5px;background:#f1effc;color:#5f4ea1;font-size:8px}
+    .wy13-level.fit{background:var(--teal-weak);color:var(--teal)}
+    .wy13-paper-side{display:grid;align-content:start;justify-items:end;gap:6px}
+    .wy13-paper-side .small-btn{white-space:nowrap}
+    .wy13-global-cta{
+      position:sticky;bottom:0;z-index:5;margin-top:12px;padding:10px 12px;border:1px solid var(--line);
+      border-radius:9px;background:rgba(255,255,255,.97);box-shadow:0 -8px 24px rgba(46,43,67,.08);
+      display:flex;justify-content:space-between;align-items:center;gap:12px
+    }
+    .wy13-global-cta small{color:var(--muted);font-size:9px;line-height:1.45}
+    .wy13-disabled{
+      height:35px;padding:0 13px;border:0;border-radius:8px;background:#e5e7ec;
+      color:#9ba1ad;font-size:10px;cursor:not-allowed
+    }
+
+    /* ---------- in-workspace library ---------- */
+    .wy13-library-head{
+      display:flex;align-items:flex-start;justify-content:space-between;gap:14px;
+      background:#fff;border:1px solid var(--line);border-radius:9px;padding:14px;margin-bottom:10px
+    }
+    .wy13-library-head h2{margin:0;font-size:14px}
+    .wy13-library-head p{margin:5px 0 0;color:var(--muted);font-size:9px}
+    .wy13-library-tabs{
+      display:flex;gap:4px;border-bottom:1px solid var(--line);margin:-2px -14px 12px;padding:0 14px
+    }
+    .wy13-library-tab{
+      height:34px;padding:0 10px;border:0;border-bottom:2px solid transparent;
+      background:transparent;color:var(--muted);font-size:9px
+    }
+    .wy13-library-tab.active{color:var(--purple);border-color:var(--purple);font-weight:800}
+    .wy13-library-list{display:grid;gap:8px}
+    .wy13-library-item{
+      display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center;
+      padding:11px;border:1px solid var(--line);border-radius:8px;background:#fff
+    }
+    .wy13-library-item h4{margin:0;font-size:10px}
+    .wy13-library-item p{margin:4px 0 0;color:var(--muted);font-size:8px;line-height:1.5}
+    .wy13-empty{
+      padding:20px;border:1px dashed #c9c1ef;border-radius:8px;background:#fbfaff;
+      color:var(--muted);font-size:9px;text-align:center
+    }
+
+    /* ---------- assistant ---------- */
+    .wy13-assistant-message{display:grid;gap:7px}
+    .wy13-assistant-metrics{display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin-top:7px}
+    .wy13-assistant-metric{padding:8px;border:1px solid #edf0f5;border-radius:7px;background:#fbfcff}
+    .wy13-assistant-metric b{display:block;color:var(--purple);font-size:14px}
+    .wy13-assistant-metric span{font-size:8px;color:var(--muted)}
+
+    /* ---------- modal ---------- */
+    .wy13-risk-funnel{display:grid;justify-items:center;gap:5px;padding:8px 8px 14px}
+    .wy13-funnel-step{
+      height:50px;display:grid;place-items:center;text-align:center;color:#fff;font-size:9px;
+      border-radius:6px;clip-path:polygon(8% 0,92% 0,82% 100%,18% 100%);
+      background:linear-gradient(135deg,#7962dc,#9b89ee)
+    }
+    .wy13-funnel-step:nth-child(1){width:100%}
+    .wy13-funnel-step:nth-child(2){width:82%;opacity:.92}
+    .wy13-funnel-step:nth-child(3){width:64%;opacity:.84}
+    .wy13-funnel-step:nth-child(4){width:48%;opacity:.76}
+
+    @media(max-width:1100px){
+      body.wy13-find-results .main{grid-template-columns:225px 340px minmax(470px,1fr)!important}
+      .wy13-req-summary{grid-template-columns:repeat(2,1fr)}
+      .wy13-clusters,.wy13-full-grid{grid-template-columns:1fr}
+    }
+  `;
+  d.head.appendChild(style);
 
   const js=d.createElement('script');
-  js.id='wy-find-lifecycle-fix-v12';
   js.textContent=String.raw`
     (function(){
-      const previousRenderRecommend=renderRecommend;
+      const CLUSTERS=[
+        {id:'demand',name:'市场需求与消费升级',count:16,keep:5,queries:['旅游市场需求 技术升级','消费升级 旅游数字化','tourism demand technology adoption'],db:'OpenAlex · Semantic Scholar · 中文学术数据库'},
+        {id:'tech',name:'技术创新与数字化转型',count:14,keep:4,queries:['旅游产业 技术创新','数字化转型 旅游产业','tourism digital transformation'],db:'OpenAlex · Crossref · 中文学术数据库'},
+        {id:'region',name:'区域差异与空间演化',count:12,keep:4,queries:['省级旅游产业 区域差异','空间分异 技术演化','regional tourism innovation'],db:'OpenAlex · 中文学术数据库'},
+        {id:'policy',name:'产业政策与治理机制',count:10,keep:4,queries:['旅游产业 政策机制','地方治理 技术扩散','tourism policy innovation'],db:'Semantic Scholar · 中文学术数据库'},
+        {id:'industry',name:'产业组织与绩效',count:8,keep:3,queries:['旅游产业组织 技术绩效','市场结构 创新绩效','tourism industry performance'],db:'Crossref · 中文学术数据库'}
+      ];
 
-      renderRecommend=function(){
-        /* Find Papers owns its own page layout.
-           Never inherit review-form or outline layout classes. */
-        document.body.classList.remove('wy11-review-form','wy-outline-v8');
+      const PAPERS=[
+        {id:'p1',cluster:'demand',title:'Tourism demand upgrading and digital technology adoption: Evidence from regional markets',authors:'Liu, Chen & Wang',year:'2025',venue:'Tourism Management',doi:'10.1016/j.tourman.2025.demo01',levels:['SSCI','JCR Q1','近5年'],source:'Semantic Scholar',oa:true,taskUsable:true,fit:['SSCI','JCR Q1–Q2']},
+        {id:'p2',cluster:'demand',title:'市场需求升级与旅游产业技术创新：来自省级面板数据的证据',authors:'王宁，赵辰',year:'2024',venue:'旅游学刊',doi:'10.demo/cn.2024.021',levels:['CSSCI','北大核心','近5年'],source:'中文学术数据库',oa:false,taskUsable:true,fit:['CSSCI','近5年']},
+        {id:'p3',cluster:'tech',title:'Digital transformation, innovation capability and tourism industry productivity',authors:'Huang & Li',year:'2024',venue:'Information & Management',doi:'10.1016/j.im.2024.demo02',levels:['SSCI','JCR Q1','近5年'],source:'OpenAlex',oa:true,taskUsable:true,fit:['SSCI','JCR Q1–Q2']},
+        {id:'p4',cluster:'tech',title:'数字技术赋能旅游产业高质量发展的机制研究',authors:'周敏，孙凯',year:'2023',venue:'经济地理',doi:'10.demo/cn.2023.066',levels:['CSSCI','北大核心','近5年'],source:'中文学术数据库',oa:false,taskUsable:true,fit:['CSSCI','近5年']},
+        {id:'p5',cluster:'region',title:'Regional heterogeneity in tourism innovation: A spatial panel analysis',authors:'Smith, Zhao & Park',year:'2023',venue:'Annals of Tourism Research',doi:'10.1016/j.annals.2023.demo03',levels:['SSCI','JCR Q1','近5年'],source:'OpenAlex',oa:true,taskUsable:true,fit:['SSCI','JCR Q1–Q2']},
+        {id:'p6',cluster:'region',title:'中国旅游产业技术效率的空间分异及其驱动因素',authors:'刘洋，周敏',year:'2022',venue:'地理研究',doi:'10.demo/cn.2022.108',levels:['CSSCI','CSCD','近5年'],source:'中文学术数据库',oa:false,taskUsable:true,fit:['CSSCI','近5年']},
+        {id:'p7',cluster:'policy',title:'Policy support, institutional environment and technology diffusion in tourism',authors:'Hughes & Martin',year:'2024',venue:'Research Policy',doi:'10.1016/j.respol.2024.demo04',levels:['SSCI','JCR Q1','近5年'],source:'Crossref',oa:true,taskUsable:true,fit:['SSCI','JCR Q1–Q2']},
+        {id:'p8',cluster:'policy',title:'地方治理能力、产业政策与旅游技术扩散',authors:'陈立，郭宇',year:'2024',venue:'公共管理学报',doi:'10.demo/cn.2024.031',levels:['CSSCI','北大核心','近5年'],source:'中文学术数据库',oa:false,taskUsable:true,fit:['CSSCI','近5年']},
+        {id:'p9',cluster:'industry',title:'Market structure and innovation performance in tourism industries',authors:'Garcia & Lee',year:'2022',venue:'Technological Forecasting & Social Change',doi:'10.1016/j.techfore.2022.demo05',levels:['SSCI','JCR Q1','近5年'],source:'Semantic Scholar',oa:true,taskUsable:false,fit:['SSCI']},
+        {id:'p10',cluster:'industry',title:'旅游产业组织演化、竞争结构与技术绩效',authors:'李卓，杨帆',year:'2021',venue:'科研管理',doi:'10.demo/cn.2021.087',levels:['CSSCI','北大核心','近5年'],source:'中文学术数据库',oa:false,taskUsable:true,fit:['CSSCI','近5年']}
+      ];
 
-        const stage=state.wyFind?.stage || 'setup';
-        if(stage==='setup' || stage==='running'){
-          document.body.classList.add('task-setup');
-        }else{
-          document.body.classList.remove('task-setup');
+      function S(){
+        if(!state.wy13){
+          state.wy13={
+            stage:'setup',
+            intensity:'standard',
+            explain:false,
+            editReq:false,
+            dbs:{openalex:true,semantic:true,crossref:true,cn:true},
+            runStep:0,runToken:0,
+            resultTab:0,panel:'results',libraryTab:'all',
+            paperStates:{},
+            aggregateLibraryAdded:0,aggregateUsableAdded:0,
+            bulkOA:false,batchProcessing:false,externalBatches:0,
+            flashLibrary:0,lastStrategy:'',assistantMessages:[],
+            savedResultScroll:0
+          };
         }
+        return state.wy13;
+      }
 
-        return previousRenderRecommend();
+      function clearFindClasses(){
+        document.body.classList.remove('wy13-find-setup','wy13-find-running','wy13-find-results','wy11-review-form','wy-outline-v8');
+      }
+      function topicTitle(){
+        return document.querySelector('#reviewTopic')?.value?.trim()
+          || state.tasks?.find(t=>t.type==='文献综述')?.title
+          || '市场需求对中国省级旅游产业技术演化的影响';
+      }
+      function totalNeed(){return Math.max(1,Number(state.wyReview?.total)||20)}
+      function poolSize(){return totalNeed()*(S().intensity==='quick'?2:S().intensity==='deep'?4:3)}
+      function paperState(id){return S().paperStates[id]||'candidate'}
+      function sampleLibraryAdded(){
+        return PAPERS.filter(p=>['parsing','usable','library_only'].includes(paperState(p.id))).length;
+      }
+      function sampleUsableAdded(){
+        return PAPERS.filter(p=>paperState(p.id)==='usable').length;
+      }
+      function libraryCount(){return 63+S().aggregateLibraryAdded+sampleLibraryAdded()}
+      function usableCount(){return 13+S().aggregateUsableAdded+sampleUsableAdded()}
+      function pendingCount(){return PAPERS.filter(p=>paperState(p.id)==='pending').length}
+      function deltaUsable(){return Math.max(0,usableCount()-13)}
+
+      function reqNeed(id,fallback){
+        const r=state.wyReview?.reqs?.find(x=>x.id===id || (id==='jcr12'&&String(x.name||'').includes('JCR')));
+        return Number(r?.need)||fallback;
+      }
+      function reqKind(id,fallback='prefer'){
+        const r=state.wyReview?.reqs?.find(x=>x.id===id || (id==='jcr12'&&String(x.name||'').includes('JCR')));
+        return r?.kind||fallback;
+      }
+      function reqCounts(){
+        const d=deltaUsable();
+        return {
+          ssci:Math.min(18,3+Math.floor((d+2)/3)),
+          cssci:Math.min(18,5+Math.floor(d/4)),
+          jcr12:Math.min(15,2+Math.floor((d+2)/4)),
+          recent:Math.min(totalNeed()+8,10+Math.floor(d*.8))
+        };
+      }
+      function hardMissing(){
+        const c=reqCounts(),miss=[];
+        if(reqKind('ssci','must')==='must' && c.ssci<reqNeed('ssci',5))miss.push(['SSCI',reqNeed('ssci',5)-c.ssci]);
+        if(reqKind('cssci','must')==='must' && c.cssci<reqNeed('cssci',5))miss.push(['CSSCI',reqNeed('cssci',5)-c.cssci]);
+        return miss;
+      }
+      function readiness(){
+        const current=usableCount(),total=totalNeed();
+        if(current<total || hardMissing().length)return 'insufficient';
+        return current<Math.ceil(total/.75)?'critical':'safe';
+      }
+      function gapText(){
+        const parts=[];
+        if(usableCount()<totalNeed())parts.push('总量还缺 '+(totalNeed()-usableCount())+' 篇可用全文');
+        hardMissing().forEach(x=>parts.push(x[0]+' 还缺 '+x[1]+' 篇'));
+        return parts.join('；')||'数量与必须质量条件已经满足';
+      }
+
+      function flashLibrary(n){
+        S().flashLibrary=n;
+        setTimeout(()=>{S().flashLibrary=0;applyResultsChrome()},1700);
+      }
+      function addAssistant(text){
+        S().assistantMessages.push(text);
+      }
+
+      /* ---------- setup ---------- */
+      function reqSummary(){
+        return '<div class="wy13-req-summary">'+
+          '<div class="wy13-req-chip"><b>'+totalNeed()+'</b><span>目标全文文献</span></div>'+
+          '<div class="wy13-req-chip"><b>≥'+reqNeed('ssci',5)+'</b><span>SSCI · '+(reqKind('ssci','must')==='must'?'必须':'优先')+'</span></div>'+
+          '<div class="wy13-req-chip"><b>≥'+reqNeed('cssci',5)+'</b><span>CSSCI · '+(reqKind('cssci','must')==='must'?'必须':'优先')+'</span></div>'+
+          '<div class="wy13-req-chip"><b>≥'+reqNeed('jcr12',3)+'</b><span>JCR Q1–Q2 · '+(reqKind('jcr12','prefer')==='must'?'必须':'优先')+'</span></div>'+
+        '</div>';
+      }
+      function reqEditor(){
+        if(!S().editReq)return '';
+        const reqs=state.wyReview?.reqs||[];
+        return '<div class="wy13-req-editor">'+
+          '<div class="search-row"><input class="input" id="wy13Total" type="number" min="1" max="80" value="'+totalNeed()+'"><span class="muted" style="align-self:center">篇总需求</span></div>'+
+          reqs.slice(0,4).map((r,i)=>'<div class="wy13-req-edit-row"><span style="font-size:9px">'+r.name+'</span><input class="input" style="height:30px" data-wy13-req-need="'+i+'" type="number" min="0" value="'+r.need+'"><select class="input" style="height:30px" data-wy13-req-kind="'+i+'"><option value="must" '+(r.kind==='must'?'selected':'')+'>必须满足</option><option value="prefer" '+(r.kind==='prefer'?'selected':'')+'>优先满足</option></select></div>').join('')+
+          '<div class="actions" style="margin-top:8px"><button class="small-btn primary" data-wy13-save-req>保存文献需求</button></div>'+
+        '</div>';
+      }
+      function setupHTML(){
+        clearFindClasses();
+        document.body.classList.add('wy13-find-setup','task-setup');
+        const s=S(),pool=poolSize();
+        return '<div class="wy13-page-shell">'+
+          '<div class="wy13-page-head"><div><h1>找文献 · 检索设置</h1><p>系统已继承当前文献综述的选题、研究问题和文献需求。这里用于微调 Search Agent 的检索参数。</p></div><button class="ghost" data-wy13-back-review>返回文献综述</button></div>'+
+          '<section class="wy13-setup-card"><h2>检索需求</h2><p>检索阶段先建立候选文献池，真正进入写作的材料仍需获取全文并完成内容筛选。</p>'+
+            '<div class="wy13-block"><div class="wy13-block-head"><div><strong>研究选题</strong><small>从当前文献综述继承</small></div></div><div class="wy13-topic-chip"><b>'+topicTitle()+'</b><span class="status-pill">已继承</span></div></div>'+
+            '<div class="wy13-block"><div class="wy13-block-head"><div><strong>系统生成的检索关键词</strong><small>基于标题、研究方向和研究问题生成</small></div><button class="small-btn" data-wy13-opt-keywords>AI 优化关键词</button></div><div class="wy13-keywords"><span class="wy13-keyword">旅游市场需求</span><span class="wy13-keyword">技术演化</span><span class="wy13-keyword">数字化转型</span><span class="wy13-keyword">区域差异</span><span class="wy13-keyword">产业政策</span><span class="wy13-keyword">tourism technology adoption</span></div></div>'+
+            '<div class="wy13-block"><div class="wy13-block-head"><div><strong>文献需求</strong><small>直接继承上一页，可在开始检索前调整</small></div><button class="small-btn" data-wy13-edit-req>'+(s.editReq?'收起调整':'调整文献需求')+'</button></div>'+reqSummary()+reqEditor()+'</div>'+
+            '<div class="wy13-block"><div class="wy13-block-head"><div><strong>检索数据库</strong><small>开放学术元数据 + 已授权中文学术数据源</small></div></div><div class="wy13-db-grid">'+
+              [['openalex','OpenAlex','开放学术元数据'],['semantic','Semantic Scholar','语义检索与引文元数据'],['crossref','Crossref','DOI 与出版元数据'],['cn','中文学术数据库','授权数据源 / 用户可访问来源']].map(x=>'<label class="wy13-db"><input type="checkbox" data-wy13-db="'+x[0]+'" '+(s.dbs[x[0]]?'checked':'')+'><span><b>'+x[1]+'</b><small>'+x[2]+'</small></span></label>').join('')+
+            '</div></div>'+
+            '<div class="wy13-block"><div class="wy13-block-head"><div><strong>检索强度</strong><small>强度影响查询扩展范围和候选池规模</small></div></div><div class="wy13-intensity">'+
+              '<button class="wy13-intensity-btn '+(s.intensity==='quick'?'active':'')+'" data-wy13-intensity="quick"><b>快速</b><small>目标需求 × 2<br>适合快速补充</small></button>'+
+              '<button class="wy13-intensity-btn '+(s.intensity==='standard'?'active':'')+'" data-wy13-intensity="standard"><b>标准 · 推荐</b><small>目标需求 × 3<br>兼顾覆盖与等待时间</small></button>'+
+              '<button class="wy13-intensity-btn '+(s.intensity==='deep'?'active':'')+'" data-wy13-intensity="deep"><b>深度</b><small>目标需求 × 4<br>扩大查询与主题覆盖</small></button>'+
+            '</div>'+
+            '<div class="wy13-why"><div class="wy13-why-head"><span><b>为什么候选文献会多于最终需求？</b>　Metadata / 摘要只能完成候选初筛，获取全文后还要做内容相关性筛选。</span><button class="wy13-link-btn" data-wy13-explain>'+(s.explain?'收起':'了解筛选过程 ›')+'</button></div><div class="wy13-why-flow '+(s.explain?'open':'')+'"><span class="wy13-why-node">多数据库检索</span><span class="wy13-why-arrow">→</span><span class="wy13-why-node">Metadata 去重初筛</span><span class="wy13-why-arrow">→</span><span class="wy13-why-node">形成 2–4 倍候选池</span><span class="wy13-why-arrow">→</span><span class="wy13-why-node">获取全文</span><span class="wy13-why-arrow">→</span><span class="wy13-why-node">内容筛选</span></div></div>'+
+            '<div class="wy13-estimate">预计形成约 <b>'+pool+' 篇候选文献</b>。候选数只是检索供给，不等于最终可用于当前任务的全文数量。</div></div>'+
+            '<div class="wy13-setup-foot"><button class="primary" data-wy13-start-search>开始检索</button></div>'+
+          '</section>'+
+        '</div>';
+      }
+
+      /* ---------- running ---------- */
+      const RUN_STEPS=[
+        ['生成检索式','根据选题拆解中英文关键词与查询组合'],
+        ['多数据库检索','并行检索已选择的数据源'],
+        ['Metadata 归一化与去重','合并 DOI、标题、作者和年份信息'],
+        ['按文献要求筛选','应用 SSCI / CSSCI / JCR / 年份等条件'],
+        ['主题聚类与候选排序','形成结构化候选文献池']
+      ];
+      function runningDetails(i){
+        return [
+          '已生成 12 组中英文检索组合',
+          '已检索 4 / 4 个数据源 · 获得 243 条原始记录',
+          '正在处理 186 / 243 条记录 · 去重后保留 186 条',
+          '已识别 SSCI 18 · CSSCI 16 · JCR Q1–Q2 12',
+          '已形成 5 个检索方向 · 最终候选池 '+poolSize()+' 篇'
+        ][i];
+      }
+      function runningRetained(i){return [12,243,186,98,poolSize()][i]}
+      function runningHTML(){
+        clearFindClasses();
+        document.body.classList.add('wy13-find-running','task-setup');
+        const s=S(),progress=[18,38,62,82,100][s.runStep]||18;
+        return '<div class="wy13-running-shell"><div class="wy13-running-hero"><h1>正在检索文献</h1><p>正在根据你的文献综述要求建立候选文献池。检索完成后会自动进入结果工作台。</p></div>'+
+          '<section class="wy13-running-card"><div class="wy13-progressbar"><i style="width:'+progress+'%"></i></div><div class="wy13-run-list">'+
+            RUN_STEPS.map((x,i)=>'<div class="wy13-run-step '+(i<s.runStep?'done':i===s.runStep?'current':'')+'"><i>'+(i<s.runStep?'✓':i+1)+'</i><div><strong>'+x[0]+'</strong><small>'+(i===s.runStep?runningDetails(i):x[1])+'</small></div></div>').join('')+
+          '</div><div class="wy13-run-live"><span>当前阶段：<b>'+RUN_STEPS[s.runStep][0]+'</b></span><span>当前已保留 <b>'+runningRetained(s.runStep)+'</b> 条候选记录</span></div></section></div>';
+      }
+      function startRunning(){
+        const s=S();
+        s.stage='running';s.runStep=0;
+        const token=++s.runToken;
+        renderAll();
+        const tick=()=>{
+          if(S().runToken!==token || S().stage!=='running' || state.view!=='recommend')return;
+          if(S().runStep<4){
+            S().runStep++;
+            renderAll();
+            setTimeout(tick,650);
+          }else{
+            S().stage='workspace';S().resultTab=0;S().panel='results';
+            clearFindClasses();document.body.classList.remove('task-setup');document.body.classList.add('wy13-find-results');
+            renderAll();
+            toast('检索完成：已建立 '+poolSize()+' 篇候选文献池');
+          }
+        };
+        setTimeout(tick,650);
+      }
+
+      /* ---------- results content ---------- */
+      function demandRows(){
+        const c=reqCounts();
+        const rows=[
+          ['SSCI','≥ '+reqNeed('ssci',5)+(reqKind('ssci','must')==='must'?' · 必须':' · 优先'),18,6,12,c.ssci,c.ssci>=reqNeed('ssci',5)],
+          ['CSSCI','≥ '+reqNeed('cssci',5)+(reqKind('cssci','must')==='must'?' · 必须':' · 优先'),16,2,14,c.cssci,c.cssci>=reqNeed('cssci',5)],
+          ['JCR Q1–Q2','≥ '+reqNeed('jcr12',3)+(reqKind('jcr12','prefer')==='must'?' · 必须':' · 优先'),12,4,8,c.jcr12,c.jcr12>=reqNeed('jcr12',3)]
+        ];
+        return rows.map(r=>'<tr><td><b>'+r[0]+'</b></td><td>'+r[1]+'</td><td>'+r[2]+'</td><td>'+r[3]+'</td><td>'+r[4]+'</td><td>'+r[5]+'</td><td class="'+(r[6]?'wy13-ok':'wy13-gap-status')+'">'+(r[6]?'已满足':'还缺 '+(Number(String(r[1]).match(/\d+/)?.[0]||0)-r[5]))+'</td></tr>').join('');
+      }
+      function fulfillmentHTML(){
+        const s=S(),current=usableCount(),status=readiness();
+        const oaRemain=Math.max(0,18-(s.bulkOA?7:0)-PAPERS.filter(p=>p.oa&&['parsing','usable','library_only'].includes(paperState(p.id))).length);
+        return '<section class="wy13-section"><div class="wy13-overview"><div><h2>本次文献需求满足情况</h2><p>候选池回答“系统找到了什么”，当前全文回答“真正已经可以进入当前任务的材料有多少”。</p></div><div class="wy13-overview-score"><strong>'+current+' / '+totalNeed()+'</strong><small>当前可用全文</small></div></div>'+
+          '<table class="wy13-demand-table"><thead><tr><th>文献要求</th><th>我的需求</th><th>候选池</th><th>可一键获取</th><th>需自行下载</th><th>当前可用全文</th><th>状态</th></tr></thead><tbody>'+
+            '<tr><td><b>总文献</b></td><td>'+totalNeed()+'</td><td>'+poolSize()+'</td><td>18</td><td>42</td><td>'+current+'</td><td class="'+(current>=totalNeed()?'wy13-ok':'wy13-gap-status')+'">'+(current>=totalNeed()?'数量已达标':'还缺 '+(totalNeed()-current))+'</td></tr>'+
+            demandRows()+
+          '</tbody></table></section>'+
+          '<section class="wy13-section"><h3>全文获取</h3><div class="wy13-full-grid">'+
+            '<div class="wy13-full-card"><span class="wy13-status-badge oa">OA / 可直接获取</span><div class="big">'+oaRemain+'</div><small>获取后会依次查重、入库、解析，并重新判断是否纳入本次任务。</small><button class="small-btn primary" data-wy13-bulk-oa '+(s.bulkOA?'disabled':'')+'>'+(s.bulkOA?'已完成一键入库':'一键入库')+'</button></div>'+
+            '<div class="wy13-full-card"><span class="wy13-status-badge warn">需自行获取全文</span><div class="big">42</div><small>可以导出待下载清单，前往对应来源获取全文；下载后上传即可进入同一入库与解析流程。</small><div class="actions" style="justify-content:flex-start"><button class="small-btn" data-wy13-export-list>导出文献 List</button><button class="small-btn primary" data-wy13-upload-batch '+(s.batchProcessing?'disabled':'')+'>'+(s.batchProcessing?'正在解析…':s.externalBatches?'继续上传下一批':'上传已下载全文')+'</button></div></div>'+
+          '</div></section>'+
+          '<section class="wy13-section"><h3>当前结论</h3><div class="wy13-conclusion '+(status==='safe'?'good':'')+'">'+
+            (status==='insufficient'?'目前仍不足：'+gapText()+'。继续入库或上传全文后，系统会自动重新计算。':status==='critical'?'当前已经达到基本要求，但全文内容筛选后仍可能低于目标，继续时会先提示风险。':'当前全文与必须质量条件均有较充分冗余，可以继续进入文献综述。')+
+          '</div></section>';
+      }
+      function strategyHTML(){
+        return '<section class="wy13-section"><h2>系统检索策略</h2><p>这是系统实际执行的结构化 Search Plan，用来解释选题如何被拆成可检索的研究方向。</p></section>'+
+          '<div class="wy13-clusters">'+CLUSTERS.map(c=>{
+            let count=c.count;
+            if(S().lastStrategy.includes('政策') && c.id==='policy')count+=4;
+            return '<article class="wy13-cluster"><div class="wy13-cluster-head"><div><h3>'+c.name+'</h3><span class="muted">建议最终覆盖约 '+c.keep+' 篇</span></div><span class="wy13-cluster-count">'+count+' 篇</span></div><div class="wy13-query-list">'+c.queries.map(q=>'<span class="wy13-query">'+q+'</span>').join('')+'</div><div class="wy13-cluster-foot"><span>'+c.db+'</span><span>Metadata 聚类</span></div></article>';
+          }).join('')+'</div>'+
+          '<section class="wy13-section" style="margin-top:10px"><h3>策略可继续修改</h3><p>'+(S().lastStrategy?'<b style="color:var(--purple)">最近调整：</b>'+S().lastStrategy:'在中间「文优小助手」中输入：多找政策机制、优先 CSSCI、只看近三年等。候选池和聚类会同步刷新。')+'</p><button class="small-btn" data-wy13-rerun>按当前策略重新检索</button></section>';
+      }
+      function paperActions(p){
+        const st=paperState(p.id);
+        if(st==='fetching')return '<span class="wy13-status-badge purple">正在获取全文</span><button class="small-btn" disabled>获取中…</button>';
+        if(st==='parsing')return '<span class="wy13-status-badge purple">已入库 · 解析中</span><button class="small-btn" disabled>解析中…</button>';
+        if(st==='usable')return '<span class="wy13-status-badge oa">已入库 · 本次可用</span><button class="small-btn" data-wy13-open-library-paper="'+p.id+'">在文献库查看</button>';
+        if(st==='library_only')return '<span class="wy13-status-badge">已入库 · 不纳入本次任务</span><button class="small-btn" data-wy13-open-library-paper="'+p.id+'">在文献库查看</button>';
+        if(st==='pending')return '<span class="wy13-status-badge warn">待上传全文</span><button class="small-btn primary" data-wy13-upload-paper="'+p.id+'">上传全文</button>';
+        if(p.oa)return '<span class="wy13-status-badge oa">OA 可获取</span><button class="small-btn primary" data-wy13-import-paper="'+p.id+'">一键入库</button>';
+        return '<span class="wy13-status-badge warn">需自行获取</span><button class="small-btn primary" data-wy13-source-paper="'+p.id+'">前往来源下载</button><button class="small-btn" data-wy13-download-list="'+p.id+'">加入下载清单</button>';
+      }
+      function candidatesHTML(){
+        return '<section class="wy13-section"><h2>候选文献</h2><p>按 Search Cluster 分组。此阶段展示 Metadata、文献层次、摘要匹配和全文获取状态，不把候选文献直接解释为正文证据。</p></section>'+
+          CLUSTERS.map(c=>'<section class="wy13-paper-cluster"><div class="wy13-paper-cluster-head"><h3>'+c.name+'</h3><span>候选 '+c.count+' · 建议最终覆盖 '+c.keep+'</span></div>'+
+            PAPERS.filter(p=>p.cluster===c.id).map(p=>'<article class="wy13-paper-card"><div><h4>'+p.title+'</h4><div class="wy13-paper-meta">'+p.authors+' · '+p.year+' · '+p.venue+'<br>DOI：'+p.doi+' · 来源：'+p.source+' · 摘要可用</div><div class="wy13-levels">'+p.levels.map(x=>'<span class="wy13-level">'+x+'</span>').join('')+p.fit.map(x=>'<span class="wy13-level fit">可补 '+x+'</span>').join('')+'</div></div><div class="wy13-paper-side">'+paperActions(p)+'</div></article>').join('')+
+          '</section>').join('');
+      }
+      function globalCTA(){
+        const status=readiness(),current=usableCount(),safe=Math.ceil(totalNeed()/.75);
+        if(status==='insufficient')return '<div class="wy13-global-cta"><small>当前 '+current+' / '+totalNeed()+' 篇；'+gapText()+'。</small><button class="wy13-disabled" disabled>需要继续补充文献</button></div>';
+        if(status==='critical')return '<div class="wy13-global-cta"><small>当前 '+current+' 篇已达到基本要求，但低于建议安全储备 '+safe+' 篇。</small><button class="primary" data-wy13-continue>继续文献综述</button></div>';
+        return '<div class="wy13-global-cta"><small>当前 '+current+' 篇，数量与必须质量要求均有较充分冗余。</small><button class="primary" data-wy13-continue>继续文献综述</button></div>';
+      }
+      function resultsHTML(){
+        clearFindClasses();document.body.classList.remove('task-setup');document.body.classList.add('wy13-find-results');
+        if(S().panel==='library')return libraryHTML();
+        const body=S().resultTab===0?fulfillmentHTML():S().resultTab===1?strategyHTML():candidatesHTML();
+        return '<div class="wy13-result-top"><button class="wy13-arrow" data-wy13-prev '+(S().resultTab===0?'disabled':'')+'>‹</button><div class="wy13-tabs"><button class="wy13-tab '+(S().resultTab===0?'active':'')+'" data-wy13-tab="0">需求满足情况</button><button class="wy13-tab '+(S().resultTab===1?'active':'')+'" data-wy13-tab="1">检索策略</button><button class="wy13-tab '+(S().resultTab===2?'active':'')+'" data-wy13-tab="2">候选文献</button></div><button class="wy13-arrow" data-wy13-next '+(S().resultTab===2?'disabled':'')+'>›</button></div>'+body+globalCTA();
+      }
+
+      /* ---------- library inside same workspace ---------- */
+      function importedPapers(){
+        return PAPERS.filter(p=>['parsing','usable','library_only'].includes(paperState(p.id)));
+      }
+      function libraryAll(){
+        const items=[
+          '<article class="wy13-library-item"><div><h4>低空经济发展的制度适配与政策机制研究</h4><p>王婷婷，李明 · 2024 · 全文已解析 · 当前任务相关</p></div><span class="wy13-status-badge oa">已有资产</span></article>',
+          '<article class="wy13-library-item"><div><h4>中国省域低空经济发展的空间分异与影响因素</h4><p>刘洋，周敏 · 2023 · 全文已解析 · 当前任务相关</p></div><span class="wy13-status-badge oa">已有资产</span></article>'
+        ];
+        importedPapers().forEach(p=>{
+          const st=paperState(p.id);
+          items.push('<article class="wy13-library-item"><div><h4>'+p.title+'</h4><p>'+p.authors+' · '+p.year+' · '+(st==='parsing'?'全文解析中':st==='usable'?'全文已解析 · 已纳入本次任务':'全文已解析 · 未纳入本次任务')+'</p></div><span class="wy13-status-badge '+(st==='usable'?'oa':st==='parsing'?'purple':'')+'">'+(st==='parsing'?'解析中':st==='usable'?'本次可用':'仅入库')+'</span></article>');
+        });
+        if(S().aggregateLibraryAdded){
+          items.push('<article class="wy13-library-item"><div><h4>批量入库文献 × '+S().aggregateLibraryAdded+'</h4><p>来自本次检索的一键入库 / 用户上传 · 已完成查重与入库</p></div><span class="wy13-status-badge oa">已入库</span></article>');
+        }
+        return '<div class="wy13-library-list">'+items.join('')+'</div>';
+      }
+      function libraryPending(){
+        const list=PAPERS.filter(p=>paperState(p.id)==='pending');
+        if(!list.length)return '<div class="wy13-empty">当前没有待获取 / 待上传全文的文献。</div>';
+        return '<div class="wy13-library-list">'+list.map(p=>'<article class="wy13-library-item"><div><h4>'+p.title+'</h4><p>'+p.authors+' · '+p.source+' · 已从找文献结果加入待处理队列</p></div><button class="small-btn primary" data-wy13-upload-paper="'+p.id+'">上传全文</button></article>').join('')+'</div>';
+      }
+      function libraryHTML(){
+        const tab=S().libraryTab;
+        let body=tab==='all'?libraryAll():tab==='pending'?libraryPending():tab==='notes'
+          ?'<div class="wy13-empty">批注仍从已入库全文的阅读与 AI 问答中沉淀。当前共有 31 条批注。</div>'
+          :'<div class="wy13-empty">术语仍从文献解析与阅读中沉淀。当前共有 14 个核心术语。</div>';
+        return '<div class="wy13-library-head"><div><h2>文献库 · '+libraryCount()+' 篇</h2><p>刚才从找文献结果执行的入库、下载清单和上传操作会在这里同步显示。</p></div><button class="small-btn primary" data-wy13-back-results>返回找文献结果</button></div>'+
+          '<section class="wy13-section"><div class="wy13-library-tabs"><button class="wy13-library-tab '+(tab==='all'?'active':'')+'" data-wy13-library-tab="all">全部文献 '+libraryCount()+'</button><button class="wy13-library-tab '+(tab==='pending'?'active':'')+'" data-wy13-library-tab="pending">待获取全文 '+pendingCount()+'</button><button class="wy13-library-tab '+(tab==='notes'?'active':'')+'" data-wy13-library-tab="notes">批注 31</button><button class="wy13-library-tab '+(tab==='terms'?'active':'')+'" data-wy13-library-tab="terms">术语 14</button></div>'+body+'</section>';
+      }
+
+      /* ---------- render entry ---------- */
+      renderRecommend=function(){
+        const s=S();
+        if(s.stage==='setup')return setupHTML();
+        if(s.stage==='running')return runningHTML();
+        return resultsHTML();
       };
 
-      /* Clean up BEFORE earlier click handlers call renderAll(). */
-      document.addEventListener('click',e=>{
-        const b=e.target.closest('button');
-        if(!b)return;
-
-        if(b.matches('[data-wy-review-primary]')){
-          const label=(b.textContent||'').trim();
-          if(label==='找文献'){
-            document.body.classList.remove('wy11-review-form','wy-outline-v8');
-            document.body.classList.add('task-setup');
+      const oldChatV13=renderChat;
+      renderChat=function(){
+        if(state.view==='recommend' && S().stage==='workspace'){
+          const head=document.querySelector('.chat-head span');
+          if(head)head.textContent='文优小助手';
+          const list=document.querySelector('#chatList');
+          const current=usableCount();
+          if(S().panel==='library'){
+            list.innerHTML='<div class="message"><div class="status-row"><span class="status-dot"></span><span>正在查看文献库</span></div><p>从右侧候选文献执行的操作已经同步到研究资产。</p><div class="wy13-assistant-metrics"><div class="wy13-assistant-metric"><b>'+libraryCount()+'</b><span>文献库</span></div><div class="wy13-assistant-metric"><b>'+pendingCount()+'</b><span>待获取全文</span></div><div class="wy13-assistant-metric"><b>'+current+'</b><span>当前任务可用</span></div><div class="wy13-assistant-metric"><b>'+totalNeed()+'</b><span>任务目标</span></div></div><div class="message-actions"><button class="small-btn primary" data-wy13-back-results>返回找文献结果</button></div></div>';
+          }else{
+            list.innerHTML='<div class="message"><div class="status-row"><span class="status-dot"></span><span>检索已完成</span></div><div class="wy13-assistant-message"><p>共形成 '+poolSize()+' 篇候选文献，覆盖 5 个检索方向。</p><p>当前已有 <b>'+current+' / '+totalNeed()+'</b> 篇全文可用于本次文献综述'+(gapText()&&readiness()==='insufficient'?'；'+gapText():'。')+'</p></div><div class="message-actions"><button class="small-btn primary" data-wy13-agent="多找政策机制">多找政策机制</button><button class="small-btn" data-wy13-agent="优先 CSSCI">优先 CSSCI</button><button class="small-btn" data-wy13-agent="只看近三年">只看近三年</button></div></div>'+
+              S().assistantMessages.map(x=>'<div class="message user">'+x+'</div><div class="message"><p>已更新检索策略，右侧 Search Plan 与候选排序已同步刷新。</p></div>').join('');
           }
+          const composer=document.querySelector('#composer');
+          if(composer)composer.placeholder=S().panel==='library'?'例如：帮我看看刚入库的文献是否适合当前综述':'例如：国际经验少一点，多找空域管理相关研究';
+          return;
         }
+        oldChatV13();
+      };
 
-        if(b.matches('[data-wy-find-back-review]')){
-          document.body.classList.remove('wy-outline-v8');
-          document.body.classList.add('wy11-review-form','task-setup');
+      function applyResultsSidebar(){
+        if(state.view!=='recommend' || S().stage!=='workspace')return;
+        const side=document.querySelector('.sidebar');if(!side)return;
+        const active=S().panel==='library'?'library':'review';
+        side.innerHTML='<div class="wy13-side"><div><div class="wy13-side-title">任务类别</div><button class="wy13-new-task" data-wy13-create-task>＋ 创建任务</button><button class="wy13-side-topic"><span>'+topicTitle()+'</span><span>⌃</span></button><div class="wy13-tree"><button class="wy13-nav '+(active==='review'?'active':'')+'" data-wy13-nav="review"><span>文献综述</span></button><button class="wy13-nav" data-wy13-nav="proposal"><span>开题报告</span></button><button class="wy13-nav" data-wy13-nav="draft"><span>论文初稿</span></button></div></div><div class="wy13-divider"></div><div><div class="wy13-side-title">研究资产</div><button class="wy13-nav '+(active==='library'?'active':'')+'" data-wy13-nav="library"><span>文献库</span><span><span class="count">'+libraryCount()+'</span> '+(S().flashLibrary?'<span class="wy13-flash">+'+S().flashLibrary+'</span>':'')+'</span></button><button class="wy13-nav" data-wy13-nav="artifacts"><span>学术成果</span><span class="count">3</span></button></div><div class="wy13-side-note">右侧候选文献完成入库后，会先进入个人文献库；全文解析并通过当前任务筛选后，才计入“当前可用全文”。</div></div>';
+      }
+      function applyResultsChrome(){
+        if(state.view==='recommend' && S().stage==='workspace'){
+          clearFindClasses();document.body.classList.remove('task-setup');document.body.classList.add('wy13-find-results');
+          applyResultsSidebar();
+          const composer=document.querySelector('#composer');
+          if(composer)composer.placeholder=S().panel==='library'?'例如：检查刚入库文献':'例如：多找政策机制相关研究';
         }
+      }
+      const oldRenderAllV13=renderAll;
+      renderAll=function(){
+        oldRenderAllV13();
+        setTimeout(applyResultsChrome,20);
+      };
+      setInterval(applyResultsChrome,180);
 
-        if(b.matches('[data-wy-start-search]')){
-          document.body.classList.remove('wy11-review-form','wy-outline-v8');
-          document.body.classList.add('task-setup');
+      /* ---------- operations ---------- */
+      function setPaperState(id,value){
+        S().paperStates[id]=value;
+      }
+      function importPaper(id){
+        const p=PAPERS.find(x=>x.id===id);if(!p||paperState(id)!=='candidate')return;
+        setPaperState(id,'fetching');renderAll();
+        setTimeout(()=>{
+          if(paperState(id)!=='fetching')return;
+          setPaperState(id,'parsing');flashLibrary(1);addAssistant('《'+p.title+'》已取得全文并加入文献库，正在解析。');renderAll();
+        },350);
+        setTimeout(()=>{
+          if(paperState(id)!=='parsing')return;
+          setPaperState(id,p.taskUsable?'usable':'library_only');
+          addAssistant(p.taskUsable?'《'+p.title+'》解析完成，已纳入本次文献综述。':'《'+p.title+'》已入库，但全文筛选后未纳入本次文献综述。');
+          renderAll();
+        },1050);
+      }
+      function uploadPaper(id){
+        const p=PAPERS.find(x=>x.id===id);if(!p)return;
+        if(!['pending','candidate'].includes(paperState(id)))return;
+        setPaperState(id,'parsing');flashLibrary(1);addAssistant('已上传《'+p.title+'》，完成查重并进入文献库，正在解析。');renderAll();
+        setTimeout(()=>{
+          if(paperState(id)!=='parsing')return;
+          setPaperState(id,p.taskUsable?'usable':'library_only');renderAll();
+        },800);
+      }
+      function openSource(id){
+        const p=PAPERS.find(x=>x.id===id);if(!p)return;
+        setPaperState(id,'pending');addAssistant('已将《'+p.title+'》标记为待获取全文。下载后回到文献库“待获取全文”上传即可。');renderAll();
+        try{
+          const w=window.open('','_blank');
+          if(w){
+            w.document.write('<!doctype html><meta charset="utf-8"><title>来源数据库 · Demo</title><style>body{font-family:Arial,"Microsoft YaHei";background:#f7f8fc;padding:50px;color:#303545}.card{max-width:720px;margin:auto;background:white;border:1px solid #e3e6ef;border-radius:12px;padding:28px}h1{font-size:22px}.tag{display:inline-block;background:#f0edff;color:#6547d8;padding:5px 8px;border-radius:6px}</style><div class="card"><span class="tag">原型模拟</span><h1>已跳转到文献来源页面</h1><p><b>'+p.title.replaceAll("'","")+'</b></p><p>真实产品中这里会跳转至 DOI / 数据库详情页，由用户按自己的访问权限获取全文。</p><p>下载完成后返回文优小助，点击“上传全文”。</p></div>');
+            w.document.close();
+          }
+        }catch(e){}
+      }
+      function bulkOA(){
+        if(S().bulkOA)return;
+        S().bulkOA=true;
+        const candidates=PAPERS.filter(p=>p.oa&&paperState(p.id)==='candidate');
+        candidates.forEach(p=>setPaperState(p.id,'fetching'));
+        renderAll();
+        setTimeout(()=>{
+          candidates.forEach(p=>setPaperState(p.id,'parsing'));
+          S().aggregateLibraryAdded+=2;
+          flashLibrary(candidates.length+2);
+          addAssistant('一键获取的全文已完成查重并进入文献库，正在解析。');
+          renderAll();
+        },380);
+        setTimeout(()=>{
+          candidates.forEach(p=>setPaperState(p.id,p.taskUsable?'usable':'library_only'));
+          S().aggregateUsableAdded+=2;
+          addAssistant('本批 OA 文献解析完成。文献库与本次任务可用全文数量已经重新计算。');
+          renderAll();
+        },1150);
+      }
+      function uploadBatch(){
+        if(S().batchProcessing || S().externalBatches>=2)return;
+        S().batchProcessing=true;renderAll();
+        setTimeout(()=>{
+          S().aggregateLibraryAdded+=7;flashLibrary(7);addAssistant('本批 7 篇全文已上传、查重并进入文献库，正在解析。');renderAll();
+        },320);
+        setTimeout(()=>{
+          S().aggregateUsableAdded+=6;S().externalBatches++;S().batchProcessing=false;
+          addAssistant('本批全文解析完成，其中 6 篇通过内容筛选并纳入当前任务。');
+          renderAll();
+        },1050);
+      }
+      function exportList(){
+        const rows=[['Title','Authors','Year','Venue','DOI','Source','Literature level','Cluster']];
+        PAPERS.filter(p=>!p.oa).forEach(p=>rows.push([p.title,p.authors,p.year,p.venue,p.doi,p.source,p.levels.join(' / '),CLUSTERS.find(c=>c.id===p.cluster)?.name||'']));
+        const csv=rows.map(r=>r.map(x=>'"'+String(x).replaceAll('"','""')+'"').join(',')).join('\\n');
+        const blob=new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8'});
+        const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='文优小助_待下载文献List.csv';a.click();
+        setTimeout(()=>URL.revokeObjectURL(a.href),800);toast('已导出待下载文献 List');
+      }
+      function riskModal(){
+        const current=usableCount(),low=Math.floor(current*.75),high=Math.max(low,Math.floor(current*.9));
+        document.querySelector('#modalTitle').textContent='当前文献数量处于临界区间';
+        document.querySelector('#modalBody').innerHTML='<div class="wy13-risk-funnel"><div class="wy13-funnel-step"><b>Metadata 候选池</b><br>'+poolSize()+' 篇</div><div class="wy13-funnel-step"><b>已获取全文</b><br>'+current+' 篇</div><div class="wy13-funnel-step"><b>全文解析 + 内容筛选</b><br>预计保留 '+low+'–'+high+' 篇</div><div class="wy13-funnel-step"><b>最终写作材料</b><br>目标 ≥ '+totalNeed()+' 篇</div></div><p class="muted">候选文献最初主要依据题目、书目信息与摘要筛选。进入全文内容筛选后，部分论文可能因为研究对象、问题或证据用途不匹配而被移出当前任务。</p>';
+        document.querySelector('#modalFoot').innerHTML='<button class="ghost" data-wy13-risk-more>继续补充文献</button><button class="primary" data-wy13-risk-ack>是的，我已知晓</button>';
+        document.querySelector('#modal').classList.add('open');
+      }
+      function continueReview(){
+        clearFindClasses();document.body.classList.remove('task-setup');
+        state.analysisDone=true;state.outlineEdited=false;state.view='review';
+        if(state.wyReview)state.wyReview.uploaded=Math.max(Number(state.wyReview.uploaded)||0,Math.max(0,usableCount()-3));
+        renderAll();
+        setTimeout(()=>window.__renderOutlineV8?.(),0);
+        toast('已进入大纲确认');
+      }
+      function createTaskModal(){
+        document.querySelector('#modalTitle').textContent='创建任务';
+        document.querySelector('#modalBody').innerHTML='<div class="type-grid"><button class="type-card" data-wy13-create-type="review"><h3>文献综述</h3><p>创建新的文献综述任务</p></button><button class="type-card" data-wy13-create-type="proposal"><h3>开题报告</h3><p>创建新的开题报告任务</p></button><button class="type-card" data-wy13-create-type="draft"><h3>论文初稿</h3><p>创建新的论文初稿任务</p></button></div>';
+        document.querySelector('#modalFoot').innerHTML='<button class="ghost" data-close>取消</button>';
+        document.querySelector('#modal').classList.add('open');
+      }
+
+      document.addEventListener('change',e=>{
+        if(e.target.matches('[data-wy13-db]'))S().dbs[e.target.dataset.wy13Db]=e.target.checked;
+      });
+
+      document.addEventListener('click',e=>{
+        const b=e.target.closest('button');if(!b)return;
+
+        if(b.matches('[data-wy13-back-review]')){
+          clearFindClasses();document.body.classList.add('wy11-review-form','task-setup');
+          state.view='reviewCreate';renderReviewCreate();return;
         }
+        if(b.matches('[data-wy13-opt-keywords]'))toast('已扩展中英文同义词与相关检索词');
+        if(b.matches('[data-wy13-edit-req]')){S().editReq=!S().editReq;renderAll()}
+        if(b.matches('[data-wy13-save-req]')){
+          if(state.wyReview){
+            state.wyReview.total=Math.max(1,Math.min(80,Number(document.querySelector('#wy13Total')?.value)||20));
+            document.querySelectorAll('[data-wy13-req-need]').forEach(x=>{const r=state.wyReview.reqs?.[Number(x.dataset.wy13ReqNeed)];if(r)r.need=Math.max(0,Number(x.value)||0)});
+            document.querySelectorAll('[data-wy13-req-kind]').forEach(x=>{const r=state.wyReview.reqs?.[Number(x.dataset.wy13ReqKind)];if(r)r.kind=x.value});
+          }
+          S().editReq=false;renderAll();toast('文献需求已更新');
+        }
+        if(b.matches('[data-wy13-intensity]')){S().intensity=b.dataset.wy13Intensity;renderAll()}
+        if(b.matches('[data-wy13-explain]')){S().explain=!S().explain;renderAll()}
+        if(b.matches('[data-wy13-start-search]'))startRunning();
 
-        if(b.matches('[data-wy-continue-review],[data-wy-risk-ack]')){
-          document.body.classList.remove('wy11-review-form','task-setup');
+        if(b.matches('[data-wy13-tab]')){S().resultTab=Number(b.dataset.wy13Tab);renderAll()}
+        if(b.matches('[data-wy13-prev]')){S().resultTab=Math.max(0,S().resultTab-1);renderAll()}
+        if(b.matches('[data-wy13-next]')){S().resultTab=Math.min(2,S().resultTab+1);renderAll()}
+        if(b.matches('[data-wy13-bulk-oa]'))bulkOA();
+        if(b.matches('[data-wy13-upload-batch]'))uploadBatch();
+        if(b.matches('[data-wy13-export-list]'))exportList();
+        if(b.matches('[data-wy13-import-paper]'))importPaper(b.dataset.wy13ImportPaper);
+        if(b.matches('[data-wy13-source-paper]'))openSource(b.dataset.wy13SourcePaper);
+        if(b.matches('[data-wy13-download-list]')){
+          const id=b.dataset.wy13DownloadList;if(paperState(id)==='candidate'){setPaperState(id,'pending');addAssistant('已加入待下载清单，可在左侧文献库 → 待获取全文继续处理。');renderAll();toast('已加入下载清单')}
+        }
+        if(b.matches('[data-wy13-upload-paper]'))uploadPaper(b.dataset.wy13UploadPaper);
+        if(b.matches('[data-wy13-open-library-paper]')){S().panel='library';S().libraryTab='all';renderAll()}
+        if(b.matches('[data-wy13-rerun]'))startRunning();
+
+        if(b.matches('[data-wy13-agent]')){
+          S().lastStrategy=b.dataset.wy13Agent;addAssistant(b.dataset.wy13Agent);renderAll();toast('已更新检索策略与候选排序');
+        }
+        if(b.matches('[data-wy13-continue]')){readiness()==='critical'?riskModal():continueReview()}
+        if(b.matches('[data-wy13-risk-more]')){document.querySelector('#modal').classList.remove('open');S().resultTab=0;renderAll()}
+        if(b.matches('[data-wy13-risk-ack]')){document.querySelector('#modal').classList.remove('open');continueReview()}
+
+        if(b.matches('[data-wy13-back-results]')){S().panel='results';renderAll()}
+        if(b.matches('[data-wy13-library-tab]')){S().libraryTab=b.dataset.wy13LibraryTab;renderAll()}
+        if(b.matches('[data-wy13-create-task]'))createTaskModal();
+        if(b.matches('[data-wy13-create-type]')){
+          document.querySelector('#modal').classList.remove('open');
+          clearFindClasses();
+          const v=b.dataset.wy13CreateType;
+          if(v==='review'){state.analysisDone=false;state.outlineEdited=false;state.view='reviewCreate';renderReviewCreate()}
+          else{state.view=v;renderAll()}
+        }
+        if(b.matches('[data-wy13-nav]')){
+          const v=b.dataset.wy13Nav;
+          if(v==='library'){S().panel='library';S().libraryTab='all';renderAll()}
+          else{
+            clearFindClasses();
+            if(v==='review'){
+              if(state.analysisDone){state.view='review';renderAll()}
+              else{state.view='reviewCreate';renderReviewCreate()}
+            }else{state.view=v;renderAll()}
+          }
         }
       },true);
 
-      /* Async search transitions can happen after the click event. */
-      setInterval(()=>{
-        if(state.view!=='recommend')return;
-        document.body.classList.remove('wy11-review-form','wy-outline-v8');
+      /* Reuse the existing composer, but intercept it before the base app handles send. */
+      document.addEventListener('click',e=>{
+        const b=e.target.closest('[data-send]');if(!b)return;
+        if(state.view==='recommend' && S().stage==='workspace'){
+          e.preventDefault();e.stopImmediatePropagation();
+          const input=document.querySelector('#composer');
+          const txt=input?.value.trim();
+          if(txt){
+            S().lastStrategy=txt;addAssistant(txt);if(input)input.value='';
+            renderAll();toast('文优小助手已更新检索策略');
+          }
+        }
+      },true);
 
-        const stage=state.wyFind?.stage || 'setup';
-        if(stage==='workspace')document.body.classList.remove('task-setup');
-        else document.body.classList.add('task-setup');
-      },180);
+      /* Entry from the review form: always open a fresh setup state. */
+      document.addEventListener('click',e=>{
+        const b=e.target.closest('[data-wy-review-primary]');if(!b)return;
+        if((b.textContent||'').trim()==='找文献'){
+          setTimeout(()=>{
+            if(state.view==='recommend'){
+              state.wy13=null;
+              S().stage='setup';
+              renderAll();
+            }
+          },0);
+        }
+      });
+
+      /* Any direct "find papers" entry without a current v13 session starts at setup. */
+      setInterval(()=>{
+        if(state.view==='recommend' && !state.wy13){
+          S();renderAll();
+        }
+      },300);
     })();
   `;
   d.body.appendChild(js);
