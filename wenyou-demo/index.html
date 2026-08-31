@@ -1547,6 +1547,89 @@ frame.addEventListener('load',()=>{
       color:var(--muted);font-size:9px;text-align:center
     }
 
+    /* ---------- V16 library page + task-aware import mode ---------- */
+    .wy16-library-shell{display:grid;gap:10px}
+    .wy16-library-header{
+      background:#fff;border:1px solid var(--line);border-radius:9px;padding:14px;
+      display:flex;align-items:flex-start;justify-content:space-between;gap:14px
+    }
+    .wy16-library-header h2{margin:0;font-size:15px}
+    .wy16-library-header p{margin:5px 0 0;color:var(--muted);font-size:9px;line-height:1.55}
+    .wy16-library-header-actions{display:flex;gap:7px;flex-wrap:wrap;justify-content:flex-end}
+    .wy16-tabs{
+      display:grid;grid-template-columns:repeat(4,1fr);gap:5px;
+      background:#fff;border:1px solid var(--line);border-radius:9px;padding:5px
+    }
+    .wy16-tab{
+      min-height:38px;border:0;border-radius:7px;background:transparent;color:#6c7486;
+      font-size:9px;text-align:center;padding:6px 7px
+    }
+    .wy16-tab b{display:block;font-size:12px;color:#444c5e;margin-bottom:2px}
+    .wy16-tab.active{background:var(--purple-weak);color:var(--purple);font-weight:800}
+    .wy16-tab.active b{color:var(--purple)}
+    .wy16-import-context{
+      background:#fff;border:1px solid #dcd6f5;border-radius:9px;padding:14px
+    }
+    .wy16-context-top{
+      display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:10px
+    }
+    .wy16-context-top h3{margin:0;font-size:12px}
+    .wy16-context-top p{margin:4px 0 0;color:var(--muted);font-size:8px;line-height:1.55}
+    .wy16-context-stat{
+      min-width:90px;padding:8px 10px;border-radius:8px;background:var(--purple-weak);
+      color:var(--purple);text-align:center;font-size:8px
+    }
+    .wy16-context-stat b{display:block;font-size:18px}
+    .wy16-dropzone{
+      border:1px dashed #aa9de7;border-radius:9px;background:#fbfaff;padding:20px 14px;
+      text-align:center;transition:.15s
+    }
+    .wy16-dropzone.dragover{border-color:var(--purple);background:#f5f1ff}
+    .wy16-dropzone strong{display:block;font-size:12px;color:#4f4389}
+    .wy16-dropzone p{margin:5px auto 10px;max-width:620px;color:var(--muted);font-size:8px;line-height:1.55}
+    .wy16-dropzone input{display:none}
+    .wy16-match-hint{
+      margin-top:9px;display:flex;gap:6px;align-items:center;justify-content:center;flex-wrap:wrap;
+      color:#6b7284;font-size:8px
+    }
+    .wy16-match-hint span{padding:4px 6px;border-radius:5px;background:#fff;border:1px solid var(--line)}
+    .wy16-upload-list{display:grid;gap:7px;margin-top:10px}
+    .wy16-upload-row{
+      display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center;
+      padding:10px;border:1px solid var(--line);border-radius:8px;background:#fcfdff
+    }
+    .wy16-upload-row h4{margin:0;font-size:10px;line-height:1.4}
+    .wy16-upload-row p{margin:4px 0 0;color:var(--muted);font-size:8px;line-height:1.45}
+    .wy16-upload-status{display:flex;gap:5px;align-items:center;justify-content:flex-end;flex-wrap:wrap}
+    .wy16-mini-spinner{
+      width:11px;height:11px;border:2px solid #ddd7f4;border-top-color:var(--purple);
+      border-radius:50%;animation:wyspin .7s linear infinite
+    }
+    .wy16-pending-card{
+      display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center;
+      padding:10px;border-bottom:1px solid var(--line)
+    }
+    .wy16-pending-card:last-child{border-bottom:0}
+    .wy16-pending-card h4{margin:0;font-size:10px;line-height:1.4}
+    .wy16-pending-card p{margin:4px 0 0;color:var(--muted);font-size:8px}
+    .wy16-library-section{
+      background:#fff;border:1px solid var(--line);border-radius:9px;padding:14px
+    }
+    .wy16-library-section-head{
+      display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:8px
+    }
+    .wy16-library-section-head h3{margin:0;font-size:11px}
+    .wy16-library-section-head small{color:var(--muted);font-size:8px}
+    .wy16-progress-note{
+      padding:9px 10px;border-radius:7px;background:var(--teal-weak);color:#2f6f68;
+      font-size:8px;line-height:1.55
+    }
+    @media(max-width:1100px){
+      .wy16-tabs{grid-template-columns:repeat(2,1fr)}
+      .wy16-library-header{flex-direction:column}
+      .wy16-library-header-actions{justify-content:flex-start}
+    }
+
     /* ---------- assistant ---------- */
     .wy13-assistant-message{display:grid;gap:7px}
     .wy13-assistant-metrics{display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin-top:7px}
@@ -1607,11 +1690,12 @@ frame.addEventListener('load',()=>{
             editReq:false,
             dbs:{openalex:true,semantic:true,crossref:true,cn:true},
             runStep:0,runToken:0,
-            resultTab:0,panel:'results',libraryTab:'all',
+            resultTab:0,panel:'results',libraryTab:'all',libraryMode:'browse',
             paperStates:{},
             aggregateLibraryAdded:0,aggregateUsableAdded:0,
             bulkOA:false,batchProcessing:false,externalBatches:0,
             flashLibrary:0,lastStrategy:'',assistantMessages:[],
+            listExported:false,importUploads:[],manualResolved:0,importSeq:0,
             savedResultScroll:0
           };
         }
@@ -1794,7 +1878,7 @@ frame.addEventListener('load',()=>{
           '</tbody></table></section>'+
           '<section class="wy13-section"><h3>全文获取</h3><div class="wy13-full-grid">'+
             '<div class="wy13-full-card"><span class="wy13-status-badge oa">OA / 可直接获取</span><div class="big">'+oaRemain+'</div><small>获取后会依次查重、入库、解析，并重新判断是否纳入本次任务。</small><button class="small-btn primary" data-wy13-bulk-oa '+(s.bulkOA?'disabled':'')+'>'+(s.bulkOA?'已完成一键入库':'一键入库')+'</button></div>'+
-            '<div class="wy13-full-card"><span class="wy13-status-badge warn">需自行获取全文</span><div class="big">42</div><small>可以导出待下载清单，前往对应来源获取全文；下载后上传即可进入同一入库与解析流程。</small><div class="actions" style="justify-content:flex-start"><button class="small-btn" data-wy13-export-list>导出文献 List</button><button class="small-btn primary" data-wy13-upload-batch '+(s.batchProcessing?'disabled':'')+'>'+(s.batchProcessing?'正在解析…':s.externalBatches?'继续上传下一批':'上传已下载全文')+'</button></div></div>'+
+            '<div class="wy13-full-card"><span class="wy13-status-badge warn">需自行获取全文</span><div class="big">'+Math.max(0,42-S().manualResolved)+'</div><small>先导出待下载清单并在校内数据库 / 来源页下载 PDF；下载完成后回到文优，通过文献库完成导入、匹配与解析。</small><div class="actions" style="justify-content:flex-start"><button class="small-btn" data-wy13-export-list>'+(S().listExported?'重新导出文献 List':'导出文献 List')+'</button><button class="small-btn primary" data-wy16-open-import>导入到文献库</button></div></div>'+
           '</div></section>'+
           '<section class="wy13-section"><h3>当前结论</h3><div class="wy13-conclusion '+(status==='safe'?'good':'')+'">'+
             (status==='insufficient'?'目前仍不足：'+gapText()+'。继续入库或上传全文后，系统会自动重新计算。':status==='critical'?'当前已经达到基本要求，但全文内容筛选后仍可能低于目标，继续时会先提示风险。':'当前全文与必须质量条件均有较充分冗余，可以继续进入文献综述。')+
@@ -1890,6 +1974,16 @@ frame.addEventListener('load',()=>{
       function importedPapers(){
         return PAPERS.filter(p=>['parsing','usable','library_only'].includes(paperState(p.id)));
       }
+      function parsingCount(){
+        return PAPERS.filter(p=>paperState(p.id)==='parsing').length
+          + S().importUploads.filter(x=>x.status==='matching'||x.status==='parsing').length;
+      }
+      function failedCount(){
+        return S().importUploads.filter(x=>x.status==='failed').length;
+      }
+      function manualPendingCount(){
+        return Math.max(0,42-S().manualResolved);
+      }
       function libraryAll(){
         const items=[
           '<article class="wy13-library-item"><div><h4>低空经济发展的制度适配与政策机制研究</h4><p>王婷婷，李明 · 2024 · 全文已解析 · 当前任务相关</p></div><span class="wy13-status-badge oa">已有资产</span></article>',
@@ -1899,23 +1993,68 @@ frame.addEventListener('load',()=>{
           const st=paperState(p.id);
           items.push('<article class="wy13-library-item"><div><h4>'+p.title+'</h4><p>'+p.authors+' · '+p.year+' · '+(st==='parsing'?'全文解析中':st==='usable'?'全文已解析 · 已纳入本次任务':'全文已解析 · 未纳入本次任务')+'</p></div><span class="wy13-status-badge '+(st==='usable'?'oa':st==='parsing'?'purple':'')+'">'+(st==='parsing'?'解析中':st==='usable'?'本次可用':'仅入库')+'</span></article>');
         });
+        S().importUploads.filter(x=>['parsing','usable','library_only','failed'].includes(x.status)).forEach(x=>{
+          items.push('<article class="wy13-library-item"><div><h4>'+(x.matchTitle||x.fileName)+'</h4><p>'+x.fileName+' · '+(x.status==='parsing'?'全文解析中':x.status==='usable'?'已解析 · 已纳入当前任务':x.status==='failed'?'已入库 · 解析失败':'已解析 · 未纳入当前任务')+'</p></div><span class="wy13-status-badge '+(x.status==='usable'?'oa':x.status==='parsing'?'purple':x.status==='failed'?'warn':'')+'">'+(x.status==='parsing'?'解析中':x.status==='usable'?'本次可用':x.status==='failed'?'解析失败':'仅入库')+'</span></article>');
+        });
         if(S().aggregateLibraryAdded){
-          items.push('<article class="wy13-library-item"><div><h4>批量入库文献 × '+S().aggregateLibraryAdded+'</h4><p>来自本次检索的一键入库 / 用户上传 · 已完成查重与入库</p></div><span class="wy13-status-badge oa">已入库</span></article>');
+          items.push('<article class="wy13-library-item"><div><h4>其他批量入库文献 × '+S().aggregateLibraryAdded+'</h4><p>来自本次检索的一键入库 · 已完成查重与入库</p></div><span class="wy13-status-badge oa">已入库</span></article>');
         }
         return '<div class="wy13-library-list">'+items.join('')+'</div>';
       }
       function libraryPending(){
         const list=PAPERS.filter(p=>paperState(p.id)==='pending');
-        if(!list.length)return '<div class="wy13-empty">当前没有待获取 / 待上传全文的文献。</div>';
-        return '<div class="wy13-library-list">'+list.map(p=>'<article class="wy13-library-item"><div><h4>'+p.title+'</h4><p>'+p.authors+' · '+p.source+' · 已从找文献结果加入待处理队列</p></div><button class="small-btn primary" data-wy13-upload-paper="'+p.id+'">上传全文</button></article>').join('')+'</div>';
+        const samples=PAPERS.filter(p=>!p.oa && paperState(p.id)==='candidate').slice(0,4);
+        const shown=[...list,...samples.filter(p=>!list.some(x=>x.id===p.id))];
+        return '<div class="wy16-library-section"><div class="wy16-library-section-head"><h3>待获取全文</h3><small>本次 Find Papers 尚有 '+manualPendingCount()+' 篇需要用户通过外部来源取得 PDF</small></div>'+
+          (shown.length?shown.map(p=>'<article class="wy16-pending-card"><div><h4>'+p.title+'</h4><p>'+p.authors+' · '+p.year+' · '+p.source+' · '+(paperState(p.id)==='pending'?'已加入待下载清单':'待从来源获取全文')+'</p></div><span class="wy13-status-badge warn">'+(paperState(p.id)==='pending'?'等待上传':'需下载')+'</span></article>').join(''):'<div class="wy13-empty">当前没有待获取全文的样例文献。</div>')+
+          '</div>';
+      }
+      function libraryParsing(){
+        const rows=[];
+        PAPERS.filter(p=>paperState(p.id)==='parsing').forEach(p=>rows.push('<article class="wy16-upload-row"><div><h4>'+p.title+'</h4><p>已入库 · 正在解析全文并检查是否适用于当前文献综述</p></div><div class="wy16-upload-status"><i class="wy16-mini-spinner"></i><span class="wy13-status-badge purple">解析中</span></div></article>'));
+        S().importUploads.filter(x=>x.status==='matching'||x.status==='parsing').forEach(x=>rows.push('<article class="wy16-upload-row"><div><h4>'+x.fileName+'</h4><p>'+(x.status==='matching'?'正在根据 DOI / 标题 / 作者与本次待补全文清单匹配':'已匹配：'+(x.matchTitle||'候选文献')+' · 已入库，正在解析')+'</p></div><div class="wy16-upload-status"><i class="wy16-mini-spinner"></i><span class="wy13-status-badge purple">'+(x.status==='matching'?'匹配中':'解析中')+'</span></div></article>'));
+        return '<div class="wy16-library-section"><div class="wy16-library-section-head"><h3>解析中</h3><small>入库后才进入全文解析与任务适用性判断</small></div>'+(rows.length?'<div class="wy16-upload-list">'+rows.join('')+'</div>':'<div class="wy13-empty">当前没有正在解析的文献。</div>')+'</div>';
+      }
+      function libraryFailed(){
+        const rows=S().importUploads.filter(x=>x.status==='failed');
+        return '<div class="wy16-library-section"><div class="wy16-library-section-head"><h3>解析失败</h3><small>失败文献仍保留在文献库，可以重新上传或补充信息</small></div>'+
+          (rows.length?'<div class="wy16-upload-list">'+rows.map(x=>'<article class="wy16-upload-row"><div><h4>'+x.fileName+'</h4><p>已入库，但未能正确提取全文内容。可以重新上传 PDF。</p></div><div class="wy16-upload-status"><span class="wy13-status-badge warn">解析失败</span><button class="small-btn" data-wy16-retry="'+x.id+'">重新上传</button></div></article>').join('')+'</div>':'<div class="wy13-empty">当前没有解析失败的文献。</div>')+
+          '</div>';
+      }
+      function importUploadRows(){
+        const rows=S().importUploads.slice().reverse();
+        if(!rows.length)return '<div class="wy13-empty">尚未选择本地 PDF。下载完成后可一次选择多篇，系统会自动尝试与本次待补全文清单匹配。</div>';
+        return '<div class="wy16-upload-list">'+rows.map(x=>{
+          const status=x.status==='matching'
+            ?'<i class="wy16-mini-spinner"></i><span class="wy13-status-badge purple">匹配中</span>'
+            :x.status==='parsing'
+              ?'<i class="wy16-mini-spinner"></i><span class="wy13-status-badge purple">已入库 · 解析中</span>'
+              :x.status==='usable'
+                ?'<span class="wy13-status-badge oa">已入库 · 本次可用</span>'
+                :x.status==='library_only'
+                  ?'<span class="wy13-status-badge">已入库 · 不纳入本次任务</span>'
+                  :'<span class="wy13-status-badge warn">解析失败</span><button class="small-btn" data-wy16-retry="'+x.id+'">重新上传</button>';
+          return '<article class="wy16-upload-row"><div><h4>'+x.fileName+'</h4><p>'+(x.matchTitle?'匹配候选：'+x.matchTitle:'正在与导出的候选文献 List 匹配')+'</p></div><div class="wy16-upload-status">'+status+'</div></article>';
+        }).join('')+'</div>';
+      }
+      function libraryImportHTML(){
+        return '<section class="wy16-import-context"><div class="wy16-context-top"><div><h3>导入文献 · 当前文献综述补全文</h3><p>来自「'+topicTitle()+'」的 Find Papers 结果。上传后会先匹配候选文献，再查重、入库、解析，最后判断是否计入本次任务。</p></div><div class="wy16-context-stat"><b>'+manualPendingCount()+'</b>待补全文</div></div>'+
+          '<div class="wy16-dropzone" data-wy16-dropzone><strong>把刚刚下载的 PDF 拖到这里</strong><p>或选择本地文件。系统会优先依据 DOI、标题、作者与年份，把 PDF 自动关联到刚才导出的候选文献清单。</p><button class="small-btn primary" data-wy16-choose-files>选择本地 PDF</button><input id="wy16ImportFiles" type="file" accept=".pdf,application/pdf" multiple><div class="wy16-match-hint"><span>DOI 匹配</span><span>标题匹配</span><span>作者 / 年份辅助</span><span>重复文献自动忽略</span></div></div>'+
+          '<div style="margin-top:10px"><div class="wy16-library-section-head"><h3>本次上传</h3><small>'+(S().listExported?'已关联刚才导出的文献 List':'即使没有在本次会话导出 List，也会按当前候选池进行匹配')+'</small></div>'+importUploadRows()+'</div>'+
+          '</section>';
       }
       function libraryHTML(){
-        const tab=S().libraryTab;
-        let body=tab==='all'?libraryAll():tab==='pending'?libraryPending():tab==='notes'
-          ?'<div class="wy13-empty">批注仍从已入库全文的阅读与 AI 问答中沉淀。当前共有 31 条批注。</div>'
-          :'<div class="wy13-empty">术语仍从文献解析与阅读中沉淀。当前共有 14 个核心术语。</div>';
-        return '<div class="wy13-library-head"><div><h2>文献库 · '+libraryCount()+' 篇</h2><p>刚才从找文献结果执行的入库、下载清单和上传操作会在这里同步显示。</p></div><button class="small-btn primary" data-wy13-back-results>返回找文献结果</button></div>'+
-          '<section class="wy13-section"><div class="wy13-library-tabs"><button class="wy13-library-tab '+(tab==='all'?'active':'')+'" data-wy13-library-tab="all">全部文献 '+libraryCount()+'</button><button class="wy13-library-tab '+(tab==='pending'?'active':'')+'" data-wy13-library-tab="pending">待获取全文 '+pendingCount()+'</button><button class="wy13-library-tab '+(tab==='notes'?'active':'')+'" data-wy13-library-tab="notes">批注 31</button><button class="wy13-library-tab '+(tab==='terms'?'active':'')+'" data-wy13-library-tab="terms">术语 14</button></div>'+body+'</section>';
+        const s=S(),tab=s.libraryTab;
+        const body=tab==='pending'?libraryPending():tab==='parsing'?libraryParsing():tab==='failed'?libraryFailed():libraryAll();
+        return '<div class="wy16-library-shell">'+
+          '<header class="wy16-library-header"><div><h2>文献库 · '+libraryCount()+' 篇</h2><p>'+(s.libraryMode==='import'?'当前处于“导入文献”状态，保留本次文献综述的补全文上下文。':'这里是当前工作台内的完整文献库。Find Papers 的入库、下载清单和全文解析会持续沉淀到这里。')+'</p></div><div class="wy16-library-header-actions">'+
+            (s.libraryMode==='import'?'<button class="small-btn" data-wy16-library-browse>查看文献库</button>':'<button class="small-btn primary" data-wy16-library-import>上传文献</button>')+
+            '<button class="small-btn" data-wy13-back-results>返回找文献结果</button></div></header>'+
+          '<nav class="wy16-tabs"><button class="wy16-tab '+(tab==='all'?'active':'')+'" data-wy13-library-tab="all"><b>'+libraryCount()+'</b>全部文献</button><button class="wy16-tab '+(tab==='pending'?'active':'')+'" data-wy13-library-tab="pending"><b>'+manualPendingCount()+'</b>待获取全文</button><button class="wy16-tab '+(tab==='parsing'?'active':'')+'" data-wy13-library-tab="parsing"><b>'+parsingCount()+'</b>解析中</button><button class="wy16-tab '+(tab==='failed'?'active':'')+'" data-wy13-library-tab="failed"><b>'+failedCount()+'</b>解析失败</button></nav>'+
+          (s.libraryMode==='import'?libraryImportHTML():'')+
+          (s.libraryMode==='browse'?body:(tab!=='all'?body:''))+
+          (s.libraryMode==='import'&&S().importUploads.some(x=>x.status==='usable'||x.status==='library_only')?'<div class="wy16-progress-note">已完成的上传会立即进入个人文献库；只有全文解析并通过当前任务筛选的文献，才会同步增加 Find Papers 的“当前可用全文”。</div>':'')+
+          '</div>';
       }
 
       /* ---------- render entry ---------- */
@@ -1934,7 +2073,8 @@ frame.addEventListener('load',()=>{
           const list=document.querySelector('#chatList');
           const current=usableCount();
           if(S().panel==='library'){
-            list.innerHTML='<div class="message"><div class="status-row"><span class="status-dot"></span><span>正在查看文献库</span></div><p>从右侧候选文献执行的操作已经同步到研究资产。</p><div class="wy13-assistant-metrics"><div class="wy13-assistant-metric"><b>'+libraryCount()+'</b><span>文献库</span></div><div class="wy13-assistant-metric"><b>'+pendingCount()+'</b><span>待获取全文</span></div><div class="wy13-assistant-metric"><b>'+current+'</b><span>当前任务可用</span></div><div class="wy13-assistant-metric"><b>'+totalNeed()+'</b><span>任务目标</span></div></div><div class="message-actions"><button class="small-btn primary" data-wy13-back-results>返回找文献结果</button></div></div>';
+            const importing=S().libraryMode==='import';
+            list.innerHTML='<div class="message"><div class="status-row"><span class="status-dot"></span><span>'+(importing?'正在导入文献':'正在查看文献库')+'</span></div><p>'+(importing?'你正在为当前文献综述补充无法直接获取的全文。PDF 上传后我会帮助匹配候选、查重、入库和判断本次任务可用性。':'从右侧候选文献执行的操作已经同步到研究资产。')+'</p><div class="wy13-assistant-metrics"><div class="wy13-assistant-metric"><b>'+libraryCount()+'</b><span>文献库</span></div><div class="wy13-assistant-metric"><b>'+manualPendingCount()+'</b><span>待获取全文</span></div><div class="wy13-assistant-metric"><b>'+current+'</b><span>当前任务可用</span></div><div class="wy13-assistant-metric"><b>'+parsingCount()+'</b><span>解析中</span></div></div><div class="message-actions"><button class="small-btn primary" data-wy13-back-results>返回找文献结果</button></div></div>';
           }else{
             list.innerHTML='<div class="message"><div class="status-row"><span class="status-dot"></span><span>检索已完成</span></div><div class="wy13-assistant-message"><p>共形成 '+poolSize()+' 篇候选文献，覆盖 5 个检索方向。</p><p>当前已有 <b>'+current+' / '+totalNeed()+'</b> 篇全文可用于本次文献综述'+(gapText()&&readiness()==='insufficient'?'；'+gapText():'。')+'</p></div><div class="message-actions"><button class="small-btn primary" data-wy13-agent="多找政策机制">多找政策机制</button><button class="small-btn" data-wy13-agent="优先 CSSCI">优先 CSSCI</button><button class="small-btn" data-wy13-agent="只看近三年">只看近三年</button></div></div>'+
               S().assistantMessages.map(x=>'<div class="message user">'+x+'</div><div class="message"><p>已更新检索策略，右侧 Search Plan 与候选排序已同步刷新。</p></div>').join('');
@@ -2037,13 +2177,75 @@ frame.addEventListener('load',()=>{
           renderAll();
         },1050);
       }
+      function openLibraryImport(){
+        const s=S();
+        s.panel='library';s.libraryMode='import';s.libraryTab='all';
+        renderAll();
+      }
+      function addImportFiles(fileList){
+        const files=[...(fileList||[])].filter(f=>String(f.name||'').toLowerCase().endsWith('.pdf'));
+        if(!files.length){toast('请选择 PDF 文件');return}
+        const s=S();
+        const matchPool=PAPERS.filter(p=>!p.oa);
+        const created=files.map((f,idx)=>{
+          const match=matchPool[(s.importSeq+idx)%matchPool.length];
+          return {
+            id:'u'+(++s.importSeq),
+            fileName:f.name,
+            matchTitle:match?.title||'',
+            matchPaperId:match?.id||'',
+            status:'matching'
+          };
+        });
+        s.importUploads.push(...created);
+        s.libraryMode='import';s.libraryTab='all';
+        renderAll();
+        setTimeout(()=>{
+          created.forEach(x=>{
+            const current=S().importUploads.find(y=>y.id===x.id);
+            if(current&&current.status==='matching')current.status='parsing';
+          });
+          S().aggregateLibraryAdded+=created.length;
+          S().manualResolved+=created.length;
+          flashLibrary(created.length);
+          addAssistant('本批 '+created.length+' 篇 PDF 已与候选清单完成匹配并进入文献库，正在解析全文。');
+          renderAll();
+        },420);
+        setTimeout(()=>{
+          created.forEach((x,idx)=>{
+            const current=S().importUploads.find(y=>y.id===x.id);
+            if(!current||current.status!=='parsing')return;
+            /* Demo keeps one occasional parse failure so the library failure state is visible. */
+            if(created.length>=3 && idx===created.length-1){
+              current.status='failed';
+            }else{
+              current.status=(idx%4===3)?'library_only':'usable';
+              if(current.status==='usable')S().aggregateUsableAdded+=1;
+            }
+          });
+          addAssistant('本批全文解析完成。通过任务筛选的文献已经计入当前文献综述，其余文献仍保留在个人文献库。');
+          renderAll();
+        },1250);
+      }
+      function retryImport(id){
+        const x=S().importUploads.find(y=>y.id===id);if(!x)return;
+        x.status='parsing';S().libraryMode='import';renderAll();
+        setTimeout(()=>{
+          const current=S().importUploads.find(y=>y.id===id);
+          if(!current||current.status!=='parsing')return;
+          current.status='usable';S().aggregateUsableAdded+=1;
+          addAssistant('重新上传解析成功，已纳入本次文献综述。');
+          renderAll();
+        },850);
+      }
+
       function exportList(){
         const rows=[['Title','Authors','Year','Venue','DOI','Source','Literature level','Cluster']];
         PAPERS.filter(p=>!p.oa).forEach(p=>rows.push([p.title,p.authors,p.year,p.venue,p.doi,p.source,p.levels.join(' / '),CLUSTERS.find(c=>c.id===p.cluster)?.name||'']));
         const csv=rows.map(r=>r.map(x=>'"'+String(x).replaceAll('"','""')+'"').join(',')).join('\\n');
         const blob=new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8'});
         const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='文优小助_待下载文献List.csv';a.click();
-        setTimeout(()=>URL.revokeObjectURL(a.href),800);toast('已导出待下载文献 List');
+        setTimeout(()=>URL.revokeObjectURL(a.href),800);S().listExported=true;toast('已导出待下载文献 List');
       }
       function riskModal(){
         const current=usableCount(),low=Math.floor(current*.75),high=Math.max(low,Math.floor(current*.9));
@@ -2069,6 +2271,23 @@ frame.addEventListener('load',()=>{
 
       document.addEventListener('change',e=>{
         if(e.target.matches('[data-wy13-db]'))S().dbs[e.target.dataset.wy13Db]=e.target.checked;
+        if(e.target.id==='wy16ImportFiles'){
+          addImportFiles(e.target.files);
+          e.target.value='';
+        }
+      });
+
+      document.addEventListener('dragover',e=>{
+        const zone=e.target.closest?.('[data-wy16-dropzone]');if(!zone)return;
+        e.preventDefault();zone.classList.add('dragover');
+      });
+      document.addEventListener('dragleave',e=>{
+        const zone=e.target.closest?.('[data-wy16-dropzone]');if(!zone)return;
+        zone.classList.remove('dragover');
+      });
+      document.addEventListener('drop',e=>{
+        const zone=e.target.closest?.('[data-wy16-dropzone]');if(!zone)return;
+        e.preventDefault();zone.classList.remove('dragover');addImportFiles(e.dataTransfer?.files);
       });
 
       document.addEventListener('click',e=>{
@@ -2108,7 +2327,7 @@ frame.addEventListener('load',()=>{
           return;
         }
         if(b.matches('[data-wy13-bulk-oa]'))bulkOA();
-        if(b.matches('[data-wy13-upload-batch]'))uploadBatch();
+        if(b.matches('[data-wy16-open-import]')){openLibraryImport();return}
         if(b.matches('[data-wy13-export-list]'))exportList();
         if(b.matches('[data-wy13-import-paper]'))importPaper(b.dataset.wy13ImportPaper);
         if(b.matches('[data-wy13-source-paper]'))openSource(b.dataset.wy13SourcePaper);
@@ -2126,8 +2345,12 @@ frame.addEventListener('load',()=>{
         if(b.matches('[data-wy13-risk-more]')){document.querySelector('#modal').classList.remove('open');S().resultTab=0;renderAll()}
         if(b.matches('[data-wy13-risk-ack]')){document.querySelector('#modal').classList.remove('open');continueReview()}
 
-        if(b.matches('[data-wy13-back-results]')){S().panel='results';renderAll()}
+        if(b.matches('[data-wy13-back-results]')){S().panel='results';S().libraryMode='browse';renderAll()}
         if(b.matches('[data-wy13-library-tab]')){S().libraryTab=b.dataset.wy13LibraryTab;renderAll()}
+        if(b.matches('[data-wy16-library-import]')){S().libraryMode='import';S().libraryTab='all';renderAll()}
+        if(b.matches('[data-wy16-library-browse]')){S().libraryMode='browse';S().libraryTab='all';renderAll()}
+        if(b.matches('[data-wy16-choose-files]')){document.querySelector('#wy16ImportFiles')?.click()}
+        if(b.matches('[data-wy16-retry]'))retryImport(b.dataset.wy16Retry)
         if(b.matches('[data-wy13-create-task]'))createTaskModal();
         if(b.matches('[data-wy13-create-type]')){
           document.querySelector('#modal').classList.remove('open');
@@ -2138,7 +2361,7 @@ frame.addEventListener('load',()=>{
         }
         if(b.matches('[data-wy13-nav]')){
           const v=b.dataset.wy13Nav;
-          if(v==='library'){S().panel='library';S().libraryTab='all';renderAll()}
+          if(v==='library'){S().panel='library';S().libraryMode='browse';S().libraryTab='all';renderAll()}
           else{
             clearFindClasses();
             if(v==='review'){
