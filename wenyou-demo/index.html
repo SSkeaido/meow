@@ -886,6 +886,8 @@ frame.addEventListener('load',()=>{
       }
 
       function applyCommonSidebar(){
+        /* Find Papers results owns the sidebar exclusively. */
+        if(state.view==='recommend' && state.wy13?.stage==='workspace')return;
         if(document.body.classList.contains('prelogin'))return;
         if(document.body.classList.contains('task-setup'))return;
         if(document.body.classList.contains('wy-outline-v8'))return;
@@ -1268,8 +1270,39 @@ frame.addEventListener('load',()=>{
     }
     body.wy13-find-results .workspace{grid-template-rows:1fr!important}
     body.wy13-find-results .work-body{
-      height:100%;overflow:auto;padding:16px 18px 34px;background:#f7f8fc
+      height:100%;overflow:hidden;padding:0;background:#f7f8fc;box-sizing:border-box
     }
+
+    /* ---------- V14 stable results frame ---------- */
+    .wy14-result-shell{
+      height:100%;min-height:0;display:grid;
+      grid-template-rows:auto minmax(0,1fr) auto;overflow:hidden
+    }
+    .wy14-result-head{
+      padding:14px 18px 10px;background:#f7f8fc;border-bottom:1px solid #e8eaf0
+    }
+    .wy14-result-title{
+      display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:9px
+    }
+    .wy14-result-title h2{margin:0;font-size:14px}
+    .wy14-result-title p{margin:4px 0 0;color:var(--muted);font-size:8px;line-height:1.45}
+    .wy14-result-scroll{
+      min-height:0;overflow:auto;padding:10px 18px 14px;box-sizing:border-box;
+      scrollbar-gutter:stable
+    }
+    .wy14-result-foot{
+      padding:10px 18px 14px;background:#f7f8fc;border-top:1px solid #e8eaf0
+    }
+    .wy14-result-foot .wy13-global-cta{
+      position:static;bottom:auto;margin:0;box-shadow:none
+    }
+    .wy14-library-scroll{
+      height:100%;overflow:auto;padding:16px 18px 34px;box-sizing:border-box;
+      scrollbar-gutter:stable
+    }
+    .wy14-result-head .wy13-result-top{margin-bottom:0}
+    .wy14-result-head .wy13-tabs{box-shadow:0 1px 2px rgba(40,42,60,.03)}
+    .wy14-result-head .wy13-tab{cursor:pointer}
 
     /* ---------- setup ---------- */
     .wy13-page-shell{max-width:1040px;margin:0 auto;padding:28px 30px 50px}
@@ -1797,9 +1830,17 @@ frame.addEventListener('load',()=>{
       }
       function resultsHTML(){
         clearFindClasses();document.body.classList.remove('task-setup');document.body.classList.add('wy13-find-results');
-        if(S().panel==='library')return libraryHTML();
+        if(S().panel==='library')return '<div class="wy14-library-scroll">'+libraryHTML()+'</div>';
         const body=S().resultTab===0?fulfillmentHTML():S().resultTab===1?strategyHTML():candidatesHTML();
-        return '<div class="wy13-result-top"><button class="wy13-arrow" data-wy13-prev '+(S().resultTab===0?'disabled':'')+'>‹</button><div class="wy13-tabs"><button class="wy13-tab '+(S().resultTab===0?'active':'')+'" data-wy13-tab="0">需求满足情况</button><button class="wy13-tab '+(S().resultTab===1?'active':'')+'" data-wy13-tab="1">检索策略</button><button class="wy13-tab '+(S().resultTab===2?'active':'')+'" data-wy13-tab="2">候选文献</button></div><button class="wy13-arrow" data-wy13-next '+(S().resultTab===2?'disabled':'')+'>›</button></div>'+body+globalCTA();
+        const tabName=['需求满足情况','检索策略','候选文献'][S().resultTab]||'需求满足情况';
+        return '<div class="wy14-result-shell">'+
+          '<header class="wy14-result-head">'+
+            '<div class="wy14-result-title"><div><h2>找文献结果</h2><p>检索已完成 · 共形成 '+poolSize()+' 篇候选文献 · 当前正在查看「'+tabName+'」</p></div><span class="status-pill">当前可用 '+usableCount()+' / '+totalNeed()+'</span></div>'+
+            '<div class="wy13-result-top"><button class="wy13-arrow" data-wy13-prev '+(S().resultTab===0?'disabled':'')+'>‹</button><div class="wy13-tabs"><button class="wy13-tab '+(S().resultTab===0?'active':'')+'" data-wy13-tab="0">需求满足情况</button><button class="wy13-tab '+(S().resultTab===1?'active':'')+'" data-wy13-tab="1">检索策略</button><button class="wy13-tab '+(S().resultTab===2?'active':'')+'" data-wy13-tab="2">候选文献</button></div><button class="wy13-arrow" data-wy13-next '+(S().resultTab===2?'disabled':'')+'>›</button></div>'+
+          '</header>'+
+          '<div class="wy14-result-scroll" data-wy14-result-scroll>'+body+'</div>'+
+          '<footer class="wy14-result-foot">'+globalCTA()+'</footer>'+
+        '</div>';
       }
 
       /* ---------- library inside same workspace ---------- */
@@ -1879,9 +1920,9 @@ frame.addEventListener('load',()=>{
       const oldRenderAllV13=renderAll;
       renderAll=function(){
         oldRenderAllV13();
-        setTimeout(applyResultsChrome,20);
+        /* Repaint once after a real state render. No polling / DOM replacement loop. */
+        applyResultsChrome();
       };
-      setInterval(applyResultsChrome,180);
 
       /* ---------- operations ---------- */
       function setPaperState(id,value){
