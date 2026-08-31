@@ -11,12 +11,14 @@ button{border:0;cursor:pointer;background:none}button:disabled{cursor:not-allowe
 .app-topbar{height:64px;display:flex;align-items:center;gap:14px;padding:0 18px;background:#fff;border-bottom:1px solid var(--line);position:relative;z-index:20}
 body.prelogin .app-topbar{display:none}.brand{display:flex;align-items:center;gap:10px;font-weight:800;color:var(--purple);font-size:18px}.brand-mark{width:36px;height:36px;border-radius:9px;background:var(--purple);display:grid;place-items:center;color:#fff;font-weight:900}.top-actions{margin-left:auto;display:flex;gap:8px;align-items:center}.chip{display:inline-flex;align-items:center;min-height:36px;padding:0 12px;border-radius:9px;background:#f1f3f8;color:#454d60;font-size:12px}.chip.teal{background:var(--teal-weak);color:var(--teal)}.chip.amber{background:var(--amber-weak);color:var(--amber)}
 .screen{display:none}.screen.active{display:block}.app-screen{height:calc(100vh - 64px);min-height:0}.prelogin-screen{height:100vh;overflow:auto;background:linear-gradient(135deg,#fbfaff,#f7f8fc 45%,#eef8f7)}
-.splash-screen{
-  height:100vh;display:grid;place-items:center;overflow:hidden;
+.screen.splash-screen{
+  display:none;
+  height:100vh;place-items:center;overflow:hidden;
   background:
     radial-gradient(circle at 50% 42%,rgba(101,71,216,.10),transparent 29%),
     linear-gradient(135deg,#fbfaff,#f7f8fc 48%,#eef8f7)
 }
+.screen.splash-screen.active{display:grid}
 .splash-center{display:grid;justify-items:center;gap:14px;transform:translateY(-10px)}
 .splash-logo{
   width:66px;height:66px;border-radius:17px;background:var(--purple);color:#fff;
