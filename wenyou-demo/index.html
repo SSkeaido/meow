@@ -830,6 +830,7 @@ frame.addEventListener('load',()=>{
       function sideHTML(){
         return '<aside class="wy8-side">'+
           '<div><div class="wy8-side-title">任务类别</div>'+
+            '<button class="new-task" style="margin-bottom:9px" data-open-task>＋ 创建任务</button>'+
             '<button class="wy8-topic"><span>'+taskTitle()+'</span><span>⌃</span></button>'+
             '<div class="wy8-tree">'+
               '<button class="wy8-nav active" data-wy8-nav="review">文献综述</button>'+
@@ -1219,6 +1220,7 @@ frame.addEventListener('load',()=>{
         return '<div class="wy11-side-inner">'+
           '<div>'+
             '<div class="wy11-side-title">任务类别</div>'+
+            '<button class="new-task" style="margin-bottom:9px" data-open-task>＋ 创建任务</button>'+
             '<button class="wy11-topic"><span>'+topic+'</span><span>⌃</span></button>'+
             '<div class="wy11-tree">'+
               '<button class="wy11-nav '+(active==='review'?'active':'')+'" data-wy11-nav="review">文献综述</button>'+
@@ -1570,6 +1572,76 @@ frame.addEventListener('load',()=>{
         document.body.classList.add('wy11-modern');
         applyCommonSidebar();
       },350);
+    })();
+  `;
+  d.body.appendChild(js);
+});
+</script>
+
+
+<script>
+frame.addEventListener('load',()=>{
+  const d=frame.contentDocument;
+  if(!d || d.getElementById('wy-find-lifecycle-fix-v12')) return;
+
+  const js=d.createElement('script');
+  js.id='wy-find-lifecycle-fix-v12';
+  js.textContent=String.raw`
+    (function(){
+      const previousRenderRecommend=renderRecommend;
+
+      renderRecommend=function(){
+        /* Find Papers owns its own page layout.
+           Never inherit review-form or outline layout classes. */
+        document.body.classList.remove('wy11-review-form','wy-outline-v8');
+
+        const stage=state.wyFind?.stage || 'setup';
+        if(stage==='setup' || stage==='running'){
+          document.body.classList.add('task-setup');
+        }else{
+          document.body.classList.remove('task-setup');
+        }
+
+        return previousRenderRecommend();
+      };
+
+      /* Clean up BEFORE earlier click handlers call renderAll(). */
+      document.addEventListener('click',e=>{
+        const b=e.target.closest('button');
+        if(!b)return;
+
+        if(b.matches('[data-wy-review-primary]')){
+          const label=(b.textContent||'').trim();
+          if(label==='找文献'){
+            document.body.classList.remove('wy11-review-form','wy-outline-v8');
+            document.body.classList.add('task-setup');
+          }
+        }
+
+        if(b.matches('[data-wy-find-back-review]')){
+          document.body.classList.remove('wy-outline-v8');
+          document.body.classList.add('wy11-review-form','task-setup');
+        }
+
+        if(b.matches('[data-wy-start-search]')){
+          document.body.classList.remove('wy11-review-form','wy-outline-v8');
+          document.body.classList.add('task-setup');
+        }
+
+        if(b.matches('[data-wy-continue-review],[data-wy-risk-ack]')){
+          document.body.classList.remove('wy11-review-form','task-setup');
+        }
+      },true);
+
+      /* Async search transitions can happen after the click event. */
+      setInterval(()=>{
+        if(state.view!=='recommend')return;
+        document.body.classList.remove('wy11-review-form','wy-outline-v8');
+
+        const stage=state.wyFind?.stage || 'setup';
+        if(stage==='workspace')document.body.classList.remove('task-setup');
+        else document.body.classList.add('task-setup');
+      },180);
     })();
   `;
   d.body.appendChild(js);
