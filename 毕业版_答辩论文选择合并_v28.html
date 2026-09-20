@@ -1,0 +1,2005 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>文优小助 · 毕业版工作台</title>
+  <style>
+    :root{
+      --bg:#f7f8fc;--surface:#fff;--line:#e3e6ef;--ink:#202535;--muted:#8e97a8;
+      --purple:#6547d8;--purple-weak:#f0edff;--teal:#14817d;--teal-weak:#e8f7f5;
+      --shadow:0 18px 45px rgba(36,40,64,.08);font-family:"Microsoft YaHei","PingFang SC",Arial,sans-serif
+    }
+    *{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;background:var(--bg);color:var(--ink)}
+    body{min-width:1200px;overflow:hidden}button,input,textarea,select{font:inherit}button,a{color:inherit}a{text-decoration:none}
+    button{border:0;cursor:pointer;background:none}
+
+    /* 开屏动画样式 */
+    #splashScreen{
+      position:fixed;top:0;left:0;width:100vw;height:100vh;background:radial-gradient(circle at 50% 42%,rgba(101,71,216,.12),transparent 35%),linear-gradient(135deg,#fbfaff,#f7f8fc 48%,#eef8f7);
+      display:grid;place-items:center;z-index:9999;transition:opacity .35s ease-out,transform .35s ease-out;
+    }
+    #splashScreen.fade-out{opacity:0;transform:scale(1.03);pointer-events:none}
+    .splash-box{display:grid;justify-items:center;gap:14px;animation:splashIn .8s cubic-bezier(.2,.8,.2,1) both}
+    .splash-logo{width:68px;height:68px;border-radius:18px;background:var(--purple);color:#fff;display:grid;place-items:center;font-size:32px;font-weight:900;box-shadow:0 18px 42px rgba(101,71,216,0.25)}
+    .splash-name{font-size:22px;font-weight:900;color:var(--purple);letter-spacing:.5px}
+    .splash-sub{color:var(--muted);font-size:11px;letter-spacing:.5px}
+    .splash-bar{width:140px;height:3px;background:#e6e3f4;border-radius:999px;overflow:hidden;margin-top:6px}
+    .splash-bar i{display:block;width:100%;height:100%;background:var(--purple);transform-origin:left center;animation:splashLoad 1.1s cubic-bezier(.25,.7,.25,1) both}
+    @keyframes splashIn{from{opacity:0;transform:scale(.85) translateY(10px)}to{opacity:1;transform:none}}
+    @keyframes splashLoad{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+
+    /* 顶部应用栏 */
+    .app-topbar{height:64px;display:flex;align-items:center;gap:14px;padding:0 24px;background:#fff;border-bottom:1px solid var(--line);position:fixed;top:0;left:0;right:0;z-index:300}
+    .brand{display:flex;align-items:center;gap:10px;font-weight:900;color:var(--purple);font-size:18px}
+    .brand-mark{width:36px;height:36px;border-radius:10px;background:var(--purple);display:grid;place-items:center;color:#fff;font-size:16px}
+    .top-search{margin-left:40px;width:320px;height:36px;background:#f7f8fc;border:1px solid var(--line);border-radius:999px;padding:0 14px;display:flex;align-items:center;gap:8px;color:var(--muted);font-size:12px}
+    .top-actions{margin-left:auto;display:flex;gap:16px;align-items:center}
+    .user-profile{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:700}
+    .user-avatar{width:28px;height:28px;border-radius:50%;background:#ddd}
+
+    /* 整体应用布局 */
+    .app-layout{height:100vh;display:block;overflow:hidden;padding-top:64px}
+    
+    /* 左侧边栏：动态子任务进度 + 底部持久化文献库 */
+    .sidebar{position:fixed;top:64px;bottom:0;left:0;width:250px;background:#fff;border-right:1px solid var(--line);padding:20px 14px;display:flex;flex-direction:column;gap:14px;overflow:visible;z-index:220;transition:width .28s cubic-bezier(.2,.8,.2,1),padding .28s ease}
+    .sidebar.collapsed{width:84px;padding:18px 10px}
+    .sidebar-scroll{height:100%;display:flex;flex-direction:column;gap:14px;overflow:auto}
+    .sidebar.collapsed .sidebar-scroll{display:none}
+    .sidebar-toggle{position:absolute;right:-14px;top:18px;width:28px;height:28px;border-radius:50%;background:#fff;border:1px solid var(--line);box-shadow:0 6px 16px rgba(36,40,64,.10);display:grid;place-items:center;color:var(--purple);font-size:14px;font-weight:900;z-index:5;transition:.2s}
+    .sidebar-toggle:hover{background:var(--purple-weak);border-color:#cfc5fb}
+    .sidebar.collapsed .sidebar-toggle{transform:rotate(180deg)}
+    .sidebar-compact-progress{display:none;height:100%;align-items:center;justify-content:center}
+    .sidebar.collapsed .sidebar-compact-progress{display:flex}
+    .vertical-progress{position:relative;display:grid;gap:34px;justify-items:center;padding:12px 0}
+    .vertical-progress:before{content:"";position:absolute;top:28px;bottom:28px;left:50%;width:2px;background:#e5e7ef;transform:translateX(-50%);z-index:0}
+    .v-stage{position:relative;z-index:1;display:grid;justify-items:center;gap:5px;cursor:pointer;width:64px}
+    .v-circle{width:30px;height:30px;border-radius:50%;background:#fff;border:2px solid #d8dbe4;display:grid;place-items:center;color:#a0a7b8;font-size:10px;font-weight:900;transition:.2s}
+    .v-stage.completed .v-circle{background:var(--purple);border-color:var(--purple);color:#fff}
+    .v-stage.current .v-circle{background:var(--purple);border-color:var(--purple);color:#fff;box-shadow:0 0 0 4px var(--purple-weak)}
+    .v-stage span{font-size:9px;font-weight:800;color:#7c8495;text-align:center;line-height:1.25}
+    .v-stage.current span{color:var(--purple)}
+    .side-group-title{font-size:11px;font-weight:800;color:var(--muted);padding:0 6px;letter-spacing:.5px}
+    
+    /* 小节点进度样式 */
+    .subtask-list{display:grid;gap:4px}
+    .subtask-nav{height:36px;padding:0 10px;border-radius:8px;display:flex;align-items:center;justify-content:space-between;font-size:11px;color:#596174;font-weight:700;cursor:pointer}
+    .subtask-nav:hover{background:#f7f6fc;color:var(--purple)}
+    .subtask-nav.active{background:var(--purple-weak);color:var(--purple)}
+    .subtask-status{font-size:10px}
+    .subtask-status.done{color:var(--teal)}
+    .subtask-status.doing{color:var(--purple);font-weight:900}
+
+    /* 左侧步骤：进度展示 + 已完成/当前步骤可点击回看 */
+    #sidebarSubtasks .subtask-nav{width:100%;border:0;text-align:left;background:transparent}
+    #sidebarSubtasks .subtask-nav:hover{background:#f7f6fc}
+    #sidebarSubtasks .subtask-nav.active{background:var(--purple-weak)}
+    #sidebarSubtasks .subtask-nav{position:relative;transition:background .18s ease,color .18s ease,opacity .18s ease}
+    #sidebarSubtasks .subtask-nav.viewing{background:var(--purple-weak);color:var(--purple)}
+    #sidebarSubtasks .subtask-nav.progress-current:not(.viewing){color:var(--purple)}
+    #sidebarSubtasks .subtask-nav:disabled{cursor:not-allowed;color:#a6adbc;opacity:.72}
+    #sidebarSubtasks .subtask-nav:disabled:hover{background:transparent;color:#a6adbc}
+    .subtask-nav-right{display:flex;align-items:center;gap:7px}
+    .subtask-jump{width:11px;color:var(--purple);font-size:14px;font-weight:900;opacity:0;transform:translateX(-3px);transition:.18s ease}
+    #sidebarSubtasks .subtask-nav:not(:disabled):hover .subtask-jump{opacity:1;transform:translateX(0)}
+    .subtask-lock{font-size:9px;color:#aab0bd}
+
+    .side-divider{height:1px;background:var(--line);margin:4px 0}
+    
+    /* 底部固定的文献库资产入口 */
+    .library-asset-box{
+      margin-top:auto;padding:12px 14px;background:#fbfaff;border:1px solid #ded8f8;
+      border-radius:12px;cursor:pointer;transition:.2s;
+    }
+    .library-asset-box:hover{background:var(--purple-weak);border-color:var(--purple)}
+    .library-asset-title{display:flex;justify-content:space-between;align-items:center;font-size:12px;font-weight:900;color:var(--purple)}
+    .library-asset-desc{font-size:10px;color:var(--muted);margin-top:4px;line-height:1.4}
+
+    /* 右侧主视口 */
+    .main-viewport{position:relative;margin-left:250px;height:calc(100vh - 64px);overflow:hidden;padding:0;display:grid;grid-template-rows:104px minmax(0,1fr);transition:margin-left .28s cubic-bezier(.2,.8,.2,1),grid-template-rows .28s cubic-bezier(.2,.8,.2,1)}
+    .main-viewport.sidebar-collapsed{margin-left:84px}
+    .main-viewport.progress-expanded{grid-template-rows:300px minmax(0,1fr)}
+    /* 固定毕业进度区：它不是表单内容，而是右侧工作区的固定上半区 */
+    .progress-zone{position:relative;z-index:170;padding:8px 32px 7px;background:var(--bg);border-bottom:1px solid #e9ebf2;overflow:visible;transition:padding .28s cubic-bezier(.2,.8,.2,1)}
+    .main-viewport.progress-expanded .progress-zone{padding:24px 32px 20px}
+    .welcome-line{display:none;justify-content:space-between;align-items:center;margin-bottom:10px;transition:margin .28s ease,opacity .2s ease}
+    .main-viewport.progress-expanded .welcome-line{display:flex}
+    .main-viewport.progress-expanded .welcome-line{margin-bottom:18px}
+    .welcome-line h1{margin:0;font-size:22px;font-weight:900}
+    .welcome-line p{margin:0;color:#ff85a2;font-size:12px;font-weight:700}
+
+    /* 毕业进度主卡片：固定占据顶部进度区域，不再跟随表单滚动 */
+    .progress-card{position:relative;z-index:171;background:#fff;border:1px solid var(--line);border-radius:16px;padding:7px 22px 6px;box-shadow:0 8px 22px rgba(36,40,64,.05);margin:0;min-height:72px;display:flex;align-items:center;transition:min-height .28s cubic-bezier(.2,.8,.2,1),padding .28s ease,box-shadow .28s ease}
+    .main-viewport.progress-expanded .progress-card{padding:27px 28px 24px;min-height:170px;box-shadow:var(--shadow)}
+    .content-scroll{min-height:0;overflow:auto;padding:20px 32px 40px;background:var(--bg)}
+    .steps-container{display:flex;justify-content:space-between;align-items:center;width:100%;max-width:1080px;margin:0 auto;position:relative;transition:max-width .28s ease}
+    .main-viewport:not(.progress-expanded) .steps-container{max-width:980px}
+    .step-line{position:absolute;top:14px;left:46px;right:46px;height:2px;background:#e3e6ef;z-index:1;transition:top .28s ease,left .28s ease,right .28s ease}
+    .main-viewport.progress-expanded .step-line{top:20px;left:50px;right:50px}
+    
+    .step-node{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;cursor:pointer}
+    .step-circle{width:30px;height:30px;border-radius:50%;background:#fff;border:2px solid #ddd;display:grid;place-items:center;font-weight:900;color:var(--muted);transition:.28s cubic-bezier(.2,.8,.2,1);font-size:11px}
+    .main-viewport.progress-expanded .step-circle{width:40px;height:40px;font-size:13px}
+    .step-node.completed .step-circle{background:var(--purple);border-color:var(--purple);color:#fff}
+    .step-node.current .step-circle{background:var(--purple);border-color:var(--purple);box-shadow:0 0 0 5px var(--purple-weak);color:#fff}
+    .step-node.completed.current .step-circle{box-shadow:0 0 0 5px var(--purple-weak)}
+    .step-node p{margin:3px 0 0;font-size:10px;font-weight:800;color:var(--ink);transition:.2s}
+    .main-viewport.progress-expanded .step-node p{margin-top:6px;font-size:12px}
+    .step-node>span{font-size:9px;color:var(--purple);margin-top:1px;font-weight:700;opacity:0;max-height:0;overflow:hidden;transition:.2s}
+    .main-viewport.progress-expanded .step-node>span{font-size:10px;opacity:1;max-height:18px}
+
+    /* 悬浮弹窗 */
+    .step-popover{
+      position:absolute;top:55px;left:50%;transform:translateX(-50%) translateY(8px);
+      width:320px;background:#fff;border:1px solid #dcd5ff;border-radius:14px;
+      padding:16px;box-shadow:0 12px 35px rgba(101,71,216,.15);
+      opacity:0;pointer-events:none;transition:opacity .22s cubic-bezier(.2,.8,.2,1),transform .22s cubic-bezier(.2,.8,.2,1);z-index:500;
+      text-align:left;
+      /* 卡片内容较长时在卡片内部滚动，不再被视口截断 */
+      max-height:min(560px,calc(100vh - 180px));
+      overflow-y:auto;
+      overflow-x:hidden;
+      overscroll-behavior:contain;
+      scrollbar-gutter:stable;
+    }
+    .step-popover::-webkit-scrollbar{width:6px}
+    .step-popover::-webkit-scrollbar-thumb{background:#d8d2ef;border-radius:999px}
+    .step-popover::-webkit-scrollbar-track{background:transparent}
+    .main-viewport.progress-expanded .step-node:hover .step-popover,
+    .main-viewport.progress-expanded .step-popover:hover{opacity:1;transform:translateX(-50%) translateY(0);pointer-events:auto}
+
+    /* 首尾节点的 Hover 卡片向进度区内部展开，避免被固定侧栏或右侧边界遮挡 */
+    #node-review .step-popover{left:-14px;transform:translateY(8px)}
+    .main-viewport.progress-expanded #node-review:hover .step-popover{transform:translateY(0)}
+    #node-defense .step-popover{left:auto;right:-14px;transform:translateY(8px)}
+    .main-viewport.progress-expanded #node-defense:hover .step-popover{transform:translateY(0)}
+    
+    .popover-title{font-size:14px;font-weight:900;color:var(--ink);margin-bottom:4px}
+
+    .popover-kicker{font-size:10px;color:var(--purple);font-weight:900;margin-bottom:8px}
+    .popover-tools{display:grid;gap:7px;margin:9px 0 10px}
+    .popover-tool{display:grid;grid-template-columns:24px 1fr;gap:7px;align-items:flex-start;padding:7px 8px;background:#faf9ff;border:1px solid #ece8fb;border-radius:8px}
+    .popover-tool i{font-style:normal;font-size:14px;line-height:1.2}
+    .popover-tool b{display:block;font-size:10px;color:var(--ink);margin-bottom:2px}
+    .popover-tool small{display:block;font-size:9px;color:var(--muted);line-height:1.45}
+    .popover-effect{padding:8px 9px;border-radius:8px;background:var(--teal-weak);color:#356b66;font-size:9px;line-height:1.5;margin-bottom:9px}
+    .popover-result{font-size:9px;color:#5f6575;line-height:1.5;margin-bottom:9px}
+    .popover-row{font-size:11px;color:var(--muted);margin-bottom:3px}
+    .popover-row b{color:var(--purple)}
+    .popover-list{margin:4px 0 10px;padding-left:14px;font-size:11px;color:#596174;line-height:1.5}
+    .popover-pills{display:flex;gap:5px;flex-wrap:wrap}
+    .popover-pill{padding:3px 7px;border-radius:5px;background:var(--purple-weak);color:var(--purple);font-size:10px;font-weight:800;cursor:pointer}
+    .popover-pill:hover{background:var(--purple);color:#fff}
+
+    /* 工作台表单区域（默认进入即展示） */
+    .workspace-container{background:#fff;border:1px solid var(--line);border-radius:16px;overflow:hidden;box-shadow:var(--shadow);display:grid;grid-template-columns:300px minmax(0,1fr);min-height:480px}
+    .assistant-pane{border-right:1px solid var(--line);padding:20px;background:#fbfcff;display:flex;flex-direction:column;justify-content:space-between}
+    .assistant-box{padding:12px;background:#fff;border:1px solid var(--line);border-radius:10px;font-size:11px;line-height:1.6;color:var(--muted)}
+    
+    .form-pane{padding:24px 30px;overflow:auto}
+    .form-row{display:grid;grid-template-columns:130px minmax(0,1fr);gap:14px;padding:12px 0;border-bottom:1px solid #f0f1f5}
+    .form-row>label{font-size:11px;font-weight:800;padding-top:9px}
+    .input,.textarea,.select{width:100%;border:1px solid var(--line);border-radius:8px;background:#fff;outline:none;padding:0 10px}
+    .input,.select{height:38px}
+    .textarea{min-height:80px;padding:10px;resize:vertical}
+    .primary{display:inline-flex;align-items:center;justify-content:center;border-radius:8px;font-weight:700;height:38px;padding:0 16px;background:var(--purple);color:#fff;font-size:12px}
+    .ghost{display:inline-flex;align-items:center;justify-content:center;border-radius:8px;font-weight:700;height:38px;padding:0 14px;background:#eef1f7;color:#424a5c;font-size:12px}
+  
+
+    /* ===== 论文综述：填需求 / 确认材料表单 ===== */
+    .review-step-shell{display:grid;gap:16px}
+    .review-step-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px}
+    .review-step-head h2{margin:0;font-size:19px}
+    .review-step-head p{margin:5px 0 0;color:var(--muted);font-size:11px;line-height:1.55}
+    .step-tag{display:inline-flex;align-items:center;height:28px;padding:0 9px;border-radius:999px;background:var(--purple-weak);color:var(--purple);font-size:10px;font-weight:800}
+    .review-card{border:1px solid var(--line);border-radius:12px;background:#fff;padding:16px 18px}
+    .review-card h3{margin:0 0 4px;font-size:14px}.review-card>p{margin:0 0 12px;color:var(--muted);font-size:10px;line-height:1.55}
+    .req-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.req-grid .form-row{display:block;border:0;padding:0}.req-grid label{display:block;font-size:10px;font-weight:800;margin-bottom:6px}
+    .req-wide{grid-column:1/-1}.req-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:4px}
+    .material-summary{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:12px}
+    .material-metric{padding:11px;border:1px solid var(--line);border-radius:9px;background:#fbfcff}.material-metric b{display:block;font-size:18px;color:var(--purple)}.material-metric span{font-size:9px;color:var(--muted)}
+    .material-status{padding:12px;border:1px solid #dcd6f5;border-radius:10px;background:#fcfbff}.material-status-head{display:flex;justify-content:space-between;gap:10px;align-items:center}.material-status-head b{font-size:11px}.material-status-head span{font-size:10px;color:var(--purple);font-weight:800}
+    .material-gap{margin-top:10px;padding:10px;border-radius:8px;background:#fff4df;color:#77511b;font-size:9px;line-height:1.55}
+    .material-tools{display:grid;grid-template-columns:1fr 1fr;gap:10px}.material-tool{padding:12px;border:1px solid var(--line);border-radius:10px;background:#fff}.material-tool strong{font-size:11px}.material-tool p{margin:5px 0 10px;color:var(--muted);font-size:9px;line-height:1.5}
+    .material-table{width:100%;border-collapse:collapse;margin-top:10px;font-size:9px}.material-table th,.material-table td{padding:8px;border-bottom:1px solid var(--line);text-align:left}.material-table th{color:var(--muted);background:#fafbfe;font-weight:700}.ok{color:var(--teal);font-weight:800}.warn{color:#b56b0c;font-weight:800}
+    .review-step-hidden{display:none!important}
+
+    /* ===== 文献需求：复用原 demo 的可编辑结构 ===== */
+    .req-shell{display:grid;gap:10px}
+    .req-head{display:flex;justify-content:space-between;gap:10px;align-items:center}
+    .req-subject-badge{display:inline-flex;align-items:center;min-height:27px;padding:0 9px;border-radius:7px;background:var(--teal-weak);color:var(--teal);font-size:9px;font-weight:800}
+    .req-basic{border:1px solid var(--line);border-radius:9px;background:#fff;overflow:hidden}
+    .req-basic-row{min-height:66px;padding:11px 13px;display:flex;align-items:center;justify-content:space-between;gap:18px;border-bottom:1px solid #f0f1f5}
+    .req-basic-row:last-child{border-bottom:0}.req-basic-row b{display:block;font-size:10px}.req-basic-row small{display:block;margin-top:3px;color:var(--muted);font-size:8px;line-height:1.45}
+    .req-discipline{width:260px;flex:0 0 auto;font-size:10px}.req-number-wrap{display:flex;align-items:center;gap:7px;color:var(--muted);font-size:9px}.req-number{width:92px!important;text-align:center;font-weight:800;color:var(--purple)}
+    .req-recommendation{padding:11px 12px;border:1px solid #d9d2f7;border-radius:9px;background:#fbfaff;display:flex;align-items:center;justify-content:space-between;gap:16px}
+    .req-recommend-copy{min-width:0}.req-recommend-kicker{display:block;color:var(--purple);font-size:8px;font-weight:900;margin-bottom:3px}.req-recommend-copy strong{display:block;font-size:10px;color:#3f365f}.req-recommend-copy small{display:block;color:var(--muted);font-size:8px;margin-top:3px}.req-recommend-rules{margin-top:7px;color:#655b86;font-size:8px;line-height:1.5}
+    .small-btn{display:inline-flex;align-items:center;justify-content:center;height:31px;padding:0 10px;border:1px solid var(--line);background:#fff;border-radius:8px;font-size:10px;font-weight:700}.small-btn.primary-lite{border-color:#9c8be9;color:var(--purple);background:var(--purple-weak)}
+    .req-adopt.is-adopted{border-color:#9ed5ce;background:var(--teal-weak);color:var(--teal)}
+    .req-advanced-toggle{width:100%;min-height:54px;padding:10px 12px;border:1px solid var(--line);border-radius:9px;background:#fff;display:flex;align-items:center;justify-content:space-between;gap:14px;text-align:left}
+    .req-advanced-toggle:hover{background:#faf9ff;border-color:#d8d1f4}.req-advanced-toggle b{display:block;font-size:10px}.req-advanced-toggle small{display:block;margin-top:3px;color:var(--muted);font-size:8px;line-height:1.45}.req-toggle-action{flex:0 0 auto;color:var(--purple);font-size:9px;font-weight:800}
+    .req-detail{padding:12px;border:1px solid #ece9f7;border-radius:9px;background:#fff;display:grid;gap:10px}.req-detail[hidden]{display:none}
+    .req-rule-head,.req-rule{display:grid;grid-template-columns:minmax(180px,1.3fr) 110px 130px 28px;gap:8px;align-items:center}.req-rule-head{padding:0 4px;color:var(--muted);font-size:8px}.req-rule-list{display:grid;gap:7px}.req-rule .input,.req-rule .select{height:34px;font-size:9px}.req-rule-name{font-weight:700}.req-min{display:grid;grid-template-columns:20px 1fr;align-items:center;border:1px solid var(--line);border-radius:8px;background:#fff;overflow:hidden}.req-min span{text-align:center;color:var(--purple);font-size:11px;font-weight:900}.req-min .input{border:0;border-radius:0;padding-left:2px;box-shadow:none!important}.req-remove{width:28px;height:28px;border-radius:7px;color:#a1a7b3;font-size:17px}.req-remove:hover{background:#fff0f2;color:#bb4658}.req-add{justify-self:start;height:30px;padding:0 10px;border:1px dashed #b8acec;border-radius:7px;background:#fbfaff;color:var(--purple);font-size:9px;font-weight:800}
+
+  
+    /* ===== 论文初稿：四步主流程 + 结果优化中心 ===== */
+    .draft-shell{display:grid;gap:16px}
+    .draft-hidden{display:none!important}
+    .draft-card{border:1px solid var(--line);border-radius:12px;background:#fff;padding:16px 18px}
+    .draft-card h3{margin:0 0 4px;font-size:14px}
+    .draft-card>p{margin:0 0 12px;color:var(--muted);font-size:10px;line-height:1.55}
+    .draft-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .draft-grid .form-row{display:block;border:0;padding:0}
+    .draft-grid label{display:block;font-size:10px;font-weight:800;margin-bottom:6px}
+    .draft-wide{grid-column:1/-1}
+    .draft-choice-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
+    .draft-choice{padding:12px;border:1px solid var(--line);border-radius:10px;background:#fff;text-align:left;transition:.2s}
+    .draft-choice:hover{border-color:#c9bef5;background:#fbfaff}
+    .draft-choice.active{border-color:#9f8df0;background:var(--purple-weak)}
+    .draft-choice b{display:block;font-size:10px}.draft-choice small{display:block;margin-top:4px;font-size:8px;color:var(--muted);line-height:1.45}
+    .research-method-wrap{display:grid;gap:8px;width:100%}
+    .research-method-note{font-size:9px;color:var(--muted);line-height:1.5}
+    .research-method-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
+    .research-method{padding:11px 12px;border:1px solid var(--line);border-radius:10px;background:#fff;text-align:left;transition:.2s;position:relative}
+    .research-method:hover{border-color:#c9bef5;background:#fbfaff}
+    .research-method.active{border-color:#9f8df0;background:var(--purple-weak)}
+    .research-method.active:after{content:'✓';position:absolute;right:10px;top:9px;width:18px;height:18px;border-radius:6px;background:var(--purple);color:#fff;display:grid;place-items:center;font-size:10px;font-weight:900}
+    .research-method b{display:block;font-size:10px;padding-right:24px}.research-method small{display:block;margin-top:4px;font-size:8px;color:var(--muted);line-height:1.45}
+    .research-method.supported{min-height:78px;padding-right:110px}
+    .method-supported-badge{position:absolute;right:10px;bottom:10px;display:inline-flex;align-items:center;height:22px;padding:0 7px;border-radius:999px;background:var(--teal-weak);color:var(--teal);font-size:8px;font-weight:900}
+    .other-method-box{margin-top:10px;padding:11px 12px;border:1px solid var(--line);border-radius:10px;background:#fcfdff}
+    .other-method-box b{display:block;font-size:10px}.other-method-box small{display:block;margin:4px 0 8px;color:var(--muted);font-size:8px;line-height:1.5}
+    .questionnaire-shell{display:grid;gap:16px}
+    .questionnaire-hidden{display:none!important}
+    .questionnaire-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .questionnaire-grid .form-row{display:block;border:0;padding:0}.questionnaire-grid label{display:block;font-size:10px;font-weight:800;margin-bottom:6px}
+    .questionnaire-wide{grid-column:1/-1}
+    .questionnaire-dimensions{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+    .questionnaire-dimension{padding:10px;border:1px solid var(--line);border-radius:9px;background:#fbfcff;font-size:9px;font-weight:800;color:#596174}
+    .questionnaire-dimension input{margin-right:5px}
+    .questionnaire-preview{display:grid;gap:7px;margin-top:10px}
+    .questionnaire-item{padding:10px 11px;border:1px solid var(--line);border-radius:8px;background:#fff}
+    .questionnaire-item b{display:block;font-size:10px}.questionnaire-item small{display:block;margin-top:4px;color:var(--muted);font-size:8px;line-height:1.45}
+    .questionnaire-status{padding:11px 12px;border:1px solid #d8d2f4;border-radius:9px;background:#fbfaff;font-size:9px;line-height:1.6;color:#5f6072}
+    .questionnaire-data-box{padding:12px;border:1px dashed #b8acec;border-radius:9px;background:#fbfaff;display:flex;align-items:center;justify-content:space-between;gap:12px}
+    .questionnaire-data-box b{display:block;font-size:10px;color:var(--purple)}.questionnaire-data-box small{display:block;margin-top:4px;color:var(--muted);font-size:8px}
+    .draft-material-list{display:grid;gap:8px}
+    .draft-material-row{display:grid;grid-template-columns:34px 1fr auto;gap:10px;align-items:center;padding:11px;border:1px solid var(--line);border-radius:10px;background:#fcfdff}
+    .draft-material-icon{width:34px;height:34px;border-radius:9px;display:grid;place-items:center;background:var(--purple-weak)}
+    .draft-material-row b{display:block;font-size:10px}.draft-material-row small{display:block;margin-top:3px;font-size:8px;color:var(--muted)}
+    .draft-state{font-size:9px;font-weight:800;padding:5px 7px;border-radius:999px;background:#f1f3f7;color:#777f90}
+    .draft-state.ok{background:var(--teal-weak);color:var(--teal)}
+    .draft-state.warn{background:#fff4df;color:#9a6817}
+    .draft-tool-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+    .draft-tool{padding:13px;border:1px solid var(--line);border-radius:10px;background:#fff}
+    .draft-tool strong{font-size:11px}.draft-tool p{margin:5px 0 10px;font-size:9px;color:var(--muted);line-height:1.5}
+    .draft-outline-list{display:grid;gap:7px}
+    .draft-outline-row{display:grid;grid-template-columns:24px 1fr auto;gap:8px;align-items:center;padding:9px 10px;border:1px solid var(--line);border-radius:8px;background:#fff}
+    .draft-outline-row.child{margin-left:28px;background:#fcfdff}
+    .draft-outline-row .drag{color:#a0a6b4}
+    .draft-outline-input{width:100%;border:0;background:transparent;outline:none;font-size:10px;font-weight:700}
+    .draft-outline-row.child .draft-outline-input{font-weight:500}
+    .draft-result-pane{margin-top:12px}
+    .draft-result-meta{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 14px}
+    .draft-meta-pill{display:inline-flex;align-items:center;min-height:28px;padding:0 9px;border-radius:999px;background:#f4f5f9;color:#626a7b;font-size:9px;font-weight:800}
+    .draft-main-actions{display:flex;gap:8px;justify-content:flex-end;margin:12px 0}
+    .value-section{margin-top:18px;padding-top:18px;border-top:1px solid var(--line)}
+    .value-section-head{display:flex;justify-content:space-between;gap:14px;align-items:flex-start;margin-bottom:10px}
+    .value-section-head h3{margin:0;font-size:14px}
+    .value-section-head p{margin:4px 0 0;color:var(--muted);font-size:9px;line-height:1.5}
+    .value-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .value-card{padding:14px;border:1px solid var(--line);border-radius:11px;background:#fcfdff;display:grid;grid-template-columns:38px minmax(0,1fr) auto;gap:10px;align-items:center}
+    .value-icon{width:38px;height:38px;border-radius:10px;background:var(--purple-weak);display:grid;place-items:center;font-size:18px}
+    .value-card b{display:block;font-size:11px}.value-card small{display:block;margin-top:4px;color:var(--muted);font-size:8px;line-height:1.45}
+    .value-badge{display:inline-flex;align-items:center;height:22px;padding:0 7px;border-radius:999px;background:#fff4df;color:#9a6817;font-size:8px;font-weight:800;margin-top:6px}
+    .value-detail{margin-top:10px}
+    .draft-paper{min-height:380px;padding:28px 38px;border:1px solid var(--line);border-radius:10px;background:#fff;line-height:1.9}
+    .draft-paper h1{font-size:20px;margin:0 0 18px}.draft-paper h2{font-size:15px;margin:22px 0 8px}.draft-paper p{font-family:Georgia,"Songti SC",serif;font-size:11px;color:#343948}
+    .format-summary{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:12px 0}
+    .format-metric{padding:11px;border:1px solid var(--line);border-radius:9px;background:#fbfcff}
+    .format-metric b{display:block;font-size:17px;color:var(--purple)}.format-metric span{font-size:8px;color:var(--muted)}
+    .issue-list{display:grid;gap:7px}.issue-row{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;padding:10px;border:1px solid var(--line);border-radius:8px}
+    .issue-row b{display:block;font-size:10px}.issue-row small{display:block;margin-top:3px;color:var(--muted);font-size:8px}
+    .risk-grid{display:grid;grid-template-columns:180px 1fr;gap:12px;align-items:start}
+    .risk-score{padding:18px;border:1px solid #f1d7dc;border-radius:12px;background:#fff7f8;text-align:center}
+    .risk-score b{display:block;font-size:34px;color:#bb4658}.risk-score span{font-size:9px;color:#8c5960}
+    .risk-list{display:grid;gap:8px}.risk-item{padding:10px;border:1px solid var(--line);border-radius:8px;background:#fff}
+    .risk-item strong{font-size:10px}.risk-item p{margin:5px 0 8px;font-size:9px;color:var(--muted);line-height:1.5}
+
+
+    /* ===== 答辩准备：独立四步流程 ===== */
+    .defense-shell{display:grid;gap:16px}
+    .defense-hidden{display:none!important}
+    .defense-card{border:1px solid var(--line);border-radius:12px;background:#fff;padding:16px 18px}
+    .defense-card h3{margin:0 0 4px;font-size:14px}
+    .defense-card>p{margin:0 0 12px;color:var(--muted);font-size:10px;line-height:1.55}
+    .defense-paper-card{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:14px;align-items:center;padding:14px;border:1px solid #ded8f8;border-radius:11px;background:#fbfaff}
+    .defense-paper-card h4{margin:0;font-size:12px}.defense-paper-card p{margin:5px 0 0;color:var(--muted);font-size:9px;line-height:1.5}
+    .defense-paper-meta{display:flex;gap:7px;flex-wrap:wrap;margin-top:9px}.defense-paper-meta span{padding:4px 7px;border-radius:999px;background:#fff;color:#625a80;font-size:8px;font-weight:800}
+    .defense-option-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+    .defense-option{padding:13px;border:1px solid var(--line);border-radius:10px;background:#fcfdff;display:grid;grid-template-columns:34px 1fr auto;gap:10px;align-items:center}
+    .defense-option-icon{width:34px;height:34px;border-radius:9px;background:var(--purple-weak);display:grid;place-items:center;font-size:16px}.defense-option b{display:block;font-size:10px}.defense-option small{display:block;margin-top:3px;color:var(--muted);font-size:8px;line-height:1.45}
+    .defense-focus-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.defense-focus{padding:10px;border:1px solid var(--line);border-radius:8px;background:#fff;font-size:9px}.defense-focus input{margin-right:5px}
+    .defense-plan-list{display:grid;gap:8px}.defense-plan-row{display:grid;grid-template-columns:34px minmax(0,1fr) 70px 90px;gap:10px;align-items:center;padding:10px;border:1px solid var(--line);border-radius:9px;background:#fff}
+    .defense-plan-num{width:30px;height:30px;border-radius:9px;background:var(--purple-weak);color:var(--purple);display:grid;place-items:center;font-size:9px;font-weight:900}.defense-plan-row b{font-size:10px}.defense-plan-row small{display:block;margin-top:3px;color:var(--muted);font-size:8px}.defense-plan-pages,.defense-plan-time{font-size:9px;color:#626a7b;text-align:right}
+    .defense-result-hero{padding:18px;border:1px solid #d9d2f7;border-radius:12px;background:linear-gradient(135deg,#fbfaff,#fff);display:grid;grid-template-columns:1fr auto;gap:16px;align-items:center}
+    .defense-result-hero h3{font-size:16px;margin:0}.defense-result-hero p{margin:6px 0 0;color:var(--muted);font-size:9px;line-height:1.5}
+    .defense-result-metrics{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}.defense-result-metrics span{padding:5px 8px;border-radius:999px;background:#fff;border:1px solid #e8e3fa;color:#6557a1;font-size:8px;font-weight:800}
+    .defense-ppt-includes{margin-top:12px;padding-top:11px;border-top:1px solid #ece8fb}
+    .defense-ppt-includes-title{font-size:9px;font-weight:900;color:#6557a1;margin-bottom:7px}
+    .defense-ppt-includes-list{display:flex;gap:8px;flex-wrap:wrap}
+    .defense-ppt-include{display:inline-flex;align-items:center;gap:6px;padding:7px 9px;border:1px solid #e8e3fa;border-radius:8px;background:#fff;color:#626a7b;font-size:8px;line-height:1.4}
+    .defense-ppt-include b{font-size:9px;color:var(--ink)}
+
+
+    /* ===== 完整文献检索流程：复用 index23 Find Papers 能力 ===== */
+    .search-shell{display:grid;gap:14px}
+    .search-hidden{display:none!important}
+    .search-card{border:1px solid var(--line);border-radius:12px;background:#fff;padding:16px 18px}
+    .search-card h3{margin:0;font-size:14px}.search-card>p{margin:5px 0 12px;color:var(--muted);font-size:9px;line-height:1.55}
+    .search-block{padding:13px 0;border-bottom:1px solid #f0f1f5}.search-block:last-child{border-bottom:0}
+    .search-block-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;margin-bottom:9px}
+    .search-block-head b{display:block;font-size:11px}.search-block-head small{display:block;margin-top:3px;color:var(--muted);font-size:8px;line-height:1.45}
+    .search-topic{padding:10px 12px;border:1px solid #ded8f8;border-radius:8px;background:#fbfaff;color:var(--purple);font-size:11px;font-weight:800}
+    .search-keywords{display:flex;gap:6px;flex-wrap:wrap}.search-keyword{padding:5px 8px;border-radius:6px;background:#f4f2fb;color:#594b91;font-size:9px}
+    .search-db-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}.search-db{display:flex;gap:8px;align-items:flex-start;padding:10px;border:1px solid var(--line);border-radius:8px;background:#fff;font-size:9px}.search-db b{font-size:10px}.search-db small{display:block;color:var(--muted);font-size:8px;margin-top:2px}
+    .search-intensity{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.search-intensity-card{padding:11px;border:1px solid var(--line);border-radius:9px;background:#fff;text-align:left}.search-intensity-card.active{border-color:#b6a9ec;background:var(--purple-weak)}.search-intensity-card b{display:block;font-size:10px}.search-intensity-card small{display:block;color:var(--muted);font-size:8px;line-height:1.45;margin-top:4px}
+    .search-why{margin-top:10px;padding:10px 11px;border:1px solid #e6e1f7;border-radius:8px;background:#fbfaff;font-size:8px;color:#5f6072;line-height:1.55}.search-why-flow{display:none;margin-top:8px;padding-top:8px;border-top:1px solid #e5e0f7;gap:5px;flex-wrap:wrap;align-items:center}.search-why-flow.open{display:flex}.search-why-node{padding:4px 6px;border:1px solid var(--line);border-radius:5px;background:#fff}
+    .search-estimate{margin-top:10px;padding:10px;border-radius:8px;background:var(--teal-weak);color:#306e66;font-size:9px}
+    .search-running{max-width:820px;margin:0 auto;padding:10px 0 20px}.search-run-hero{text-align:center;margin-bottom:15px}.search-run-hero h2{margin:0;font-size:19px}.search-run-hero p{color:var(--muted);font-size:9px}.search-run-progress{height:7px;border-radius:999px;background:#eceef4;overflow:hidden;margin-bottom:13px}.search-run-progress i{display:block;height:100%;background:var(--purple);border-radius:999px;transition:.35s}
+    .search-run-list{display:grid;gap:8px}.search-run-step{display:flex;gap:10px;padding:10px;border:1px solid var(--line);border-radius:8px;align-items:flex-start}.search-run-step i{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;background:#eef0f4;color:#8b91a0;font-style:normal;font-size:9px}.search-run-step.done i{background:var(--teal);color:#fff}.search-run-step.current{border-color:#c9bef5;background:#fbfaff}.search-run-step.current i{background:var(--purple);color:#fff}.search-run-step b{font-size:10px}.search-run-step small{display:block;color:var(--muted);font-size:8px;margin-top:3px}
+    .search-run-live{margin-top:12px;padding:10px;border-radius:8px;background:#f7f8fb;display:flex;justify-content:space-between;font-size:9px}.search-run-live b{color:var(--purple)}
+    .search-result-shell{border:1px solid var(--line);border-radius:12px;background:#fff;overflow:hidden}.search-result-head{padding:14px 16px 10px;background:#fafbfe;border-bottom:1px solid var(--line)}.search-result-title{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;margin-bottom:9px}.search-result-title h3{margin:0;font-size:14px}.search-result-title p{margin:4px 0 0;color:var(--muted);font-size:8px}
+    .search-status-pill{display:inline-flex;padding:5px 8px;border-radius:6px;background:var(--teal-weak);color:var(--teal);font-size:9px;font-weight:800}.search-tabs{display:grid;grid-template-columns:repeat(3,1fr);padding:3px;border:1px solid var(--line);border-radius:8px;background:#fff}.search-tab{height:34px;border-radius:6px;font-size:10px;color:var(--muted)}.search-tab.active{background:var(--purple-weak);color:var(--purple);font-weight:900}
+    .search-result-content{padding:12px 16px 16px}.search-result-section{border:1px solid var(--line);border-radius:9px;padding:14px;margin-bottom:10px}.search-result-section h3{margin:0;font-size:12px}.search-result-section p{font-size:9px;color:var(--muted);line-height:1.55}
+    .search-overview{display:grid;grid-template-columns:1fr auto;gap:12px}.search-overview-score b{display:block;font-size:25px;color:var(--purple)}.search-overview-score small{font-size:8px;color:var(--muted)}
+    .search-demand-table{width:100%;border-collapse:collapse;margin-top:10px;font-size:8px}.search-demand-table th,.search-demand-table td{padding:8px 6px;border-bottom:1px solid var(--line);text-align:left}.search-demand-table th{background:#fafbfe;color:var(--muted);font-weight:700}
+    .search-full-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}.search-full-card{border:1px solid var(--line);border-radius:8px;padding:12px;background:#fcfdff}.search-big{font-size:21px;color:var(--purple);font-weight:900}.search-full-card small{display:block;color:var(--muted);font-size:8px;line-height:1.5;margin:4px 0 9px}.search-badge{display:inline-flex;padding:4px 6px;border-radius:5px;font-size:8px;background:#f0f2f6;color:#667084}.search-badge.oa{background:var(--teal-weak);color:var(--teal)}.search-badge.warn{background:#fff4df;color:#b56b0c}
+    .search-cluster-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}.search-cluster{border:1px solid var(--line);border-radius:8px;padding:11px;background:#fff}.search-cluster-head{display:flex;justify-content:space-between;gap:8px}.search-cluster h4{font-size:11px;margin:0}.search-cluster-count{font-size:11px;color:var(--purple);font-weight:900}.search-query-list{display:flex;gap:5px;flex-wrap:wrap;margin-top:7px}.search-query{padding:4px 6px;border-radius:5px;background:#f5f3fd;color:#5d5190;font-size:8px}.search-cluster-foot{display:flex;justify-content:space-between;gap:8px;margin-top:8px;color:var(--muted);font-size:8px}
+    .search-paper-cluster{margin-bottom:13px}.search-paper-cluster-head{display:flex;justify-content:space-between;gap:10px;margin-bottom:7px}.search-paper-cluster-head h4{margin:0;font-size:12px}.search-paper-cluster-head span{font-size:8px;color:var(--muted)}.search-paper{display:grid;grid-template-columns:minmax(0,1fr) 145px;gap:10px;padding:11px;border:1px solid var(--line);border-radius:8px;background:#fff;margin-bottom:7px}.search-paper h5{font-size:10px;line-height:1.45;margin:0}.search-paper-meta{font-size:8px;color:#596175;line-height:1.55;margin-top:5px}.search-levels{display:flex;gap:5px;flex-wrap:wrap;margin-top:6px}.search-level{padding:3px 5px;border-radius:5px;background:#f1effc;color:#5f4ea1;font-size:8px}.search-level.fit{background:var(--teal-weak);color:var(--teal)}.search-paper-side{display:grid;align-content:start;justify-items:end;gap:6px}
+    .search-import-context{padding:14px;border:1px solid #dcd6f5;border-radius:9px;background:#fff}.search-import-top{display:flex;justify-content:space-between;gap:12px;margin-bottom:10px}.search-import-stat{min-width:90px;text-align:center;padding:8px;border-radius:8px;background:var(--purple-weak);color:var(--purple);font-size:8px}.search-import-stat b{display:block;font-size:18px}.search-dropzone{border:1px dashed #aa9de7;border-radius:9px;background:#fbfaff;padding:22px 14px;text-align:center}.search-dropzone strong{display:block;font-size:12px;color:#4f4389}.search-dropzone p{font-size:8px;color:var(--muted);line-height:1.5}.search-match-hints{display:flex;justify-content:center;gap:6px;flex-wrap:wrap;margin-top:9px}.search-match-hints span{padding:4px 6px;border:1px solid var(--line);border-radius:5px;background:#fff;font-size:8px;color:#6b7284}.search-import-list{display:grid;gap:7px;margin-top:10px}.search-import-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center;padding:10px;border:1px solid var(--line);border-radius:8px;background:#fcfdff}.search-import-row h4{font-size:10px;margin:0}.search-import-row p{font-size:8px;color:var(--muted);margin:4px 0 0}
+    .search-conclusion{padding:10px;border-radius:7px;background:#fff4df;color:#77511b;font-size:9px}.search-conclusion.good{background:var(--teal-weak);color:#246a63}
+
+
+    /* ===== v17：开题报告 + Hover 工具快捷入口 ===== */
+    .popover-tool.clickable{cursor:pointer;position:relative;padding-right:30px;transition:.18s ease}
+    .popover-tool.clickable:after{content:"›";position:absolute;right:10px;top:50%;transform:translateY(-50%);color:#9588cf;font-size:16px;font-weight:900;transition:.18s ease}
+    .popover-tool.clickable:hover{border-color:#b8acec;background:var(--purple-weak);transform:translateY(-1px)}
+    .popover-tool.clickable:hover:after{right:7px;color:var(--purple)}
+    .tool-target-highlight{outline:2px solid #a894ef!important;box-shadow:0 0 0 5px rgba(101,71,216,.10)!important;background:#fbfaff!important}
+    .proposal-shell{display:grid;gap:16px}.proposal-hidden{display:none!important}
+    .proposal-card{border:1px solid var(--line);border-radius:12px;background:#fff;padding:16px 18px}
+    .proposal-card h3{margin:0 0 4px;font-size:14px}.proposal-card>p{margin:0 0 12px;color:var(--muted);font-size:10px;line-height:1.55}
+    .proposal-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.proposal-grid .form-row{display:block;border:0;padding:0}.proposal-grid label{display:block;font-size:10px;font-weight:800;margin-bottom:6px}.proposal-wide{grid-column:1/-1}
+    .proposal-material-list{display:grid;gap:8px}.proposal-material-row{display:grid;grid-template-columns:34px 1fr auto;gap:10px;align-items:center;padding:11px;border:1px solid var(--line);border-radius:10px;background:#fcfdff}.proposal-material-row b{display:block;font-size:10px}.proposal-material-row small{display:block;margin-top:3px;color:var(--muted);font-size:8px}.proposal-material-icon{width:34px;height:34px;border-radius:9px;display:grid;place-items:center;background:var(--purple-weak)}
+    .proposal-tools{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.proposal-tool{padding:13px;border:1px solid var(--line);border-radius:10px;background:#fff;transition:.18s}.proposal-tool strong{font-size:11px}.proposal-tool p{margin:5px 0 10px;font-size:9px;color:var(--muted);line-height:1.5}.proposal-tool:hover{border-color:#c9bef5;background:#fbfaff}
+    .proposal-plan{display:grid;gap:9px}.proposal-plan-row{display:grid;grid-template-columns:120px minmax(0,1fr);gap:12px;padding:11px;border:1px solid var(--line);border-radius:9px;background:#fcfdff}.proposal-plan-row b{font-size:10px}.proposal-plan-row div:last-child{font-size:10px;color:#535b6d;line-height:1.6}
+    .proposal-result-meta{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 14px}.proposal-result-paper{padding:26px 34px;border:1px solid var(--line);border-radius:10px;background:#fff;line-height:1.85}.proposal-result-paper h1{font-size:20px;margin:0 0 18px}.proposal-result-paper h2{font-size:15px;margin:20px 0 8px}.proposal-result-paper p{font-family:Georgia,"Songti SC",serif;font-size:11px;color:#343948}
+
+
+    /* ===== 阶段首屏：已继承研究基础 ===== */
+    .inherited-foundation{border:1px solid #ded8f8;border-radius:12px;background:linear-gradient(180deg,#fbfaff,#fff);padding:15px 16px}
+    .inherited-head{display:flex;justify-content:space-between;gap:14px;align-items:flex-start;margin-bottom:11px}.inherited-head h3{margin:0;font-size:14px}.inherited-head p{margin:4px 0 0;color:var(--muted);font-size:9px;line-height:1.5}
+    .inherited-badge{display:inline-flex;align-items:center;height:24px;padding:0 8px;border-radius:999px;background:var(--teal-weak);color:var(--teal);font-size:8px;font-weight:800;white-space:nowrap}
+    .inherited-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:8px}.inherited-item{position:relative;padding:10px;border:1px solid #ebe8f7;border-radius:9px;background:#fff;transition:.18s}.inherited-item:hover{border-color:#c9bef5;background:#fbfaff}.inherited-item.selected{border-color:#9f8df0;background:var(--purple-weak);box-shadow:0 0 0 3px rgba(101,71,216,.06)}.inherited-item b{display:block;font-size:10px;color:#433a68;padding-right:24px}.inherited-item small{display:block;margin-top:4px;color:var(--muted);font-size:8px;line-height:1.4}.inherited-item .mini-ok{display:inline-flex;margin-top:7px;padding:3px 6px;border-radius:999px;background:#f3f4f8;color:#747b8d;font-size:7px;font-weight:800}.inherited-item.selected .mini-ok{background:var(--teal-weak);color:var(--teal)}.reuse-check{position:absolute;right:9px;top:9px;width:15px;height:15px;accent-color:var(--purple)}.reuse-actions{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:11px;padding-top:11px;border-top:1px solid #ece9f7}.reuse-actions small{color:var(--muted);font-size:8px;line-height:1.45}.reuse-result{display:none;margin-top:10px;padding:9px 10px;border-radius:8px;background:var(--teal-weak);color:var(--teal);font-size:9px;line-height:1.5}.reuse-result.show{display:block}
+</style>
+</head>
+<body>
+
+  <!-- 顶栏 -->
+  <header class="app-topbar">
+    <div class="brand"><span class="brand-mark">文</span><span>文优小助 · 毕业版</span></div>
+    <div class="top-search">🔍 搜索功能、资料或问题...</div>
+    <div class="top-actions">
+      <span>🔔</span>
+      <div class="user-profile"><div class="user-avatar"></div>同学 ∨</div>
+    </div>
+  </header>
+
+  <div class="app-layout">
+    <!-- 左侧边栏：动态小节点 + 底部持久化文献库 -->
+    <aside class="sidebar" id="sidebar">
+      <button class="sidebar-toggle" id="sidebarToggle" type="button" aria-label="收窄左侧栏">‹</button>
+      <div class="sidebar-compact-progress" id="sidebarCompactProgress">
+        <div class="vertical-progress" id="verticalProgress"></div>
+      </div>
+      <div class="sidebar-scroll">
+      <div>
+        <div class="side-group-title" id="sidebarGroupTitle">论文综述任务进度</div>
+        <div class="subtask-list" id="sidebarSubtasks" style="margin-top:6px">
+          <!-- 动态渲染的小节点 -->
+        </div>
+      </div>
+
+      <div class="side-divider"></div>
+
+      <!-- 底部持久化资产入口：文献库 -->
+      <div class="library-asset-box" onclick="alert('打开文献库面板：当前共有 63 篇文献资产，可随时供各个节点复用。')">
+        <div class="library-asset-title">
+          <span>📚 个人文献库</span>
+          <span style="font-size:10px; background:var(--purple-weak); padding:2px 6px; border-radius:99px">63 篇</span>
+        </div>
+        <div class="library-asset-desc">所有节点通用的研究基础资产，支持跨阶段持续复用。</div>
+      </div>
+      </div>
+    </aside>
+
+    <!-- 右侧内容主视口 -->
+    <main class="main-viewport" id="mainViewport">
+      <section class="progress-zone" id="progressZone">
+      <div class="welcome-line">
+        <h1 id="pageHeading">毕业论文进度：论文综述</h1>
+        <p>好的毕业，从清晰的进度开始 💖</p>
+      </div>
+
+      <!-- 核心毕业进度条组件（带完整 Hover 悬浮卡片） -->
+      <section class="progress-card">
+        <div class="steps-container">
+          <div class="step-line"></div>
+
+          <!-- 阶段 1：论文综述 -->
+          <div class="step-node current" id="node-review" onclick="switchStage('review')">
+            <div class="step-circle">○</div>
+            <p>论文综述</p>
+            <span id="badge-review">进行中</span>
+            
+            <div class="step-popover" onclick="event.stopPropagation()">
+              <div class="popover-title">论文综述</div>
+              <div class="popover-kicker">快速完成从材料准备到综述输出</div>
+              <div class="popover-row"><b>快速完成工具包</b></div>
+              <div class="popover-tools">
+                <div class="popover-tool clickable" onclick="event.stopPropagation();openStageTool('review','search')"><i>📚</i><div><b>找文献</b><small>根据选题补充需要的研究文献</small></div></div>
+                <div class="popover-tool clickable" onclick="event.stopPropagation();openStageTool('review','chart')"><i>📊</i><div><b>学术图</b><small>生成研究框架、研究脉络等学术图</small></div></div>
+              </div>
+              <div class="popover-effect"><b>生成效果 · 精准综述</b><br>严格基于你的文献库生成，引用内容对应原文。</div>
+              <div class="popover-result"><b>最终获得：</b> 一篇有真实文献支撑、引用可追溯的文献综述。</div>
+              <div class="popover-pills" style="margin-top:6px">
+                <span class="popover-pill" onclick="switchStage('review')">进入该阶段</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 阶段 2：开题报告 -->
+          <div class="step-node" id="node-proposal" onclick="switchStage('proposal')">
+            <div class="step-circle">○</div>
+            <p>开题报告</p>
+            <span id="badge-proposal">待开始</span>
+
+            <div class="step-popover" onclick="event.stopPropagation()">
+              <div class="popover-title">开题报告</div>
+              <div class="popover-kicker">快速把已有研究积累整理成完整开题方案</div>
+              <div class="popover-row"><b>快速完成工具包</b></div>
+              <div class="popover-tools">
+                <div class="popover-tool clickable" onclick="event.stopPropagation();openStageTool('proposal','search')"><i>📚</i><div><b>找文献</b><small>补充研究背景、理论依据和相关研究</small></div></div>
+                <div class="popover-tool clickable" onclick="event.stopPropagation();openStageTool('proposal','survey')"><i>📋</i><div><b>问卷调查</b><small>设计并持续管理本研究的同一份问卷</small></div></div>
+                <div class="popover-tool clickable" onclick="event.stopPropagation();openStageTool('proposal','chart')"><i>📊</i><div><b>学术图</b><small>生成技术路线、研究框架等学术图</small></div></div>
+              </div>
+              <div class="popover-effect"><b>生成效果</b><br>自动复用已有综述、文献和研究信息，减少重复填写。</div>
+              <div class="popover-result"><b>最终获得：</b> 一份研究问题清晰、方法完整、结构规范的开题报告。</div>
+              <div class="popover-pills" style="margin-top:6px">
+                <span class="popover-pill" onclick="switchStage('proposal')">进入该阶段</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 阶段 3：论文初稿 -->
+          <div class="step-node" id="node-draft" onclick="switchStage('draft')">
+            <div class="step-circle">○</div>
+            <p>论文初稿</p>
+            <span id="badge-draft">待开始</span>
+
+            <div class="step-popover" onclick="event.stopPropagation()">
+              <div class="popover-title">论文初稿</div>
+              <div class="popover-kicker">快速把已有研究材料推进成完整论文初稿</div>
+              <div class="popover-row"><b>快速完成工具包</b></div>
+              <div class="popover-tools">
+                <div class="popover-tool clickable" onclick="event.stopPropagation();openStageTool('draft','search')"><i>📚</i><div><b>找文献</b><small>为不同章节补充需要的研究依据</small></div></div>
+                <div class="popover-tool clickable" onclick="event.stopPropagation();openStageTool('draft','survey')"><i>📋</i><div><b>问卷调查</b><small>继续使用同一份问卷并补充调查数据</small></div></div>
+                <div class="popover-tool clickable" onclick="event.stopPropagation();openStageTool('draft','chart')"><i>📊</i><div><b>学术图</b><small>生成研究框架、机制图与技术路线</small></div></div>
+                <div class="popover-tool clickable" onclick="event.stopPropagation();openStageTool('draft','format')"><i>📄</i><div><b>格式调整</b><small>按学校规范调整论文格式</small></div></div>
+                <div class="popover-tool clickable" onclick="event.stopPropagation();openStageTool('draft','plag')"><i>🔍</i><div><b>查重优化</b><small>识别高重复表达并辅助优化</small></div></div>
+              </div>
+              <div class="popover-effect"><b>生成效果</b><br>结合文献、综述、开题内容和已确认大纲连续写作。</div>
+              <div class="popover-result"><b>最终获得：</b> 一篇结构完整、材料有据、可继续修改的论文初稿。</div>
+              <div class="popover-pills" style="margin-top:6px">
+                <span class="popover-pill" onclick="switchStage('draft')">进入该阶段</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 阶段 4：答辩准备 -->
+          <div class="step-node" id="node-defense" onclick="switchStage('defense')">
+            <div class="step-circle">○</div>
+            <p>答辩准备</p>
+            <span id="badge-defense">待开始</span>
+
+            <div class="step-popover" onclick="event.stopPropagation()">
+              <div class="popover-title">答辩准备</div>
+              <div class="popover-kicker">把最终论文快速转化为清晰的答辩展示材料</div>
+              <div class="popover-row"><b>核心工具</b></div>
+              <div class="popover-tools">
+                <div class="popover-tool clickable" onclick="event.stopPropagation();openStageTool('defense','ppt')"><i>📊</i><div><b>论文PPT</b><small>自动提炼研究问题、方法、结果与创新点，生成答辩演示</small></div></div>
+              </div>
+              <div class="popover-row"><b>提交前可选优化</b></div>
+              <div class="popover-tools">
+                <div class="popover-tool clickable" onclick="event.stopPropagation();openStageTool('defense','format')"><i>📄</i><div><b>格式调整</b><small>按学校规范检查最终论文格式</small></div></div>
+                <div class="popover-tool clickable" onclick="event.stopPropagation();openStageTool('defense','plag')"><i>🔍</i><div><b>查重优化</b><small>在提交前处理高重复风险内容</small></div></div>
+              </div>
+              <div class="popover-effect"><b>准备效果</b><br>从论文全文中提炼研究问题、方法、核心结论与创新点。</div>
+              <div class="popover-result"><b>最终获得：</b> 一套基于论文全文生成、可继续编辑和导出的答辩材料。</div>
+              <div class="popover-pills" style="margin-top:6px">
+                <span class="popover-pill" onclick="switchStage('defense')">进入该阶段</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+      </section>
+
+      <!-- 表单为独立滚动区；顶部毕业进度区与左栏保持固定 -->
+      <div class="content-scroll">
+      <!-- 深度表单工作台（直接在主页面渲染，默认进入文献综述） -->
+      <section class="workspace-container" style="display:block;min-height:0">
+        <div class="form-pane" style="height:100%;overflow:auto">
+          <div id="reviewStepDemand" class="review-step-shell">
+            <div class="review-step-head">
+              <div><h2>填写综述需求</h2><p>先告诉文优你要写什么，以及希望使用怎样的文献材料。</p></div><span class="step-tag">步骤 1 / 4</span>
+            </div>
+            <section class="review-card">
+              <h3>基本信息</h3><p>复用原文献综述表单结构，只保留毕业版真正需要用户确认的内容。</p>
+              <div class="req-grid">
+                <div class="form-row req-wide"><label>当前选题</label><div style="padding:10px 12px;background:#fbfaff;border:1px solid #ded8f8;border-radius:8px;font-size:11px;color:var(--purple);font-weight:700">市场需求对中国省级旅游产业技术演化的影响</div></div>
+                <div class="form-row req-wide"><label>* 综述标题</label><input class="input" value="市场需求对中国省级旅游产业技术演化的影响"></div>
+                <div class="form-row"><label>研究方向</label><input class="input" value="旅游产业技术演化与区域市场需求"></div>
+                <div class="form-row"><label>* 目标字数</label><input class="input" type="number" value="5000"></div>
+                <div class="form-row req-wide"><label>核心研究问题</label><textarea class="textarea">市场需求如何影响省级旅游产业技术演化？现有研究有哪些共同结论与不足？</textarea></div>
+              </div>
+            </section>
+            <section class="review-card">
+              <h3>文献需求</h3><p>按原 demo 的逻辑保留“学科判断 → 系统建议 → 可选细化要求”，这里只定义需求，不在这里展示材料是否满足。</p>
+              <div class="req-shell" id="reqEditor">
+                <div class="req-head">
+                  <strong id="reqHeadline" style="font-size:11px">本次目标 20 篇</strong>
+                  <span class="req-subject-badge" id="reqSubjectBadge">经济 / 管理 / 社会科学</span>
+                </div>
+                <div class="req-basic">
+                  <div class="req-basic-row">
+                    <div><b>学科</b><small>不同学科使用不同的文献评价与收录体系</small></div>
+                    <select id="reqDiscipline" class="select req-discipline">
+                      <option value="social" selected>经济 / 管理 / 社会科学</option>
+                      <option value="stem">理工 / 工程</option>
+                      <option value="medical">医学 / 生命科学</option>
+                      <option value="humanities">人文 / 教育 / 法学</option>
+                    </select>
+                  </div>
+                  <div class="req-basic-row">
+                    <div><b>目标文献数量</b><small>确定本次综述希望使用多少篇可用全文</small></div>
+                    <div class="req-number-wrap"><input id="reqTarget" class="input req-number" type="number" min="1" max="200" value="20"><span>篇</span></div>
+                  </div>
+                </div>
+                <div class="req-recommendation" id="reqRecommendation">
+                  <div class="req-recommend-copy">
+                    <span class="req-recommend-kicker">系统建议</span>
+                    <strong id="reqRecommendationTitle">建议 18–25 篇，推荐采用 20 篇</strong>
+                    <small id="reqRecommendationBasis">根据 5000 字与「经济 / 管理 / 社会科学」生成</small>
+                    <div class="req-recommend-rules" id="reqRecommendationRules">SSCI ≥ 5 · 必须　 CSSCI ≥ 5 · 必须　 JCR Q1–Q2 ≥ 3 · 优先</div>
+                  </div>
+                  <button class="small-btn primary-lite req-adopt" type="button" id="reqAdoptBtn" onclick="adoptRequirementSuggestion()">采用建议</button>
+                </div>
+                <button class="req-advanced-toggle" type="button" id="reqAdvancedToggle" onclick="toggleRequirementDetail()" aria-expanded="false">
+                  <span><b>具体文献要求（可选）</b><small id="reqCurrentSummary">当前：SSCI ≥ 5 · CSSCI ≥ 5 · JCR Q1–Q2 ≥ 3</small></span>
+                  <span class="req-toggle-action" id="reqToggleAction">展开 ›</span>
+                </button>
+                <div class="req-detail" id="reqDetail" hidden>
+                  <div class="req-rule-head"><span>文献类型 / 收录体系</span><span>数量</span><span>要求等级</span><span></span></div>
+                  <div class="req-rule-list" id="reqRuleList">
+                    <div class="req-rule" data-req-rule><input class="input req-rule-name" value="SSCI"><div class="req-min"><span>≥</span><input class="input req-rule-count" type="number" min="0" max="200" value="5"></div><select class="select req-rule-mode"><option value="must" selected>必须满足</option><option value="prefer">优先满足</option></select><button class="req-remove" type="button" onclick="removeReqRule(this)">×</button></div>
+                    <div class="req-rule" data-req-rule><input class="input req-rule-name" value="CSSCI"><div class="req-min"><span>≥</span><input class="input req-rule-count" type="number" min="0" max="200" value="5"></div><select class="select req-rule-mode"><option value="must" selected>必须满足</option><option value="prefer">优先满足</option></select><button class="req-remove" type="button" onclick="removeReqRule(this)">×</button></div>
+                    <div class="req-rule" data-req-rule><input class="input req-rule-name" value="JCR Q1–Q2"><div class="req-min"><span>≥</span><input class="input req-rule-count" type="number" min="0" max="200" value="3"></div><select class="select req-rule-mode"><option value="must">必须满足</option><option value="prefer" selected>优先满足</option></select><button class="req-remove" type="button" onclick="removeReqRule(this)">×</button></div>
+                  </div>
+                  <button class="req-add" type="button" onclick="addReqRule()">＋ 添加文献要求</button>
+                </div>
+              </div>
+            </section>
+            <div class="req-actions"><button class="ghost" type="button">保存草稿</button><button class="primary" type="button" onclick="goReviewStep(2)">下一步：确认材料 →</button></div>
+          </div>
+
+          <div id="reviewStepMaterial" class="review-step-shell review-step-hidden">
+            <div class="review-step-head">
+              <div><h2>确认材料</h2><p>先检查当前文献库是否足够。如果不足，就在这里直接补材料，补完后仍回到“确认材料”。</p></div><span class="step-tag">步骤 2 / 4</span>
+            </div>
+            <section class="review-card">
+              <div class="material-status-head"><b>当前材料满足情况</b><span>3 / 20 篇可用</span></div>
+              <div class="material-summary">
+                <div class="material-metric"><b>63</b><span>文献库总量</span></div>
+                <div class="material-metric"><b>6</b><span>选题相关</span></div>
+                <div class="material-metric"><b>3</b><span>全文可用</span></div>
+                <div class="material-metric"><b>3 / 20</b><span>本次目标</span></div>
+              </div>
+              <div class="material-gap">当前材料不足：总量还缺 17 篇；SSCI 至少还缺 4 篇；CSSCI 至少还缺 3 篇。你可以补充材料，也可以承担风险直接继续。</div>
+            </section>
+
+            <section class="review-card">
+              <h3>补充材料</h3><p>复用原“找文献 · 检索设置”的主要逻辑，但不再单独暴露为进度节点。</p>
+              <div class="material-tools" style="grid-template-columns:repeat(3,1fr)">
+                <div class="material-tool" id="reviewSearchTool"><strong>🔎 系统检索</strong><p>基于当前选题、研究问题和文献需求自动生成检索词与候选池。</p><button class="small-btn primary-lite" type="button" onclick="openSearchPage('review')">设置并检索</button></div>
+                <div class="material-tool"><strong>📄 上传本地文献</strong><p>上传 PDF 后自动查重、入库、解析，并重新判断是否计入本次任务。</p><button class="small-btn" type="button">选择本地 PDF</button></div>
+                <div class="material-tool" id="reviewChartTool"><strong>📊 学术图</strong><p>基于当前综述材料生成研究脉络、概念关系或研究框架图。</p><button class="small-btn" type="button" onclick="highlightToolTarget('reviewChartTool')">进入学术图</button></div>
+              </div>
+            </section>
+
+            <section id="materialReadyBox" class="review-card review-step-hidden">
+              <div class="material-status-head"><b>材料已满足</b><span class="ok">28 / 20 篇可用</span></div>
+              <div class="material-gap" style="background:var(--teal-weak);color:var(--teal)">当前全文数量和必须条件均已满足，可以进入大纲确认。</div>
+            </section>
+            <div class="req-actions"><button class="ghost" type="button" onclick="goReviewStep(1)">← 返回填写需求</button><button class="primary" type="button" onclick="alert('下一步进入：确认大纲')">确认材料并进入大纲 →</button></div>
+          </div>
+          <!-- 完整文献检索：仍属于“确认材料”，但保留原 Find Papers 的完整功能层级 -->
+          <div id="reviewSearchPage" class="search-shell review-step-hidden">
+            <div id="searchSetupPage" class="search-shell">
+              <div class="review-step-head">
+                <div><div style="font-size:10px;color:var(--muted);font-weight:700;margin-bottom:6px"><span data-search-context>论文综述</span> / 确认材料 / 文献检索</div><h2>找文献 · 检索设置</h2><p>继承当前综述的选题、研究问题和文献需求，完整复用 Find Papers 的检索能力。</p></div>
+                <button class="ghost" type="button" onclick="closeSearchPage()">← 返回确认材料</button>
+              </div>
+              <section class="search-card">
+                <div class="search-block"><div class="search-block-head"><div><b>研究选题</b><small>从当前文献综述继承</small></div></div><div class="search-topic">市场需求对中国省级旅游产业技术演化的影响</div></div>
+                <div class="search-block"><div class="search-block-head"><div><b>系统生成的检索关键词</b><small>基于标题、研究方向和研究问题生成</small></div><button class="small-btn" type="button" onclick="optimizeSearchKeywords(this)">AI 优化关键词</button></div><div class="search-keywords" id="searchKeywordList"><span class="search-keyword">旅游市场需求</span><span class="search-keyword">技术演化</span><span class="search-keyword">数字化转型</span><span class="search-keyword">区域差异</span><span class="search-keyword">产业政策</span><span class="search-keyword">tourism technology adoption</span></div></div>
+                <div class="search-block"><div class="search-block-head"><div><b>文献需求</b><small>继承“填需求”，本次检索前仍可微调</small></div></div>
+                  <div class="req-detail" id="searchReqEditor">
+                    <div style="display:flex;align-items:center;justify-content:space-between;gap:14px;padding-bottom:10px;border-bottom:1px solid #f0f1f5"><div><b style="font-size:10px">目标全文数量</b><small style="display:block;margin-top:3px;color:var(--muted);font-size:8px">最终可用于当前任务的全文目标</small></div><div class="req-number-wrap"><input id="searchReqTarget" class="input req-number" type="number" min="1" max="200" value="20"><span>篇</span></div></div>
+                    <div class="req-rule-head"><span>文献类型 / 收录体系</span><span>数量</span><span>要求等级</span><span></span></div>
+                    <div class="req-rule-list" id="searchReqRuleList">
+                      <div class="req-rule" data-search-req-rule><input class="input req-rule-name" value="SSCI"><div class="req-min"><span>≥</span><input class="input req-rule-count" type="number" min="0" max="200" value="5"></div><select class="select req-rule-mode"><option value="must" selected>必须满足</option><option value="prefer">优先满足</option></select><button class="req-remove" type="button" onclick="removeSearchReqRule(this)">×</button></div>
+                      <div class="req-rule" data-search-req-rule><input class="input req-rule-name" value="CSSCI"><div class="req-min"><span>≥</span><input class="input req-rule-count" type="number" min="0" max="200" value="5"></div><select class="select req-rule-mode"><option value="must" selected>必须满足</option><option value="prefer">优先满足</option></select><button class="req-remove" type="button" onclick="removeSearchReqRule(this)">×</button></div>
+                      <div class="req-rule" data-search-req-rule><input class="input req-rule-name" value="JCR Q1–Q2"><div class="req-min"><span>≥</span><input class="input req-rule-count" type="number" min="0" max="200" value="3"></div><select class="select req-rule-mode"><option value="must">必须满足</option><option value="prefer" selected>优先满足</option></select><button class="req-remove" type="button" onclick="removeSearchReqRule(this)">×</button></div>
+                    </div><button class="req-add" type="button" onclick="addSearchReqRule()">＋ 添加文献要求</button>
+                  </div>
+                </div>
+                <div class="search-block"><div class="search-block-head"><div><b>检索数据库</b><small>开放学术元数据 + 中文学术数据源</small></div></div><div class="search-db-grid"><label class="search-db"><input type="checkbox" checked><span><b>OpenAlex</b><small>开放学术元数据</small></span></label><label class="search-db"><input type="checkbox" checked><span><b>Semantic Scholar</b><small>语义检索与引文元数据</small></span></label><label class="search-db"><input type="checkbox" checked><span><b>Crossref</b><small>DOI 与出版元数据</small></span></label><label class="search-db"><input type="checkbox" checked><span><b>中文学术数据库</b><small>授权数据源 / 用户可访问来源</small></span></label></div></div>
+                <div class="search-block"><div class="search-block-head"><div><b>检索强度</b><small>影响查询扩展范围和候选池规模</small></div></div><div class="search-intensity" id="searchIntensity"><button class="search-intensity-card" type="button" onclick="selectSearchIntensity(this,2)"><b>快速</b><small>目标需求 × 2<br>适合快速补充</small></button><button class="search-intensity-card active" type="button" onclick="selectSearchIntensity(this,3)"><b>标准 · 推荐</b><small>目标需求 × 3<br>兼顾覆盖与等待时间</small></button><button class="search-intensity-card" type="button" onclick="selectSearchIntensity(this,4)"><b>深度</b><small>目标需求 × 4<br>扩大主题覆盖</small></button></div><div class="search-why"><div style="display:flex;justify-content:space-between;gap:10px"><span><b style="color:#514295">为什么候选文献会多于最终需求？</b> Metadata / 摘要只能完成候选初筛，获取全文后还要做内容相关性筛选。</span><button class="text-link" type="button" onclick="document.getElementById('searchWhyFlow').classList.toggle('open')">了解筛选过程 ›</button></div><div class="search-why-flow" id="searchWhyFlow"><span class="search-why-node">多数据库检索</span>→<span class="search-why-node">Metadata 去重初筛</span>→<span class="search-why-node">形成 2–4 倍候选池</span>→<span class="search-why-node">获取全文</span>→<span class="search-why-node">内容筛选</span></div></div><div class="search-estimate">预计形成约 <b id="searchEstimateCount">60 篇候选文献</b>。候选数只是检索供给，不等于最终可用于当前任务的全文数量。</div></div>
+                <div class="req-actions"><button class="ghost" type="button" onclick="closeSearchPage()">取消</button><button class="primary" type="button" onclick="startFullSearch()">开始检索</button></div>
+              </section>
+            </div>
+
+            <div id="searchRunningPage" class="search-shell search-hidden">
+              <div class="review-step-head"><div><div style="font-size:10px;color:var(--muted);font-weight:700;margin-bottom:6px"><span data-search-context>论文综述</span> / 确认材料 / 文献检索</div><h2>正在检索文献</h2><p>Search Agent 正在建立候选文献池，完成后进入完整结果工作台。</p></div><button class="ghost" type="button" onclick="cancelFullSearch()">取消检索</button></div>
+              <section class="search-card search-running"><div class="search-run-hero"><h2>正在根据你的要求检索</h2><p>多数据库检索、去重、质量筛选与主题聚类会按顺序完成。</p></div><div class="search-run-progress"><i id="searchRunBar" style="width:18%"></i></div><div class="search-run-list" id="searchRunList"><div class="search-run-step current"><i>1</i><div><b>生成检索式</b><small>拆解中英文关键词与查询组合</small></div></div><div class="search-run-step"><i>2</i><div><b>多数据库检索</b><small>并行检索已选择的数据源</small></div></div><div class="search-run-step"><i>3</i><div><b>Metadata 归一化与去重</b><small>合并 DOI、标题、作者和年份信息</small></div></div><div class="search-run-step"><i>4</i><div><b>按文献要求筛选</b><small>应用 SSCI / CSSCI / JCR 等条件</small></div></div><div class="search-run-step"><i>5</i><div><b>主题聚类与候选排序</b><small>形成结构化候选文献池</small></div></div></div><div class="search-run-live"><span>当前阶段：<b id="searchRunStage">生成检索式</b></span><span>当前已保留 <b id="searchRunCount">12</b> 条候选记录</span></div><div class="req-actions"><button class="small-btn primary-lite" type="button" onclick="finishSearchNow()">立即查看结果</button></div></section>
+            </div>
+
+            <div id="searchResultsPage" class="search-shell search-hidden">
+              <div class="review-step-head"><div><div style="font-size:10px;color:var(--muted);font-weight:700;margin-bottom:6px"><span data-search-context>论文综述</span> / 确认材料 / 文献检索</div><h2>找文献结果</h2><p>完整保留“需求满足情况 / 检索策略 / 候选文献”三个结果视角。</p></div><button class="ghost" type="button" onclick="backToSearchSetup()">← 调整检索</button></div>
+              <section class="search-result-shell">
+                <header class="search-result-head"><div class="search-result-title"><div><h3>检索已完成</h3><p>共形成 60 篇候选文献 · 覆盖 5 个检索方向</p></div><span class="search-status-pill" id="searchAvailabilityPill">当前可用 13 / 20</span></div><nav class="search-tabs"><button class="search-tab active" type="button" onclick="showSearchTab('demand',this)">需求满足情况</button><button class="search-tab" type="button" onclick="showSearchTab('strategy',this)">检索策略</button><button class="search-tab" type="button" onclick="showSearchTab('candidates',this)">候选文献</button></nav></header>
+                <div class="search-result-content">
+                  <div id="searchTabDemand">
+                    <section class="search-result-section"><div class="search-overview"><div><h3>本次文献需求满足情况</h3><p>候选池回答“找到了什么”，当前可用全文回答“真正能进入当前任务的材料有多少”。</p></div><div class="search-overview-score"><b id="searchAvailableScore">13 / 20</b><small>当前可用全文</small></div></div><table class="search-demand-table"><thead><tr><th>文献要求</th><th>我的需求</th><th>候选池</th><th>可一键获取</th><th>需自行下载</th><th>当前可用全文</th><th>状态</th></tr></thead><tbody id="searchDemandBody"></tbody></table></section>
+                    <section class="search-result-section"><h3>全文获取</h3><p>候选文献只有获取全文、入库并解析完成后，才会重新判断是否计入本次综述。</p><div class="search-full-grid"><div class="search-full-card"><span class="search-badge oa">OA / 可直接获取</span><div class="search-big" id="searchOAcount">18</div><small>一键获取后依次查重、入库、解析，并重新判断是否纳入本次任务。</small><button class="small-btn primary-lite" id="searchOAButton" type="button" onclick="oneClickSearchImport()">一键入库</button></div><div class="search-full-card"><span class="search-badge warn">需自行获取全文</span><div class="search-big" id="searchManualCount">42</div><small>先导出待下载清单，在校内数据库 / 来源页下载 PDF，完成后回到文优导入。</small><div style="display:flex;gap:6px;flex-wrap:wrap"><button class="small-btn" type="button" onclick="exportSearchList(this)">导出文献 List</button><button class="small-btn primary-lite" type="button" onclick="openSearchImportPage()">导入到文献库</button></div></div></div></section>
+                    <section class="search-result-section"><h3>当前结论</h3><div class="search-conclusion" id="searchConclusion">目前仍不足：总量还缺 7 篇可用全文；SSCI 还缺 2 篇。继续入库或上传全文后，系统会重新计算。</div></section>
+                    <div class="req-actions"><button class="ghost" type="button" onclick="closeSearchPage()">返回确认材料</button><button class="primary" id="searchContinueBtn" type="button" onclick="returnWithSearchResult()" disabled style="opacity:.5;cursor:not-allowed">材料仍不足</button></div>
+                  </div>
+                  <div id="searchTabStrategy" class="search-hidden"><section class="search-result-section"><h3>系统检索策略</h3><p>Search Plan 展示选题如何被拆解成可以执行的检索方向。</p></section><div class="search-cluster-grid">
+                    <article class="search-cluster"><div class="search-cluster-head"><div><h4>市场需求与消费升级</h4><span style="font-size:8px;color:var(--muted)">建议最终覆盖约 5 篇</span></div><span class="search-cluster-count">16 篇</span></div><div class="search-query-list"><span class="search-query">旅游市场需求 技术升级</span><span class="search-query">消费升级 旅游数字化</span><span class="search-query">tourism demand technology adoption</span></div><div class="search-cluster-foot"><span>OpenAlex · Semantic Scholar · 中文数据库</span><span>Metadata 聚类</span></div></article>
+                    <article class="search-cluster"><div class="search-cluster-head"><div><h4>技术创新与数字化转型</h4><span style="font-size:8px;color:var(--muted)">建议最终覆盖约 4 篇</span></div><span class="search-cluster-count">14 篇</span></div><div class="search-query-list"><span class="search-query">旅游产业 技术创新</span><span class="search-query">数字化转型 旅游产业</span><span class="search-query">tourism digital transformation</span></div><div class="search-cluster-foot"><span>OpenAlex · Crossref · 中文数据库</span><span>Metadata 聚类</span></div></article>
+                    <article class="search-cluster"><div class="search-cluster-head"><div><h4>区域差异与空间演化</h4><span style="font-size:8px;color:var(--muted)">建议最终覆盖约 4 篇</span></div><span class="search-cluster-count">12 篇</span></div><div class="search-query-list"><span class="search-query">省级旅游产业 区域差异</span><span class="search-query">空间分异 技术演化</span><span class="search-query">regional tourism innovation</span></div><div class="search-cluster-foot"><span>OpenAlex · 中文数据库</span><span>Metadata 聚类</span></div></article>
+                    <article class="search-cluster"><div class="search-cluster-head"><div><h4>产业政策与治理机制</h4><span style="font-size:8px;color:var(--muted)">建议最终覆盖约 4 篇</span></div><span class="search-cluster-count">10 篇</span></div><div class="search-query-list"><span class="search-query">旅游产业 政策机制</span><span class="search-query">地方治理 技术扩散</span><span class="search-query">tourism policy innovation</span></div><div class="search-cluster-foot"><span>Semantic Scholar · 中文数据库</span><span>Metadata 聚类</span></div></article>
+                    <article class="search-cluster"><div class="search-cluster-head"><div><h4>产业组织与绩效</h4><span style="font-size:8px;color:var(--muted)">建议最终覆盖约 3 篇</span></div><span class="search-cluster-count">8 篇</span></div><div class="search-query-list"><span class="search-query">旅游产业组织 技术绩效</span><span class="search-query">市场结构 创新绩效</span><span class="search-query">tourism industry performance</span></div><div class="search-cluster-foot"><span>Crossref · 中文数据库</span><span>Metadata 聚类</span></div></article>
+                  </div><section class="search-result-section" style="margin-top:10px"><h3>策略可继续修改</h3><p>可根据导师要求调整方向，例如“多找政策机制”“优先 CSSCI”“只看近三年”。</p><div style="display:flex;gap:6px;flex-wrap:wrap"><button class="small-btn" type="button" onclick="quickStrategy(this,'多找政策机制')">多找政策机制</button><button class="small-btn" type="button" onclick="quickStrategy(this,'优先 CSSCI')">优先 CSSCI</button><button class="small-btn" type="button" onclick="quickStrategy(this,'只看近三年')">只看近三年</button></div></section></div>
+                  <div id="searchTabCandidates" class="search-hidden"><section class="search-result-section"><h3>候选文献</h3><p>按 Search Cluster 分组，展示 Metadata、文献层次、摘要匹配与全文获取状态。</p></section>
+                    <section class="search-paper-cluster"><div class="search-paper-cluster-head"><h4>市场需求与消费升级</h4><span>建议最终覆盖 5 篇</span></div><article class="search-paper"><div><h5>Tourism demand upgrading and digital technology adoption: Evidence from regional markets</h5><div class="search-paper-meta">Liu, Chen & Wang · 2025 · Tourism Management<br>来源：OpenAlex / 中文学术数据库 · 摘要可用</div><div class="search-levels"><span class="search-level">SSCI</span><span class="search-level">JCR Q1</span><span class="search-level">近5年</span><span class="search-level fit">可补当前缺口</span></div></div><div class="search-paper-side"><span class="search-badge oa">OA 可获取</span><button class="small-btn primary-lite" type="button" onclick="singlePaperImport(this)">一键入库</button></div></article><article class="search-paper"><div><h5>市场需求升级与旅游产业技术创新：来自省级面板数据的证据</h5><div class="search-paper-meta">王宁，赵辰 · 2024 · 旅游学刊<br>来源：中文学术数据库 · 摘要可用</div><div class="search-levels"><span class="search-level">CSSCI</span><span class="search-level">北大核心</span><span class="search-level">近5年</span><span class="search-level fit">可补当前缺口</span></div></div><div class="search-paper-side"><span class="search-badge warn">需自行获取</span><button class="small-btn" type="button" onclick="this.textContent='已打开来源页'">前往来源下载</button><button class="small-btn primary-lite" type="button" onclick="openSearchImportPage()">导入到文献库</button></div></article></section>
+                    <section class="search-paper-cluster"><div class="search-paper-cluster-head"><h4>技术创新与数字化转型</h4><span>建议最终覆盖 4 篇</span></div><article class="search-paper"><div><h5>Digital transformation, innovation capability and tourism industry productivity</h5><div class="search-paper-meta">Huang & Li · 2024 · Information & Management<br>来源：OpenAlex · 摘要可用</div><div class="search-levels"><span class="search-level">SSCI</span><span class="search-level">JCR Q1</span><span class="search-level fit">可补当前缺口</span></div></div><div class="search-paper-side"><span class="search-badge oa">OA 可获取</span><button class="small-btn primary-lite" type="button" onclick="singlePaperImport(this)">一键入库</button></div></article><article class="search-paper"><div><h5>数字技术赋能旅游产业高质量发展的机制研究</h5><div class="search-paper-meta">周敏，孙凯 · 2023 · 经济地理<br>来源：中文学术数据库 · 摘要可用</div><div class="search-levels"><span class="search-level">CSSCI</span><span class="search-level">北大核心</span><span class="search-level fit">可补当前缺口</span></div></div><div class="search-paper-side"><span class="search-badge warn">需自行获取</span><button class="small-btn" type="button" onclick="this.textContent='已打开来源页'">前往来源下载</button></div></article></section>
+                    <section class="search-paper-cluster"><div class="search-paper-cluster-head"><h4>区域差异与空间演化</h4><span>建议最终覆盖 4 篇</span></div><article class="search-paper"><div><h5>Regional heterogeneity in tourism innovation: A spatial panel analysis</h5><div class="search-paper-meta">Smith, Zhao & Park · 2023 · Annals of Tourism Research</div><div class="search-levels"><span class="search-level">SSCI</span><span class="search-level">JCR Q1</span><span class="search-level fit">可补当前缺口</span></div></div><div class="search-paper-side"><span class="search-badge oa">OA 可获取</span><button class="small-btn primary-lite" type="button" onclick="singlePaperImport(this)">一键入库</button></div></article></section>
+                    <section class="search-paper-cluster"><div class="search-paper-cluster-head"><h4>产业政策与治理机制</h4><span>建议最终覆盖 4 篇</span></div><article class="search-paper"><div><h5>Policy support, institutional environment and technology diffusion in tourism</h5><div class="search-paper-meta">Hughes & Martin · 2024 · Research Policy</div><div class="search-levels"><span class="search-level">SSCI</span><span class="search-level">JCR Q1</span><span class="search-level fit">可补当前缺口</span></div></div><div class="search-paper-side"><span class="search-badge oa">OA 可获取</span><button class="small-btn primary-lite" type="button" onclick="singlePaperImport(this)">一键入库</button></div></article></section>
+                  </div>
+                </div>
+              </section>
+            </div>
+
+            <div id="searchImportPage" class="search-shell search-hidden">
+              <div class="review-step-head"><div><div style="font-size:10px;color:var(--muted);font-weight:700;margin-bottom:6px"><span data-search-context>论文综述</span> / 确认材料 / 文献检索 / 导入全文</div><h2>导入到个人文献库</h2><p>上传后先匹配候选文献，再查重、入库、解析，最后判断是否计入本次任务。</p></div><button class="ghost" type="button" onclick="backToSearchResults()">← 返回检索结果</button></div>
+              <section class="search-import-context"><div class="search-import-top"><div><h3 style="margin:0;font-size:13px">当前综述补全文</h3><p style="font-size:9px;color:var(--muted);line-height:1.5">来自当前 Find Papers 结果，优先依据 DOI、标题、作者和年份进行匹配。</p></div><div class="search-import-stat"><b id="searchImportPending">42</b>待补全文</div></div><div class="search-dropzone"><strong>把刚刚下载的 PDF 拖到这里</strong><p>或选择本地文件。支持一次选择多篇 PDF，重复文献自动忽略。</p><input id="searchPdfInput" type="file" accept=".pdf,application/pdf" multiple hidden><button class="small-btn primary-lite" type="button" onclick="document.getElementById('searchPdfInput').click()">选择本地 PDF</button><button class="small-btn" type="button" onclick="simulateSearchUpload()">原型：模拟上传 8 篇</button><div class="search-match-hints"><span>DOI 匹配</span><span>标题匹配</span><span>作者 / 年份辅助</span><span>重复文献自动忽略</span></div></div></section>
+            </div>
+
+            <div id="searchImportedPage" class="search-shell search-hidden">
+              <div class="review-step-head"><div><div style="font-size:10px;color:var(--muted);font-weight:700;margin-bottom:6px"><span data-search-context>论文综述</span> / 确认材料 / 文献检索 / 导入完成</div><h2>全文导入完成</h2><p>导入结果已经写入个人文献库，并重新计算当前综述的材料满足情况。</p></div><button class="ghost" type="button" onclick="showUpdatedSearchResults()">查看更新后的检索结果</button></div>
+              <section class="search-card"><div class="search-import-top"><div><h3>本次导入</h3><p>8 篇 PDF 已匹配候选清单，其中 7 篇解析成功，6 篇通过当前任务筛选。</p></div><div class="search-import-stat"><b>28</b>任务可用</div></div><div class="search-conclusion good">个人文献库 63 → 71；当前任务可用全文 13 → 28。数量和必须条件均已满足。</div><div class="search-import-list"><article class="search-import-row"><div><h4>政策支持与旅游技术扩散.pdf</h4><p>已匹配候选文献 · 全文已解析</p></div><span class="search-badge oa">已入库 · 本次可用</span></article><article class="search-import-row"><div><h4>市场需求升级与技术创新.pdf</h4><p>已匹配候选文献 · 全文已解析</p></div><span class="search-badge oa">已入库 · 本次可用</span></article><article class="search-import-row"><div><h4>regional-tourism-innovation.pdf</h4><p>已入库，但内容筛选后未纳入本次任务</p></div><span class="search-badge">已入库 · 不纳入</span></article><article class="search-import-row"><div><h4>tourism-policy-scan.pdf</h4><p>已入库，但未能正确提取全文内容</p></div><span class="search-badge warn">解析失败</span></article></div><div class="req-actions"><button class="primary" type="button" onclick="showUpdatedSearchResults()">查看更新后的结果 →</button></div></section>
+            </div>
+          </div>
+
+
+          <!-- 开题报告：四步结果导向流程 -->
+          <div id="proposalWorkspace" class="proposal-shell proposal-hidden">
+            <div id="proposalStepDemand" class="proposal-shell">
+              <div class="review-step-head"><div><h2>填写开题需求</h2><p>系统会先告诉你目前发现了哪些可复用成果。是否复用由你决定，确认复用后才会自动识别并带入相关信息。</p></div><span class="step-tag">步骤 1 / 4</span></div>
+              <section class="inherited-foundation">
+                <div class="inherited-head"><div><h3>发现可复用的前序成果</h3><p>这里只展示前一阶段真正产出的成果，不把文献、研究问题等拆成单独选项。若有多个成果，可分别勾选。</p></div><span class="inherited-badge">发现 2 项成果</span></div>
+                <div class="inherited-grid" id="proposalReuseGrid">
+                  <label class="inherited-item" data-reuse-card><input class="reuse-check" type="checkbox" value="review-current"><b>📝 文献综述 · 当前选题</b><small>《市场需求对中国省级旅游产业技术演化的影响》 · 最新完成版</small><span class="mini-ok">可选择复用</span></label>
+                  <label class="inherited-item" data-reuse-card><input class="reuse-check" type="checkbox" value="review-related"><b>📝 文献综述 · 相关研究</b><small>《旅游产业数字化转型与技术创新研究》 · 已完成成果</small><span class="mini-ok">可选择复用</span></label>
+                </div>
+                <div class="reuse-actions"><small>选中后，系统会从这些综述成果中识别文献、研究问题、理论基础等信息；不复用则由你重新填写。</small><button class="small-btn primary-lite" type="button" onclick="applyProposalReuse()">确认复用并自动识别</button></div>
+                <div id="proposalReuseResult" class="reuse-result"></div>
+              </section>
+              <section class="proposal-card"><h3>开题基本信息</h3><p id="proposalBasicHint">尚未确认复用内容。你可以手动填写，也可以先在上方选择已有成果后自动识别。研究方法中仅“问卷调查法”提供产品内辅助。</p><div class="proposal-grid">
+                <div class="form-row proposal-wide"><label>当前选题</label><div style="padding:10px 12px;background:#fbfaff;border:1px solid #ded8f8;border-radius:8px;font-size:11px;color:var(--purple);font-weight:700">市场需求对中国省级旅游产业技术演化的影响</div></div>
+                <div class="form-row proposal-wide"><label>* 开题标题</label><input id="proposalTitleInput" class="input" placeholder="请填写本次开题报告标题"></div>
+                <div class="form-row"><label>学校 / 专业</label><input id="proposalSchoolInput" class="input" value="A大学 · 旅游管理"></div>
+                <div class="form-row"><label>目标字数</label><input class="input" type="number" value="8000"></div>
+                <div class="form-row"><label>学校模板</label><select class="select"><option>A大学硕士研究生开题报告</option><option>通用硕士开题模板</option></select></div>
+                <div class="form-row proposal-wide"><label>研究方法</label><div class="research-method-wrap"><div class="research-method-note">研究方法仍属于论文信息。当前版本只有“问卷调查法”可进一步由文优辅助完成；其他方法可以记录或从前序成果中识别，但不会生成不存在的工具入口。</div><div class="research-method-grid" id="proposalResearchMethods" style="grid-template-columns:1fr"><button class="research-method supported" type="button" data-method="survey" onclick="toggleResearchMethod(this,'proposal','survey')"><b>问卷调查法</b><small>选择后，“确认材料”会检查问卷方案，并可直接进入问卷调查完成题项与调查方案。</small><span class="method-supported-badge">文优可辅助</span></button></div><div class="other-method-box"><b>其他研究方法</b><small>用于记录论文实际采用的方法，例如实证分析法、案例研究法、文献研究法等。当前版本仅记录，不额外提供对应研究工具。</small><input id="proposalOtherMethodsInput" class="input" placeholder="例如：实证分析法、案例研究法"></div></div></div>
+                <div class="form-row proposal-wide"><label>核心研究问题</label><textarea id="proposalQuestionInput" class="textarea" placeholder="请填写本次开题报告要解决的核心研究问题"></textarea></div>
+                <div class="form-row proposal-wide"><label>导师 / 学院要求</label><textarea class="textarea" placeholder="例如：重点说明研究创新性、研究方法可行性与技术路线"></textarea></div>
+              </div></section>
+              <div class="req-actions"><button class="ghost" type="button">保存草稿</button><button class="primary" type="button" onclick="goProposalStep(2)">下一步：确认材料 →</button></div>
+            </div>
+
+            <div id="proposalStepMaterial" class="proposal-shell proposal-hidden">
+              <div class="review-step-head"><div><h2>确认开题材料</h2><p>检查开题方案需要的研究基础。缺什么就在这里补什么，完成后仍回到“确认材料”。</p></div><span class="step-tag">步骤 2 / 4</span></div>
+              <section class="proposal-card"><h3>当前研究材料</h3><p>根据上一步确认复用的前序成果检查基础材料；若选择“问卷调查法”，这里会额外检查问卷方案。其他研究方法仅记录，不生成额外工具。</p><div class="proposal-material-list">
+                <div class="proposal-material-row"><div class="proposal-material-icon">📚</div><div><b>参考文献</b><small>28 篇全文可用，研究背景与理论依据基本充足</small></div><span class="draft-state ok">已就绪</span></div>
+                <div id="proposalMethodMaterials" style="display:contents"></div>
+                <div class="proposal-material-row"><div class="proposal-material-icon">📊</div><div><b>技术路线 / 研究框架</b><small>尚未形成可用于开题展示的技术路线图</small></div><span class="draft-state warn">待补充</span></div>
+              </div></section>
+              <section class="proposal-card"><h3>补充研究材料</h3><p id="proposalToolHint">找文献与学术图为通用能力；只有当你选择“问卷调查法”时，这里才增加问卷调查入口。</p><div class="proposal-tools" id="proposalDynamicTools"></div></section>
+              <div id="proposalMaterialReady" class="material-gap" style="display:none;background:var(--teal-weak);color:var(--teal)">开题所需材料已补齐，可以进入研究方案确认。</div>
+              <div class="req-actions"><button class="ghost" type="button" onclick="goProposalStep(1)">← 返回填写需求</button><button class="primary" type="button" onclick="goProposalStep(3)">确认材料并进入方案 →</button></div>
+            </div>
+
+            <div id="proposalStepPlan" class="proposal-shell proposal-hidden">
+              <div class="review-step-head"><div><h2>确认研究方案</h2><p>开题阶段重点确认“这项研究准备怎么做”，而不只是确认文章目录。</p></div><span class="step-tag">步骤 3 / 4</span></div>
+              <section class="proposal-card"><h3>研究方案</h3><p>系统根据已有综述、文献、已确认研究方法和技术路线组装，可直接修改。</p><div class="proposal-plan">
+                <div class="proposal-plan-row"><b>研究问题</b><div>① 市场需求是否显著影响旅游产业技术演化？<br>② 是否存在区域异质性？<br>③ 数字化水平是否发挥调节作用？</div></div>
+                <div class="proposal-plan-row"><b>研究对象</b><div id="proposalPlanObject">中国 31 个省级地区</div></div>
+                <div class="proposal-plan-row"><b>研究方法</b><div id="proposalPlanMethods">尚未确认研究方法</div></div>
+                <div id="proposalSurveyPlanRows" style="display:none"></div>
+                <div class="proposal-plan-row"><b>核心变量</b><div>因变量：旅游产业技术演化；自变量：市场需求；调节变量：数字化水平</div></div>
+                <div class="proposal-plan-row"><b>数据来源</b><div id="proposalPlanDataSource">根据研究方案填写</div></div>
+                <div class="proposal-plan-row"><b>技术路线</b><div>研究问题 → 理论分析 → 变量设计 → 数据收集 → 实证检验 → 结论建议</div></div>
+              </div></section>
+              <div class="req-actions"><button class="ghost" type="button" onclick="goProposalStep(2)">← 返回确认材料</button><button class="primary" type="button" onclick="goProposalStep(4)">确认方案并生成开题 →</button></div>
+            </div>
+
+            <div id="proposalStepResult" class="proposal-shell proposal-hidden">
+              <div class="review-step-head"><div><h2>开题报告已完成</h2><p>已根据确认后的研究方案生成完整开题报告，并复用已有研究材料。</p></div><span class="step-tag">步骤 4 / 4</span></div>
+              <section class="proposal-card"><div class="review-step-head"><div><h3 style="font-size:15px">开题报告结果</h3><p>主结果包含研究背景、研究现状、研究设计、技术路线与研究计划。</p></div><span class="step-tag" style="background:var(--teal-weak);color:var(--teal)">开题已完成</span></div>
+                <div class="proposal-result-meta"><span class="draft-meta-pill">8,620 字</span><span class="draft-meta-pill">引用文献 32 篇</span><span class="draft-meta-pill">技术路线图 1 张</span><span class="draft-meta-pill" id="proposalResultSurveyMeta" style="display:none">问卷方案 1 份</span></div>
+                <div class="draft-main-actions"><button class="ghost" type="button">继续编辑</button><button class="primary" type="button" onclick="completeStageByExport('proposal',this)">导出开题报告</button></div>
+                <div class="proposal-result-paper"><h1>市场需求对中国省级旅游产业技术演化的影响研究 · 开题报告</h1><h2>一、研究背景与意义</h2><p>随着旅游消费升级和数字技术渗透，市场需求已成为推动旅游产业技术演化的重要力量……</p><h2>二、研究问题与研究设计</h2><p><span id="proposalMethodResultText">本研究围绕市场需求、技术演化及区域异质性展开，并根据已确认的研究方法组织研究设计……</span></p><h2>三、技术路线与研究计划</h2><p>研究按照“问题提出—理论分析—变量设计—数据收集—实证检验—结论建议”的路径推进。</p></div>
+              </section>
+            </div>
+          </div>
+
+          <!-- 问卷调查：跨开题报告与论文初稿共用同一份问卷资产与同一套页面 -->
+          <div id="questionnaireWorkspace" class="questionnaire-shell questionnaire-hidden">
+            <div class="review-step-head">
+              <div>
+                <div id="questionnaireBreadcrumb" style="font-size:10px;color:var(--muted);font-weight:700;margin-bottom:6px">开题报告 / 确认材料 / 问卷调查</div>
+                <h2>问卷调查</h2>
+                <p id="questionnairePageHint">这是一份跨开题与初稿持续复用的问卷。开题时确认问卷方案，后续进入论文初稿时继续使用同一份问卷与调查数据，不重新创建。</p>
+              </div>
+              <button class="ghost" type="button" onclick="closeQuestionnairePage()">← 返回确认材料</button>
+            </div>
+
+            <section class="proposal-card">
+              <div class="review-step-head" style="margin-bottom:8px">
+                <div><h3>问卷方案</h3><p id="questionnairePlanHint">系统已结合当前选题与研究问题生成初始方案。确认后会保存为当前研究主题下的同一份问卷资产。</p></div>
+                <span id="questionnairePlanState" class="step-tag">待确认</span>
+              </div>
+              <div class="questionnaire-grid">
+                <div class="form-row questionnaire-wide"><label>调查目标</label><textarea id="sharedSurveyGoal" class="textarea">了解市场需求、数字化水平与旅游产业技术演化之间的关系，并验证关键变量之间的影响路径。</textarea></div>
+                <div class="form-row"><label>调查对象</label><input id="sharedSurveyAudience" class="input" value="旅游行业从业人员"></div>
+                <div class="form-row"><label>预计样本量</label><input id="sharedSurveyTarget" class="input" type="number" value="300"></div>
+                <div class="form-row questionnaire-wide"><label>问卷维度</label><div class="questionnaire-dimensions"><label class="questionnaire-dimension"><input type="checkbox" checked>市场需求</label><label class="questionnaire-dimension"><input type="checkbox" checked>数字化水平</label><label class="questionnaire-dimension"><input type="checkbox" checked>技术采纳</label><label class="questionnaire-dimension"><input type="checkbox" checked>基本信息</label></div></div>
+              </div>
+            </section>
+
+            <section class="proposal-card">
+              <div class="review-step-head" style="margin-bottom:8px"><div><h3>问卷题项</h3><p>当前方案为 4 个维度、28 道题。开题与初稿访问的都是这一份题项，不会生成第二份问卷。</p></div><button class="small-btn" type="button" onclick="regenerateQuestionnaire()">重新生成题项</button></div>
+              <div class="questionnaire-preview">
+                <div class="questionnaire-item"><b>Q1 市场需求变化速度</b><small>过去三年，所在地区旅游消费者的需求变化速度明显加快。　1 非常不同意 → 5 非常同意</small></div>
+                <div class="questionnaire-item"><b>Q8 数字化水平</b><small>所在单位已经较广泛地使用数字技术支持产品、服务或运营创新。</small></div>
+                <div class="questionnaire-item"><b>Q17 技术采纳</b><small>面对新的市场需求，所在单位能够较快引入或应用新的技术方案。</small></div>
+              </div>
+            </section>
+
+            <section class="proposal-card">
+              <div class="review-step-head" style="margin-bottom:8px"><div><h3>调查数据</h3><p id="questionnaireDataHint">问卷确认后可继续积累调查数据。开题阶段可以暂不导入，进入论文初稿后仍然回到这里继续。</p></div><span id="questionnaireDataState" class="step-tag">暂无样本</span></div>
+              <div class="questionnaire-data-box"><div><b id="sharedSurveyDataTitle">尚未导入有效样本</b><small id="sharedSurveyDataDesc">当前只有问卷方案。样本数据会继续归属于同一份问卷。</small></div><button class="small-btn primary-lite" type="button" onclick="simulateSurveyDataImport()">模拟导入 326 份样本</button></div>
+              <div class="questionnaire-preview" style="margin-top:10px"><div class="questionnaire-item"><b>数据完整性检查</b><small id="sharedSurveyQuality">等待导入数据后检查无效样本、缺失值与答题时长。</small></div><div class="questionnaire-item"><b>论文可用状态</b><small id="sharedSurveyUseState">尚未达到可用于初稿写作的状态。</small></div></div>
+            </section>
+
+            <div class="questionnaire-status" id="questionnaireSharedStatus">同一份问卷会在开题报告和论文初稿之间持续复用。修改问卷方案后，两个阶段看到的内容都会同步更新。</div>
+            <div class="req-actions"><button class="ghost" type="button" onclick="closeQuestionnairePage()">暂不处理</button><button class="primary" id="questionnaireConfirmBtn" type="button" onclick="confirmQuestionnaire()">确认问卷并返回 →</button></div>
+          </div>
+
+          <!-- 论文初稿：独立四步流程 -->
+          <div id="draftWorkspace" class="draft-shell draft-hidden">
+            <div id="draftStepDemand" class="draft-shell">
+              <div class="review-step-head">
+                <div><h2>填写初稿需求</h2><p>先确认这次论文初稿要不要复用前序成果。只有你确认复用后，系统才会自动识别并填入相关信息。</p></div><span class="step-tag">步骤 1 / 4</span>
+              </div>
+              <section class="inherited-foundation">
+                <div class="inherited-head"><div><h3>发现可复用的前序成果</h3><p>这里只展示前序论文节点已经完成的成果。每份成果独立选择，成果内部的文献、问题、方法与技术路线由系统统一识别。</p></div><span class="inherited-badge">发现 3 项成果</span></div>
+                <div class="inherited-grid" id="draftReuseGrid">
+                  <label class="inherited-item" data-reuse-card><input class="reuse-check" type="checkbox" value="review-current"><b>📝 文献综述</b><small>《市场需求对中国省级旅游产业技术演化的影响》 · 最新完成版</small><span class="mini-ok">可选择复用</span></label>
+                  <label class="inherited-item" data-reuse-card><input class="reuse-check" type="checkbox" value="proposal-current"><b>📋 开题报告</b><small>《市场需求对中国省级旅游产业技术演化的影响研究》 · 已完成版</small><span class="mini-ok">可选择复用</span></label>
+                  <label class="inherited-item" data-reuse-card><input class="reuse-check" type="checkbox" value="proposal-previous"><b>📋 开题报告 · 历史版本</b><small>同选题上一版开题方案 · 保留导师修改前内容</small><span class="mini-ok">可选择复用</span></label>
+                </div>
+                <div class="reuse-actions"><small>可复用一份或多份成果。系统会综合识别其中的研究问题、方法、材料与结构；不复用则重新填写。</small><button class="small-btn primary-lite" type="button" onclick="applyDraftReuse()">确认复用并自动识别</button></div>
+                <div id="draftReuseResult" class="reuse-result"></div>
+              </section>
+              <section class="draft-card">
+                <h3>论文基本信息</h3><p id="draftBasicHint">尚未确认复用内容。请手动填写，或先在上方选择已有成果后自动识别。</p>
+                <div class="draft-grid">
+                  <div class="form-row draft-wide"><label>当前选题</label><div style="padding:10px 12px;background:#fbfaff;border:1px solid #ded8f8;border-radius:8px;font-size:11px;color:var(--purple);font-weight:700">市场需求对中国省级旅游产业技术演化的影响</div></div>
+                  <div class="form-row draft-wide"><label>* 论文标题</label><input id="draftTitleInput" class="input" placeholder="请填写论文标题"></div>
+                  <div class="form-row"><label>* 目标字数</label><input class="input" type="number" value="30000"></div>
+                  <div class="form-row"><label>学校 / 专业</label><input id="draftSchoolInput" class="input" value="A大学 · 旅游管理"></div>
+                  <div class="form-row draft-wide"><label>核心研究问题</label><textarea id="draftQuestionInput" class="textarea" placeholder="请填写本次论文要解决的核心研究问题"></textarea></div>
+                </div>
+              </section>
+              <section class="draft-card">
+                <h3>研究方法</h3><p>记录这篇论文实际采用的方法。当前文优只对“问卷调查法”提供产品内辅助；若复用的开题报告中包含问卷方案，会自动识别并继续沿用。</p>
+                <div class="research-method-grid" id="draftResearchMethods" style="grid-template-columns:1fr">
+                  <button class="research-method supported" type="button" data-method="survey" onclick="toggleResearchMethod(this,'draft','survey')"><b>问卷调查法</b><small>选择后，“确认材料”会检查已有问卷与样本数据，并可继续进入问卷调查补充数据。</small><span class="method-supported-badge">文优可辅助</span></button>
+                </div>
+                <div class="other-method-box"><b>其他研究方法</b><small>可填写从开题报告继承或本次论文实际采用的其他方法。系统会保留这些信息，但当前不提供对应研究工具。</small><input id="draftOtherMethodsInput" class="input" placeholder="例如：实证分析法、文献研究法"></div>
+              </section>
+              <div class="req-actions"><button class="ghost" type="button">保存草稿</button><button class="primary" type="button" onclick="goDraftStep(2)">下一步：确认材料 →</button></div>
+            </div>
+
+            <div id="draftStepMaterial" class="draft-shell draft-hidden">
+              <div class="review-step-head">
+                <div><h2>确认初稿材料</h2><p>先确认“能不能写”。缺什么就从这里补什么，补完后仍回到本页确认。</p></div><span class="step-tag">步骤 2 / 4</span>
+              </div>
+              <section class="draft-card">
+                <h3>本次写作材料</h3><p>根据上一步确认复用的前序成果检查写作材料；若采用“问卷调查法”，这里会继续检查问卷与样本数据。其他研究方法仅记录。</p>
+                <div class="draft-material-list">
+                  <div class="draft-material-row"><div class="draft-material-icon">📚</div><div><b>参考文献</b><small>28 篇全文可用，满足当前章节写作</small></div><span class="draft-state ok">已就绪</span></div>
+                  <div id="draftMethodMaterials" style="display:contents"></div>
+                  <div class="draft-material-row"><div class="draft-material-icon">📊</div><div><b>学术图 / 研究框架</b><small>已有技术路线图，可继续补充机制图</small></div><span class="draft-state ok">可用</span></div>
+                </div>
+              </section>
+              <section class="draft-card">
+                <h3>补充研究材料</h3><p id="draftToolHint">找文献与学术图为通用能力；只有采用“问卷调查法”时，这里才增加问卷调查入口，用于继续补充问卷与样本数据。</p>
+                <div class="draft-tool-grid" id="draftDynamicTools"></div>
+              </section>
+              <div id="draftMaterialReady" class="material-gap" style="display:none;background:var(--teal-weak);color:var(--teal)">问卷与调查数据已补齐，本次初稿材料已满足，可以进入大纲确认。</div>
+              <div class="req-actions"><button class="ghost" type="button" onclick="goDraftStep(1)">← 返回填写需求</button><button class="primary" type="button" onclick="goDraftStep(3)">确认材料并进入大纲 →</button></div>
+            </div>
+
+            <div id="draftStepOutline" class="draft-shell draft-hidden">
+              <div class="review-step-head">
+                <div><h2>确认论文大纲</h2><p>系统已结合综述、开题报告、问卷与文献材料生成完整初稿结构。</p></div><span class="step-tag">步骤 3 / 4</span>
+              </div>
+              <section class="draft-card">
+                <div class="draft-outline-list">
+                  <div class="draft-outline-row"><span class="drag">⋮⋮</span><input class="draft-outline-input" value="1 绪论"><button class="small-btn">删除</button></div>
+                  <div class="draft-outline-row child"><span class="drag">⋮⋮</span><input class="draft-outline-input" value="1.1 研究背景与意义"><button class="small-btn">删除</button></div>
+                  <div class="draft-outline-row"><span class="drag">⋮⋮</span><input class="draft-outline-input" value="2 文献综述与理论基础"><button class="small-btn">删除</button></div>
+                  <div class="draft-outline-row"><span class="drag">⋮⋮</span><input class="draft-outline-input" value="3 研究设计"><button class="small-btn">删除</button></div>
+                  <div class="draft-outline-row child" id="draftSurveyOutlineRow1"><span class="drag">⋮⋮</span><input class="draft-outline-input" value="3.1 问卷设计与变量测量"><button class="small-btn">删除</button></div>
+                  <div class="draft-outline-row child" id="draftSurveyOutlineRow2"><span class="drag">⋮⋮</span><input class="draft-outline-input" value="3.2 样本与数据来源"><button class="small-btn">删除</button></div>
+                  <div class="draft-outline-row"><span class="drag">⋮⋮</span><input class="draft-outline-input" value="4 实证结果与分析"><button class="small-btn">删除</button></div>
+                  <div class="draft-outline-row"><span class="drag">⋮⋮</span><input class="draft-outline-input" value="5 结论与建议"><button class="small-btn">删除</button></div>
+                </div>
+                <button class="small-btn primary-lite" style="display:flex;margin:10px auto 0">＋ 添加章节</button>
+              </section>
+              <div class="req-actions"><button class="ghost" type="button" onclick="goDraftStep(2)">← 返回确认材料</button><button class="primary" type="button" onclick="goDraftStep(4)">确认大纲并生成初稿 →</button></div>
+            </div>
+
+            <div id="draftStepResult" class="draft-shell draft-hidden">
+              <div class="review-step-head">
+                <div><h2>论文初稿已生成</h2><p>正文完成后，格式调整和查重优化作为结果优化能力继续处理，不再增加主流程节点。</p></div><span class="step-tag">步骤 4 / 4</span>
+              </div>
+              <section id="draftResultText" class="draft-result-pane">
+                <div class="draft-card">
+                  <div class="review-step-head">
+                    <div><h3 style="font-size:15px">正文结果</h3><p>这是论文初稿阶段的主结果。格式调整与查重优化不会影响“已得到初稿”的主流程状态。</p></div>
+                    <span class="step-tag" style="background:var(--teal-weak);color:var(--teal)">初稿已完成</span>
+                  </div>
+                  <div class="draft-result-meta">
+                    <span class="draft-meta-pill">12,450 字</span>
+                    <span class="draft-meta-pill">引用文献 28 篇</span>
+                    <span class="draft-meta-pill" id="draftSurveySampleMeta">问卷样本 326 份</span>
+                  </div>
+                  <div class="draft-main-actions"><button class="ghost" type="button">继续修改正文</button><button class="primary" type="button" onclick="completeStageByExport('draft',this)">导出论文初稿</button></div>
+                  <div class="draft-paper">
+                    <h1>市场需求对中国省级旅游产业技术演化的影响研究</h1>
+                    <h2>1 绪论</h2>
+                    <p>随着旅游消费需求升级与数字技术持续渗透，省级旅游产业的技术演化呈现出明显的区域差异。已有研究从需求拉动、数字化转型与制度环境等角度进行了讨论……</p>
+                    <h2>3 研究设计</h2>
+                    <p><span id="draftMethodResultText">本研究采用问卷调查与省级面板数据相结合的方式，对市场需求、技术采纳及其作用机制进行测量。问卷题项基于既有成熟量表并结合旅游产业情境进行调整……</span></p>
+                    <h2>4 实证结果与分析</h2>
+                    <p>结果显示，市场需求升级对旅游产业技术演化具有显著正向影响，并且这一作用在不同区域之间存在异质性……</p>
+                  </div>
+
+                  <div class="value-section">
+                    <div class="value-section-head">
+                      <div><h3>进一步优化论文</h3><p>以下能力为初稿生成后的可选增值功能，需要时再进入，不占用毕业主流程节点。</p></div>
+                      <span class="step-tag">可选</span>
+                    </div>
+                    <div class="value-grid">
+                      <div class="value-card">
+                        <div class="value-icon">📄</div>
+                        <div><b>格式调整</b><small>按学校模板统一标题、字号、行距、图表编号与参考文献格式。</small><span class="value-badge">增值功能</span></div>
+                        <button class="small-btn primary-lite" type="button" onclick="openDraftValuePage('format')">开始调整</button>
+                      </div>
+                      <div class="value-card">
+                        <div class="value-icon">🔍</div>
+                        <div><b>查重优化</b><small>定位高重复风险，在保留原意与引用关系的前提下辅助优化。</small><span class="value-badge">增值功能</span></div>
+                        <button class="small-btn primary-lite" type="button" onclick="openDraftValuePage('plag')">开始优化</button>
+                      </div>
+                    </div>
+
+
+                  </div>
+                </div>
+              </section>
+            </div>
+
+            <!-- 初稿增值功能：独立表单页，不在正文结果页内展开 -->
+            <div id="draftValueFormatPage" class="draft-shell draft-hidden">
+              <div class="review-step-head">
+                <div>
+                  <div style="font-size:10px;color:var(--muted);font-weight:700;margin-bottom:6px">论文初稿 / 已生成 / 格式调整</div>
+                  <h2>格式调整</h2>
+                  <p>作为初稿完成后的可选增值功能，进入独立表单完成模板选择、问题识别与格式应用。</p>
+                </div>
+                <button class="ghost" type="button" onclick="closeDraftValuePage()">← 返回初稿结果</button>
+              </div>
+              <section class="draft-card">
+                <h3>格式调整设置</h3><p>先确认学校模板，再扫描正文中的格式问题。</p>
+                <div class="draft-grid">
+                  <div class="form-row"><label>学校模板</label><select class="select"><option>A大学硕士论文格式规范</option><option>通用硕士论文模板</option></select></div>
+                  <div class="form-row"><label>模板文件</label><button class="small-btn primary-lite" type="button">上传 Word / PDF 模板</button></div>
+                  <div class="form-row draft-wide"><label>检查范围</label><div style="display:flex;gap:8px;flex-wrap:wrap;font-size:10px"><label><input type="checkbox" checked> 标题层级</label><label><input type="checkbox" checked> 字体字号</label><label><input type="checkbox" checked> 行距页边距</label><label><input type="checkbox" checked> 图表编号</label><label><input type="checkbox" checked> 参考文献</label></div></div>
+                </div>
+                <div style="margin-top:14px;display:grid;grid-template-columns:repeat(4,1fr);gap:8px">
+                  <div class="material-metric"><b>12</b><span>标题层级问题</span></div>
+                  <div class="material-metric"><b>8</b><span>字体字号问题</span></div>
+                  <div class="material-metric"><b>3</b><span>图表编号问题</span></div>
+                  <div class="material-metric"><b>6</b><span>参考文献问题</span></div>
+                </div>
+                <div class="req-actions"><button class="ghost" type="button" onclick="closeDraftValuePage()">取消</button><button class="primary" type="button" onclick="alert('已按学校模板应用格式调整')">扫描并应用格式</button></div>
+              </section>
+            </div>
+
+            <div id="draftValuePlagPage" class="draft-shell draft-hidden">
+              <div class="review-step-head">
+                <div>
+                  <div style="font-size:10px;color:var(--muted);font-weight:700;margin-bottom:6px">论文初稿 / 已生成 / 查重优化</div>
+                  <h2>查重优化</h2>
+                  <p>作为初稿完成后的可选增值功能，进入独立表单完成风险扫描与逐段优化。</p>
+                </div>
+                <button class="ghost" type="button" onclick="closeDraftValuePage()">← 返回初稿结果</button>
+              </div>
+              <section class="draft-card">
+                <h3>查重优化设置</h3><p>保留原意与引用关系，仅针对高风险表达进行优化。</p>
+                <div class="draft-grid">
+                  <div class="form-row"><label>检查范围</label><select class="select"><option>全文</option><option>仅正文</option><option>指定章节</option></select></div>
+                  <div class="form-row"><label>优化强度</label><select class="select"><option>标准 · 推荐</option><option>轻度</option><option>深度</option></select></div>
+                  <div class="form-row draft-wide"><label>保护内容</label><div style="display:flex;gap:8px;flex-wrap:wrap;font-size:10px"><label><input type="checkbox" checked> 保留引用</label><label><input type="checkbox" checked> 保留术语</label><label><input type="checkbox" checked> 保留数据与结论</label></div></div>
+                </div>
+                <div style="margin-top:14px;padding:12px;border:1px solid #f1d8dc;border-radius:9px;background:#fff8f9;font-size:10px;line-height:1.6">
+                  当前预检发现 <b style="color:#bb4658">7 处高风险表达</b>、<b style="color:#b56b0c">18 处中风险表达</b>。建议优先处理高风险段落。
+                </div>
+                <div class="req-actions"><button class="ghost" type="button" onclick="closeDraftValuePage()">取消</button><button class="primary" type="button" onclick="alert('已开始逐段查重优化')">开始扫描并优化</button></div>
+              </section>
+            </div>
+            </div>
+
+          <!-- 答辩准备：独立四步流程，保持现有毕业版骨架 -->
+          <div id="defenseWorkspace" class="defense-shell defense-hidden">
+            <div id="defenseStepPaper" class="defense-shell">
+              <div class="review-step-head">
+                <div><h2>确认答辩论文</h2><p>系统先展示论文初稿节点已经产出的论文成果。是否复用、复用哪一版由你决定，确认后再识别答辩所需信息。</p></div><span class="step-tag">步骤 1 / 4</span>
+              </div>
+              <section class="inherited-foundation">
+                <div class="inherited-head"><div><h3>选择本次答辩论文</h3><p>系统发现你在“论文初稿”节点已有多个论文版本。请选择本次答辩使用的版本，也可以上传其他最终版。</p></div><span class="inherited-badge">发现 2 个版本</span></div>
+                <div class="inherited-grid" id="defenseReuseGrid">
+                  <label class="inherited-item" data-reuse-card><input class="reuse-check" name="defense-paper" type="radio" value="draft-v8"><b>📄 论文初稿 V8</b><small>32,684 字 · 参考文献 58 篇 · 图表 16 个 · 今天 10:42</small><span class="mini-ok">最新版本</span></label>
+                  <label class="inherited-item" data-reuse-card><input class="reuse-check" name="defense-paper" type="radio" value="draft-v7"><b>📄 论文初稿 V7</b><small>31,920 字 · 导师修改前版本 · 昨天 21:18</small><span class="mini-ok">历史版本</span></label>
+                </div>
+                <div style="margin-top:11px;padding-top:11px;border-top:1px solid #ece9f7;display:flex;justify-content:space-between;align-items:center;gap:12px">
+                  <div><b style="display:block;font-size:10px">没有要使用的已有版本？</b><small style="display:block;margin-top:3px;color:var(--muted);font-size:8px">可上传导师确认后的最终论文，上传后将作为本次答辩论文。</small></div>
+                  <button class="small-btn" type="button" onclick="simulateDefensePaperUpload()">上传其他最终版</button>
+                </div>
+                <div class="reuse-actions"><small>本次答辩只使用一个主版本。确认后，系统将自动识别论文标题、研究问题、研究方法、主要结论、创新点和图表信息。</small><button class="small-btn primary-lite" type="button" onclick="applyDefenseReuse()">确认使用并自动识别</button></div>
+                <div id="defenseReuseResult" class="reuse-result"></div>
+              </section>
+              <section class="defense-card">
+                <h3>提交前可选检查</h3><p>需要时进入独立功能页处理，完成后仍返回“确认论文”。</p>
+                <div class="defense-option-grid">
+                  <div class="defense-option"><div class="defense-option-icon">📄</div><div><b>格式调整</b><small>按学校规范检查最终论文格式</small></div><button class="small-btn" type="button" onclick="openDefenseValuePage('format')">去检查</button></div>
+                  <div class="defense-option"><div class="defense-option-icon">🔍</div><div><b>查重优化</b><small>提交前处理高重复风险内容</small></div><button class="small-btn" type="button" onclick="openDefenseValuePage('plag')">去优化</button></div>
+                </div>
+              </section>
+              <div class="req-actions"><button class="ghost" type="button">保存进度</button><button class="primary" type="button" onclick="goDefenseStep(2)">确认论文并继续 →</button></div>
+            </div>
+
+            <div id="defenseStepRequirement" class="defense-shell defense-hidden">
+              <div class="review-step-head">
+                <div><h2>设置答辩要求</h2><p>论文内容已经准备好，这一步只告诉文优“这次答辩要怎么呈现”。</p></div><span class="step-tag">步骤 2 / 4</span>
+              </div>
+              <section class="defense-card">
+                <h3>答辩基本要求</h3><p>用于控制 PPT 页数、内容比重和讲述节奏。</p>
+                <div class="draft-grid">
+                  <div class="form-row"><label>学校 / 学院</label><input class="input" value="A大学 · 旅游管理学院"></div>
+                  <div class="form-row"><label>答辩时长</label><div class="req-number-wrap"><input class="input req-number" type="number" value="10"><span>分钟</span></div></div>
+                  <div class="form-row"><label>PPT 建议页数</label><select class="select"><option>12–15 页</option><option>10–12 页</option><option>15–18 页</option></select></div>
+                  <div class="form-row"><label>学校 PPT 模板</label><button class="small-btn primary-lite" type="button">上传 PPT / PDF 模板</button></div>
+                  <div class="form-row draft-wide"><label>补充要求</label><textarea class="textarea" placeholder="例如：导师要求重点突出实证结果和创新点……">重点突出实证结果、区域差异和创新点，弱化文献综述部分。</textarea></div>
+                </div>
+              </section>
+              <section class="defense-card">
+                <h3>答辩重点</h3><p>系统会从论文中自动抽取内容，你只需要确认哪些部分要重点呈现。</p>
+                <div class="defense-focus-grid">
+                  <label class="defense-focus"><input type="checkbox" checked>研究背景</label>
+                  <label class="defense-focus"><input type="checkbox" checked>研究问题</label>
+                  <label class="defense-focus"><input type="checkbox" checked>研究方法</label>
+                  <label class="defense-focus"><input type="checkbox" checked>核心发现</label>
+                  <label class="defense-focus"><input type="checkbox" checked>创新点</label>
+                  <label class="defense-focus"><input type="checkbox" checked>研究不足</label>
+                </div>
+              </section>
+              <div class="req-actions"><button class="ghost" type="button" onclick="goDefenseStep(1)">← 返回确认论文</button><button class="primary" type="button" onclick="goDefenseStep(3)">生成答辩方案 →</button></div>
+            </div>
+
+            <div id="defenseStepGenerate" class="defense-shell defense-hidden">
+              <div class="review-step-head">
+                <div><h2>确认答辩材料方案</h2><p>生成 PPT 前先确认内容结构、页数和时间分配，避免“一键生成后再大改”。</p></div><span class="step-tag">步骤 3 / 4</span>
+              </div>
+              <section class="defense-card">
+                <h3>答辩 PPT 方案</h3><p>预计 14 页，陈述约 9 分 20 秒。</p>
+                <div class="defense-plan-list">
+                  <div class="defense-plan-row"><div class="defense-plan-num">01</div><div><b>研究背景与问题</b><small>行业背景、研究动机与核心问题</small></div><div class="defense-plan-pages">2 页</div><div class="defense-plan-time">1:20</div></div>
+                  <div class="defense-plan-row"><div class="defense-plan-num">02</div><div><b>理论基础与研究假设</b><small>核心理论、概念关系与研究假设</small></div><div class="defense-plan-pages">2 页</div><div class="defense-plan-time">1:10</div></div>
+                  <div class="defense-plan-row"><div class="defense-plan-num">03</div><div><b>研究设计</b><small>样本、问卷、变量与分析方法</small></div><div class="defense-plan-pages">3 页</div><div class="defense-plan-time">2:10</div></div>
+                  <div class="defense-plan-row"><div class="defense-plan-num">04</div><div><b>实证结果</b><small>核心结果、区域异质性与稳健性</small></div><div class="defense-plan-pages">4 页</div><div class="defense-plan-time">3:00</div></div>
+                  <div class="defense-plan-row"><div class="defense-plan-num">05</div><div><b>研究结论与创新</b><small>主要结论、理论与实践价值</small></div><div class="defense-plan-pages">2 页</div><div class="defense-plan-time">1:20</div></div>
+                  <div class="defense-plan-row"><div class="defense-plan-num">06</div><div><b>不足与展望</b><small>研究局限和后续方向</small></div><div class="defense-plan-pages">1 页</div><div class="defense-plan-time">0:20</div></div>
+                </div>
+                <div class="req-actions"><button class="ghost" type="button">重新生成方案</button><button class="small-btn primary-lite" type="button">调整结构</button></div>
+              </section>
+              <div class="req-actions"><button class="ghost" type="button" onclick="goDefenseStep(2)">← 返回答辩要求</button><button class="primary" type="button" onclick="goDefenseStep(4)">确认并生成 PPT →</button></div>
+            </div>
+
+            <div id="defenseStepResult" class="defense-shell defense-hidden">
+              <div class="review-step-head">
+                <div><h2>答辩准备已完成</h2><p>论文 PPT 是本阶段主结果，其他辅助内容围绕展示与陈述服务。</p></div><span class="step-tag">步骤 4 / 4</span>
+              </div>
+              <section class="defense-result-hero">
+                <div>
+                  <h3>论文答辩 PPT 已生成</h3>
+                  <p>已根据最终论文、答辩时长和展示重点生成答辩演示，可继续编辑后导出。</p>
+                  <div class="defense-result-metrics"><span>14 页</span><span>预计 9 分 20 秒</span><span>6 个内容模块</span><span>已套用学校模板</span></div>
+                  <div class="defense-ppt-includes">
+                    <div class="defense-ppt-includes-title">PPT 已附带</div>
+                    <div class="defense-ppt-includes-list">
+                      <div class="defense-ppt-include"><span>🎤</span><span><b>逐页陈述提示</b><br>每页讲解要点、过渡语与时间提示</span></div>
+                      <div class="defense-ppt-include"><span>✨</span><span><b>关键内容速览</b><br>研究问题、方法、结论、创新点与局限摘要</span></div>
+                    </div>
+                  </div>
+                </div>
+                <div style="display:grid;gap:8px"><button class="primary" type="button">预览 PPT</button><button class="small-btn" type="button">继续编辑</button><button class="small-btn" type="button" onclick="completeStageByExport('defense',this)">导出 PPT</button></div>
+              </section>
+            </div>
+
+            <!-- 答辩阶段调用的可选增值功能，仍使用独立表单页 -->
+            <div id="defenseValueFormatPage" class="defense-shell defense-hidden">
+              <div class="review-step-head"><div><div style="font-size:10px;color:var(--muted);font-weight:700;margin-bottom:6px">答辩准备 / 确认论文 / 格式调整</div><h2>格式调整</h2><p>提交前检查最终论文格式，完成后返回确认论文。</p></div><button class="ghost" type="button" onclick="closeDefenseValuePage()">← 返回确认论文</button></div>
+              <section class="draft-card"><div class="draft-grid"><div class="form-row"><label>学校模板</label><select class="select"><option>A大学硕士论文格式规范</option></select></div><div class="form-row"><label>模板文件</label><button class="small-btn primary-lite" type="button">上传 Word / PDF 模板</button></div><div class="form-row draft-wide"><label>检查范围</label><div style="display:flex;gap:8px;flex-wrap:wrap;font-size:10px"><label><input type="checkbox" checked> 标题层级</label><label><input type="checkbox" checked> 字体字号</label><label><input type="checkbox" checked> 图表编号</label><label><input type="checkbox" checked> 参考文献</label></div></div></div><div class="req-actions"><button class="ghost" type="button" onclick="closeDefenseValuePage()">取消</button><button class="primary" type="button">开始格式检查</button></div></section>
+            </div>
+
+            <div id="defenseValuePlagPage" class="defense-shell defense-hidden">
+              <div class="review-step-head"><div><div style="font-size:10px;color:var(--muted);font-weight:700;margin-bottom:6px">答辩准备 / 确认论文 / 查重优化</div><h2>查重优化</h2><p>提交前进行风险扫描，完成后返回确认论文。</p></div><button class="ghost" type="button" onclick="closeDefenseValuePage()">← 返回确认论文</button></div>
+              <section class="draft-card"><div class="draft-grid"><div class="form-row"><label>检查范围</label><select class="select"><option>全文</option><option>仅正文</option></select></div><div class="form-row"><label>优化强度</label><select class="select"><option>标准 · 推荐</option><option>轻度</option><option>深度</option></select></div><div class="form-row draft-wide"><label>保护内容</label><div style="display:flex;gap:8px;flex-wrap:wrap;font-size:10px"><label><input type="checkbox" checked> 保留引用</label><label><input type="checkbox" checked> 保留术语</label><label><input type="checkbox" checked> 保留数据与结论</label></div></div></div><div class="req-actions"><button class="ghost" type="button" onclick="closeDefenseValuePage()">取消</button><button class="primary" type="button">开始风险扫描</button></div></section>
+            </div>
+          </div>
+
+          </div>
+        </div>
+      </section>
+
+
+
+</main>
+  </div>
+
+  <script>
+    window.addEventListener('DOMContentLoaded', () => { switchStage('review'); renderMethodMaterials('proposal'); renderMethodTools('proposal'); renderMethodMaterials('draft'); renderMethodTools('draft'); });
+
+    // 阶段配置：包含对应的左侧小节点状态、助手文案与表单 HTML
+    const stageData = {
+      review: {
+        name: "论文综述",
+        next: "proposal",
+        nextName: "开题报告",
+        subtasks: [
+          { name: "1. 填写需求", status: "done", text: "已完成" },
+          { name: "2. 确认材料", status: "doing", text: "进行中" },
+          { name: "3. 确认大纲", status: "todo", text: "待开始" },
+          { name: "4. 得到综述", status: "todo", text: "待开始" }
+        ],
+        assistant: "已关联你的文献库（共 63 篇文献），当前正在协助校验文献需求与覆盖度。",
+        desc: "完成国内外研究现状整理、文献评述与空白识别。",
+        html: `
+          <div class="form-row"><label>当前选题</label><div style="padding:8px 10px;background:#fbfaff;border:1px solid #ded8f8;border-radius:8px;font-size:11px;color:var(--purple);font-weight:700">市场需求对中国省级旅游产业技术演化的影响</div></div>
+          <div class="form-row"><label>* 论文标题</label><input class="input" value="市场需求对中国省级旅游产业技术演化的影响"></div>
+          <div class="form-row"><label>研究方向</label><input class="input" value="旅游产业技术演化与区域市场需求"></div>
+          <div class="form-row"><label>核心研究问题</label><textarea class="textarea">市场需求如何影响省级旅游产业技术演化？现有研究有哪些共同结论与不足？</textarea></div>
+          <div class="form-row"><label>* 目标文献数量</label><input class="input" type="number" value="20" style="width:120px"></div>
+        `
+      },
+      proposal: {
+        name: "开题报告",
+        next: "draft",
+        nextName: "论文初稿",
+        subtasks: [
+          { name: "1. 填写需求", status: "done", text: "已完成" },
+          { name: "2. 确认材料", status: "doing", text: "进行中" },
+          { name: "3. 确认方案", status: "todo", text: "待开始" },
+          { name: "4. 完成开题", status: "todo", text: "待开始" }
+        ],
+        assistant: "已自动复用你在论文综述阶段沉淀的 28 篇可用全文与核心论点，正在协助对接学校开题标准模板。",
+        desc: "明确研究问题、研究方法、技术路线与进度安排。",
+        html: `
+          <div class="form-row"><label>论文题目</label><input class="input" value="市场需求对中国省级旅游产业技术演化的影响研究"></div>
+          <div class="form-row"><label>研究背景与意义</label><textarea class="textarea">结合数字经济与消费升级背景，阐述研究的现实与理论意义...</textarea></div>
+          <div class="form-row"><label>研究方法</label><input class="input" value="空间面板模型、熵值法、门槛回归模型"></div>
+          <div class="form-row"><label>学校模板</label><select class="select"><option>标准硕士研究生开题模板 (A大学)</option><option>通用学术硕士开题模板</option></select></div>
+        `
+      },
+      draft: {
+        name: "论文初稿",
+        next: "defense",
+        nextName: "答辩准备",
+        subtasks: [
+          { name: "1. 填写需求", status: "done", text: "已完成" },
+          { name: "2. 确认材料", status: "doing", text: "进行中" },
+          { name: "3. 确认大纲", status: "todo", text: "待开始" },
+          { name: "4. 得到初稿", status: "todo", text: "待开始" }
+        ],
+        assistant: "已加载 5 级层级大纲与文献库批注，可随时调用 AI 智能续写或校对正文。",
+        desc: "基于已有研究材料和框架，推进各章节正文写作。",
+        html: `
+          <div class="form-row"><label>当前写作章节</label><select class="select"><option>3.1 省级旅游产业技术演化特征分析</option><option>3.2 市场需求影响机制的实证检验</option></select></div>
+          <div class="form-row"><label>论文框架 / 大纲</label><textarea class="textarea">已自动加载综述与开题沉淀的大纲结构...</textarea></div>
+          <div class="form-row"><label>已有章节进展</label><div style="font-size:11px;color:var(--teal);font-weight:700;padding-top:8px">已完成前两章，当前正文总字数：12,450 字</div></div>
+        `
+      },
+      defense: {
+        name: "答辩准备",
+        next: "review",
+        nextName: "循环回综述",
+        subtasks: [
+          { name: "1. 确认论文", status: "done", text: "已完成" },
+          { name: "2. 答辩要求", status: "doing", text: "进行中" },
+          { name: "3. 生成材料", status: "todo", text: "待开始" },
+          { name: "4. 完成答辩", status: "todo", text: "待开始" }
+        ],
+        assistant: "已对全文进行查重预检与亮点提取，随时可以一键生成答辩 PPT 及模拟问答。",
+        desc: "论文全文核心亮点提炼、自述稿生成与答辩模拟。",
+        html: `
+          <div class="form-row"><label>论文全文总结</label><textarea class="textarea">已加载完整论文成果：市场需求升级显著推动了省级旅游产业技术演化...</textarea></div>
+          <div class="form-row"><label>学校答辩要求</label><input class="input" value="限时 10 分钟陈述 + 5 分钟专家提问"></div>
+          <div class="form-row"><label>核心输出物</label><div style="font-size:11px;padding-top:8px"><span style="padding:4px 8px;background:var(--teal-weak);color:var(--teal);border-radius:6px;font-weight:700;margin-right:6px">已生成 24 页答辩PPT</span><span style="padding:4px 8px;background:var(--teal-weak);color:var(--teal);border-radius:6px;font-weight:700">模拟问答 15 题就绪</span></div></div>
+        `
+      }
+    };
+
+    let currentKey = 'review';
+
+    const stageOrder = ['review', 'proposal', 'draft', 'defense'];
+
+    // 顶部毕业进度的“完成”只由最终成果导出触发。
+    // 切换/浏览某个阶段不会自动把之前阶段判定为已完成。
+    const stageCompletionState = {
+      review: false,
+      proposal: false,
+      draft: false,
+      defense: false
+    };
+
+    function renderTopStageProgress(){
+      stageOrder.forEach(key=>{
+        const node=document.getElementById('node-'+key);
+        if(!node)return;
+        const completed=!!stageCompletionState[key];
+        const active=key===currentKey;
+        node.classList.toggle('completed',completed);
+        node.classList.toggle('current',active && !completed);
+        // 已完成的阶段继续浏览时仍保持“√”，不退回进行中圆点。
+        if(completed && active) node.classList.add('completed');
+        const circle=node.querySelector('.step-circle');
+        if(circle) circle.textContent=completed?'✓':'○';
+        const badge=document.getElementById('badge-'+key);
+        if(badge) badge.textContent=completed?'已完成':active?'进行中':'待开始';
+      });
+    }
+
+    function completeStageByExport(stage,btn){
+      if(!stageCompletionState.hasOwnProperty(stage))return;
+      stageCompletionState[stage]=true;
+      const state=stageStepState[stage];
+      if(state){state.progress=Math.max(state.progress,4);state.view=4;}
+      if(btn){
+        btn.dataset.exported='1';
+        btn.textContent=stage==='defense'?'已导出 PPT':stage==='proposal'?'已导出开题报告':stage==='draft'?'已导出论文初稿':'已导出';
+      }
+      renderTopStageProgress();
+      renderVerticalProgress();
+      renderStageSidebar(stage);
+    }
+
+    // 左侧步骤导航状态：progress 表示真实推进到哪一步，view 表示当前正在查看哪一步。
+    // 已完成步骤和当前步骤可回看；尚未推进到的后续步骤保持锁定。
+    const stageStepState = {
+      review:   { progress: 1, view: 1 },
+      proposal: { progress: 1, view: 1 },
+      draft:    { progress: 1, view: 1 },
+      defense:  { progress: 1, view: 1 }
+    };
+
+    const stageStepNames = {
+      review:   ['1. 填写需求','2. 确认材料','3. 确认大纲','4. 得到综述'],
+      proposal: ['1. 填写需求','2. 确认材料','3. 确认方案','4. 完成开题'],
+      draft:    ['1. 填写需求','2. 确认材料','3. 确认大纲','4. 得到初稿'],
+      defense:  ['1. 确认论文','2. 答辩要求','3. 生成材料','4. 完成答辩']
+    };
+
+    function setStageStepView(stage, step){
+      const state=stageStepState[stage];
+      if(!state) return;
+      // 页面里的“下一步”按钮或 Hover 快捷入口可以真实推进并解锁下一步。
+      if(step>state.progress) state.progress=step;
+      state.view=step;
+    }
+
+    function renderStageSidebar(stage){
+      const list=document.getElementById('sidebarSubtasks');
+      const state=stageStepState[stage];
+      const names=stageStepNames[stage];
+      if(!list||!state||!names)return;
+      list.innerHTML=names.map((n,i)=>{
+        const idx=i+1;
+        const locked=idx>state.progress;
+        const stageDone=!!stageCompletionState[stage];
+        const doneByExport=stageDone && idx===4;
+        const status=(idx<state.progress || doneByExport)?'done':idx===state.progress?'doing':'todo';
+        const txt=(idx<state.progress || doneByExport)?'已完成':idx===state.progress?'进行中':'待开始';
+        const viewing=idx===state.view;
+        return `<button type="button" class="subtask-nav ${viewing?'viewing active':''} ${idx===state.progress?'progress-current':''}" ${locked?'disabled aria-disabled="true" title="完成上一步后解锁"':'onclick="navigateStageStep(\''+stage+'\','+idx+')"'} aria-current="${viewing?'step':'false'}"><span>${n}</span><span class="subtask-nav-right"><span class="subtask-status ${status}">${txt}</span>${locked?'<span class="subtask-lock">🔒</span>':'<span class="subtask-jump">›</span>'}</span></button>`;
+      }).join('');
+    }
+
+    function navigateStageStep(stage, step){
+      const state=stageStepState[stage];
+      if(!state || step>state.progress) return;
+      if(stage==='review') goReviewStep(step);
+      else if(stage==='proposal') goProposalStep(step);
+      else if(stage==='draft') goDraftStep(step);
+      else if(stage==='defense') goDefenseStep(step);
+    }
+
+    function renderVerticalProgress(){
+      const target = document.getElementById('verticalProgress');
+      if(!target) return;
+      target.innerHTML = stageOrder.map(key => {
+        const data = stageData[key];
+        const completed=!!stageCompletionState[key];
+        const active=key===currentKey;
+        const visualState=completed?'completed':active?'current':'';
+        const mark=completed?'✓':'○';
+        return `<div class="v-stage ${visualState}" onclick="switchStage('${key}')"><div class="v-circle">${mark}</div><span>${data.name}</span></div>`;
+      }).join('');
+    }
+
+    function toggleSidebar(){
+      const sidebar = document.getElementById('sidebar');
+      const main = document.getElementById('mainViewport');
+      const collapsed = sidebar.classList.toggle('collapsed');
+      main.classList.toggle('sidebar-collapsed', collapsed);
+      const btn = document.getElementById('sidebarToggle');
+      btn.setAttribute('aria-label', collapsed ? '展开左侧栏' : '收窄左侧栏');
+      renderVerticalProgress();
+    }
+
+    document.getElementById('sidebarToggle')?.addEventListener('click', toggleSidebar);
+
+    const progressZone = document.getElementById('progressZone');
+    const mainViewport = document.getElementById('mainViewport');
+    progressZone?.addEventListener('mouseenter', () => mainViewport.classList.add('progress-expanded'));
+    progressZone?.addEventListener('mouseleave', () => mainViewport.classList.remove('progress-expanded'));
+
+    function switchStage(key) {
+      currentKey = key;
+      const data = stageData[key];
+      if(!data) return;
+
+      // 1. 更新顶部标题
+      document.getElementById('pageHeading').textContent = '毕业论文进度：' + data.name;
+
+      // 2. 顶部状态只表达真实任务状态：进行中=紫色圆点，导出完成=√。
+      // 浏览到后续阶段不会自动把前序阶段标成完成。
+      renderTopStageProgress();
+
+      // 3. 动态渲染左侧边栏：当前大节点下的【小节点任务列表】
+      document.getElementById('sidebarGroupTitle').textContent = data.name + ' 任务进度';
+      const subListHtml = data.subtasks.map(sub => `
+        <div class="subtask-nav ${sub.status==='doing'?'active':''}">
+          <span>${sub.name}</span>
+          <span class="subtask-status ${sub.status}">${sub.text}</span>
+        </div>
+      `).join('');
+      document.getElementById('sidebarSubtasks').innerHTML = subListHtml;
+
+      // 4. 更新右侧阶段工作区
+      const reviewIds=['reviewStepDemand','reviewStepMaterial','reviewSearchPage'];
+      reviewIds.forEach(id=>document.getElementById(id)?.classList.add('review-step-hidden'));
+      document.getElementById('proposalWorkspace')?.classList.add('proposal-hidden');
+      document.getElementById('draftWorkspace')?.classList.add('draft-hidden');
+      document.getElementById('defenseWorkspace')?.classList.add('defense-hidden');
+      document.getElementById('questionnaireWorkspace')?.classList.add('questionnaire-hidden');
+
+      if(key === 'review'){
+        goReviewStep(stageStepState.review.progress);
+      } else if(key === 'proposal'){
+        document.getElementById('proposalWorkspace')?.classList.remove('proposal-hidden');
+        goProposalStep(stageStepState.proposal.progress);
+      } else if(key === 'draft'){
+        document.getElementById('draftWorkspace')?.classList.remove('draft-hidden');
+        goDraftStep(stageStepState.draft.progress);
+      } else if(key === 'defense'){
+        document.getElementById('defenseWorkspace')?.classList.remove('defense-hidden');
+        goDefenseStep(stageStepState.defense.progress);
+      } else {
+        console.log('阶段已切换：', data.name);
+      }
+      renderVerticalProgress();
+    }
+
+    function autoNextStage() {
+      const nextIdx = (stageOrder.indexOf(currentKey) + 1) % stageOrder.length;
+      if(nextIdx === 0) {
+        alert('恭喜你已完成毕业全流程演练！');
+      }
+      switchStage(stageOrder[nextIdx]);
+    }
+  
+    function goReviewStep(step){
+      // 当前 demo 的综述实际页面已实现到第 2 步；第 3、4 步继续保持锁定展示。
+      if(step>2) return;
+      const a=document.getElementById('reviewStepDemand');
+      const b=document.getElementById('reviewStepMaterial');
+      const c=document.getElementById('reviewSearchPage');
+      if(!a||!b)return;
+      setStageStepView('review',step);
+      c?.classList.add('review-step-hidden');
+      a.classList.toggle('review-step-hidden', step!==1);
+      b.classList.toggle('review-step-hidden', step!==2);
+      updateReviewSidebar();
+      document.querySelector('.content-scroll')?.scrollTo?.({top:0,behavior:'smooth'});
+    }
+    function updateReviewSidebar(){ renderStageSidebar('review'); }
+    let searchTimer=null;
+    let searchIntensityMultiplier=3;
+    let searchReady=false;
+    let searchOAImported=false;
+
+    function hideAllSearchViews(){
+      ['searchSetupPage','searchRunningPage','searchResultsPage','searchImportPage','searchImportedPage'].forEach(id=>document.getElementById(id)?.classList.add('search-hidden'));
+    }
+    let searchSourceStage='review';
+    function openSearchPage(sourceStage='review'){
+      searchSourceStage=sourceStage;
+      document.getElementById('reviewStepMaterial')?.classList.add('review-step-hidden');
+      document.getElementById('proposalWorkspace')?.classList.add('proposal-hidden');
+      document.getElementById('draftWorkspace')?.classList.add('draft-hidden');
+      document.getElementById('questionnaireWorkspace')?.classList.add('questionnaire-hidden');
+      document.getElementById('reviewSearchPage')?.classList.remove('review-step-hidden');
+      const label=sourceStage==='proposal'?'开题报告':sourceStage==='draft'?'论文初稿':'论文综述';
+      document.querySelectorAll('[data-search-context]').forEach(x=>x.textContent=label);
+      hideAllSearchViews();
+      document.getElementById('searchSetupPage')?.classList.remove('search-hidden');
+      if(sourceStage==='proposal') updateProposalSidebar();
+      else if(sourceStage==='draft') updateDraftSidebar();
+      else updateReviewSidebar();
+      document.querySelector('.content-scroll')?.scrollTo?.({top:0,behavior:'smooth'});
+      updateSearchEstimate();
+    }
+    function closeSearchPage(){
+      if(searchTimer){clearInterval(searchTimer);searchTimer=null;}
+      document.getElementById('reviewSearchPage')?.classList.add('review-step-hidden');
+      if(searchSourceStage==='proposal'){document.getElementById('proposalWorkspace')?.classList.remove('proposal-hidden');goProposalStep(2);}
+      else if(searchSourceStage==='draft'){document.getElementById('draftWorkspace')?.classList.remove('draft-hidden');goDraftStep(2);}
+      else{document.getElementById('reviewStepMaterial')?.classList.remove('review-step-hidden');updateReviewSidebar();}
+      document.querySelector('.content-scroll')?.scrollTo?.({top:0,behavior:'smooth'});
+    }
+    function backToSearchSetup(){
+      if(searchTimer){clearInterval(searchTimer);searchTimer=null;}
+      hideAllSearchViews();document.getElementById('searchSetupPage')?.classList.remove('search-hidden');
+      document.querySelector('.content-scroll')?.scrollTo?.({top:0,behavior:'smooth'});
+    }
+    function selectSearchIntensity(btn,m){
+      searchIntensityMultiplier=m;
+      document.querySelectorAll('#searchIntensity .search-intensity-card').forEach(x=>x.classList.remove('active'));
+      btn?.classList.add('active');updateSearchEstimate();
+    }
+    function updateSearchEstimate(){
+      const target=parseInt(document.getElementById('searchReqTarget')?.value||20,10)||20;
+      const el=document.getElementById('searchEstimateCount');if(el)el.textContent=(target*searchIntensityMultiplier)+' 篇候选文献';
+    }
+    function optimizeSearchKeywords(btn){
+      const list=document.getElementById('searchKeywordList');if(!list)return;
+      if(!list.querySelector('[data-ai-keyword]')) list.insertAdjacentHTML('beforeend','<span class="search-keyword" data-ai-keyword>需求拉动创新</span><span class="search-keyword" data-ai-keyword>tourism demand innovation</span>');
+      if(btn)btn.textContent='已优化关键词';
+    }
+    function startFullSearch(){
+      hideAllSearchViews();document.getElementById('searchRunningPage')?.classList.remove('search-hidden');
+      const steps=[...document.querySelectorAll('#searchRunList .search-run-step')];
+      const labels=['生成检索式','多数据库检索','Metadata 归一化与去重','按文献要求筛选','主题聚类与候选排序'];
+      let i=0; const counts=[12,31,45,54,60], widths=[18,38,58,78,100];
+      steps.forEach(x=>x.classList.remove('done','current'));steps[0]?.classList.add('current');
+      document.getElementById('searchRunBar').style.width='18%';document.getElementById('searchRunStage').textContent=labels[0];document.getElementById('searchRunCount').textContent=counts[0];
+      if(searchTimer)clearInterval(searchTimer);
+      searchTimer=setInterval(()=>{i++; if(i>=steps.length){clearInterval(searchTimer);searchTimer=null;showSearchResults();return;} steps.forEach((x,idx)=>{x.classList.toggle('done',idx<i);x.classList.toggle('current',idx===i)});document.getElementById('searchRunBar').style.width=widths[i]+'%';document.getElementById('searchRunStage').textContent=labels[i];document.getElementById('searchRunCount').textContent=counts[i];},520);
+    }
+    function cancelFullSearch(){if(searchTimer){clearInterval(searchTimer);searchTimer=null;}backToSearchSetup();}
+    function finishSearchNow(){if(searchTimer){clearInterval(searchTimer);searchTimer=null;}showSearchResults();}
+    function showSearchResults(){
+      hideAllSearchViews();document.getElementById('searchResultsPage')?.classList.remove('search-hidden');
+      showSearchTab('demand',document.querySelector('.search-tab'));
+      renderSearchDemand();
+      document.querySelector('.content-scroll')?.scrollTo?.({top:0,behavior:'smooth'});
+    }
+    function showSearchTab(tab,btn){
+      const map={demand:'searchTabDemand',strategy:'searchTabStrategy',candidates:'searchTabCandidates'};
+      Object.values(map).forEach(id=>document.getElementById(id)?.classList.add('search-hidden'));
+      document.getElementById(map[tab])?.classList.remove('search-hidden');
+      document.querySelectorAll('.search-tabs .search-tab').forEach(x=>x.classList.remove('active'));btn?.classList.add('active');
+    }
+    function renderSearchDemand(){
+      const ready=searchReady; const available=ready?28:(searchOAImported?18:13);
+      const rows=ready?[
+        ['总文献','20','60','18','42','28','数量已达标','ok'],['SSCI','≥ 5 · 必须','18','6','12','7','已满足','ok'],['CSSCI','≥ 5 · 必须','16','2','14','8','已满足','ok'],['JCR Q1–Q2','≥ 3 · 优先','12','4','8','5','已满足','ok']
+      ]:[
+        ['总文献','20','60','18','42',String(available),available>=20?'已满足':'还缺 '+(20-available),available>=20?'ok':'warn'],['SSCI','≥ 5 · 必须','18','6','12',searchOAImported?'5':'3',searchOAImported?'已满足':'还缺 2',searchOAImported?'ok':'warn'],['CSSCI','≥ 5 · 必须','16','2','14',searchOAImported?'6':'5','已满足','ok'],['JCR Q1–Q2','≥ 3 · 优先','12','4','8',searchOAImported?'3':'2',searchOAImported?'已满足':'还缺 1',searchOAImported?'ok':'warn']
+      ];
+      const body=document.getElementById('searchDemandBody');if(body)body.innerHTML=rows.map(r=>`<tr><td><b>${r[0]}</b></td><td>${r[1]}</td><td>${r[2]}</td><td>${r[3]}</td><td>${r[4]}</td><td>${r[5]}</td><td class="${r[7]}">${r[6]}</td></tr>`).join('');
+      const score=document.getElementById('searchAvailableScore');if(score)score.textContent=available+' / 20';
+      const pill=document.getElementById('searchAvailabilityPill');if(pill)pill.textContent='当前可用 '+available+' / 20';
+      const conclusion=document.getElementById('searchConclusion');if(conclusion){conclusion.classList.toggle('good',ready||available>=20);conclusion.textContent=ready?'当前全文与必须质量条件均有充分冗余，可以返回“确认材料”继续。':searchOAImported?'一键获取的 OA 全文已入库，但建议继续补充或上传更多全文，确保材料有冗余。':'目前仍不足：总量还缺 7 篇可用全文；SSCI 还缺 2 篇。继续入库或上传全文后，系统会重新计算。';}
+      const c=document.getElementById('searchContinueBtn');if(c){const ok=ready||available>=20;c.disabled=!ok;c.style.opacity=ok?'1':'.5';c.style.cursor=ok?'pointer':'not-allowed';c.textContent=ok?'返回确认材料 →':'材料仍不足';}
+      const oa=document.getElementById('searchOAcount');if(oa)oa.textContent=searchOAImported?'0':'18';
+      const ob=document.getElementById('searchOAButton');if(ob){ob.disabled=searchOAImported;ob.textContent=searchOAImported?'已入库':'一键入库';}
+    }
+    function oneClickSearchImport(){searchOAImported=true;renderSearchDemand();}
+    function singlePaperImport(btn){if(btn){btn.textContent='已入库 · 解析中';btn.disabled=true;} }
+    function exportSearchList(btn){if(btn)btn.textContent='已导出 List';}
+    function quickStrategy(btn,text){if(btn)btn.textContent='✓ '+text;}
+    function openSearchImportPage(){hideAllSearchViews();document.getElementById('searchImportPage')?.classList.remove('search-hidden');document.querySelector('.content-scroll')?.scrollTo?.({top:0,behavior:'smooth'});}
+    function backToSearchResults(){showSearchResults();}
+    function simulateSearchUpload(){hideAllSearchViews();document.getElementById('searchImportedPage')?.classList.remove('search-hidden');searchReady=true;document.querySelector('.content-scroll')?.scrollTo?.({top:0,behavior:'smooth'});}
+    function showUpdatedSearchResults(){searchReady=true;showSearchResults();}
+    function returnWithSearchResult(){
+      if(!searchReady && parseInt((document.getElementById('searchAvailableScore')?.textContent||'0'),10)<20)return;
+      const source=searchSourceStage;
+      closeSearchPage();
+      if(source==='review'){
+        const ready=document.getElementById('materialReadyBox');if(ready)ready.classList.remove('review-step-hidden');
+        const summary=document.querySelector('#reviewStepMaterial .material-status-head span');if(summary)summary.textContent='28 / 20 篇可用';
+        const metrics=document.querySelectorAll('#reviewStepMaterial .material-metric b');if(metrics.length>=4){metrics[0].textContent='71';metrics[1].textContent='31';metrics[2].textContent='28';metrics[3].textContent='28 / 20';}
+        const gap=document.querySelector('#reviewStepMaterial .material-gap');if(gap){gap.style.background='var(--teal-weak)';gap.style.color='var(--teal)';gap.textContent='当前材料已满足：可用全文 28 / 20，SSCI / CSSCI 等必须条件均已达标，可以进入大纲确认。';}
+      }else if(source==='proposal'){
+        highlightToolTarget('proposalSearchTool');
+      }else if(source==='draft'){
+        highlightToolTarget('draftSearchTool');
+      }
+    }
+    function materialReady(){ document.getElementById('materialReadyBox')?.classList.remove('review-step-hidden'); }
+
+    function addSearchReqRule(){
+      const list=document.getElementById('searchReqRuleList'); if(!list)return;
+      const row=document.createElement('div');
+      row.className='req-rule'; row.setAttribute('data-search-req-rule','');
+      row.innerHTML=`<input class="input req-rule-name" value="其他文献要求"><div class="req-min"><span>≥</span><input class="input req-rule-count" type="number" min="0" max="200" value="1"></div><select class="select req-rule-mode"><option value="must">必须满足</option><option value="prefer" selected>优先满足</option></select><button class="req-remove" type="button" onclick="removeSearchReqRule(this)">×</button>`;
+      list.appendChild(row);
+    }
+    function removeSearchReqRule(btn){
+      const list=document.getElementById('searchReqRuleList');
+      if(!list)return;
+      const rows=list.querySelectorAll('[data-search-req-rule]');
+      if(rows.length<=1){ alert('至少保留一条文献要求'); return; }
+      btn.closest('[data-search-req-rule]')?.remove();
+    }
+
+    function toggleRequirementDetail(){
+      const d=document.getElementById('reqDetail'), b=document.getElementById('reqAdvancedToggle'), a=document.getElementById('reqToggleAction');
+      if(!d)return; const opening=d.hasAttribute('hidden');
+      if(opening){d.removeAttribute('hidden'); b?.setAttribute('aria-expanded','true'); if(a)a.textContent='收起⌃';}
+      else{d.setAttribute('hidden',''); b?.setAttribute('aria-expanded','false'); if(a)a.textContent='展开 ›';}
+    }
+    function adoptRequirementSuggestion(){
+      const target=document.getElementById('reqTarget'); if(target) target.value=20;
+      const btn=document.getElementById('reqAdoptBtn'); if(btn){btn.textContent='已采用';btn.classList.add('is-adopted');}
+      updateRequirementSummary();
+    }
+    function addReqRule(){
+      const list=document.getElementById('reqRuleList'); if(!list)return;
+      const row=document.createElement('div'); row.className='req-rule'; row.setAttribute('data-req-rule','');
+      row.innerHTML='<input class="input req-rule-name" value="其他要求"><div class="req-min"><span>≥</span><input class="input req-rule-count" type="number" min="0" max="200" value="1"></div><select class="select req-rule-mode"><option value="must">必须满足</option><option value="prefer" selected>优先满足</option></select><button class="req-remove" type="button" onclick="removeReqRule(this)">×</button>' ;
+      list.appendChild(row); updateRequirementSummary();
+    }
+    function removeReqRule(btn){btn?.closest('[data-req-rule]')?.remove();updateRequirementSummary();}
+    function updateRequirementSummary(){
+      const target=document.getElementById('reqTarget'); const headline=document.getElementById('reqHeadline'); if(target&&headline)headline.textContent='本次目标 '+target.value+' 篇';
+      const parts=[...document.querySelectorAll('#reqRuleList [data-req-rule]')].map(r=>{const n=r.querySelector('.req-rule-name')?.value||'要求';const c=r.querySelector('.req-rule-count')?.value||0;return n+' ≥ '+c;});
+      const s=document.getElementById('reqCurrentSummary'); if(s)s.textContent='当前：'+parts.join(' · ');
+    }
+    document.addEventListener('input',e=>{if(e.target?.id==='reqTarget'||e.target?.closest?.('#reqRuleList')) updateRequirementSummary();});
+    document.addEventListener('change',e=>{
+      if(e.target?.id==='reqDiscipline'){const map={social:'经济 / 管理 / 社会科学',stem:'理工 / 工程',medical:'医学 / 生命科学',humanities:'人文 / 教育 / 法学'};const label=map[e.target.value]||e.target.options[e.target.selectedIndex].text;const badge=document.getElementById('reqSubjectBadge');if(badge)badge.textContent=label;const basis=document.getElementById('reqRecommendationBasis');if(basis)basis.textContent='根据 5000 字与「'+label+'」生成';}
+      if(e.target?.closest?.('#reqRuleList')) updateRequirementSummary();
+    });
+
+
+
+    function updateProposalSidebar(){ renderStageSidebar('proposal'); }
+    function goProposalStep(step){
+      setStageStepView('proposal',step);
+      document.getElementById('questionnaireWorkspace')?.classList.add('questionnaire-hidden');
+      if(step===2){ renderMethodMaterials('proposal'); renderMethodTools('proposal'); checkProposalMaterials(); }
+      if(step===3 || step===4) syncProposalPlanMethods();
+      ['proposalStepDemand','proposalStepMaterial','proposalStepPlan','proposalStepResult'].forEach((id,i)=>document.getElementById(id)?.classList.toggle('proposal-hidden',i!==step-1));
+      updateProposalSidebar();
+      document.querySelector('.content-scroll')?.scrollTo?.({top:0,behavior:'smooth'});
+    }
+    function completeProposalSurvey(){
+      openQuestionnairePage('proposal');
+    }
+    function completeProposalChart(){
+      const row=[...document.querySelectorAll('#proposalStepMaterial .proposal-material-row')].find(x=>x.textContent.includes('技术路线'));
+      if(row){const s=row.querySelector('.draft-state');const c=row.querySelector('small');if(s){s.textContent='已生成';s.className='draft-state ok'}if(c)c.textContent='技术路线图 1 张 · 研究框架图 1 张';}
+      checkProposalMaterials();highlightToolTarget('proposalChartTool');
+    }
+    function checkProposalMaterials(){
+      const pending=document.querySelectorAll('#proposalStepMaterial .draft-state.warn').length;
+      const ready=document.getElementById('proposalMaterialReady');if(ready)ready.style.display=pending===0?'block':'none';
+    }
+    function highlightToolTarget(id){
+      const el=document.getElementById(id);if(!el)return;
+      document.querySelectorAll('.tool-target-highlight').forEach(x=>x.classList.remove('tool-target-highlight'));
+      el.classList.add('tool-target-highlight');el.scrollIntoView({behavior:'smooth',block:'center'});
+      setTimeout(()=>el.classList.remove('tool-target-highlight'),1800);
+    }
+    function openStageTool(stage,tool){
+      switchStage(stage);
+      setTimeout(()=>{
+        if(stage==='review'){
+          if(tool==='search'){goReviewStep(2);openSearchPage('review');}
+          else if(tool==='chart'){goReviewStep(2);highlightToolTarget('reviewChartTool');}
+        }else if(stage==='proposal'){
+          if(tool==='search'){goProposalStep(2);openSearchPage('proposal');}
+          else if(tool==='survey'){ensureResearchMethod('proposal','survey');goProposalStep(2);openQuestionnairePage('proposal');}
+          else if(tool==='chart'){goProposalStep(2);highlightToolTarget('proposalChartTool');}
+        }else if(stage==='draft'){
+          if(tool==='search'){goDraftStep(2);openSearchPage('draft');}
+          else if(tool==='survey'){ensureResearchMethod('draft','survey');goDraftStep(2);openQuestionnairePage('draft');}
+          else if(tool==='chart'){goDraftStep(2);highlightToolTarget('draftChartTool');}
+          else if(tool==='format'){goDraftStep(4);openDraftValuePage('format');}
+          else if(tool==='plag'){goDraftStep(4);openDraftValuePage('plag');}
+        }else if(stage==='defense'){
+          if(tool==='ppt'){goDefenseStep(3);}
+          else if(tool==='format'){goDefenseStep(1);openDefenseValuePage('format');}
+          else if(tool==='plag'){goDefenseStep(1);openDefenseValuePage('plag');}
+        }
+      },0);
+    }
+
+    function syncReuseCardVisual(gridId){
+      document.querySelectorAll('#'+gridId+' [data-reuse-card]').forEach(card=>{
+        const cb=card.querySelector('.reuse-check');
+        card.classList.toggle('selected',!!cb?.checked);
+        const tag=card.querySelector('.mini-ok');
+        if(tag) tag.textContent=cb?.checked?'已选择':'可选择复用';
+      });
+    }
+    document.addEventListener('change',e=>{
+      if(e.target?.classList?.contains('reuse-check')){
+        const grid=e.target.closest('.inherited-grid');
+        if(grid) syncReuseCardVisual(grid.id);
+      }
+    });
+    function selectedReuseValues(gridId){
+      return [...document.querySelectorAll('#'+gridId+' .reuse-check:checked')].map(x=>x.value);
+    }
+    function applyProposalReuse(){
+      const picked=selectedReuseValues('proposalReuseGrid');
+      const title=document.getElementById('proposalTitleInput');
+      const question=document.getElementById('proposalQuestionInput');
+      const hint=document.getElementById('proposalBasicHint');
+      const result=document.getElementById('proposalReuseResult');
+      if(!picked.length){
+        if(title) title.value=''; if(question) question.value=''; setResearchMethods('proposal',[]);
+        if(hint) hint.textContent='本次不复用前序综述成果，请重新填写开题标题、研究方法与核心研究问题。已存在的问卷不会因此被删除。';
+        if(result){result.textContent='未选择前序成果，本次开题将按新任务重新填写。';result.classList.add('show');}
+        return;
+      }
+      if(title) title.value='市场需求对中国省级旅游产业技术演化的影响研究';
+      if(question) question.value='市场需求如何影响省级旅游产业技术演化？这种影响是否存在区域异质性？';
+      setResearchMethods('proposal',[]);
+      if(hint) hint.textContent='已从你确认复用的文献综述成果中识别标题、研究问题与理论基础。研究方法仍由你确认；选择问卷调查法后，系统才会进入问卷能力。';
+      if(result){result.textContent='已确认复用 '+picked.length+' 份文献综述成果，并自动识别可复用信息。研究方法等待你确认。';result.classList.add('show');}
+    }
+    function applyDraftReuse(){
+      const picked=selectedReuseValues('draftReuseGrid');
+      const title=document.getElementById('draftTitleInput');
+      const question=document.getElementById('draftQuestionInput');
+      const hint=document.getElementById('draftBasicHint');
+      const result=document.getElementById('draftReuseResult');
+      if(!picked.length){
+        if(title) title.value=''; if(question) question.value='';
+        setResearchMethods('draft',[]);
+        if(hint) hint.textContent='本次不复用前序论文成果，请重新填写论文标题、研究问题并确认研究方法。已有问卷作为同一研究资产继续保留。';
+        if(result){result.textContent='未选择前序成果，本次初稿将从新的论文信息开始。';result.classList.add('show');}
+        return;
+      }
+      const hasProposal=picked.some(v=>v.startsWith('proposal-'));
+      const hasReview=picked.some(v=>v.startsWith('review-'));
+      if(title) title.value='市场需求对中国省级旅游产业技术演化的影响研究';
+      if(question){
+        if(hasProposal) question.value='市场需求如何影响省级旅游产业技术演化？这种影响是否存在区域异质性？数字化水平是否发挥调节作用？';
+        else if(hasReview) question.value='市场需求如何影响省级旅游产业技术演化？现有研究有哪些共同结论与不足？';
+      }
+      if(hasProposal){
+        setResearchMethods('draft',['survey','empirical']);
+        questionnaireState.planReady=true;
+      } else if(hasReview){
+        setResearchMethods('draft',['literature']);
+      }
+      if(hint) hint.textContent='已从你确认复用的前序成果中识别论文信息。若开题报告包含问卷调查法，会同时识别已有问卷方案；其他研究方法仅记录。';
+      if(result){result.textContent='已确认复用 '+picked.length+' 份前序成果，并自动识别论文标题、研究问题与研究方法。';result.classList.add('show');}
+    }
+    let defenseUploadedPaper=false;
+    function applyDefenseReuse(){
+      const picked=selectedReuseValues('defenseReuseGrid');
+      const result=document.getElementById('defenseReuseResult');
+      if(!picked.length && !defenseUploadedPaper){
+        if(result){result.textContent='请先选择一个已有论文版本，或上传本次答辩最终版。';result.classList.add('show');}
+        return;
+      }
+      if(defenseUploadedPaper){
+        if(result){result.textContent='已确认使用「导师确认最终版.pdf」作为本次答辩论文，并自动识别论文题目、研究问题、研究方法、主要结论、创新点与图表信息。';result.classList.add('show');}
+        return;
+      }
+      const useV8=picked.includes('draft-v8');
+      const version=useV8?'论文初稿 V8':'论文初稿 V7';
+      const meta=useV8?'32,684 字 · 参考文献 58 篇 · 图表 16 个':'31,920 字 · 参考文献 56 篇 · 图表 15 个';
+      if(result){result.textContent='已确认使用「'+version+'」作为本次答辩论文。'+meta+'。系统已自动识别答辩所需信息。';result.classList.add('show');}
+    }
+    function simulateDefensePaperUpload(){
+      defenseUploadedPaper=true;
+      document.querySelectorAll('#defenseReuseGrid input[type="radio"]').forEach(x=>{x.checked=false;x.closest('[data-reuse-card]')?.classList.remove('selected');});
+      const result=document.getElementById('defenseReuseResult');
+      if(result){result.textContent='已上传「导师确认最终版.pdf」。确认后将以该文件作为本次答辩论文。';result.classList.add('show');}
+    }
+
+    document.addEventListener('change',e=>{
+      if(e.target?.matches?.('#defenseReuseGrid input[type="radio"]')){
+        defenseUploadedPaper=false;
+        document.querySelectorAll('#defenseReuseGrid [data-reuse-card]').forEach(card=>card.classList.remove('selected'));
+        e.target.closest('[data-reuse-card]')?.classList.add('selected');
+        const result=document.getElementById('defenseReuseResult');
+        if(result){result.classList.remove('show');result.textContent='';}
+      }
+    });
+
+    const researchMethodLabels={survey:'问卷调查法',interview:'访谈法',experiment:'实验法',empirical:'实证分析法',case:'案例研究法',literature:'文献研究法'};
+    const selectedResearchMethods={proposal:new Set(),draft:new Set()};
+    const readyResearchMethods={proposal:new Set(),draft:new Set()};
+    const questionnaireState={
+      planReady:false,
+      draftDataReady:false,
+      audience:'旅游行业从业人员',
+      target:300,
+      questions:28,
+      dimensions:4,
+      samples:0
+    };
+
+    function otherMethodInput(scope){
+      return document.getElementById(scope==='proposal'?'proposalOtherMethodsInput':'draftOtherMethodsInput');
+    }
+    function toggleResearchMethod(btn,scope,method){
+      if(method!=='survey') return;
+      const set=selectedResearchMethods[scope]; if(!set)return;
+      if(set.has('survey')) set.delete('survey'); else set.add('survey');
+      btn?.classList.toggle('active',set.has('survey'));
+      if(!set.has('survey')) readyResearchMethods[scope]?.delete('survey');
+      renderMethodMaterials(scope);
+      renderMethodTools(scope);
+      syncProposalPlanMethods();
+      syncDraftSurveyContent();
+    }
+    function setResearchMethods(scope,methods){
+      const set=selectedResearchMethods[scope]; if(!set)return;
+      set.clear();
+      if(methods.includes('survey')) set.add('survey');
+      const grid=document.getElementById(scope==='proposal'?'proposalResearchMethods':'draftResearchMethods');
+      grid?.querySelectorAll('[data-method]').forEach(btn=>btn.classList.toggle('active',set.has(btn.dataset.method)));
+      const other=otherMethodInput(scope);
+      if(other){
+        other.value=methods.filter(m=>m!=='survey').map(m=>researchMethodLabels[m]||m).join('、');
+      }
+      renderMethodMaterials(scope);
+      renderMethodTools(scope);
+      syncProposalPlanMethods();
+      syncDraftSurveyContent();
+    }
+    function ensureResearchMethod(scope,method){
+      if(method!=='survey') return;
+      const set=selectedResearchMethods[scope];
+      if(!set || set.has('survey')) return;
+      set.add('survey');
+      const grid=document.getElementById(scope==='proposal'?'proposalResearchMethods':'draftResearchMethods');
+      grid?.querySelector('[data-method="survey"]')?.classList.add('active');
+      renderMethodMaterials(scope);
+      renderMethodTools(scope);
+      syncProposalPlanMethods();
+      syncDraftSurveyContent();
+    }
+    function methodMaterialRow(icon,title,copy,state='待补充'){
+      return `<div class="proposal-material-row"><div class="proposal-material-icon">${icon}</div><div><b>${title}</b><small>${copy}</small></div><span class="draft-state ${state==='已就绪'?'ok':'warn'}">${state}</span></div>`;
+    }
+    function draftMethodMaterialRow(icon,title,copy,state='待补充'){
+      return `<div class="draft-material-row"><div class="draft-material-icon">${icon}</div><div><b>${title}</b><small>${copy}</small></div><span class="draft-state ${state==='已就绪'?'ok':'warn'}">${state}</span></div>`;
+    }
+    function renderMethodMaterials(scope){
+      const hasSurvey=selectedResearchMethods[scope]?.has('survey');
+      const target=document.getElementById(scope==='proposal'?'proposalMethodMaterials':'draftMethodMaterials');
+      if(!target)return;
+      if(!hasSurvey){ target.innerHTML=''; return; }
+      if(scope==='proposal'){
+        const ready=questionnaireState.planReady || readyResearchMethods.proposal.has('survey');
+        target.innerHTML=methodMaterialRow('📋','问卷方案',ready?`${questionnaireState.dimensions} 个维度 · ${questionnaireState.questions} 道题 · 预计样本 ${questionnaireState.target} 份`:'已选择问卷调查法，需要先确认调查对象、问卷维度与题项结构',ready?'已就绪':'待补充');
+      }else{
+        const ready=questionnaireState.draftDataReady || readyResearchMethods.draft.has('survey');
+        const hasPlan=questionnaireState.planReady;
+        target.innerHTML=draftMethodMaterialRow('📋','问卷与样本数据',ready?`问卷 ${questionnaireState.questions} 题 · 有效样本 ${questionnaireState.samples||326} 份 · 已导入`:hasPlan?`同一份问卷 ${questionnaireState.questions} 题已存在，尚未导入有效样本`:'尚未建立问卷，请进入问卷调查创建同一份研究问卷并补充样本',ready?'已就绪':'待补充');
+      }
+    }
+    function renderMethodTools(scope){
+      const target=document.getElementById(scope==='proposal'?'proposalDynamicTools':'draftDynamicTools'); if(!target)return;
+      const hasSurvey=selectedResearchMethods[scope]?.has('survey');
+      const cls=scope==='proposal'?'proposal-tool':'draft-tool';
+      const commonSearch=`<div class="${cls}" id="${scope}SearchTool"><strong>📚 找文献</strong><p>${scope==='proposal'?'补充研究背景、理论依据或方法相关文献。':'为具体章节补充证据和参考文献。'}</p><button class="small-btn primary-lite" type="button" onclick="openSearchPage('${scope}')">补充文献</button></div>`;
+      const survey=hasSurvey?`<div class="${cls}" id="${scope}SurveyTool"><strong>📋 问卷调查</strong><p>${scope==='proposal'?'进入当前研究唯一的问卷，确认方案或继续补充调查数据。':'继续使用当前研究同一份问卷，并补充初稿写作需要的有效样本数据。'}</p><button class="small-btn primary-lite" type="button" onclick="openQuestionnairePage('${scope}')">进入问卷调查</button></div>`:'';
+      const commonChart=`<div class="${cls}" id="${scope}ChartTool"><strong>📊 学术图</strong><p>${scope==='proposal'?'生成研究框架与技术路线，作为开题方案的一部分。':'生成研究框架、作用机制图和技术路线。'}</p><button class="small-btn" type="button" onclick="${scope==='proposal'?'completeProposalChart()':"alert('进入学术图工具')"}">生成学术图</button></div>`;
+      target.innerHTML=commonSearch+survey+commonChart;
+      const hint=document.getElementById(scope==='proposal'?'proposalToolHint':'draftToolHint');
+      if(hint){
+        hint.textContent=hasSurvey
+          ? '你采用了“问卷调查法”，因此这里增加问卷调查入口。找文献与学术图仍作为通用能力保留。'
+          : '当前未采用问卷调查法，因此这里只保留找文献与学术图。其他研究方法会被记录，但不会生成当前产品尚未提供的工具入口。';
+      }
+    }
+    function completeMethodMaterial(scope,method){
+      if(method!=='survey') return;
+      readyResearchMethods[scope]?.add('survey');
+      if(scope==='proposal') questionnaireState.planReady=true;
+      else questionnaireState.draftDataReady=true;
+      renderMethodMaterials(scope);
+      renderMethodTools(scope);
+      if(scope==='proposal') checkProposalMaterials(); else checkDraftMaterials();
+    }
+    let questionnaireSourceStage='proposal';
+    function syncSharedQuestionnaireUI(){
+      const audience=document.getElementById('sharedSurveyAudience');
+      const target=document.getElementById('sharedSurveyTarget');
+      if(audience) audience.value=questionnaireState.audience;
+      if(target) target.value=questionnaireState.target;
+      const planState=document.getElementById('questionnairePlanState');
+      if(planState){
+        planState.textContent=questionnaireState.planReady?'同一问卷已保存':'待确认';
+        planState.style.background=questionnaireState.planReady?'var(--teal-weak)':'var(--purple-weak)';
+        planState.style.color=questionnaireState.planReady?'var(--teal)':'var(--purple)';
+      }
+      const dataState=document.getElementById('questionnaireDataState');
+      const dataTitle=document.getElementById('sharedSurveyDataTitle');
+      const dataDesc=document.getElementById('sharedSurveyDataDesc');
+      const quality=document.getElementById('sharedSurveyQuality');
+      const useState=document.getElementById('sharedSurveyUseState');
+      if(questionnaireState.draftDataReady){
+        if(dataState){dataState.textContent=`${questionnaireState.samples} 份有效样本`;dataState.style.background='var(--teal-weak)';dataState.style.color='var(--teal)';}
+        if(dataTitle)dataTitle.textContent=`已导入 ${questionnaireState.samples} 份有效样本`;
+        if(dataDesc)dataDesc.textContent='样本数据与当前问卷绑定，可继续用于论文初稿分析与写作。';
+        if(quality)quality.textContent=`已剔除无效答卷并完成缺失值检查，当前有效样本 ${questionnaireState.samples} 份。`;
+        if(useState)useState.textContent='已达到可用于论文初稿写作的状态。';
+      }else{
+        if(dataState){dataState.textContent='暂无样本';dataState.style.background='var(--purple-weak)';dataState.style.color='var(--purple)';}
+        if(dataTitle)dataTitle.textContent='尚未导入有效样本';
+        if(dataDesc)dataDesc.textContent=questionnaireState.planReady?'问卷方案已保存，可现在导入，也可以在论文初稿阶段继续回到这里补充。':'当前先确认问卷方案，样本数据后续仍归属于同一份问卷。';
+        if(quality)quality.textContent='等待导入数据后检查无效样本、缺失值与答题时长。';
+        if(useState)useState.textContent='尚未达到可用于初稿写作的状态。';
+      }
+      const crumb=document.getElementById('questionnaireBreadcrumb');
+      const hint=document.getElementById('questionnairePageHint');
+      const dataHint=document.getElementById('questionnaireDataHint');
+      const btn=document.getElementById('questionnaireConfirmBtn');
+      const stageName=questionnaireSourceStage==='draft'?'论文初稿':'开题报告';
+      if(crumb)crumb.textContent=`${stageName} / 确认材料 / 问卷调查`;
+      if(hint)hint.textContent=questionnaireSourceStage==='draft'
+        ? '这是开题与初稿共用的同一份问卷。这里不会重新生成问卷，只继续查看、修改原问卷或补充调查数据。'
+        : '这份问卷会保存为当前研究主题下的持续研究资产。进入论文初稿后仍然回到这里继续使用，不会重新创建。';
+      if(dataHint) dataHint.textContent=questionnaireSourceStage==='draft'
+        ? '继续在同一份问卷下补充调查数据。已有问卷结构与题项保持不变，除非你主动修改。'
+        : '样本数据可以现在补充，也可以等到论文初稿阶段再继续，届时仍然使用这一份问卷。';
+      if(btn) btn.textContent=questionnaireSourceStage==='draft'?'确认当前问卷材料并返回 →':'确认问卷并返回 →';
+    }
+    function openQuestionnairePage(scope='proposal'){
+      questionnaireSourceStage=scope;
+      ensureResearchMethod(scope,'survey');
+      document.getElementById('proposalWorkspace')?.classList.add('proposal-hidden');
+      document.getElementById('draftWorkspace')?.classList.add('draft-hidden');
+      document.getElementById('reviewSearchPage')?.classList.add('review-step-hidden');
+      document.getElementById('questionnaireWorkspace')?.classList.remove('questionnaire-hidden');
+      setStageStepView(scope,2);
+      if(scope==='proposal') updateProposalSidebar(); else updateDraftSidebar();
+      syncSharedQuestionnaireUI();
+      document.querySelector('.content-scroll')?.scrollTo?.({top:0,behavior:'smooth'});
+    }
+    function closeQuestionnairePage(){
+      document.getElementById('questionnaireWorkspace')?.classList.add('questionnaire-hidden');
+      if(questionnaireSourceStage==='proposal'){
+        document.getElementById('proposalWorkspace')?.classList.remove('proposal-hidden');
+        goProposalStep(2);
+      }else{
+        document.getElementById('draftWorkspace')?.classList.remove('draft-hidden');
+        goDraftStep(2);
+      }
+      document.querySelector('.content-scroll')?.scrollTo?.({top:0,behavior:'smooth'});
+    }
+    function regenerateQuestionnaire(){
+      const target=document.getElementById('sharedSurveyGoal');
+      if(target) target.classList.add('tool-target-highlight');
+      setTimeout(()=>target?.classList.remove('tool-target-highlight'),1200);
+    }
+    function confirmQuestionnaire(){
+      questionnaireState.audience=document.getElementById('sharedSurveyAudience')?.value||questionnaireState.audience;
+      questionnaireState.target=Number(document.getElementById('sharedSurveyTarget')?.value)||questionnaireState.target;
+      questionnaireState.planReady=true;
+      readyResearchMethods.proposal.add('survey');
+      renderMethodMaterials('proposal');
+      checkProposalMaterials();
+      syncProposalPlanMethods();
+      if(questionnaireSourceStage==='draft'){
+        if(!questionnaireState.draftDataReady){
+          alert('问卷方案已经保存，但当前还没有有效样本。你可以先返回材料页，或继续在这份问卷中导入调查数据。');
+        }else{
+          readyResearchMethods.draft.add('survey');
+        }
+        renderMethodMaterials('draft');
+        checkDraftMaterials();
+      }
+      const returnStage=questionnaireSourceStage;
+      closeQuestionnairePage();
+      setTimeout(()=>highlightToolTarget(returnStage==='proposal'?'proposalSurveyTool':'draftSurveyTool'),0);
+    }
+    function simulateSurveyDataImport(){
+      questionnaireState.planReady=true;
+      questionnaireState.samples=326;
+      questionnaireState.draftDataReady=true;
+      readyResearchMethods.proposal.add('survey');
+      readyResearchMethods.draft.add('survey');
+      syncSharedQuestionnaireUI();
+      renderMethodMaterials('proposal');
+      renderMethodMaterials('draft');
+      checkProposalMaterials();
+      checkDraftMaterials();
+    }
+    function syncProposalPlanMethods(){
+      const el=document.getElementById('proposalPlanMethods'); if(!el)return;
+      const methods=[];
+      if(selectedResearchMethods.proposal.has('survey')) methods.push('问卷调查法');
+      const other=(document.getElementById('proposalOtherMethodsInput')?.value||'').trim();
+      if(other) methods.push(other);
+      el.textContent=methods.length?methods.join(' · '):'尚未确认研究方法';
+      const surveyRows=document.getElementById('proposalSurveyPlanRows');
+      if(surveyRows){
+        const show=selectedResearchMethods.proposal.has('survey');
+        surveyRows.style.display=show?'contents':'none';
+        surveyRows.innerHTML=show?`<div class="proposal-plan-row"><b>调查对象</b><div>${questionnaireState.audience}</div></div><div class="proposal-plan-row"><b>预计样本</b><div>${questionnaireState.target} 份</div></div><div class="proposal-plan-row"><b>问卷结构</b><div>${questionnaireState.dimensions} 个维度 · ${questionnaireState.questions} 道题</div></div>`:'';
+      }
+      const hasSurvey=selectedResearchMethods.proposal.has('survey');
+      const source=document.getElementById('proposalPlanDataSource');
+      if(source) source.textContent=hasSurvey?'问卷调查'+(other?' · '+other+'相关数据来源':''):(other?other+'相关数据来源':'根据研究方案填写');
+      const object=document.getElementById('proposalPlanObject'); if(object) object.textContent=hasSurvey?'中国 31 个省级地区及旅游行业从业者样本':'中国 31 个省级地区';
+      const meta=document.getElementById('proposalResultSurveyMeta'); if(meta) meta.style.display=hasSurvey?'inline-flex':'none';
+      const text=document.getElementById('proposalMethodResultText'); if(text) text.textContent=hasSurvey?'本研究围绕市场需求、技术演化及区域异质性展开，并通过问卷调查获取行业从业者样本，用于验证关键变量之间的关系……':'本研究围绕市场需求、技术演化及区域异质性展开，并根据用户确认的其他研究方法组织研究设计……';
+    }
+    function syncDraftSurveyContent(){
+      const show=selectedResearchMethods.draft.has('survey');
+      document.getElementById('draftSurveyOutlineRow1')?.classList.toggle('draft-hidden',!show);
+      document.getElementById('draftSurveyOutlineRow2')?.classList.toggle('draft-hidden',!show);
+      const meta=document.getElementById('draftSurveySampleMeta'); if(meta) meta.style.display=show?'inline-flex':'none';
+      const text=document.getElementById('draftMethodResultText');
+      if(text) text.textContent=show?'本研究在既有研究材料基础上采用问卷调查法，对市场需求、数字化水平与技术采纳等变量进行测量，并结合有效样本形成论文分析材料……':'本研究基于已确认的研究问题、参考文献与研究方案推进正文写作。其他研究方法按用户填写的信息记录，当前版本不额外生成对应研究工具……';
+    }
+    document.addEventListener('input',e=>{
+      if(e.target?.id==='proposalOtherMethodsInput') syncProposalPlanMethods();
+    });
+
+    function updateDraftSidebar(){ renderStageSidebar('draft'); }
+    function goDraftStep(step){
+      setStageStepView('draft',step);
+      document.getElementById('questionnaireWorkspace')?.classList.add('questionnaire-hidden');
+      if(step===2){ renderMethodMaterials('draft'); renderMethodTools('draft'); checkDraftMaterials(); }
+      syncDraftSurveyContent();
+      document.getElementById('draftValueFormatPage')?.classList.add('draft-hidden');
+      document.getElementById('draftValuePlagPage')?.classList.add('draft-hidden');
+      ['draftStepDemand','draftStepMaterial','draftStepOutline','draftStepResult'].forEach((id,i)=>{
+        document.getElementById(id)?.classList.toggle('draft-hidden',i!==step-1);
+      });
+      updateDraftSidebar();
+      document.querySelector('.content-scroll')?.scrollTo?.({top:0,behavior:'smooth'});
+    }
+    function completeDraftSurvey(){
+      openQuestionnairePage('draft');
+    }
+    function checkDraftMaterials(){
+      const pending=document.querySelectorAll('#draftStepMaterial .draft-state.warn').length;
+      const ready=document.getElementById('draftMaterialReady');
+      if(ready){
+        ready.style.display=pending===0?'block':'none';
+        ready.textContent=pending===0?'当前所选研究方法对应的材料已补齐，本次初稿材料已满足，可以进入大纲确认。':'仍有研究方法对应的材料待补充。';
+      }
+    }
+    function openDraftValuePage(type){
+      document.getElementById('draftStepResult')?.classList.add('draft-hidden');
+      document.getElementById('draftValueFormatPage')?.classList.toggle('draft-hidden', type!=='format');
+      document.getElementById('draftValuePlagPage')?.classList.toggle('draft-hidden', type!=='plag');
+      document.querySelector('.content-scroll')?.scrollTo?.({top:0,behavior:'smooth'});
+      updateDraftSidebar();
+    }
+    function closeDraftValuePage(){
+      document.getElementById('draftValueFormatPage')?.classList.add('draft-hidden');
+      document.getElementById('draftValuePlagPage')?.classList.add('draft-hidden');
+      document.getElementById('draftStepResult')?.classList.remove('draft-hidden');
+      document.querySelector('.content-scroll')?.scrollTo?.({top:0,behavior:'smooth'});
+      updateDraftSidebar();
+    }
+
+    function updateDefenseSidebar(){ renderStageSidebar('defense'); }
+    function goDefenseStep(step){
+      setStageStepView('defense',step);
+      document.getElementById('defenseValueFormatPage')?.classList.add('defense-hidden');
+      document.getElementById('defenseValuePlagPage')?.classList.add('defense-hidden');
+      ['defenseStepPaper','defenseStepRequirement','defenseStepGenerate','defenseStepResult'].forEach((id,i)=>{
+        document.getElementById(id)?.classList.toggle('defense-hidden',i!==step-1);
+      });
+      updateDefenseSidebar();
+      document.querySelector('.content-scroll')?.scrollTo?.({top:0,behavior:'smooth'});
+    }
+    function openDefenseValuePage(type){
+      document.getElementById('defenseStepPaper')?.classList.add('defense-hidden');
+      document.getElementById('defenseValueFormatPage')?.classList.toggle('defense-hidden',type!=='format');
+      document.getElementById('defenseValuePlagPage')?.classList.toggle('defense-hidden',type!=='plag');
+      updateDefenseSidebar();
+      document.querySelector('.content-scroll')?.scrollTo?.({top:0,behavior:'smooth'});
+    }
+    function closeDefenseValuePage(){
+      document.getElementById('defenseValueFormatPage')?.classList.add('defense-hidden');
+      document.getElementById('defenseValuePlagPage')?.classList.add('defense-hidden');
+      document.getElementById('defenseStepPaper')?.classList.remove('defense-hidden');
+      updateDefenseSidebar();
+      document.querySelector('.content-scroll')?.scrollTo?.({top:0,behavior:'smooth'});
+    }
+
+    document.addEventListener('input',e=>{if(e.target?.id==='searchReqTarget') updateSearchEstimate();});
+    document.getElementById('searchPdfInput')?.addEventListener('change',e=>{if(e.target.files?.length) simulateSearchUpload();});
+
+  </script>
+</body>
+</html>
