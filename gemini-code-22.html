@@ -1,0 +1,1380 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>文优小助·科研版 - Stage Memory 与按需工具工作台</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome 图标库 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Serif+SC:wght@400;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#4f46e5',
+                        primaryHover: '#4338ca',
+                        primaryLight: '#f5f3ff',
+                        sidebarBg: '#f8fafc',
+                        cardBg: '#ffffff',
+                        bodyBg: '#f1f5f9'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                        serif: ['"Noto Serif SC"', 'Georgia', 'serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        ::-webkit-scrollbar { width: 4px; height: 4px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 9999px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        .resizer {
+            width: 4px; cursor: col-resize; background-color: transparent;
+            transition: background-color 0.2s; position: relative; z-index: 30; flex-shrink: 0;
+        }
+        .resizer:hover, .resizer.active { background-color: #6366f1; }
+        @keyframes highlightPulse {
+            0% { background-color: rgba(99, 102, 241, 0.18); border-color: #6366f1; }
+            100% { background-color: #ffffff; border-color: #e2e8f0; }
+        }
+        .flash-update { animation: highlightPulse 1.2s ease-out; }
+    </style>
+</head>
+<body class="bg-bodyBg font-sans text-slate-800 h-screen flex flex-col overflow-hidden select-none" onclick="handleGlobalClick(event)">
+
+    <!-- 轻量 Toast 提示 -->
+    <div id="toastNotification" class="fixed top-4 right-8 z-50 pointer-events-none transition-all duration-300 transform -translate-y-6 opacity-0 flex items-center space-x-2 px-3.5 py-2 bg-slate-900/90 text-white text-xs rounded-xl shadow-lg border border-slate-700">
+        <i class="fa-solid fa-circle-check text-emerald-400 text-sm"></i>
+        <span id="toastText">操作已完成</span>
+    </div>
+
+    <!-- 顶部全局导航栏 -->
+    <header class="h-14 bg-white border-b border-slate-200 px-5 flex items-center justify-between shrink-0 z-20">
+        <div class="flex items-center space-x-3">
+            <div class="w-8 h-8 rounded-lg bg-gradient-to-tr from-indigo-600 to-violet-500 flex items-center justify-center text-white shadow-sm">
+                <span class="font-bold text-base">文</span>
+            </div>
+            <div class="flex items-center space-x-2">
+                <span class="font-bold text-base text-slate-900 tracking-tight">文优小助</span>
+                <span class="text-xs px-2 py-0.5 bg-indigo-50 text-indigo-700 font-medium rounded-md border border-indigo-100">科研版</span>
+            </div>
+            <span class="text-slate-300 mx-1">/</span>
+            <div class="flex items-center space-x-2 text-xs text-slate-600">
+                <span class="font-medium text-slate-900">旅游产业技术演化与市场需求</span>
+                <span class="px-1.5 py-0.5 bg-emerald-50 text-emerald-700 text-[10px] rounded font-semibold border border-emerald-100">进行中</span>
+            </div>
+        </div>
+
+        <div class="flex-1 max-w-md mx-8">
+            <div class="relative">
+                <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-slate-400">
+                    <i class="fa-solid fa-magnifying-glass text-xs"></i>
+                </span>
+                <input type="text" placeholder="全局检索研究问题、文献证据、变量定义与论文正文..." class="w-full bg-slate-100 text-slate-700 text-xs rounded-lg pl-9 pr-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:bg-white border border-transparent focus:border-indigo-300 transition-all select-text">
+            </div>
+        </div>
+
+        <div class="flex items-center space-x-3">
+            <button onclick="showToast('调取项目全量审计日志...')" class="px-2.5 py-1 text-xs text-slate-600 hover:text-indigo-600 hover:bg-slate-50 rounded-md border border-slate-200 flex items-center space-x-1.5 transition">
+                <i class="fa-solid fa-clock-rotate-left text-slate-400"></i>
+                <span>项目变更历史</span>
+            </button>
+            <div class="h-4 w-px bg-slate-200"></div>
+            <div class="flex items-center space-x-2 cursor-pointer hover:opacity-80 transition">
+                <div class="w-7 h-7 rounded-full bg-indigo-600 text-white flex items-center justify-center text-xs font-bold">李</div>
+                <span class="text-xs font-medium text-slate-700">李研究员</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- 工作台三栏容器 -->
+    <div class="flex-1 flex overflow-hidden relative" id="workspaceContainer">
+
+        <!-- ======================= 左栏：研究工作导航器 (两级树形导航) ======================= -->
+        <aside id="leftSidebar" style="width: 255px;" class="bg-sidebarBg border-r border-slate-200 flex flex-col justify-between shrink-0 overflow-hidden transition-all duration-200 relative">
+            <div id="leftSidebarExpandedContent" class="p-3.5 overflow-y-auto space-y-3 flex-1">
+                <div class="flex items-center justify-between pb-1">
+                    <div class="flex items-center space-x-1.5">
+                        <i class="fa-solid fa-compass text-indigo-600 text-xs"></i>
+                        <span class="text-[11px] font-bold uppercase tracking-wider text-slate-500">研究工作导航</span>
+                    </div>
+                    <button onclick="toggleLeftSidebar()" class="text-slate-400 hover:text-slate-600 text-xs p-1" title="收起至边缘 Rail">
+                        <i class="fa-solid fa-angles-left text-[11px]"></i>
+                    </button>
+                </div>
+
+                <div class="p-2.5 bg-white rounded-xl border border-slate-200/80 shadow-2xs">
+                    <div class="text-xs font-bold text-slate-900 truncate">旅游产业技术演化与市场...</div>
+                    <div class="flex items-center justify-between mt-1 text-[11px] text-slate-500">
+                        <span class="flex items-center space-x-1.5">
+                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                            <span>进行中</span>
+                        </span>
+                        <span class="text-[10px] text-slate-400 font-mono">10:42 更新</span>
+                    </div>
+                </div>
+
+                <!-- 两级树状流 (仅当前阶段展开工具；状态区分：● 当前查看 / · 已打开在Tab / 无 未唤醒) -->
+                <nav class="space-y-1.5 text-xs pt-1 border-l border-slate-200 ml-2 pl-2" id="navTreeContainer">
+                    <!-- JS 动态渲染五阶段与二级工具子节点 -->
+                </nav>
+            </div>
+
+            <!-- 底栏：当前定位指示 -->
+            <div id="leftSidebarBottomStatus" class="p-3 border-t border-slate-200/80 bg-white/50 text-[11px] space-y-1">
+                <div class="flex justify-between text-slate-500">
+                    <span>当前阶段</span>
+                    <span class="font-medium text-slate-800" id="lblBreadcrumbStage">文献研究</span>
+                </div>
+                <div class="flex justify-between text-slate-400 text-[10px]">
+                    <span>右侧视窗</span>
+                    <span class="text-indigo-600 font-medium truncate max-w-[130px]" id="lblBreadcrumbTool">全文阅读与证据提取</span>
+                </div>
+            </div>
+
+            <!-- 42px 迷你边缘 Rail 视图 -->
+            <div id="leftSidebarRailContent" class="hidden absolute inset-0 flex flex-col items-center py-3 justify-between bg-sidebarBg">
+                <div class="space-y-4 flex flex-col items-center">
+                    <button onclick="toggleLeftSidebar()" class="text-slate-500 hover:text-indigo-600 p-1.5" title="展开研究导航">
+                        <i class="fa-solid fa-angles-right text-xs"></i>
+                    </button>
+                    <div class="w-5 h-px bg-slate-200"></div>
+                    <div class="flex flex-col space-y-3 text-xs">
+                        <span class="cursor-pointer text-emerald-600 font-bold text-center" title="研究问题" onclick="toggleLeftSidebar(); selectStage('question');">✓</span>
+                        <span class="cursor-pointer text-indigo-600 font-bold text-center" title="文献研究" onclick="toggleLeftSidebar(); selectStage('literature');">●</span>
+                        <span class="cursor-pointer text-indigo-500 font-bold text-center" title="研究设计" onclick="toggleLeftSidebar(); selectStage('design');">●</span>
+                        <span class="cursor-pointer text-slate-400 font-bold text-center" title="研究执行" onclick="toggleLeftSidebar(); selectStage('execution');">○</span>
+                        <span class="cursor-pointer text-amber-500 font-bold text-center" title="研究产出" onclick="toggleLeftSidebar(); selectStage('output');">◇</span>
+                    </div>
+                </div>
+                <div class="w-2 h-2 rounded-full bg-emerald-500 mb-2"></div>
+            </div>
+        </aside>
+
+        <!-- 左拖拽条 -->
+        <div class="resizer" id="leftResizer"></div>
+
+        <!-- ======================= 中栏：Agent 协同空间 (纯净研讨空间) ======================= -->
+        <main id="mainContent" class="flex-1 bg-white flex flex-col overflow-hidden border-r border-slate-200 min-w-[360px]">
+            
+            <!-- 临时上下文切换横幅 -->
+            <div id="fieldRecoveryBanner" class="hidden px-4 py-2 bg-indigo-50 border-b border-indigo-100 flex items-center justify-between text-xs text-indigo-900 transition-all duration-300">
+                <div class="flex items-center space-x-2">
+                    <i class="fa-solid fa-arrows-split-up-and-left text-indigo-600 text-xs"></i>
+                    <span id="recoveryBannerText">已对齐工作区视窗</span>
+                </div>
+                <span class="text-[10px] text-indigo-600/80">上下文自动同步</span>
+            </div>
+
+            <!-- Agent 针对当前右侧激活 Tab 的研判与主行动区 -->
+            <div id="agentGuideBox" class="border-b border-slate-200/90 bg-slate-50/50 shrink-0">
+                <div id="guideExpandedView" class="p-3.5 space-y-2.5">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-2">
+                            <div class="w-5 h-5 rounded bg-indigo-600 text-white flex items-center justify-center text-[10px] shadow-2xs">
+                                <i class="fa-solid fa-wand-magic-sparkles"></i>
+                            </div>
+                            <span class="text-xs font-bold text-slate-900" id="guideContextTitle">Agent 协同建议</span>
+                            <span class="text-[10px] bg-indigo-50 text-indigo-700 font-semibold px-1.5 py-0.2 rounded border border-indigo-100" id="guideBadge">7 篇高相关待提</span>
+                        </div>
+                        <button onclick="collapseAgentGuide()" class="text-slate-400 hover:text-slate-600 text-[11px] flex items-center space-x-1">
+                            <span>收起向导</span>
+                            <i class="fa-solid fa-chevron-up text-[10px]"></i>
+                        </button>
+                    </div>
+
+                    <div class="pl-7 space-y-1.5">
+                        <p class="text-xs text-slate-700 leading-relaxed" id="guideDiagnosis">
+                            当前视窗对应任务分析中...
+                        </p>
+                        <div class="flex flex-wrap items-center justify-between gap-2 pt-1">
+                            <div class="flex items-center space-x-2" id="primaryActionContainer">
+                                <button onclick="handlePrimaryAction()" id="btnPrimaryAction" class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-xs font-semibold shadow-xs flex items-center space-x-1.5 transition active:scale-95">
+                                    <i class="fa-solid fa-bolt text-[10px] text-amber-300"></i>
+                                    <span id="primaryActionLabel">执行推荐操作</span>
+                                </button>
+                                <button onclick="handleSecondaryAction('微调工作参数')" class="px-2.5 py-1.5 bg-white hover:bg-slate-100 text-slate-700 rounded-lg border border-slate-200 text-xs transition">
+                                    微调参数
+                                </button>
+                            </div>
+                            <span class="text-[10px] text-slate-400" id="guideTargetHint">视窗联动生效中</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="guideCollapsedView" class="hidden px-4 py-2 flex items-center justify-between text-xs bg-slate-50">
+                    <div class="flex items-center space-x-2">
+                        <i class="fa-solid fa-wand-magic-sparkles text-indigo-600 text-xs"></i>
+                        <span class="text-slate-500 font-medium">当前焦点：</span>
+                        <span class="font-semibold text-slate-800" id="collapsedFocusText">优先提取 7 篇高相关文献</span>
+                    </div>
+                    <button onclick="expandAgentGuide()" class="text-indigo-600 hover:text-indigo-800 font-medium flex items-center space-x-1">
+                        <span>展开建议</span>
+                        <i class="fa-solid fa-chevron-down text-[10px]"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- 对话流水区 -->
+            <div class="flex-1 overflow-y-auto p-4 space-y-4" id="chatStream"></div>
+
+            <!-- 对话输入底栏 -->
+            <div class="p-3 bg-white border-t border-slate-200 shrink-0 space-y-2">
+                <div id="activeDiscussionContext" class="hidden px-2.5 py-1 bg-amber-50 border border-amber-200 rounded-lg text-xs text-amber-900 flex items-center justify-between">
+                    <div class="flex items-center space-x-1.5 truncate">
+                        <i class="fa-solid fa-thumbtack text-amber-600 text-[10px]"></i>
+                        <span>已锁定探讨对象：<strong id="focusContextLabel">数字化水平测度</strong></span>
+                    </div>
+                    <button onclick="clearDiscussionContext()" class="text-amber-700 hover:text-amber-950 text-xs">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+
+                <div class="flex items-center space-x-1.5 overflow-x-auto pb-0.5" id="promptChipsRow"></div>
+
+                <div class="border border-slate-200 rounded-xl p-2.5 shadow-sm bg-slate-50/40 focus-within:bg-white focus-within:ring-2 focus-within:ring-indigo-500/20 focus-within:border-indigo-300 transition-all">
+                    <textarea id="chatInput" rows="2" placeholder="与 Agent 协作推演，形成定论后由右侧工具区确认写入 Memory..." class="w-full bg-transparent text-slate-800 text-xs focus:outline-none resize-none select-text"></textarea>
+                    
+                    <div class="flex items-center justify-between pt-1.5 border-t border-slate-200/50 mt-1">
+                        <span class="text-[11px] text-slate-400">💡 规则：左侧控制打开，右侧控制当前查看，中栏 Agent 负责协同深化</span>
+                        <button onclick="handleUserSend()" class="w-7 h-7 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white flex items-center justify-center shadow-xs transition">
+                            <i class="fa-solid fa-arrow-up text-xs"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- 右拖拽条 -->
+        <div class="resizer" id="rightResizer"></div>
+
+        <!-- ======================= 右栏：Stage Workspace (Memory 固定 + 3Tab上限 + “…”更多) ======================= -->
+        <aside id="rightSidebar" style="width: 450px;" class="bg-sidebarBg flex flex-col justify-between shrink-0 overflow-hidden relative transition-all duration-200">
+            <div id="rightSidebarExpandedContent" class="flex-1 flex flex-col overflow-hidden">
+                
+                <!-- ★★★ 顶部 Tab 栏 (最多3Tab: 1 Memory + 最多2工具 + 右侧“…”更多) ★★★ -->
+                <div class="bg-slate-100/90 border-b border-slate-200 px-2 pt-2 flex items-center justify-between shrink-0 relative" id="workspaceTabsHeaderWrapper">
+                    <div class="flex items-center space-x-1 overflow-x-hidden flex-1" id="workspaceTabsHeader">
+                        <!-- JS 动态渲染 Tab 栏 -->
+                    </div>
+
+                    <!-- “…” 更多下拉菜单入口容器 -->
+                    <div class="relative shrink-0 mb-0.5 ml-1 hidden" id="moreToolsDropdownWrapper">
+                        <button onclick="toggleMoreToolsDropdown(event)" id="btnMoreTools" class="px-2 py-1.5 text-xs text-slate-600 hover:text-indigo-600 hover:bg-white rounded-t-lg transition flex items-center space-x-1 font-semibold" title="查看更多已打开工具">
+                            <span>···</span>
+                            <span class="px-1 py-0.2 bg-slate-200 text-slate-600 text-[10px] rounded-full font-mono" id="moreToolsCountBadge">0</span>
+                        </button>
+
+                        <!-- 下拉菜单浮层 -->
+                        <div id="moreToolsMenu" class="hidden absolute right-0 top-full mt-1 w-56 bg-white border border-slate-200 rounded-xl shadow-xl z-50 py-1.5 text-xs">
+                            <div class="px-3 py-1 text-[10px] font-bold text-slate-400 uppercase tracking-wider border-b border-slate-100 mb-1">
+                                更多已打开工具
+                            </div>
+                            <div id="moreToolsList" class="space-y-0.5">
+                                <!-- 动态注入隐藏的工具 -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab 下方上下文状态细目说明 -->
+                <div class="p-3 pb-2 border-b border-slate-200 bg-white shrink-0">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-2">
+                            <i class="fa-solid fa-layer-group text-indigo-600 text-xs" id="iconWorkspaceSub"></i>
+                            <h3 class="text-xs font-bold text-slate-800" id="rightSubHeading">视窗标题</h3>
+                        </div>
+                        <div class="flex items-center space-x-1.5">
+                            <span class="text-[10px] bg-slate-100 text-slate-700 font-mono px-1.5 py-0.5 rounded border border-slate-200" id="currentTabBadge">状态</span>
+                            <button onclick="toggleRightSidebar()" class="text-slate-400 hover:text-slate-600 text-xs ml-1 p-1" title="收起至边缘 Rail">
+                                <i class="fa-solid fa-angles-right text-[11px]"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <p class="text-[11px] text-slate-500 mt-1 truncate" id="rightSubDesc">说明文字...</p>
+                </div>
+
+                <!-- ★ 工作区内容主体容器 ★ -->
+                <div class="flex-1 overflow-y-auto p-3.5 space-y-3" id="workspaceMainContent">
+                    <!-- 动态注入 Memory 或 Tool 现场 -->
+                </div>
+
+                <!-- 底栏：工作成果写入 Memory 闸口 (仅当处于工具 Tab 且有待沉淀结果时高亮强调) -->
+                <div class="p-3 border-t border-slate-200 bg-white shrink-0 flex items-center justify-between" id="workspaceFooter">
+                    <span class="text-[11px] text-slate-500 flex items-center space-x-1">
+                        <i class="fa-solid fa-database text-slate-400 text-[10px]"></i>
+                        <span id="footerMemorySyncStatus">所有定论已与 Memory 保持同步</span>
+                    </span>
+                    <button onclick="commitWorkspaceResultToMemory()" id="btnWorkspaceCommit" class="px-2.5 py-1 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-xs font-semibold flex items-center space-x-1 transition shadow-2xs">
+                        <i class="fa-solid fa-arrow-down-to-bracket text-[10px]"></i>
+                        <span id="btnWorkspaceCommitText">确认写入研究记录</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- 42px 迷你边缘 Rail 视图 -->
+            <div id="rightSidebarRailContent" class="hidden absolute inset-0 flex flex-col items-center py-3 justify-between bg-sidebarBg">
+                <button onclick="toggleRightSidebar()" class="text-slate-500 hover:text-indigo-600 p-1.5" title="展开工作区">
+                    <i class="fa-solid fa-angles-left text-xs"></i>
+                </button>
+                <div class="text-slate-400 text-xs font-bold [writing-mode:vertical-lr] tracking-widest uppercase cursor-pointer" onclick="toggleRightSidebar()">
+                    研究工作区
+                </div>
+                <div class="w-2 h-2 rounded-full bg-indigo-500 mb-2"></div>
+            </div>
+        </aside>
+
+    </div>
+
+    <!-- 交互脚本：严格落实最多3Tab、左数第二位插位、“…”提升与平滑补位 -->
+    <script>
+        // 1. 栏宽拖拽
+        const leftResizer = document.getElementById('leftResizer');
+        const leftSidebar = document.getElementById('leftSidebar');
+        leftResizer.addEventListener('mousedown', function (e) {
+            e.preventDefault(); leftResizer.classList.add('active');
+            function onMouseMove(e) { if (e.clientX > 170 && e.clientX < 380) leftSidebar.style.width = e.clientX + 'px'; }
+            function onMouseUp() { leftResizer.classList.remove('active'); window.removeEventListener('mousemove', onMouseMove); window.removeEventListener('mouseup', onMouseUp); }
+            window.addEventListener('mousemove', onMouseMove); window.addEventListener('mouseup', onMouseUp);
+        });
+
+        const rightResizer = document.getElementById('rightResizer');
+        const rightSidebar = document.getElementById('rightSidebar');
+        rightResizer.addEventListener('mousedown', function (e) {
+            e.preventDefault(); rightResizer.classList.add('active');
+            function onMouseMove(e) { const w = window.innerWidth - e.clientX; if (w > 300 && w < 750) rightSidebar.style.width = w + 'px'; }
+            function onMouseUp() { rightResizer.classList.remove('active'); window.removeEventListener('mousemove', onMouseMove); window.removeEventListener('mouseup', onMouseUp); }
+            window.addEventListener('mousemove', onMouseMove); window.addEventListener('mouseup', onMouseUp);
+        });
+
+        // 2. 轻量 Toast
+        let toastTimer = null;
+        function showToast(message) {
+            const toast = document.getElementById('toastNotification');
+            const text = document.getElementById('toastText');
+            text.innerText = message;
+            toast.classList.remove('opacity-0', '-translate-y-6');
+            toast.classList.add('opacity-100', 'translate-y-0');
+            if (toastTimer) clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => {
+                toast.classList.remove('opacity-100', 'translate-y-0');
+                toast.classList.add('opacity-0', '-translate-y-6');
+            }, 2400);
+        }
+
+        // 3. 向导展开/收起
+        function collapseAgentGuide() {
+            document.getElementById('guideExpandedView').classList.add('hidden');
+            document.getElementById('guideCollapsedView').classList.remove('hidden');
+        }
+        function expandAgentGuide() {
+            document.getElementById('guideCollapsedView').classList.add('hidden');
+            document.getElementById('guideExpandedView').classList.remove('hidden');
+        }
+
+        // 全局点击关闭下拉框
+        function handleGlobalClick(e) {
+            const menu = document.getElementById('moreToolsMenu');
+            const btn = document.getElementById('btnMoreTools');
+            if (menu && !menu.classList.contains('hidden') && !menu.contains(e.target) && !btn.contains(e.target)) {
+                menu.classList.add('hidden');
+            }
+        }
+
+        function toggleMoreToolsDropdown(e) {
+            e.stopPropagation();
+            const menu = document.getElementById('moreToolsMenu');
+            menu.classList.toggle('hidden');
+        }
+
+        // 4. ★★★ 5 阶段模型与各自独立的 Workspace Session 定义 ★★★
+        const stagesConfig = {
+            question: {
+                id: "question",
+                name: "研究问题",
+                memoryName: "研究问题记忆",
+                symbol: "✓",
+                symbolColor: "text-emerald-600",
+                statusLabel: "3 RQ",
+                tools: [
+                    { id: "q_explore", name: "研究方向探索", icon: "fa-compass" },
+                    { id: "q_refine", name: "研究问题生成与优化", icon: "fa-sliders" },
+                    { id: "q_review", name: "研究问题评审", icon: "fa-clipboard-check" }
+                ]
+            },
+            literature: {
+                id: "literature",
+                name: "文献研究",
+                memoryName: "文献研究记忆",
+                symbol: "●",
+                symbolColor: "text-indigo-600",
+                statusLabel: "84 篇",
+                tools: [
+                    { id: "lit_search", name: "文献检索与筛选", icon: "fa-magnifying-glass" },
+                    { id: "lit_read", name: "全文阅读与证据提取", icon: "fa-file-lines" },
+                    { id: "lit_compare", name: "文献比较与综合", icon: "fa-layer-group" }
+                ]
+            },
+            design: {
+                id: "design",
+                name: "研究设计",
+                memoryName: "研究设计记忆",
+                symbol: "●",
+                symbolColor: "text-indigo-500",
+                statusLabel: "5 假设",
+                tools: [
+                    { id: "d_model", name: "理论模型设计", icon: "fa-diagram-project" },
+                    { id: "d_measure", name: "测量与问卷设计", icon: "fa-list-check" },
+                    { id: "d_method", name: "研究方法与样本设计", icon: "fa-users-gear" },
+                    { id: "d_audit", name: "研究设计审查", icon: "fa-shield-halved" }
+                ]
+            },
+            execution: {
+                id: "execution",
+                name: "研究执行",
+                memoryName: "研究执行记忆",
+                symbol: "○",
+                symbolColor: "text-slate-400",
+                statusLabel: "172/300",
+                tools: [
+                    { id: "e_sample", name: "问卷与样本执行", icon: "fa-paper-plane" },
+                    { id: "e_clean", name: "数据质量处理", icon: "fa-filter-circle-xmark" },
+                    { id: "e_stat", name: "基础数据分析", icon: "fa-chart-pie" }
+                ]
+            },
+            output: {
+                id: "output",
+                name: "研究产出",
+                memoryName: "研究产出记忆",
+                symbol: "◇",
+                symbolColor: "text-amber-500",
+                statusLabel: "草稿 V3",
+                tools: [
+                    { id: "o_write", name: "论文写作", icon: "fa-pen-nib" },
+                    { id: "o_cite", name: "论文证据与引用检查", icon: "fa-quote-left" },
+                    { id: "o_review", name: "论文审阅", icon: "fa-user-graduate" },
+                    { id: "o_export", name: "论文版本与导出", icon: "fa-file-arrow-down" }
+                ]
+            }
+        };
+
+        // 阶段隔离的 Workspace Session 运行时状态
+        // toolTabs 数组顺序即为展示顺序，索引 0 映射左数第二个，索引 1 映射左数第三个，超出存入“…”
+        const stageSessions = {
+            question: {
+                activeTab: 'memory',
+                toolTabs: ['q_refine'], // 已打开的工具数组
+                hasPendingMemoryUpdate: false
+            },
+            literature: {
+                activeTab: 'lit_read',
+                toolTabs: ['lit_read', 'lit_search'], // 初始文献阶段打开两款
+                hasPendingMemoryUpdate: true,
+                pendingToolId: 'lit_read'
+            },
+            design: {
+                activeTab: 'memory',
+                toolTabs: [],
+                hasPendingMemoryUpdate: false
+            },
+            execution: {
+                activeTab: 'memory',
+                toolTabs: [],
+                hasPendingMemoryUpdate: false
+            },
+            output: {
+                activeTab: 'memory',
+                toolTabs: ['o_write'],
+                hasPendingMemoryUpdate: false
+            }
+        };
+
+        let currentStageId = 'literature';
+
+        // 5. 渲染左侧导航树 (● 当前查看 / · 已打开在Tab或更多 / 无 未唤醒)
+        function renderNavTree() {
+            const container = document.getElementById('navTreeContainer');
+            container.innerHTML = '';
+            const session = stageSessions[currentStageId];
+
+            Object.values(stagesConfig).forEach(stage => {
+                const isStageActive = (stage.id === currentStageId);
+                const stageBox = document.createElement('div');
+                stageBox.className = "space-y-1";
+
+                const stageRow = document.createElement('div');
+                stageRow.className = `flex items-center justify-between px-2.5 py-1.5 rounded-lg cursor-pointer transition ${
+                    isStageActive ? 'bg-indigo-50/90 text-indigo-950 font-semibold' : 'text-slate-600 hover:bg-slate-100/70 font-medium'
+                }`;
+                stageRow.onclick = () => selectStage(stage.id);
+
+                stageRow.innerHTML = `
+                    <div class="flex items-center space-x-2 truncate">
+                        <span class="${stage.symbolColor} font-bold text-xs">${stage.symbol}</span>
+                        <span class="truncate">${stage.name}</span>
+                    </div>
+                    <div class="flex items-center space-x-1.5">
+                        <span class="text-[10px] text-slate-400 font-mono">${stage.statusLabel}</span>
+                        <i class="fa-solid fa-chevron-right text-[9px] text-slate-300 transition-transform ${isStageActive ? 'rotate-90 text-indigo-500' : ''}"></i>
+                    </div>
+                `;
+                stageBox.appendChild(stageRow);
+
+                if (isStageActive && stage.tools) {
+                    const toolList = document.createElement('div');
+                    toolList.className = "ml-3 pl-2.5 border-l-2 border-indigo-100 space-y-0.5 py-0.5";
+
+                    stage.tools.forEach(tool => {
+                        const isCurrentViewing = (session.activeTab === tool.id);
+                        const isOpened = session.toolTabs.includes(tool.id);
+
+                        const toolRow = document.createElement('div');
+                        toolRow.className = `flex items-center justify-between px-2 py-1.5 rounded-md cursor-pointer text-xs transition ${
+                            isCurrentViewing 
+                                ? 'border-l-2 border-indigo-600 text-indigo-900 font-bold bg-white shadow-2xs -ml-[11px] pl-[9px]' 
+                                : 'text-slate-600 hover:text-slate-900 hover:bg-white/60 font-normal'
+                        }`;
+                        toolRow.onclick = (e) => {
+                            e.stopPropagation();
+                            openToolFromLeft(tool.id);
+                        };
+
+                        let statusIndicator = '';
+                        if (isCurrentViewing) {
+                            statusIndicator = '<span class="w-1.5 h-1.5 rounded-full bg-indigo-600" title="正在查看"></span>';
+                        } else if (isOpened) {
+                            statusIndicator = '<span class="w-1.5 h-1.5 rounded-full bg-slate-300" title="已打开"></span>';
+                        }
+
+                        toolRow.innerHTML = `
+                            <div class="flex items-center space-x-2 truncate">
+                                <i class="fa-solid ${tool.icon} text-[11px] ${isCurrentViewing ? 'text-indigo-600' : 'text-slate-400'}"></i>
+                                <span class="truncate">${tool.name}</span>
+                            </div>
+                            <div class="flex items-center space-x-1">
+                                ${statusIndicator}
+                            </div>
+                        `;
+                        toolList.appendChild(toolRow);
+                    });
+
+                    stageBox.appendChild(toolList);
+                }
+
+                container.appendChild(stageBox);
+            });
+
+            document.getElementById('lblBreadcrumbStage').innerText = stagesConfig[currentStageId].name;
+            const curTool = stagesConfig[currentStageId].tools.find(t => t.id === session.activeTab);
+            document.getElementById('lblBreadcrumbTool').innerText = (session.activeTab === 'memory') ? stagesConfig[currentStageId].memoryName : (curTool ? curTool.name : "工作区");
+        }
+
+        // 6. ★★★ 渲染右侧顶部 Tab 栏 (最多直接展示 3 个 Tab + “…” 更多) ★★★
+        function renderWorkspaceTabs() {
+            const tabsHeader = document.getElementById('workspaceTabsHeader');
+            tabsHeader.innerHTML = '';
+
+            const stage = stagesConfig[currentStageId];
+            const session = stageSessions[currentStageId];
+
+            // 规则 1：研究记忆固定在最左侧（左数第一个），始终显示，不可关闭
+            const isMemoryActive = (session.activeTab === 'memory');
+            const memoryTab = document.createElement('div');
+            memoryTab.className = `px-3 py-1.5 text-xs font-semibold rounded-t-lg cursor-pointer flex items-center space-x-1.5 border-t-2 transition shrink-0 ${
+                isMemoryActive 
+                    ? 'bg-white text-indigo-900 border-indigo-600 shadow-2xs' 
+                    : 'bg-slate-200/60 hover:bg-slate-200 text-slate-600 border-transparent'
+            }`;
+            memoryTab.onclick = () => switchTabDirectly('memory');
+
+            const memoryPendingBadge = session.hasPendingMemoryUpdate 
+                ? '<span class="px-1.5 py-0.2 bg-amber-500 text-white text-[9px] rounded-full font-mono">1</span>' 
+                : '';
+
+            memoryTab.innerHTML = `
+                <i class="fa-solid fa-brain ${isMemoryActive ? 'text-indigo-600' : 'text-slate-400'} text-[11px]"></i>
+                <span class="truncate max-w-[95px]">${stage.memoryName}</span>
+                ${memoryPendingBadge}
+            `;
+            tabsHeader.appendChild(memoryTab);
+
+            // 规则 2：最多直接展示 2 个工具（即索引 0 和 索引 1），合计最多 3 个 Tab
+            const visibleToolIds = session.toolTabs.slice(0, 2);
+            const overflowToolIds = session.toolTabs.slice(2);
+
+            visibleToolIds.forEach(toolId => {
+                const tool = stage.tools.find(t => t.id === toolId);
+                if (!tool) return;
+
+                const isToolActive = (session.activeTab === toolId);
+                const toolTab = document.createElement('div');
+                toolTab.className = `group px-2.5 py-1.5 text-xs font-medium rounded-t-lg cursor-pointer flex items-center space-x-1.5 border-t-2 transition shrink-0 ${
+                    isToolActive 
+                        ? 'bg-white text-indigo-900 font-bold border-indigo-600 shadow-2xs' 
+                        : 'bg-slate-200/60 hover:bg-slate-200 text-slate-600 border-transparent'
+                }`;
+                // 规则 6：点击已经显示的工具 Tab，仅切换当前工具，不改变排序
+                toolTab.onclick = () => switchTabDirectly(tool.id);
+
+                const toolBadge = (session.hasPendingMemoryUpdate && session.pendingToolId === tool.id) 
+                    ? '<span class="w-1.5 h-1.5 rounded-full bg-amber-500" title="有待写入成果"></span>' 
+                    : '';
+
+                toolTab.innerHTML = `
+                    <i class="fa-solid ${tool.icon} text-[10px] ${isToolActive ? 'text-indigo-600' : 'text-slate-400'}"></i>
+                    <span class="truncate max-w-[100px]">${tool.name}</span>
+                    ${toolBadge}
+                    <button onclick="closeToolTab(event, '${tool.id}')" class="text-slate-400 hover:text-slate-700 hover:bg-slate-300/60 rounded p-0.5 ml-0.5 transition" title="关闭工作视图 (不丢弃数据)">
+                        <i class="fa-solid fa-xmark text-[10px]"></i>
+                    </button>
+                `;
+                tabsHeader.appendChild(toolTab);
+            });
+
+            // 规则 4：超过 2 个工具时，其余已打开工具收入最右侧 “…” 更多 中
+            const moreWrapper = document.getElementById('moreToolsDropdownWrapper');
+            const moreList = document.getElementById('moreToolsList');
+            const moreCountBadge = document.getElementById('moreToolsCountBadge');
+
+            if (overflowToolIds.length > 0) {
+                moreWrapper.classList.remove('hidden');
+                moreCountBadge.innerText = overflowToolIds.length;
+                moreList.innerHTML = '';
+
+                overflowToolIds.forEach(overflowId => {
+                    const tool = stage.tools.find(t => t.id === overflowId);
+                    if (!tool) return;
+
+                    const item = document.createElement('div');
+                    item.className = "px-3 py-2 hover:bg-indigo-50/70 text-slate-700 hover:text-indigo-900 cursor-pointer flex items-center justify-between transition";
+                    // 规则 5：点击“…”中的工具后，该工具提升到左数第二位并设为当前工具
+                    item.onclick = (e) => {
+                        e.stopPropagation();
+                        promoteToolFromMore(tool.id);
+                    };
+
+                    item.innerHTML = `
+                        <div class="flex items-center space-x-2 truncate">
+                            <i class="fa-solid ${tool.icon} text-[11px] text-slate-400"></i>
+                            <span class="truncate">${tool.name}</span>
+                        </div>
+                        <button onclick="closeToolTab(event, '${tool.id}')" class="text-slate-400 hover:text-slate-700 p-1" title="关闭">
+                            <i class="fa-solid fa-xmark text-[10px]"></i>
+                        </button>
+                    `;
+                    moreList.appendChild(item);
+                });
+            } else {
+                moreWrapper.classList.add('hidden');
+                document.getElementById('moreToolsMenu').classList.add('hidden');
+            }
+        }
+
+        // 7. ★★★ 规则 3：新打开的工具固定插入记忆右侧第一位 (即左数第二个) ★★★
+        function openToolFromLeft(toolId) {
+            const session = stageSessions[currentStageId];
+            const existingIndex = session.toolTabs.indexOf(toolId);
+
+            if (existingIndex > -1) {
+                // 如果已经打开过：
+                if (existingIndex >= 2) {
+                    // 如果原本在“…”更多中，提升到左数第二位（即 toolTabs 索引 0）
+                    session.toolTabs.splice(existingIndex, 1);
+                    session.toolTabs.unshift(toolId);
+                }
+                // 设为当前查看
+                session.activeTab = toolId;
+            } else {
+                // 新工具：固定插入左数第二位（即数组最前端索引 0）
+                session.toolTabs.unshift(toolId);
+                session.activeTab = toolId;
+            }
+
+            syncActiveTabContent();
+            renderNavTree();
+            renderWorkspaceTabs();
+        }
+
+        // 8. ★★★ 规则 5：点击“…”中的工具后，该工具提升到左数第二位并设为当前工具 ★★★
+        function promoteToolFromMore(toolId) {
+            const session = stageSessions[currentStageId];
+            const idx = session.toolTabs.indexOf(toolId);
+            if (idx > -1) {
+                session.toolTabs.splice(idx, 1);
+                session.toolTabs.unshift(toolId); // 移到第一个工具位（左数第二位）
+            }
+            session.activeTab = toolId;
+            document.getElementById('moreToolsMenu').classList.add('hidden');
+
+            syncActiveTabContent();
+            renderNavTree();
+            renderWorkspaceTabs();
+        }
+
+        // 9. ★★★ 规则 6：点击已经显示的工具 Tab，仅切换当前工具，不改变排序 ★★★
+        function switchTabDirectly(tabId) {
+            const session = stageSessions[currentStageId];
+            session.activeTab = tabId;
+            syncActiveTabContent();
+            renderNavTree();
+            renderWorkspaceTabs();
+        }
+
+        // 10. ★★★ 规则 7 & 8：关闭工具 Tab 时自动补位与相邻/回退切换 ★★★
+        function closeToolTab(event, toolId) {
+            event.stopPropagation();
+            const session = stageSessions[currentStageId];
+            const closedIndex = session.toolTabs.indexOf(toolId);
+            if (closedIndex === -1) return;
+
+            const isCurrentActive = (session.activeTab === toolId);
+
+            // 从打开列表中移除
+            session.toolTabs.splice(closedIndex, 1);
+
+            // 规则 8：关闭当前工具后，优先切换到相邻工具；若没有其他工具，则自动回到研究记忆
+            if (isCurrentActive) {
+                if (session.toolTabs.length === 0) {
+                    session.activeTab = 'memory';
+                } else if (closedIndex < session.toolTabs.length) {
+                    // 原位置向后看（即右侧补位过来的工具）
+                    session.activeTab = session.toolTabs[closedIndex];
+                } else {
+                    // 原位置已是末尾，切换到前一个相邻工具
+                    session.activeTab = session.toolTabs[closedIndex - 1];
+                }
+            }
+
+            // 规则 9：关闭工具只关闭当前工作视图，不清空已有内容和状态
+            showToast("已关闭工作视图 (现场数据已妥善保留)");
+
+            syncActiveTabContent();
+            renderNavTree();
+            renderWorkspaceTabs();
+        }
+
+        // 11. ★★★ 规则 10：每个研究阶段分别保存自己的 Tab 打开状态 ★★★
+        function selectStage(stageId) {
+            currentStageId = stageId;
+            const stage = stagesConfig[stageId];
+
+            const banner = document.getElementById('fieldRecoveryBanner');
+            const bannerText = document.getElementById('recoveryBannerText');
+            bannerText.innerText = `已恢复「${stage.name}」独立工作集`;
+            banner.classList.remove('hidden');
+            setTimeout(() => banner.classList.add('hidden'), 1500);
+
+            // 切换阶段后，只显示该阶段的“研究记忆 + 已打开工具”
+            syncActiveTabContent();
+            renderNavTree();
+            renderWorkspaceTabs();
+        }
+
+        // 12. 视窗同步核心：根据当前激活 Tab 渲染中栏 Agent 与右栏工作现场
+        function syncActiveTabContent() {
+            const stage = stagesConfig[currentStageId];
+            const session = stageSessions[currentStageId];
+            const activeTab = session.activeTab;
+
+            const iconSub = document.getElementById('iconWorkspaceSub');
+            const subHeading = document.getElementById('rightSubHeading');
+            const subDesc = document.getElementById('rightSubDesc');
+            const tabBadge = document.getElementById('currentTabBadge');
+            const container = document.getElementById('workspaceMainContent');
+            const footerStatus = document.getElementById('footerMemorySyncStatus');
+            const commitBtn = document.getElementById('btnWorkspaceCommit');
+
+            const guideTitle = document.getElementById('guideContextTitle');
+            const guideBadge = document.getElementById('guideBadge');
+            const guideDiag = document.getElementById('guideDiagnosis');
+            const guideActionBtn = document.getElementById('primaryActionLabel');
+            const collapsedFocus = document.getElementById('collapsedFocusText');
+
+            expandAgentGuide();
+
+            // A. 查看研究记忆 (Stage Memory)
+            if (activeTab === 'memory') {
+                iconSub.className = "fa-solid fa-brain text-indigo-600 text-xs";
+                subHeading.innerText = `${stage.memoryName} (基线底座)`;
+                tabBadge.innerText = "权威阶段事实";
+                subDesc.innerText = "沉淀当前阶段已确认的学术共识、核心结构与前序阶段引用。";
+
+                guideTitle.innerText = `Agent 研判 · ${stage.name}总览`;
+                commitBtn.classList.add('hidden');
+                footerStatus.innerText = "当前呈现为权威阶段记忆基线";
+
+                if (currentStageId === 'literature') {
+                    guideBadge.innerText = "1 处学术争议";
+                    guideDiag.innerHTML = `当前文献库包含 <strong>84 篇文献与 3 项理论基石</strong>。识别到需求拉动在“突破性创新”场景下的理论争议，建议深入推演。`;
+                    guideActionBtn.innerText = "查看学术争议焦点";
+                    collapsedFocus.innerText = "文献争议焦点推演";
+                    renderChatStream([
+                        { role: "agent", text: "已为你切回【文献研究记忆】。当前阶段包含 3 项核心理论、2 处学术争议与 1 个待补缺口。你可以随时在左侧唤醒具体工具深入处理。", time: "10:30" }
+                    ]);
+                    renderPromptChips(["查看理论基石", "审视学术分歧", "检查研究缺口"]);
+                    renderLiteratureMemoryContent(container);
+                } else if (currentStageId === 'design') {
+                    guideBadge.innerText = "设计待完善";
+                    guideDiag.innerHTML = `当前研究设计已确立 5 项核心假设与 4 个变量。数字化水平测度存在同源方差风险，建议通过「测量与问卷设计」工具补充客观指标。`;
+                    guideActionBtn.innerText = "唤醒测量与问卷工具";
+                    collapsedFocus.innerText = "完善数字化水平测度";
+                    renderChatStream([
+                        { role: "agent", text: "当前处于【研究设计记忆】。主干模型已确定，但调节变量测度需要强化。", time: "昨天 16:20" }
+                    ]);
+                    renderPromptChips(["查看变量体系", "检查 H1-H5 假设", "跨阶段引用追溯"]);
+                    renderDesignMemoryContent(container);
+                } else {
+                    guideBadge.innerText = "阶段基线";
+                    guideDiag.innerHTML = `当前处于 <strong>${stage.name}</strong> 阶段记忆底座。左侧可选择专业工具进入临时工作现场。`;
+                    guideActionBtn.innerText = "推进当前阶段任务";
+                    collapsedFocus.innerText = stage.name;
+                    renderChatStream([
+                        { role: "agent", text: `正在呈现 ${stage.name} 的权威沉淀数据。`, time: "刚刚" }
+                    ]);
+                    renderPromptChips(["查看阶段基线", "比对前序阶段", "导出快照"]);
+                    renderGenericMemoryContent(container, stage);
+                }
+            } 
+            // B. 查看具体工具工作现场
+            else {
+                const tool = stage.tools.find(t => t.id === activeTab);
+                if (!tool) return;
+
+                iconSub.className = `fa-solid ${tool.icon} text-indigo-600 text-xs`;
+                subHeading.innerText = `${tool.name} · 工作现场`;
+                tabBadge.innerText = "临时工作现场";
+                commitBtn.classList.remove('hidden');
+
+                guideTitle.innerText = `Agent 协同研讨 · ${tool.name}`;
+
+                if (tool.id === 'lit_read') {
+                    subDesc.innerText = "对纳入文献进行结构化实证数据抽取，支持原文高亮溯源。";
+                    tabBadge.innerText = "41/62 已完成";
+                    guideBadge.innerText = "7 篇高相关待提";
+                    guideDiag.innerHTML = `当前 62 篇纳入文献中已有 41 篇完成结构化提取。建议优先提取其中 <strong>7 篇与“数字化调节效应”直接相关的实证研究</strong>。`;
+                    guideActionBtn.innerText = "优先提取 7 篇高相关文献";
+                    collapsedFocus.innerText = "提取 7 篇文献实证证据";
+                    footerStatus.innerText = session.hasPendingMemoryUpdate ? "△ 存在 1 篇文献证据待写入 Memory" : "已与 Memory 同步";
+
+                    renderChatStream([
+                        { role: "agent", text: "已切换至【全文阅读与证据提取】工作现场。Chen & Liu (2024) 发现其调节变量缺少原始量表信度，已在中栏标记讨论。", time: "10:15" },
+                        { role: "user", text: "这 7 篇先提取样本、变量和主要结论，重点看调节效应的实证系数。", time: "10:18" }
+                    ]);
+                    renderPromptChips(["重点提取调节效应", "核对样本量规模", "定位原文段落"]);
+                    renderLitReadToolWorkspace(container);
+                } else if (tool.id === 'lit_search') {
+                    subDesc.innerText = "联合学术检索、检索式调优、去重排序与质量初筛。";
+                    tabBadge.innerText = "84 篇候选";
+                    guideBadge.innerText = "调节文献偏弱";
+                    guideDiag.innerHTML = `检索策略针对“需求拉动”命中率高，但文旅场景中数字化调节变量文献偏弱，建议追加布尔组合。`;
+                    guideActionBtn.innerText = "优化检索式并扩检";
+                    collapsedFocus.innerText = "扩充数字化调节实证文献";
+                    footerStatus.innerText = "已与 Memory 同步";
+
+                    renderChatStream([
+                        { role: "agent", text: "右侧检索工作区已就绪。建议在知网与 Web of Science 补充检索词：`(\"Digital Transformation\" OR \"Digitalization\") AND (\"Tourism\" OR \"Hospitality\")`。", time: "09:30" }
+                    ]);
+                    renderPromptChips(["去重并剔除短文", "按近5年顶刊重排", "导出检索式"]);
+                    renderLitSearchToolWorkspace(container);
+                } else if (tool.id === 'lit_compare') {
+                    subDesc.innerText = "跨文献观点横向对比矩阵，识别理论流派争议与研究缺口。";
+                    tabBadge.innerText = "17 篇对比";
+                    guideBadge.innerText = "2 处分歧待解";
+                    guideDiag.innerHTML = `多文献对比发现需求拉动在激进创新上存在分歧（Schmookler vs Christensen）。`;
+                    guideActionBtn.innerText = "生成学术争议对比矩阵";
+                    collapsedFocus.innerText = "梳理激进/渐进创新冲突";
+                    footerStatus.innerText = "已与 Memory 同步";
+
+                    renderChatStream([
+                        { role: "agent", text: "已在右侧聚合 17 篇核心文献横向矩阵。文旅产业数字化能否打破创新者窘境是关键缺口。", time: "09:40" }
+                    ]);
+                    renderPromptChips(["梳理分歧依据", "提炼理论缺口 (Gap)", "形成综述逻辑图"]);
+                    renderLitCompareToolWorkspace(container);
+                } else if (tool.id === 'd_measure') {
+                    subDesc.innerText = "变量操作化、顶刊成熟量表库匹配及主客观测度题项生成。";
+                    tabBadge.innerText = "28 题 · V3";
+                    guideBadge.innerText = "题项覆盖待核验";
+                    guideDiag.innerHTML = `调节变量（数字化水平）经研讨决定采用“3 道主观题 + 城市客观指数”双重方案。右侧已生成题项结构，请确认后写入 Memory。`;
+                    guideActionBtn.innerText = "将双重测度写入 Memory";
+                    collapsedFocus.innerText = "落实数字化双重测度";
+                    footerStatus.innerText = "△ 数字化双重测度待写入 Memory";
+
+                    renderChatStream([
+                        { role: "agent", text: "已在【测量与问卷设计】现场完成双重测度设计。点击右下角【确认写入研究记录】，该成果将正式固化到研究设计记忆中。", time: "昨天 16:32" }
+                    ]);
+                    renderPromptChips(["调取 Vial 2019 量表", "检查问卷 Q17-Q19", "排查同源方差"]);
+                    renderMeasureToolWorkspace(container);
+                } else {
+                    subDesc.innerText = `正在运行 ${tool.name} 的专业功能，中间生成的阶段性成果将暂存于此。`;
+                    tabBadge.innerText = "工作就绪";
+                    guideBadge.innerText = "协同就绪";
+                    guideDiag.innerHTML = `您正在查看 <strong>${tool.name}</strong> 现场。关闭当前 Tab 不会丢失已输入的内容。`;
+                    guideActionBtn.innerText = `运行 ${tool.name}`;
+                    collapsedFocus.innerText = tool.name;
+                    footerStatus.innerText = "暂无待写入项";
+
+                    renderChatStream([
+                        { role: "agent", text: `已就绪。正在调度 ${tool.name} 的专业数据管线，形成定论后可沉淀至阶段 Memory。`, time: "刚刚" }
+                    ]);
+                    renderPromptChips(["查看操作指南", "重置工作现场", "生成候选草稿"]);
+                    renderGenericToolWorkspace(container, tool);
+                }
+            }
+        }
+
+        // 13. 工作区视图渲染组件
+        function renderLiteratureMemoryContent(container) {
+            container.innerHTML = `
+                <div class="p-2.5 bg-slate-50 border border-slate-200 rounded-xl flex items-center justify-between text-[11px]">
+                    <span class="text-slate-600 flex items-center space-x-1.5">
+                        <i class="fa-solid fa-link text-indigo-500"></i>
+                        <span>前序承接：承接<strong>研究问题</strong> 3 项 RQ</span>
+                    </span>
+                    <button onclick="showToast('调取项目跨阶段共享记忆...')" class="text-indigo-600 hover:underline font-medium">查看项目共享记忆 →</button>
+                </div>
+
+                <section class="bg-white rounded-xl border border-slate-200 shadow-2xs p-3 space-y-2 text-xs">
+                    <div class="flex items-center justify-between border-b border-slate-100 pb-1.5">
+                        <div class="flex items-center space-x-2">
+                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                            <h4 class="font-bold text-slate-800">已固化核心理论基石 (3项)</h4>
+                        </div>
+                        <span class="text-[10px] text-emerald-700 bg-emerald-50 px-1.5 py-0.2 rounded font-medium">✓ 已落盘</span>
+                    </div>
+                    <div class="space-y-1.5 text-[11px]">
+                        <div class="p-2 bg-slate-50 rounded flex justify-between">
+                            <span>需求拉动创新理论 (Schmookler, 1966)</span>
+                            <span class="text-slate-400">基础拉动力</span>
+                        </div>
+                        <div class="p-2 bg-slate-50 rounded flex justify-between">
+                            <span>动态能力理论 (Teece, 1997)</span>
+                            <span class="text-slate-400">企业传导机制</span>
+                        </div>
+                        <div class="p-2 bg-slate-50 rounded flex justify-between">
+                            <span>制度环境与技术扩散 (DiMaggio, 1983)</span>
+                            <span class="text-slate-400">异质性解释依据</span>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="bg-white rounded-xl border border-slate-200 shadow-2xs p-3 space-y-2 text-xs">
+                    <div class="flex items-center justify-between border-b border-slate-100 pb-1.5">
+                        <div class="flex items-center space-x-2">
+                            <span class="w-1.5 h-1.5 rounded-full bg-indigo-500"></span>
+                            <h4 class="font-bold text-slate-800">学术争议与待补缺口</h4>
+                        </div>
+                        <span class="text-[10px] text-indigo-700 bg-indigo-50 px-1.5 py-0.2 rounded font-medium">● 2项焦点</span>
+                    </div>
+                    <div class="p-2 bg-amber-50/60 border border-amber-200 rounded-lg text-[11px] text-amber-950 space-y-1">
+                        <strong>争议：需求拉动 vs 破坏性创新窘境</strong>
+                        <p class="text-slate-600">过度拟合当前主流市场需求可能导致文旅企业产生渐进创新依赖，阻碍突破性技术探索。</p>
+                    </div>
+                </section>
+            `;
+        }
+
+        function renderDesignMemoryContent(container) {
+            container.innerHTML = `
+                <div class="p-2.5 bg-slate-50 border border-slate-200 rounded-xl flex items-center justify-between text-[11px]">
+                    <span class="text-slate-600 flex items-center space-x-1.5">
+                        <i class="fa-solid fa-link text-indigo-500"></i>
+                        <span>前序承接：承接<strong>文献研究</strong> 17 篇核心理论证据</span>
+                    </span>
+                    <button onclick="showToast('调取项目共享记忆...')" class="text-indigo-600 hover:underline font-medium">查看项目共享记忆 →</button>
+                </div>
+
+                <div class="p-3 bg-white rounded-xl border border-slate-200 shadow-2xs space-y-2 text-xs">
+                    <div class="flex items-center justify-between border-b border-slate-100 pb-1.5">
+                        <h4 class="font-bold text-slate-800">概念模型核心变量 (4项)</h4>
+                        <span class="text-[10px] text-emerald-600 font-medium">V2 稳定版</span>
+                    </div>
+                    <div class="space-y-1.5 text-[11px] text-slate-700">
+                        <div class="p-2 bg-slate-50 rounded flex justify-between">
+                            <span>自变量 (IV)：市场需求感知 (5题)</span>
+                            <span class="text-emerald-600">✓ 已入库</span>
+                        </div>
+                        <div class="p-2 bg-slate-50 rounded flex justify-between">
+                            <span>因变量 (DV)：技术创新绩效 (4题)</span>
+                            <span class="text-emerald-600">✓ 已入库</span>
+                        </div>
+                        <div class="p-2 bg-amber-50/60 border border-amber-200 rounded flex justify-between text-amber-950">
+                            <span>调节变量 (Mod)：数字化发展水平</span>
+                            <span class="text-amber-700 font-semibold">待优化操作化</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderLitReadToolWorkspace(container) {
+            container.innerHTML = `
+                <div class="p-2.5 bg-white rounded-xl border border-slate-200 shadow-2xs space-y-2">
+                    <div class="flex items-center justify-between text-xs">
+                        <span class="font-bold text-slate-800">提取工作流进度</span>
+                        <span class="text-indigo-600 font-semibold font-mono">41 / 62 (66%)</span>
+                    </div>
+                    <div class="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
+                        <div class="bg-indigo-600 h-full rounded-full" style="width: 66%;"></div>
+                    </div>
+                    <div class="flex items-center space-x-1.5 pt-1">
+                        <span class="px-2 py-0.5 bg-indigo-50 text-indigo-700 rounded text-[10px] font-semibold">待处理 (21)</span>
+                        <span class="px-2 py-0.5 bg-slate-100 text-slate-600 rounded text-[10px] hover:bg-slate-200 cursor-pointer">高相关 (7)</span>
+                        <span class="px-2 py-0.5 bg-slate-100 text-slate-600 rounded text-[10px] hover:bg-slate-200 cursor-pointer">已入库 (41)</span>
+                    </div>
+                </div>
+
+                <div class="space-y-2 text-xs">
+                    <div class="p-3 bg-white rounded-xl border border-slate-200 shadow-2xs space-y-2">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h4 class="font-bold text-slate-900 leading-snug">Wang et al. (2023)</h4>
+                                <p class="text-[11px] text-slate-500 mt-0.5">Digital Transformation and Regional Innovation Gradient</p>
+                            </div>
+                            <span class="px-1.5 py-0.5 bg-emerald-50 text-emerald-700 text-[10px] rounded font-medium border border-emerald-100 shrink-0">✓ 已提取</span>
+                        </div>
+                        <div class="grid grid-cols-2 gap-1.5 text-[11px] bg-slate-50 p-2 rounded-lg text-slate-600">
+                            <div><strong class="text-slate-700">样本：</strong>312 家文旅企业</div>
+                            <div><strong class="text-slate-700">方法：</strong>双重差分 (DID)</div>
+                            <div><strong class="text-slate-700">调节项：</strong>数字基础设施</div>
+                            <div><strong class="text-slate-700">显著性：</strong>β=0.34 (p<0.01)</div>
+                        </div>
+                        <div class="flex items-center justify-between pt-1 text-[11px]">
+                            <button onclick="showToast('已定位至原文 PDF P.7 高亮证据段')" class="text-indigo-600 hover:underline flex items-center space-x-1">
+                                <i class="fa-solid fa-quote-left text-[10px]"></i><span>原文溯源定位</span>
+                            </button>
+                            <span class="text-slate-400 text-[10px]">置信度: 98%</span>
+                        </div>
+                    </div>
+
+                    <div class="p-3 bg-white rounded-xl border-l-4 border-amber-500 border-slate-200 shadow-2xs space-y-2">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h4 class="font-bold text-slate-900 leading-snug">Chen & Liu (2024)</h4>
+                                <p class="text-[11px] text-slate-500 mt-0.5">Spatial Spillover of Technology Adoption in Hospitality</p>
+                            </div>
+                            <span class="px-1.5 py-0.5 bg-amber-50 text-amber-700 text-[10px] rounded font-medium border border-amber-200 shrink-0">△ 待确认</span>
+                        </div>
+                        <div class="space-y-1 text-[11px] text-slate-700">
+                            <div class="flex items-center space-x-1.5">
+                                <i class="fa-solid fa-check text-emerald-500 text-[10px]"></i><span>样本量：480 份高管问卷</span>
+                            </div>
+                            <div class="flex items-center space-x-1.5 text-amber-700 bg-amber-50/70 p-1 rounded">
+                                <i class="fa-solid fa-triangle-exclamation text-[10px]"></i>
+                                <span>调节变量测度未提供原量表信度 (α) 需二次复核</span>
+                            </div>
+                        </div>
+                        <div class="flex justify-end space-x-2 pt-1">
+                            <button onclick="focusFromRight('Chen & Liu (2024) 量表核验', '文献证据')" class="px-2 py-1 text-slate-600 hover:bg-slate-100 rounded text-[11px]">中栏讨论</button>
+                            <button onclick="commitWorkspaceResultToMemory()" class="px-2.5 py-1 bg-indigo-600 hover:bg-indigo-700 text-white rounded text-[11px] font-semibold">采纳并写入 Memory</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderLitSearchToolWorkspace(container) {
+            container.innerHTML = `
+                <div class="p-3 bg-white rounded-xl border border-slate-200 shadow-2xs space-y-3 text-xs">
+                    <div class="flex items-center justify-between border-b border-slate-100 pb-2">
+                        <span class="font-bold text-slate-800">联合学术检索配置</span>
+                        <span class="text-indigo-600 font-mono">已命中 84 篇候选</span>
+                    </div>
+                    <div class="p-2.5 bg-slate-50 rounded-lg space-y-1 font-mono text-[11px] text-slate-700">
+                        <div>TITLE-ABS-KEY(("Demand Pull" OR "Market Demand")</div>
+                        <div class="text-indigo-600">AND ("Digitalization" OR "Digital Transformation")</div>
+                        <div>AND ("Innovation Performance" OR "Technology Evolution"))</div>
+                    </div>
+                    <div class="flex justify-between items-center pt-1 text-[11px]">
+                        <span class="text-slate-400">检索源：知网、WOS、ScienceDirect</span>
+                        <button onclick="showToast('正在执行检索式优化与去重...')" class="px-2.5 py-1 bg-indigo-600 hover:bg-indigo-700 text-white rounded font-medium">执行检索调优</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderLitCompareToolWorkspace(container) {
+            container.innerHTML = `
+                <div class="p-3 bg-white rounded-xl border border-slate-200 shadow-2xs space-y-3 text-xs">
+                    <div class="flex justify-between items-center border-b border-slate-100 pb-2">
+                        <span class="font-bold text-slate-800">流派冲突对比矩阵</span>
+                        <span class="text-indigo-600 text-[10px] font-semibold">17 篇核心对比</span>
+                    </div>
+                    <div class="space-y-2 text-[11px]">
+                        <div class="p-2 bg-slate-50 rounded space-y-1">
+                            <span class="font-bold text-slate-800">需求拉动派 (Schmookler, 1966)</span>
+                            <p class="text-slate-600">市场扩张是技术创新的主导引擎，拉动研发边际收益。</p>
+                        </div>
+                        <div class="p-2 bg-amber-50/70 border border-amber-200 rounded space-y-1">
+                            <span class="font-bold text-amber-950">创新窘境派 (Christensen, 1997)</span>
+                            <p class="text-amber-900">过度迎合主流客户需求会导致企业深陷渐进改良，错失突破性技术。</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderMeasureToolWorkspace(container) {
+            container.innerHTML = `
+                <div class="p-3 bg-white rounded-xl border border-slate-200 shadow-2xs space-y-3 text-xs">
+                    <div class="flex items-center justify-between pb-2 border-b border-slate-100">
+                        <span class="font-bold text-slate-800">变量操作化与双重测度方案</span>
+                        <span class="text-[10px] bg-slate-100 text-slate-600 px-1.5 py-0.2 rounded font-mono">共 4 变量 · 28 题项</span>
+                    </div>
+
+                    <div class="p-2.5 bg-indigo-50/60 rounded-xl border border-indigo-200 space-y-2">
+                        <div class="flex justify-between items-center">
+                            <span class="font-bold text-indigo-950">调节变量 (Mod)：数字化发展水平</span>
+                            <span class="text-[10px] bg-amber-100 text-amber-800 px-1.5 py-0.2 rounded font-semibold">待沉淀至 Memory</span>
+                        </div>
+                        <div class="space-y-1 text-[11px] text-slate-700 pl-2 border-l-2 border-indigo-500">
+                            <div>• <strong>主观感知：</strong>3 道高管李克特题项 (采纳 Vial, 2019 量表)</div>
+                            <div>• <strong>客观指数：</strong>地级市《数字经济发展指数》客观得分匹配</div>
+                        </div>
+                        <p class="text-[10px] text-indigo-900">写入后将更新变量体系、问卷结构 (Q17-Q19) 并解除设计审查预警。</p>
+                    </div>
+
+                    <div class="space-y-1.5 text-slate-700 text-[11px]">
+                        <div class="p-2 bg-slate-50 rounded flex justify-between">
+                            <span>自变量 (IV)：市场需求感知 (5题)</span>
+                            <span class="text-emerald-600 font-medium">✓ 已落盘</span>
+                        </div>
+                        <div class="p-2 bg-slate-50 rounded flex justify-between">
+                            <span>因变量 (DV)：技术创新绩效 (4题)</span>
+                            <span class="text-emerald-600 font-medium">✓ 已落盘</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderGenericMemoryContent(container, stage) {
+            container.innerHTML = `
+                <div class="p-4 bg-white rounded-xl border border-slate-200 shadow-2xs text-center space-y-2">
+                    <i class="fa-solid fa-brain text-indigo-500 text-xl"></i>
+                    <h4 class="text-xs font-bold text-slate-800">${stage.memoryName}</h4>
+                    <p class="text-[11px] text-slate-500">当前阶段权威沉淀基线。左侧可选择专业工具进入临时工作现场推进新进展。</p>
+                </div>
+            `;
+        }
+
+        function renderGenericToolWorkspace(container, tool) {
+            container.innerHTML = `
+                <div class="p-4 bg-white rounded-xl border border-slate-200 shadow-2xs text-center space-y-3">
+                    <div class="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center mx-auto text-sm">
+                        <i class="fa-solid ${tool.icon}"></i>
+                    </div>
+                    <div>
+                        <h4 class="text-xs font-bold text-slate-800">${tool.name} · 工作现场</h4>
+                        <p class="text-[11px] text-slate-500 mt-1">在中栏与 Agent 展开深度研讨，推演结果将在此临时缓冲并支持校验。</p>
+                    </div>
+                    <div class="pt-2">
+                        <button onclick="commitWorkspaceResultToMemory()" class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-xs font-medium transition shadow-2xs">
+                            确认将当前结果沉淀至 Memory
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        // 14. 成果落盘写入 Memory
+        function commitWorkspaceResultToMemory() {
+            const btn = document.getElementById('btnWorkspaceCommit');
+            const session = stageSessions[currentStageId];
+
+            btn.disabled = true;
+            btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin text-[10px]"></i><span>正在落盘...</span>`;
+
+            setTimeout(() => {
+                btn.disabled = false;
+                btn.className = "px-2.5 py-1 bg-emerald-600 text-white rounded-lg text-xs font-semibold flex items-center space-x-1 cursor-default shadow-2xs";
+                btn.innerHTML = `<i class="fa-solid fa-check text-[10px]"></i><span>✓ 已写入研究记录</span>`;
+                
+                session.hasPendingMemoryUpdate = false;
+                document.getElementById('footerMemorySyncStatus').innerText = "✓ 所有成果已正式落盘至 Stage Memory";
+                showToast("✓ 工具现场成果已成功写入阶段研究记忆 (Stage Memory)！");
+
+                renderWorkspaceTabs();
+
+                const stream = document.getElementById('chatStream');
+                const agentDiv = document.createElement('div');
+                agentDiv.className = "flex items-start space-x-3";
+                agentDiv.innerHTML = `
+                    <div class="w-7 h-7 rounded-lg bg-gradient-to-tr from-indigo-600 to-violet-500 text-white flex items-center justify-center shrink-0 text-xs mt-0.5">
+                        <i class="fa-solid fa-database"></i>
+                    </div>
+                    <div class="space-y-1 max-w-xl flex-1">
+                        <div class="bg-emerald-50 text-emerald-950 rounded-2xl rounded-tl-none p-3 text-xs leading-relaxed border border-emerald-200 shadow-2xs">
+                            <strong>已完成记忆落盘：</strong>工具现场产生的成果已固化进【${stagesConfig[currentStageId].memoryName}】中，成为后续科研阶段的权威依据。
+                        </div>
+                        <span class="text-[10px] text-slate-400 block pl-1">刚刚 · 系统日志</span>
+                    </div>
+                `;
+                stream.appendChild(agentDiv);
+                stream.scrollTop = stream.scrollHeight;
+            }, 500);
+        }
+
+        // 15. 中栏研讨流水与辅助操作
+        function renderChatStream(messages) {
+            const stream = document.getElementById('chatStream');
+            stream.innerHTML = '';
+            messages.forEach(msg => {
+                if (msg.role === 'user') {
+                    const div = document.createElement('div');
+                    div.className = "flex items-start space-x-3 justify-end";
+                    div.innerHTML = `
+                        <div class="space-y-1 text-right max-w-lg">
+                            <div class="bg-indigo-600 text-white rounded-2xl rounded-tr-none px-3.5 py-2 text-xs text-left leading-relaxed shadow-xs select-text">
+                                ${msg.text}
+                            </div>
+                            <span class="text-[10px] text-slate-400 block pr-1">${msg.time}</span>
+                        </div>
+                        <div class="w-7 h-7 rounded-lg bg-slate-200 text-slate-700 flex items-center justify-center font-bold text-xs shrink-0">李</div>
+                    `;
+                    stream.appendChild(div);
+                } else {
+                    const div = document.createElement('div');
+                    div.className = "flex items-start space-x-3";
+                    div.innerHTML = `
+                        <div class="w-7 h-7 rounded-lg bg-gradient-to-tr from-indigo-600 to-violet-500 text-white flex items-center justify-center shrink-0 text-xs mt-0.5">
+                            <i class="fa-solid fa-wand-magic-sparkles"></i>
+                        </div>
+                        <div class="space-y-1 max-w-xl flex-1">
+                            <div class="bg-slate-50 text-slate-800 rounded-2xl rounded-tl-none p-3 text-xs leading-relaxed border border-slate-200/80 shadow-2xs select-text">
+                                ${msg.text}
+                            </div>
+                            <span class="text-[10px] text-slate-400 block pl-1">${msg.time} · 文优学术内核</span>
+                        </div>
+                    `;
+                    stream.appendChild(div);
+                }
+            });
+            stream.scrollTop = stream.scrollHeight;
+        }
+
+        function renderPromptChips(chips) {
+            const row = document.getElementById('promptChipsRow');
+            row.innerHTML = '<span class="text-[11px] text-slate-400 shrink-0">快捷指令：</span>';
+            chips.forEach(chip => {
+                const b = document.createElement('button');
+                b.className = "px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 text-[11px] rounded-lg transition shrink-0";
+                b.innerText = chip;
+                b.onclick = () => fillChatInput(chip);
+                row.appendChild(b);
+            });
+        }
+
+        function fillChatInput(text) {
+            const input = document.getElementById('chatInput');
+            input.value = text;
+            input.focus();
+        }
+
+        function handlePrimaryAction() {
+            const label = document.getElementById('primaryActionLabel').innerText;
+            fillChatInput(label);
+            handleUserSend();
+        }
+
+        function handleSecondaryAction(text) {
+            fillChatInput(text);
+            handleUserSend();
+        }
+
+        function handleUserSend() {
+            const input = document.getElementById('chatInput');
+            const text = input.value.trim();
+            if (!text) return;
+            input.value = '';
+
+            collapseAgentGuide();
+
+            const stream = document.getElementById('chatStream');
+            const userDiv = document.createElement('div');
+            userDiv.className = "flex items-start space-x-3 justify-end";
+            userDiv.innerHTML = `
+                <div class="space-y-1 text-right max-w-lg">
+                    <div class="bg-indigo-600 text-white rounded-2xl rounded-tr-none px-3.5 py-2 text-xs text-left leading-relaxed shadow-xs select-text">
+                        ${text}
+                    </div>
+                    <span class="text-[10px] text-slate-400 block pr-1">刚刚</span>
+                </div>
+                <div class="w-7 h-7 rounded-lg bg-slate-200 text-slate-700 flex items-center justify-center font-bold text-xs shrink-0">李</div>
+            `;
+            stream.appendChild(userDiv);
+            stream.scrollTop = stream.scrollHeight;
+
+            setTimeout(() => {
+                const agentDiv = document.createElement('div');
+                agentDiv.className = "flex items-start space-x-3";
+                agentDiv.innerHTML = `
+                    <div class="w-7 h-7 rounded-lg bg-gradient-to-tr from-indigo-600 to-violet-500 text-white flex items-center justify-center shrink-0 text-xs mt-0.5">
+                        <i class="fa-solid fa-wand-magic-sparkles"></i>
+                    </div>
+                    <div class="space-y-1 max-w-xl flex-1">
+                        <div class="bg-slate-50 text-slate-800 rounded-2xl rounded-tl-none p-3 text-xs leading-relaxed border border-slate-200/80 shadow-2xs select-text">
+                            收到探讨需求。已对齐右侧当前激活的视窗上下文。若形成明确学术共识，请随时点击右侧工作区底栏【确认写入研究记录】落盘至 Memory。
+                        </div>
+                        <span class="text-[10px] text-slate-400 block pl-1">刚刚 · 文优学术内核</span>
+                    </div>
+                `;
+                stream.appendChild(agentDiv);
+                stream.scrollTop = stream.scrollHeight;
+            }, 380);
+        }
+
+        function focusFromRight(label, hint) {
+            const bar = document.getElementById('activeDiscussionContext');
+            const labelEl = document.getElementById('focusContextLabel');
+            labelEl.innerText = `${hint}: ${label}`;
+            bar.classList.remove('hidden');
+            fillChatInput(`针对「${label}」，我们该如何进一步深化？`);
+        }
+        function clearDiscussionContext() {
+            document.getElementById('activeDiscussionContext').classList.add('hidden');
+        }
+
+        // 16. 侧边栏折叠
+        let leftCollapsed = false;
+        function toggleLeftSidebar() {
+            leftCollapsed = !leftCollapsed;
+            if (leftCollapsed) {
+                leftSidebar.style.width = '42px';
+                document.getElementById('leftSidebarExpandedContent').classList.add('hidden');
+                document.getElementById('leftSidebarBottomStatus').classList.add('hidden');
+                document.getElementById('leftSidebarRailContent').classList.remove('hidden');
+            } else {
+                leftSidebar.style.width = '255px';
+                document.getElementById('leftSidebarExpandedContent').classList.remove('hidden');
+                document.getElementById('leftSidebarBottomStatus').classList.remove('hidden');
+                document.getElementById('leftSidebarRailContent').classList.add('hidden');
+            }
+        }
+
+        let rightCollapsed = false;
+        function toggleRightSidebar() {
+            rightCollapsed = !rightCollapsed;
+            if (rightCollapsed) {
+                rightSidebar.style.width = '42px';
+                document.getElementById('rightSidebarExpandedContent').classList.add('hidden');
+                document.getElementById('rightSidebarRailContent').classList.remove('hidden');
+            } else {
+                rightSidebar.style.width = '450px';
+                document.getElementById('rightSidebarExpandedContent').classList.remove('hidden');
+                document.getElementById('rightSidebarRailContent').classList.add('hidden');
+            }
+        }
+
+        // 初始化：进入文献阶段
+        window.addEventListener('DOMContentLoaded', () => {
+            selectStage('literature');
+        });
+    </script>
+</body>
+</html>
