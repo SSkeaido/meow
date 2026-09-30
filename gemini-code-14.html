@@ -1,0 +1,1073 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>文优小助 · 阶段四：论文定稿工作台（业务完整版）</title>
+  <style>
+    :root {
+      --primary: #2563eb;
+      --primary-light: #eff6ff;
+      --primary-border: #bfdbfe;
+      --success: #10b981;
+      --success-bg: #ecfdf5;
+      --warning: #f59e0b;
+      --warning-bg: #fffbeb;
+      --danger: #ef4444;
+      --danger-bg: #fef2f2;
+      --gray-50: #f8fafc;
+      --gray-100: #f1f5f9;
+      --gray-200: #e2e8f0;
+      --gray-500: #64748b;
+      --gray-700: #334155;
+      --gray-900: #0f172a;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", sans-serif; }
+    body { background-color: var(--gray-50); color: var(--gray-900); padding-bottom: 80px; }
+
+    /* 顶部测试控制器 */
+    .debug-bar { background: #1e293b; color: #fff; padding: 10px 24px; font-size: 12px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 8px rgba(0,0,0,0.15); }
+    .debug-group { display: flex; align-items: center; gap: 8px; }
+    .debug-select { background: #334155; color: #fff; border: 1px solid #475569; padding: 4px 8px; border-radius: 4px; font-size: 12px; }
+
+    header { background: #fff; border-bottom: 1px solid var(--gray-200); padding: 16px 32px; display: flex; align-items: center; justify-content: space-between; }
+    .brand { font-size: 18px; font-weight: 700; color: var(--gray-900); display: flex; align-items: center; gap: 8px; }
+    .brand-badge { background: #3b82f6; color: white; padding: 2px 8px; border-radius: 4px; font-size: 12px; }
+    .project-meta { font-size: 14px; color: var(--gray-500); }
+
+    .stage-bar { background: #fff; border-bottom: 1px solid var(--gray-200); padding: 12px 32px; display: flex; gap: 24px; font-size: 14px; }
+    .stage-item { color: var(--gray-500); display: flex; align-items: center; gap: 6px; }
+    .stage-item.completed { color: var(--success); }
+    .stage-item.active { color: var(--primary); font-weight: 600; }
+
+    main { max-width: 1060px; margin: 28px auto; padding: 0 16px; }
+
+    .flow-view { display: none; background: #fff; border: 1px solid var(--gray-200); border-radius: 12px; padding: 28px; }
+    .flow-view.active { display: block; }
+    .view-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; border-bottom: 1px solid var(--gray-100); padding-bottom: 16px; }
+    .back-btn { background: none; border: 1px solid var(--gray-200); padding: 6px 14px; border-radius: 6px; cursor: pointer; font-size: 13px; color: var(--gray-700); display: inline-flex; align-items: center; gap: 4px; transition: 0.15s; }
+    .back-btn:hover { background: var(--gray-100); }
+
+    .box-panel { border: 1px solid var(--gray-200); border-radius: 8px; padding: 20px; margin-bottom: 24px; position: relative; }
+    .btn { display: inline-flex; align-items: center; justify-content: center; padding: 10px 18px; border-radius: 6px; font-size: 14px; font-weight: 500; cursor: pointer; border: none; transition: 0.15s; text-decoration: none; }
+    .btn-primary { background: var(--primary); color: white; }
+    .btn-primary:hover { background: #1d4ed8; }
+    .btn-outline { background: white; border: 1px solid var(--gray-200); color: var(--gray-700); }
+    .btn-outline:hover { background: var(--gray-100); }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .step-actions { display: flex; justify-content: space-between; align-items: center; padding-top: 8px; }
+
+    .campaign-banner {
+      background: linear-gradient(90deg, #eff6ff 0%, #fef3c7 100%);
+      border: 1px solid #bfdbfe;
+      border-radius: 8px;
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 18px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .campaign-banner:hover { box-shadow: 0 4px 12px rgba(37, 99, 235, 0.1); border-color: #60a5fa; }
+    .campaign-title { font-size: 13px; font-weight: 600; color: #1e3a8a; display: flex; align-items: center; gap: 6px; }
+    .campaign-badge { background: #ef4444; color: #fff; font-size: 11px; padding: 1px 6px; border-radius: 10px; font-weight: 700; }
+    .campaign-link { font-size: 12px; color: var(--primary); font-weight: 600; display: flex; align-items: center; gap: 4px; }
+
+    .activity-hero { text-align: center; margin-bottom: 24px; padding-bottom: 18px; border-bottom: 1px solid var(--gray-200); }
+    .activity-hero h1 { font-size: 24px; color: #1e3a8a; margin-bottom: 10px; font-weight: 800; display: flex; align-items: center; justify-content: center; gap: 8px; }
+    .activity-rule-card {
+      background: linear-gradient(180deg, #fffbeb 0%, #fef3c7 100%);
+      border: 1px solid #fde68a;
+      border-radius: 8px;
+      padding: 16px 20px;
+      text-align: left;
+      font-size: 13px;
+      color: #78350f;
+      line-height: 1.6;
+      max-width: 860px;
+      margin: 0 auto;
+    }
+    .activity-rule-card strong { color: #92400e; font-weight: 700; }
+    .activity-form-grid { display: grid; grid-template-columns: 2fr 1.5fr 1fr auto; gap: 12px; align-items: flex-end; margin-top: 14px; }
+    .form-item label { display: block; font-size: 12px; font-weight: 600; color: var(--gray-700); margin-bottom: 6px; }
+    .form-item input, .form-item select { width: 100%; padding: 9px 12px; border: 1px solid var(--gray-200); border-radius: 6px; font-size: 13px; outline: none; }
+    .form-item input:focus, .form-item select:focus { border-color: var(--primary); }
+
+    .upload-zone { border: 2px dashed var(--gray-200); border-radius: 8px; padding: 24px; text-align: center; cursor: pointer; transition: 0.2s; background: var(--gray-50); }
+    .upload-zone:hover { border-color: var(--primary); background: #f8fbff; }
+    .upload-zone.selected { border-color: var(--primary); background: var(--primary-light); }
+    .upload-zone.locked { opacity: 0.6; cursor: not-allowed; border-color: #cbd5e1; background: var(--gray-100); }
+
+    .modal-backdrop { display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(2px); z-index: 1000; align-items: center; justify-content: center; padding: 16px; }
+    .modal-backdrop.show { display: flex; }
+    .modal-card { background: #fff; border-radius: 12px; max-width: 500px; width: 100%; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2); overflow: hidden; animation: modalFadeIn 0.2s ease; }
+    @keyframes modalFadeIn { from { opacity: 0; transform: translateY(12px) scale(0.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
+    .modal-header { padding: 16px 20px; background: #f8fafc; border-bottom: 1px solid var(--gray-200); display: flex; justify-content: space-between; align-items: center; }
+    .modal-close { background: none; border: none; font-size: 20px; cursor: pointer; color: var(--gray-500); }
+    .modal-body { padding: 24px; }
+    .modal-footer { padding: 16px 24px; background: #fff; border-top: 1px solid var(--gray-200); display: flex; justify-content: center; gap: 12px; }
+
+    .chat-drawer { display: none; position: fixed; right: 20px; bottom: 20px; width: 360px; height: 480px; background: #fff; border-radius: 12px; box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.25); border: 1px solid var(--gray-200); z-index: 1100; flex-direction: column; overflow: hidden; }
+    .chat-drawer.show { display: flex; }
+    .chat-header { background: var(--primary); color: #fff; padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; font-size: 14px; font-weight: 600; }
+    .chat-content { flex: 1; padding: 16px; background: var(--gray-50); overflow-y: auto; font-size: 13px; display: flex; flex-direction: column; gap: 12px; }
+    .chat-bubble { padding: 8px 12px; border-radius: 8px; max-width: 85%; line-height: 1.4; }
+    .chat-bubble.service { background: #fff; border: 1px solid var(--gray-200); align-self: flex-start; }
+    .chat-bubble.user { background: var(--primary); color: #fff; align-self: flex-end; }
+    .chat-input-bar { padding: 10px; border-top: 1px solid var(--gray-200); display: flex; gap: 8px; background: #fff; }
+
+    .workbench-header { margin-bottom: 24px; }
+    .workbench-header h1 { font-size: 24px; margin-bottom: 6px; }
+    .workbench-header p { font-size: 14px; color: var(--gray-500); }
+    .tool-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+    .tool-card { background: #fff; border: 1px solid var(--gray-200); border-radius: 12px; padding: 24px; display: flex; flex-direction: column; justify-content: space-between; transition: all 0.2s ease; position: relative; }
+    .tool-card:hover { border-color: var(--primary); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05); }
+    .tool-status-tag { position: absolute; top: 20px; right: 20px; font-size: 12px; padding: 4px 8px; border-radius: 20px; background: var(--gray-100); color: var(--gray-700); font-weight: 500; }
+    .tool-card h2 { font-size: 18px; margin-bottom: 8px; }
+    .tool-card .desc { font-size: 13px; color: var(--gray-500); margin-bottom: 18px; line-height: 1.5; }
+    .tool-pipeline { display: flex; gap: 8px; align-items: center; font-size: 12px; color: var(--gray-700); margin-bottom: 24px; background: var(--gray-50); padding: 10px 12px; border-radius: 8px; }
+    .pipeline-arrow { color: var(--gray-500); }
+
+    .step-track { display: flex; justify-content: space-between; margin-bottom: 32px; position: relative; }
+    .step-track::before { content: ""; position: absolute; top: 14px; left: 8%; right: 8%; height: 2px; background: var(--gray-200); z-index: 1; }
+    .step-node { position: relative; z-index: 2; display: flex; flex-direction: column; align-items: center; background: #fff; padding: 0 16px; }
+    .step-num { width: 30px; height: 30px; border-radius: 50%; background: var(--gray-100); border: 2px solid var(--gray-200); display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 600; color: var(--gray-500); margin-bottom: 6px; }
+    .step-node.active .step-num { background: var(--primary); border-color: var(--primary); color: #fff; }
+    .step-node.completed .step-num { background: var(--success); border-color: var(--success); color: #fff; }
+    .step-title { font-size: 13px; color: var(--gray-500); }
+    .step-node.active .step-title { color: var(--gray-900); font-weight: 600; }
+
+    .flow-step-content { display: none; }
+    .flow-step-content.current { display: block; }
+    .file-pill { display: flex; align-items: center; justify-content: space-between; padding: 12px; border: 1px solid var(--gray-200); border-radius: 6px; margin-bottom: 8px; cursor: pointer; }
+    .file-pill.selected { border-color: var(--primary); background: var(--primary-light); }
+    .file-pill.disabled { opacity: 0.7; cursor: not-allowed; background: var(--gray-100); }
+    .file-tag { font-size: 11px; padding: 2px 6px; border-radius: 4px; font-weight: 500; margin-left: 6px; }
+    .tag-signed { background: var(--success-bg); color: var(--success); }
+    .fee-badge { font-size: 12px; background: #fef3c7; color: #92400e; padding: 4px 10px; border-radius: 20px; font-weight: 600; display: inline-flex; align-items: center; gap: 4px; }
+    .rule-tag-group { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0; }
+    .rule-tag { background: var(--primary-light); color: var(--primary); border: 1px solid var(--primary-border); font-size: 12px; padding: 4px 10px; border-radius: 4px; }
+
+    .diff-card { border: 1px solid var(--gray-200); border-radius: 8px; overflow: hidden; margin-bottom: 16px; }
+    .diff-header { background: var(--gray-50); padding: 10px 16px; display: flex; justify-content: space-between; font-size: 12px; color: var(--gray-700); border-bottom: 1px solid var(--gray-200); }
+    .diff-body { display: grid; grid-template-columns: 1fr 1fr; }
+    .diff-pane { padding: 16px; font-size: 13px; line-height: 1.6; }
+    .diff-pane.old { background: #fffdfd; border-right: 1px solid var(--gray-200); }
+    .diff-pane.new { background: #fdfffe; }
+    .tag-origin { background: #fee2e2; color: #b91c1c; padding: 2px 6px; border-radius: 4px; font-size: 11px; }
+
+    .pay-card { border: 1px solid var(--gray-200); border-radius: 8px; padding: 16px; background: var(--gray-50); margin-bottom: 16px; }
+    .pay-row { display: flex; justify-content: space-between; align-items: center; font-size: 13px; margin-bottom: 8px; }
+    .pay-row:last-child { margin-bottom: 0; padding-top: 8px; border-top: 1px dashed var(--gray-200); }
+  </style>
+</head>
+<body>
+
+  <!-- 顶部调试控制器 -->
+  <div class="debug-bar">
+    <div class="debug-group">
+      <strong>[PRD 业务场景模拟器]</strong>
+      <span>步骤一（格式选论文）：</span>
+      <select class="debug-select" id="cfg-step1-scene" onchange="renderStep1Scene()">
+        <option value="scenario-1">情况 1：正常已签收初稿 (单/多版本切换 + 上传框)</option>
+        <option value="scenario-2">情况 2：有初稿但未签收/未付费 (强拦截去付款 + 上传框)</option>
+        <option value="scenario-4">情况 3：多次调整资费场景 (扣除100文优币/会员卡点 + 上传框)</option>
+      </select>
+    </div>
+  </div>
+
+  <header>
+    <div class="brand">
+      <span>文优小助</span>
+      <span class="brand-badge">毕业版</span>
+    </div>
+    <div class="project-meta">当前项目：基于深度学习的高校学术论文自动润色算法研究</div>
+  </header>
+
+  <nav class="stage-bar">
+    <div class="stage-item completed">✓ 阶段一：选题论证</div>
+    <div class="stage-item completed">✓ 阶段二：开题报告</div>
+    <div class="stage-item completed">✓ 阶段三：论文初稿</div>
+    <div class="stage-item active">● 阶段四：论文定稿（当前）</div>
+  </nav>
+
+  <main>
+    <!-- 阶段四工作台首页 -->
+    <div id="view-dashboard" class="flow-view active">
+      <div class="workbench-header">
+        <h1>第四阶段：论文定稿工作台</h1>
+        <p>论文内容已完成，本阶段承载格式调整与论文降重两条独立交付流程。两者互不影响、不强制顺序、原初稿绝对只读保留[cite: 1]。</p>
+      </div>
+
+      <div class="tool-cards">
+        <div class="tool-card">
+          <span class="tool-status-tag">独立交付</span>
+          <div>
+            <h2>格式调整</h2>
+            <p class="desc">对标目标高校排版规范，自动应用标题层级、字体、行距、页码、目录及图表格式，未覆盖项明确列出清单[cite: 1]。</p>
+            <div class="tool-pipeline">
+              <span>选初稿/上传</span>
+              <span class="pipeline-arrow">→</span>
+              <span>选学校模板</span>
+              <span class="pipeline-arrow">→</span>
+              <span>导出排版版</span>
+            </div>
+          </div>
+          <button class="btn btn-primary" onclick="startFormatFlow()">启动格式调整</button>
+        </div>
+
+        <div class="tool-card">
+          <span class="tool-status-tag">独立交付</span>
+          <div>
+            <h2>论文降重与润色</h2>
+            <p class="desc">提交查重报告与一致的正文全文，先试看前3处改写效果，满意后再付费全篇降重，保持学术原意与事实不变[cite: 1]。</p>
+            <div class="tool-pipeline">
+              <span>提交报告+正文</span>
+              <span class="pipeline-arrow">→</span>
+              <span>预览效果</span>
+              <span class="pipeline-arrow">→</span>
+              <span>结算导出</span>
+            </div>
+          </div>
+          <button class="btn btn-primary" onclick="startReducFlow()">启动论文降重</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== 流程 A：格式调整 ==================== -->
+    <div id="view-format" class="flow-view">
+      <div class="view-top">
+        <div>
+          <h3>格式调整流程</h3>
+          <span style="font-size: 12px; color: var(--gray-500);">只调整版面规则，不擅自增删或改写观点与核心论据[cite: 1]</span>
+        </div>
+        <button class="back-btn" onclick="switchView('dashboard')">← 返回定稿工作台</button>
+      </div>
+
+      <div class="step-track" id="format-steptrack">
+        <div class="step-node active" id="f-node-1"><div class="step-num">1</div><div class="step-title">选择论文</div></div>
+        <div class="step-node" id="f-node-2"><div class="step-num">2</div><div class="step-title">选择学校模板</div></div>
+        <div class="step-node" id="f-node-3"><div class="step-num">3</div><div class="step-title">确认并导出</div></div>
+      </div>
+
+      <!-- 格式 Step 1：选择初稿 -->
+      <div class="flow-step-content current" id="format-step-1">
+        <div class="box-panel" id="step1-dynamic-container"></div>
+        <div class="step-actions" id="step1-actions-bar"></div>
+      </div>
+
+      <!-- 格式 Step 2：选择学校模板 -->
+      <div class="flow-step-content" id="format-step-2">
+        <div class="box-panel">
+          <div class="campaign-banner" onclick="switchView('campaign-page')">
+            <div class="campaign-title">
+              <span class="campaign-badge">活动专区</span>
+              <span>没有想要的模板？上传学校模板享免费格式调整！</span>
+            </div>
+            <div class="campaign-link">
+              <span>进入活动页面报名上传</span>
+              <span>→</span>
+            </div>
+          </div>
+
+          <h4 style="margin-bottom: 12px;">匹配目标高校排版规范</h4>
+          <select style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid var(--gray-200); font-size: 14px; margin-bottom: 16px;">
+            <option>浙江大学 - 计算机科学与技术学院 - 2026届研究生学位论文标准规范 (官方已收录)</option>
+            <option>清华大学 - 硕博学位论文标准模板 (2025/2026通用)</option>
+            <option>华中科技大学 - 本科毕业设计排版规范 (2026版)</option>
+          </select>
+
+          <div style="background: var(--gray-50); border: 1px solid var(--gray-200); border-radius: 6px; padding: 14px;">
+            <div style="font-size: 13px; font-weight: 600; margin-bottom: 8px;">系统已解析目标模板 8 大类规则集（全自动套用，无须逐项手动勾选）：</div>
+            <div class="rule-tag-group">
+              <span class="rule-tag">一级标题 黑体三号居中</span>
+              <span class="rule-tag">正文 宋体小四 1.5倍行距</span>
+              <span class="rule-tag">页边距 左3.0cm 右2.5cm</span>
+              <span class="rule-tag">页眉 奇偶页不同</span>
+              <span class="rule-tag">页码 罗马前言/阿拉伯正文居中</span>
+              <span class="rule-tag">图表 自动重排图题编号</span>
+              <span class="rule-tag">参考文献 GB/T 7714-2015</span>
+              <span class="rule-tag">自动更新三级目录</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="step-actions">
+          <button class="btn btn-outline" onclick="goFormatStep(1)">← 上一步：重新选择初稿</button>
+          <button class="btn btn-primary" onclick="goFormatStep(3)">立即排版并生成版本 →</button>
+        </div>
+      </div>
+
+      <!-- 格式 Step 3：确认并导出 -->
+      <div class="flow-step-content" id="format-step-3">
+        <div class="box-panel">
+          <div style="text-align: center; padding: 36px 24px; background: var(--gray-50); border-radius: 8px; border: 1px solid var(--gray-200);">
+            <div style="font-size: 40px; margin-bottom: 10px;">📄</div>
+            <h3 style="font-size: 18px; margin-bottom: 8px;">已生成独立排版版本</h3>
+            <p style="font-size: 13px; color: var(--gray-500); margin: 6px 0 24px; line-height: 1.6;">
+              目标文件：<strong id="final-format-filename">..._学术论文自动润色_浙大模板排版版.docx</strong><br>
+              原初稿始终独立锁定保留。享受 30 天内基于同模板无限微调服务[cite: 1]。
+            </p>
+            <div style="display: flex; justify-content: center; gap: 14px; align-items: center;">
+              <button class="btn btn-primary" onclick="alert('开始下载排版完成的 Word 文档 (.docx)')">下载 Word 格式文件 (.docx)</button>
+              <button class="btn btn-outline" style="color: #b91c1c; border-color: #fecaca; background: #fff5f5;" onclick="openCustomTemplateModal()">
+                结果不满意？文优客服来处理
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="step-actions">
+          <button class="btn btn-outline" onclick="goFormatStep(2)">← 上一步：更换目标模板</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== 活动独立专区 ==================== -->
+    <div id="view-campaign-page" class="flow-view">
+      <div class="view-top">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <span style="font-size:20px;">🎉</span>
+          <div>
+            <h3 style="margin:0;font-size:17px;color:#1e3a8a;">争做模板上传第一人 · 享专属免费调整</h3>
+            <span style="font-size:12px;color:var(--gray-500);">首位上传者尊享无限次格式调整免单特权[cite: 1]</span>
+          </div>
+        </div>
+        <button class="back-btn" onclick="switchView('format'); goFormatStep(2);">← 返回选择模板</button>
+      </div>
+
+      <div class="activity-hero">
+        <h1>争做模板上传第一人，享无限格式调整</h1>
+        <div class="activity-rule-card">
+          <div style="font-weight:700;font-size:14px;margin-bottom:6px;display:flex;align-items:center;gap:6px;">
+            <span>📜</span> 活动核心规则
+          </div>
+          <div>1. 第一个上传该学校模板（自己需要的模板）的同学，可以获得<strong>同一篇论文免费无限次调整格式的资格</strong>，权益有效期<strong>直到次年六月</strong>[cite: 1]；</div>
+          <div style="margin-top:4px;">2. <strong>注意：</strong>“同一篇论文”指<strong>论文相似度大于百分之八十（≥80%）</strong>的论文版本[cite: 1]；</div>
+          <div style="margin-top:4px;color:#b45309;font-size:12px;">* 审核通过后，该特权将自动绑定至您的文优账号。</div>
+        </div>
+      </div>
+
+      <div class="box-panel">
+        <h3 style="font-size:15px;margin-bottom:6px;">第一步：输入模板信息并查重</h3>
+        <p style="font-size:12px;color:var(--gray-500);margin-bottom:14px;">请先填写您所需模板的学校信息，系统将立即检索该校模板是否已有同学首发上传[cite: 1]。</p>
+        
+        <div class="activity-form-grid">
+          <div class="form-item">
+            <label>* 学校名称</label>
+            <input type="text" id="act-school-input" placeholder="例如：四川大学、西南交通大学...">
+          </div>
+          <div class="form-item">
+            <label>院系（选填）</label>
+            <input type="text" id="act-dept-input" placeholder="例如：计算机学院（不填则为全校通用）">
+          </div>
+          <div class="form-item">
+            <label>* 模板年份</label>
+            <select id="act-year-input">
+              <option value="2026">2026 届</option>
+              <option value="2025">2025 届</option>
+              <option value="2024">2024 届及更早</option>
+            </select>
+          </div>
+          <div>
+            <button class="btn btn-primary" style="height:38px;padding:0 20px;" onclick="handleTemplateSearch()">查找是否首发</button>
+          </div>
+        </div>
+
+        <div id="act-search-feedback" style="display:none;margin-top:14px;padding:10px 14px;border-radius:6px;font-size:13px;"></div>
+      </div>
+
+      <div class="box-panel" id="act-upload-panel">
+        <h3 style="font-size:15px;margin-bottom:6px;">第二步：上传官方规范模板</h3>
+        <p style="font-size:12px;color:var(--gray-500);margin-bottom:14px;">经检索该校尚无模板记录时，下方上传通道将对您解锁开放[cite: 1]。</p>
+
+        <div class="upload-zone locked" id="act-upload-zone" onclick="triggerActivityDocUpload()">
+          <div style="font-size:32px;margin-bottom:6px;">📤</div>
+          <div style="font-size:14px;font-weight:600;" id="act-upload-text">请先在上方填写信息并点击【查找】验证资格</div>
+          <div style="font-size:12px;color:var(--gray-500);margin-top:4px;">支持 .docx / .doc 格式的学校官方学位论文排版模板</div>
+        </div>
+
+        <div style="margin-top:18px;display:flex;justify-content:flex-end;gap:12px;">
+          <button class="btn btn-outline" onclick="switchView('format'); goFormatStep(2);">取消返回</button>
+          <button class="btn btn-primary" id="btn-act-submit" disabled onclick="handleActivitySubmit()">确认提交活动报名</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== 流程 B：论文降重 ==================== -->
+    <div id="view-reduc" class="flow-view">
+      <div class="view-top">
+        <div>
+          <h3>论文降重与润色流程</h3>
+          <span style="font-size: 12px; color: var(--gray-500);">查重报告与正文全文均为必传材料；试看前三处改写质量，满意后确认结算全篇降重[cite: 1]</span>
+        </div>
+        <button class="back-btn" onclick="switchView('dashboard')">← 返回定稿工作台</button>
+      </div>
+
+      <div class="step-track" id="reduc-steptrack">
+        <div class="step-node active" id="r-node-1"><div class="step-num">1</div><div class="step-title">提交材料</div></div>
+        <div class="step-node" id="r-node-2"><div class="step-num">2</div><div class="step-title">预览降重效果</div></div>
+        <div class="step-node" id="r-node-3"><div class="step-num">3</div><div class="step-title">复查并导出</div></div>
+      </div>
+
+      <!-- 降重 Step 1 -->
+      <div class="flow-step-content current" id="reduc-step-1">
+        <div class="box-panel">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+            <h4 style="margin: 0;">1. 上传官方查重报告 <span style="color: var(--danger); font-size: 13px;">(必传)</span></h4>
+            <span style="font-size: 12px; color: var(--gray-500);">支持知网(CNKI)、维普、万方官方报告格式[cite: 1]</span>
+          </div>
+
+          <div class="upload-zone selected" onclick="alert('查重报告已载入并校验！')">
+            <div style="font-size: 26px; margin-bottom: 4px;">📊</div>
+            <div style="font-size: 14px; font-weight: 600;" id="r-report-name">已加载官方查重报告：知网VIP5.3学术报告_2026.html (解析通过)</div>
+            <div style="font-size: 12px; color: var(--gray-500); margin-top: 4px;">支持全文版报告或简报，系统将自动定位重复段落[cite: 1]</div>
+          </div>
+
+          <div style="margin-top: 14px;">
+            <label style="font-size: 13px; font-weight: 600; display: block; margin-bottom: 6px;">降重改写重点：</label>
+            <div style="display: flex; gap: 20px; font-size: 13px;">
+              <label><input type="radio" name="reduc-type-mode" checked> 综合降低重复率（针对标红内容同义与句式重构）</label>
+              <label><input type="radio" name="reduc-type-mode"> 降低 AIGC 疑似度（针对机械表达与句法通顺度润色）</label>
+            </div>
+          </div>
+        </div>
+
+        <div class="box-panel">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+            <h4 style="margin: 0;">2. 上传论文正文全文 (.docx) <span style="color: var(--danger); font-size: 13px;">(必传)</span></h4>
+            <span style="font-size: 12px; color: var(--gray-500);">用于重复片段精确段落映射与重构替换[cite: 1]</span>
+          </div>
+
+          <div style="padding: 10px 14px; background: #fffbeb; border: 1px solid #fde68a; border-radius: 6px; margin-bottom: 12px; font-size: 12px; color: #92400e; display: flex; align-items: center; gap: 8px;">
+            <span>⚠️</span>
+            <span><strong>重要提示：</strong>所上传的论文全文必须与提交的查重报告内容保持完全一致！若正文与报告版本对不上，系统将无法精确定位重复片段并阻断处理[cite: 1]。</span>
+          </div>
+
+          <div class="upload-zone" id="r-doc-upload-zone" onclick="triggerReducDocUpload()">
+            <div style="font-size: 26px; margin-bottom: 4px;">📝</div>
+            <div style="font-size: 14px; font-weight: 600;" id="r-doc-upload-title">点击选择并上传论文正文全文 Word 文档 (.docx)</div>
+            <div style="font-size: 12px; color: var(--gray-500); margin-top: 4px;">字数需与报告吻合 · 上传后系统将锁定原事实数据与引用关系[cite: 1]</div>
+          </div>
+        </div>
+
+        <div class="step-actions">
+          <button class="btn btn-outline" onclick="switchView('dashboard')">← 返回定稿工作台</button>
+          <button class="btn btn-primary" onclick="proceedToReducStep2()">开始解析材料，试看前3处效果 →</button>
+        </div>
+      </div>
+
+      <!-- 降重 Step 2 -->
+      <div class="flow-step-content" id="reduc-step-2">
+        <div class="box-panel">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+            <div>
+              <h4 style="margin: 0;">降重效果试看预览 (前 3 处片段试读)</h4>
+              <span style="font-size: 12px; color: var(--gray-500);">正文全文与报告已成功匹配，定位全文 18 处重复片段[cite: 1]：</span>
+            </div>
+            <span class="tag-origin" style="background:#dbeafe; color:#1e40af; font-size:12px; padding:4px 8px;">报告总重复率：31.4%</span>
+          </div>
+
+          <div class="diff-card">
+            <div class="diff-header">
+              <span>第 1 处试看片段 · 第二章背景综述</span>
+              <span class="tag-origin">知网重合比 82%</span>
+            </div>
+            <div class="diff-body">
+              <div class="diff-pane old">
+                <div style="font-size: 11px; color: var(--danger); font-weight: 600; margin-bottom: 4px;">报告标红原文</div>
+                <p>随着互联网技术的快速发展，网络购物已经成为人们日常生活中不可或缺的一部分，电子商务平台的交易额逐年攀升，对物流配送的时效性提出了前所未有的严峻挑战。</p>
+              </div>
+              <div class="diff-pane new">
+                <div style="font-size: 11px; color: var(--success); font-weight: 600; margin-bottom: 4px;">文优降重润色后</div>
+                <p>互联网基础设施持续完善后，线上消费模式逐渐融入居民日常商业场景。在电商交易规模稳步扩充的背景下，终端物流履约体系的响应效率亦面临更高维度的协同要求。</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="diff-card">
+            <div class="diff-header">
+              <span>第 2 处试看片段 · 第三章算法推导</span>
+              <span class="tag-origin">知网重合比 75%</span>
+            </div>
+            <div class="diff-body">
+              <div class="diff-pane old">
+                <div style="font-size: 11px; color: var(--danger); font-weight: 600; margin-bottom: 4px;">报告标红原文</div>
+                <p>通过构建多层神经网络结构，模型能够有效提取文本序列中的深层语义特征，并对上下文之间的隐式关联进行全局拟合。</p>
+              </div>
+              <div class="diff-pane new">
+                <div style="font-size: 11px; color: var(--success); font-weight: 600; margin-bottom: 4px;">文优降重润色后</div>
+                <p>借助深层网络架构设计，该模型可充分捕捉文本序列所蕴含的高阶语意表征，从而实现对上下文潜在依存关系的全局建模。</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="diff-card">
+            <div class="diff-header">
+              <span>第 3 处试看片段 · 第五章结论分析</span>
+              <span class="tag-origin">知网重合比 68%</span>
+            </div>
+            <div class="diff-body">
+              <div class="diff-pane old">
+                <div style="font-size: 11px; color: var(--danger); font-weight: 600; margin-bottom: 4px;">报告标红原文</div>
+                <p>实验结果充分表明，本文提出的优化算法在收敛速度和稳定性方面均显著优于传统基线模型。</p>
+              </div>
+              <div class="diff-pane new">
+                <div style="font-size: 11px; color: var(--success); font-weight: 600; margin-bottom: 4px;">文优降重润色后</div>
+                <p>实证测试表明，相较于经典基准方法，本研究所构建的改进算法在计算收敛效率及迭代稳定性维度均展现出显著增益。</p>
+              </div>
+            </div>
+          </div>
+
+          <div style="text-align: center; padding: 22px; background: linear-gradient(180deg, #f8fafc 0%, #eff6ff 100%); border: 1px solid var(--primary-border); border-radius: 8px; margin-top: 14px;">
+            <div style="font-size: 15px; font-weight: 600; color: #1e3a8a; margin-bottom: 6px;">改写质量符合学术预期？立即全篇降重</div>
+            <p style="font-size: 12px; color: var(--gray-500); margin-bottom: 14px;">不满意可联系客服全额退款！</p>
+            <button class="btn btn-primary" style="padding: 12px 32px; font-size: 15px;" onclick="openPaymentModal()">
+              🚀 确认并开始全篇降重 →
+            </button>
+          </div>
+        </div>
+
+        <div class="step-actions">
+          <button class="btn btn-outline" onclick="goReducStep(1)">← 上一步：重新提交材料</button>
+        </div>
+      </div>
+
+      <!-- 降重 Step 3：复查并导出（点击不满意弹出定制化模板弹窗） -->
+      <div class="flow-step-content" id="reduc-step-3">
+        <div class="box-panel" style="text-align: center; padding: 36px;">
+          <div style="font-size: 40px; margin-bottom: 12px;">✨</div>
+          <h3>降重润色完成，独立新版本已生成</h3>
+          <p style="font-size: 13px; color: var(--gray-500); margin: 8px 0 20px;">
+            目标文件：<strong>..._学术论文自动润色_精准降重版_V1.docx</strong><br>
+            原初稿保持完整未改动。本次处理已锁定学术术语、论据及参考文献引用[cite: 1]。
+          </p>
+          <div style="display: flex; justify-content: center; gap: 12px;">
+            <button class="btn btn-outline" onclick="goReducStep(2)">← 返回试看预览</button>
+            <button class="btn btn-primary" onclick="alert('开始下载降重后的 Word 文档 (.docx)')">导出降重版 Word 文件 (.docx)</button>
+            <!-- 绑定弹窗函数 openCustomTemplateModal() -->
+            <button class="btn btn-outline" style="color: #b91c1c; border-color: #fecaca; background: #fff5f5;" onclick="openCustomTemplateModal()">
+              结果不满意？文优客服来处理！
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- ==================== 定制化模板服务弹窗 Modal ==================== -->
+  <div class="modal-backdrop" id="custom-template-modal" onclick="closeCustomTemplateModalOnBackdrop(event)">
+    <div class="modal-card" style="max-width: 480px;">
+      <div class="modal-header">
+        <div style="font-weight: 700; font-size: 16px; color: #1e3a8a;">定制化模板服务</div>
+        <button class="modal-close" onclick="closeCustomTemplateModal()">×</button>
+      </div>
+      <div class="modal-body" style="text-align: left; padding: 24px;">
+        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 18px; font-size: 13px; line-height: 1.8; color: #334155;">
+          <p style="margin: 0;">
+            可根据需求定制、微调模板样式，收费标准：根据需求定价，三十天内可调整三次。[cite: 1]
+          </p>
+        </div>
+      </div>
+      <div class="modal-footer" style="padding: 16px 24px; justify-content: center; gap: 12px;">
+        <button class="btn btn-outline" style="font-size: 13px;" onclick="closeCustomTemplateModal()">稍后再说</button>
+        <button class="btn btn-primary" style="font-size: 13px; background: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%);" onclick="handleContactCustomTemplate()">
+          联系客服定制化模板
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== 付款结算示意弹窗 Modal ==================== -->
+  <div class="modal-backdrop" id="payment-modal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div style="font-weight: 700; font-size: 16px; color: #1e3a8a;">💳 论文降重服务结算确认</div>
+        <button class="modal-close" onclick="closePaymentModal()">×</button>
+      </div>
+      <div class="modal-body">
+        <div class="pay-card">
+          <div class="pay-row">
+            <span style="color: var(--gray-500);">当前服务项目</span>
+            <strong style="color: var(--gray-900);">官方查重定位 + 深度学术降重润色[cite: 1]</strong>
+          </div>
+          <div class="pay-row">
+            <span style="color: var(--gray-500);">论文正文字数</span>
+            <span>28,400 字</span>
+          </div>
+          <div class="pay-row">
+            <span style="color: var(--gray-500);">已定位待处理片段</span>
+            <span>共 18 处重复片段[cite: 1]</span>
+          </div>
+          <div class="pay-row">
+            <span style="color: var(--gray-500);">服务保障机制</span>
+            <span style="color: var(--success); font-weight: 600;">二次查重不达标享客服退款/补降[cite: 1]</span>
+          </div>
+          <div class="pay-row">
+            <strong>实付合计金额</strong>
+            <strong style="color: #b91c1c; font-size: 18px;">¥ 58.00 <span style="font-size: 12px; font-weight: normal; color: var(--gray-500);">(或扣除 580 文优币)</span></strong>
+          </div>
+        </div>
+
+        <div style="font-size: 12px; color: var(--gray-700); margin-bottom: 12px; text-align: left;">
+          请选择支付方式：
+          <div style="display: flex; gap: 16px; margin-top: 6px;">
+            <label><input type="radio" name="pay-method" checked> 微信支付</label>
+            <label><input type="radio" name="pay-method"> 支付宝</label>
+            <label><input type="radio" name="pay-method"> 文优币余额抵扣 (当前余额: 1,200)</label>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" style="font-size: 13px;" onclick="closePaymentModal()">取消</button>
+        <button class="btn btn-primary" style="font-size: 13px; background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);" onclick="confirmPaymentAndStart()">
+          确认支付并开始全篇降重
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== 审查期确认弹窗 Modal ==================== -->
+  <div class="modal-backdrop" id="review-result-modal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div style="font-weight: 700; font-size: 16px; color: #1e3a8a;">📋 模板报名已提交</div>
+        <button class="modal-close" onclick="closeReviewModal()">×</button>
+      </div>
+      <div class="modal-body" style="text-align: center;">
+        <div style="font-size:42px;margin-bottom:12px;">⏳</div>
+        <h3 style="font-size:18px;color:#0f172a;margin-bottom:8px;">将在三日内通知您参与结果</h3>
+        <p style="font-size:13px;color:var(--gray-500);line-height:1.6;margin-bottom:6px;">
+          文优学术排版工程团队正在对您上传的学校规范模板进行段落、行距、页码与标题规则的结构化解析[cite: 1]。
+        </p>
+        <p style="font-size:12px;color:#d97706;background:#fffbeb;padding:8px 12px;border-radius:6px;border:1px solid #fde68a;">
+          审核通过后，该模板直到次年六月的无限次免费格式调整资格将即刻发放到您的账户[cite: 1]！
+        </p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" style="font-size:13px;" onclick="closeReviewModal(); switchView('format'); goFormatStep(2);">返回模板列表</button>
+        <button class="btn btn-primary" style="font-size:13px;background:linear-gradient(135deg, #2563eb 0%, #7c3aed 100%);" onclick="handleUrgentService()">
+          ⚡ 联系客服加急制作模板
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== 在线客服对话侧窗 ==================== -->
+  <div class="chat-drawer" id="chat-drawer">
+    <div class="chat-header">
+      <div style="display: flex; align-items: center; gap: 6px;">
+        <span>🎧 文优小助 · 专属学术顾问</span>
+      </div>
+      <button onclick="closeChatDrawer()" style="background: none; border: none; color: #fff; font-size: 18px; cursor: pointer;">✕</button>
+    </div>
+    <div class="chat-content" id="chat-messages">
+      <div class="chat-bubble service">
+        同学您好！我是文优专属学术排版与降重顾问。请问是对当前的格式、降重改写需要人工复核，还是需要加急处理[cite: 1]？
+      </div>
+    </div>
+    <div class="chat-input-bar">
+      <input type="text" id="chat-input" placeholder="输入您的问题..." style="flex: 1; padding: 6px 10px; border: 1px solid var(--gray-200); border-radius: 4px; font-size: 12px;" onkeydown="handleChatEnter(event)">
+      <button class="btn btn-primary" style="padding: 6px 12px; font-size: 12px;" onclick="sendChatMessage()">发送</button>
+    </div>
+  </div>
+
+  <script>
+    let selectedDraftIndex = 0;
+    let selectedLocalFile = false;
+
+    // 降重材料状态
+    let reducDocUploaded = false;
+
+    // 活动状态
+    let actSearchPassed = false;
+    let actFileUploaded = false;
+
+    function switchView(viewName) {
+      document.querySelectorAll('.flow-view').forEach(el => el.classList.remove('active'));
+      if (viewName === 'dashboard') {
+        document.getElementById('view-dashboard').classList.add('active');
+      } else if (viewName === 'format') {
+        document.getElementById('view-format').classList.add('active');
+        goFormatStep(1);
+      } else if (viewName === 'reduc') {
+        document.getElementById('view-reduc').classList.add('active');
+        goReducStep(1);
+      } else if (viewName === 'campaign-page') {
+        document.getElementById('view-campaign-page').classList.add('active');
+        resetActivityPage();
+      }
+    }
+
+    function startFormatFlow() {
+      switchView('format');
+      renderStep1Scene();
+    }
+
+    function startReducFlow() {
+      switchView('reduc');
+      goReducStep(1);
+    }
+
+    // 格式调整步进
+    function goFormatStep(step) {
+      for (let i = 1; i <= 3; i++) {
+        const content = document.getElementById(`format-step-${i}`);
+        const node = document.getElementById(`f-node-${i}`);
+        if (content) content.classList.remove('current');
+        if (node) {
+          node.classList.remove('active', 'completed');
+          if (i < step) node.classList.add('completed');
+          if (i === step) node.classList.add('active');
+        }
+      }
+      document.getElementById(`format-step-${step}`).classList.add('current');
+    }
+
+    // 降重步进
+    function goReducStep(step) {
+      for (let i = 1; i <= 3; i++) {
+        const content = document.getElementById(`reduc-step-${i}`);
+        const node = document.getElementById(`r-node-${i}`);
+        if (content) content.classList.remove('current');
+        if (node) {
+          node.classList.remove('active', 'completed');
+          if (i < step) node.classList.add('completed');
+          if (i === step) node.classList.add('active');
+        }
+      }
+      document.getElementById(`reduc-step-${step}`).classList.add('current');
+    }
+
+    // 降重步骤 1 前往步骤 2 校验
+    function proceedToReducStep2() {
+      if (!reducDocUploaded) {
+        alert("请先上传与查重报告相符的论文正文全文 (.docx)！");
+        return;
+      }
+      goReducStep(2);
+    }
+
+    function triggerReducDocUpload() {
+      reducDocUploaded = true;
+      const zone = document.getElementById('r-doc-upload-zone');
+      const title = document.getElementById('r-doc-upload-title');
+      zone.classList.add('selected');
+      title.innerText = "✓ 已上传并校验正文：基于深度学习的高校学术论文自动润色算法研究_与报告一致版.docx";
+      title.style.color = "#10b981";
+    }
+
+    // 付费弹窗控制
+    function openPaymentModal() {
+      document.getElementById('payment-modal').classList.add('show');
+    }
+
+    function closePaymentModal() {
+      document.getElementById('payment-modal').classList.remove('show');
+    }
+
+    function confirmPaymentAndStart() {
+      closePaymentModal();
+      alert("支付成功！文优全量学术降重引擎已启动，正在对已定位的18处片段进行重构与润色...");
+      goReducStep(3);
+    }
+
+    // 活动独立页面逻辑
+    function resetActivityPage() {
+      actSearchPassed = false;
+      actFileUploaded = false;
+      document.getElementById('act-school-input').value = '';
+      document.getElementById('act-dept-input').value = '';
+      document.getElementById('act-search-feedback').style.display = 'none';
+      const zone = document.getElementById('act-upload-zone');
+      zone.className = 'upload-zone locked';
+      document.getElementById('act-upload-text').innerText = '请先在上方填写信息并点击【查找】验证资格';
+      document.getElementById('btn-act-submit').disabled = true;
+    }
+
+    function handleTemplateSearch() {
+      const school = document.getElementById('act-school-input').value.trim();
+      const year = document.getElementById('act-year-input').value;
+      const feedback = document.getElementById('act-search-feedback');
+      const uploadZone = document.getElementById('act-upload-zone');
+      const uploadText = document.getElementById('act-upload-text');
+
+      if (!school) {
+        alert("请先填写学校名称！");
+        return;
+      }
+
+      if (school.includes("浙江大学") || school.includes("清华大学") || school.includes("华中科技大学")) {
+        actSearchPassed = false;
+        feedback.style.display = 'block';
+        feedback.style.background = '#fef2f2';
+        feedback.style.border = '1px solid #fecaca';
+        feedback.style.color = '#b91c1c';
+        feedback.innerHTML = `<strong>抱歉，该模板已被上传！</strong> 该规范已有同学抢先首发并完成收录，您可以直接在格式调整列表中选用，或更换其他年份/学院模板参与。`;
+        uploadZone.className = 'upload-zone locked';
+        uploadText.innerText = '该模板已被收录，暂不开放上传';
+        document.getElementById('btn-act-submit').disabled = true;
+      } else {
+        actSearchPassed = true;
+        feedback.style.display = 'block';
+        feedback.style.background = '#ecfdf5';
+        feedback.style.border = '1px solid #a7f3d0';
+        feedback.style.color = '#065f46';
+        feedback.innerHTML = `<strong>🎉 恭喜！文优模板库尚无【${school} - ${year}届】模板记录！</strong> 您是该模板的本校第一人，下方上传通道已为您解锁开放，快来抢占首位特权吧！`;
+        uploadZone.className = 'upload-zone';
+        uploadText.innerText = `点击上传【${school}】官方毕业论文标准规范模板 (.docx)`;
+      }
+    }
+
+    function triggerActivityDocUpload() {
+      if (!actSearchPassed) {
+        alert("请先在上方填写学校并点击【查找】，确认符合首位资格后再上传文件！");
+        return;
+      }
+      const school = document.getElementById('act-school-input').value.trim();
+      actFileUploaded = true;
+      const uploadZone = document.getElementById('act-upload-zone');
+      const uploadText = document.getElementById('act-upload-text');
+      uploadZone.className = 'upload-zone selected';
+      uploadText.innerText = `✓ 已加载：${school}_学位论文排版规范及样式模板_2026.docx`;
+      document.getElementById('btn-act-submit').disabled = false;
+    }
+
+    function handleActivitySubmit() {
+      if (!actFileUploaded) {
+        alert("请先点击上传框选择模板文件！");
+        return;
+      }
+      document.getElementById('review-result-modal').classList.add('show');
+    }
+
+    function closeReviewModal() {
+      document.getElementById('review-result-modal').classList.remove('show');
+    }
+
+    function handleUrgentService() {
+      closeReviewModal();
+      const school = document.getElementById('act-school-input').value.trim();
+      openChatDrawer(`您好，我刚刚在活动专区提交了【${school}】的学位论文规范模板，希望能申请加急制作与审核！`);
+    }
+
+    // 定制化模板弹窗控制
+    function openCustomTemplateModal() {
+      document.getElementById('custom-template-modal').classList.add('show');
+    }
+
+    function closeCustomTemplateModal() {
+      document.getElementById('custom-template-modal').classList.remove('show');
+    }
+
+    function closeCustomTemplateModalOnBackdrop(e) {
+      if (e.target.id === 'custom-template-modal') {
+        closeCustomTemplateModal();
+      }
+    }
+
+    function handleContactCustomTemplate() {
+      closeCustomTemplateModal();
+      openChatDrawer('您好，我对本次自动排版/降重的结果不太满意，想要申请【定制化模板服务】，根据我的需求定制微调模板样式（三十天内可调整三次）[cite: 1]。');
+    }
+
+    function openChatDrawer(initialText) {
+      document.getElementById('chat-drawer').classList.add('show');
+      if (initialText) {
+        appendChatMessage(initialText, 'user');
+        setTimeout(() => {
+          appendChatMessage('收到！客服与人工排版专家已接入，我们将为您核实信息并提供专属处理方案！', 'service');
+        }, 600);
+      }
+    }
+
+    function closeChatDrawer() {
+      document.getElementById('chat-drawer').classList.remove('show');
+    }
+
+    function sendChatMessage() {
+      const input = document.getElementById('chat-input');
+      const text = input.value.trim();
+      if (!text) return;
+      appendChatMessage(text, 'user');
+      input.value = '';
+      setTimeout(() => {
+        appendChatMessage('好的，客服老师已收到您的需求，正在为您查询排版/降重进度与售后保障记录...', 'service');
+      }, 800);
+    }
+
+    function handleChatEnter(e) {
+      if (e.key === 'Enter') sendChatMessage();
+    }
+
+    function appendChatMessage(msg, sender) {
+      const box = document.getElementById('chat-messages');
+      const bubble = document.createElement('div');
+      bubble.className = `chat-bubble ${sender}`;
+      bubble.innerText = msg;
+      box.appendChild(bubble);
+      box.scrollTop = box.scrollHeight;
+    }
+
+    // 格式步骤一渲染
+    function renderStep1Scene() {
+      const scene = document.getElementById('cfg-step1-scene').value;
+      const container = document.getElementById('step1-dynamic-container');
+      const actionsBar = document.getElementById('step1-actions-bar');
+
+      if (scene === 'scenario-1') {
+        container.innerHTML = `
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+            <h4 style="margin: 0;">选择需要排版的论文初稿</h4>
+            <span class="fee-badge">🎁 本次排版：首次免费 (原价 100 文优币)</span>
+          </div>
+          
+          <div style="margin-bottom: 16px;">
+            <div style="font-size: 12px; font-weight: 600; color: var(--gray-700); margin-bottom: 8px;">方式一：选用文优已有初稿</div>
+            
+            <div class="file-pill ${(!selectedLocalFile && selectedDraftIndex === 0) ? 'selected' : ''}" onclick="selectDraft(0)">
+              <div>
+                <div style="display: flex; align-items: center;">
+                  <strong>基于深度学习的高校学术论文自动润色算法研究_终版初稿_V2.docx</strong>
+                  <span class="file-tag tag-signed">已签收 (正文只读保护)[cite: 1]</span>
+                </div>
+                <div style="font-size: 12px; color: var(--gray-500); margin-top: 4px;">字数：28,400 · 签收时间：2026-04-12 14:20 · 推荐版本</div>
+              </div>
+              <span style="color: var(--primary); font-weight: 600;">${(!selectedLocalFile && selectedDraftIndex === 0) ? '● 已选定' : '○ 选择'}</span>
+            </div>
+
+            <div class="file-pill ${(!selectedLocalFile && selectedDraftIndex === 1) ? 'selected' : ''}" onclick="selectDraft(1)">
+              <div>
+                <div style="display: flex; align-items: center;">
+                  <strong>基于深度学习的高校学术论文自动润色算法研究_中间稿_V1.docx</strong>
+                  <span class="file-tag tag-signed">已签收</span>
+                </div>
+                <div style="font-size: 12px; color: var(--gray-500); margin-top: 4px;">字数：26,100 · 签收时间：2026-04-10 09:15 · 历史存档版本</div>
+              </div>
+              <span style="color: var(--gray-500); font-weight: 600;">${(!selectedLocalFile && selectedDraftIndex === 1) ? '● 已选定' : '○ 选择'}</span>
+            </div>
+          </div>
+
+          <div>
+            <div style="font-size: 12px; font-weight: 600; color: var(--gray-700); margin-bottom: 8px;">方式二：上传本地初稿文件</div>
+            <div class="upload-zone ${selectedLocalFile ? 'selected' : ''}" onclick="handleLocalDocUpload()">
+              <div style="font-size: 22px; margin-bottom: 4px;">📤</div>
+              <div style="font-size: 13px; font-weight: 600;" id="f-local-file-title">
+                ${selectedLocalFile ? '已加载本地文件：我的本地毕业论文草稿_定稿.docx (点击可重新选择)' : '点击上传本地 Word 论文初稿 (.docx)'}
+              </div>
+              <div style="font-size: 11px; color: var(--gray-500); margin-top: 4px;">支持 .docx 格式 · 上传后系统将直接读取段落结构，原文件只读保留[cite: 1]</div>
+            </div>
+          </div>
+
+          <p style="font-size: 12px; color: var(--gray-500); margin-top: 14px;">提示：系统将读取文档结构和现有样式，格式调整全程不改写您的观点、数据和学术论断[cite: 1]。</p>
+        `;
+
+        actionsBar.innerHTML = `
+          <button class="btn btn-outline" onclick="switchView('dashboard')">← 返回定稿工作台</button>
+          <button class="btn btn-primary" onclick="goFormatStep(2)">下一步：匹配学校模板 →</button>
+        `;
+
+      } else if (scene === 'scenario-2') {
+        container.innerHTML = `
+          <h4 style="margin-bottom: 12px;">选择需要排版的论文初稿</h4>
+          <div style="padding: 14px; background: var(--danger-bg); border: 1px solid #fecaca; border-radius: 8px; color: #991b1b; font-size: 13px; line-height: 1.5; margin-bottom: 14px;">
+            <strong>初稿尚未签收结算，无法进入格式定稿阶段</strong><br>
+            依据文优毕业版规范，当前初稿正文仍处于锁定状态。您需要先在阶段三完成初稿签收结算，方可解锁格式调整[cite: 1]。
+          </div>
+
+          <div class="file-pill disabled">
+            <div>
+              <div style="display: flex; align-items: center;">
+                <strong>基于深度学习的高校学术论文自动润色算法研究_待签收稿.docx</strong>
+                <span class="file-tag" style="background:#fee2e2; color:#b91c1c;">待签收付款 · 格式排版锁定</span>
+              </div>
+              <div style="font-size: 12px; color: var(--danger); margin-top: 4px;">生成时间：2026-04-12 11:30 · 需先结算该初稿</div>
+            </div>
+            <span style="font-size: 12px; color: var(--gray-500);">未解锁</span>
+          </div>
+
+          <div style="margin-top: 16px;">
+            <div style="font-size: 12px; font-weight: 600; color: var(--gray-700); margin-bottom: 8px;">或者直接上传本地独立初稿文件进行排版：</div>
+            <div class="upload-zone ${selectedLocalFile ? 'selected' : ''}" onclick="handleLocalDocUpload()">
+              <div style="font-size: 22px; margin-bottom: 4px;">📤</div>
+              <div style="font-size: 13px; font-weight: 600;">
+                ${selectedLocalFile ? '已加载本地文件：我的本地毕业论文草稿_定稿.docx (点击可重新选择)' : '点击上传本地 Word 论文初稿 (.docx)'}
+              </div>
+              <div style="font-size: 11px; color: var(--gray-500); margin-top: 4px;">若您希望排版外部自备文件，可直接在此上传</div>
+            </div>
+          </div>
+        `;
+
+        actionsBar.innerHTML = `
+          <button class="btn btn-outline" onclick="switchView('dashboard')">← 返回定稿工作台</button>
+          ${selectedLocalFile 
+            ? `<button class="btn btn-primary" onclick="goFormatStep(2)">以本地文件继续：匹配学校模板 →</button>` 
+            : `<button class="btn btn-danger" onclick="alert('即将跳转至「阶段三：初稿签收与结算界面」')">去签收初稿并结算 →</button>`
+          }
+        `;
+
+      } else if (scene === 'scenario-4') {
+        container.innerHTML = `
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+            <h4 style="margin: 0;">选择需要排版的论文初稿（二次调整）</h4>
+            <span class="fee-badge" style="background: #fee2e2; color: #b91c1c;">💳 本次排版：需消耗 100 文优币 (余额: 250)[cite: 1]</span>
+          </div>
+
+          <div style="margin-bottom: 16px;">
+            <div style="font-size: 12px; font-weight: 600; color: var(--gray-700); margin-bottom: 8px;">方式一：选用文优已有初稿</div>
+            <div class="file-pill ${(!selectedLocalFile && selectedDraftIndex === 0) ? 'selected' : ''}" onclick="selectDraft(0)">
+              <div>
+                <div style="display: flex; align-items: center;">
+                  <strong>基于深度学习的高校学术论文自动润色算法研究_修定稿.docx</strong>
+                  <span class="file-tag tag-signed">已签收</span>
+                </div>
+                <div style="font-size: 12px; color: var(--gray-500); margin-top: 4px;">字数：28,400 · 签收时间：2026-04-12 14:20</div>
+              </div>
+              <span style="color: var(--primary); font-weight: 600;">${(!selectedLocalFile && selectedDraftIndex === 0) ? '● 已选定' : '○ 选择'}</span>
+            </div>
+          </div>
+
+          <div>
+            <div style="font-size: 12px; font-weight: 600; color: var(--gray-700); margin-bottom: 8px;">方式二：上传本地初稿文件</div>
+            <div class="upload-zone ${selectedLocalFile ? 'selected' : ''}" onclick="handleLocalDocUpload()">
+              <div style="font-size: 22px; margin-bottom: 4px;">📤</div>
+              <div style="font-size: 13px; font-weight: 600;">
+                ${selectedLocalFile ? '已加载本地文件：我的本地毕业论文草稿_定稿.docx (点击可重新选择)' : '点击上传本地 Word 论文初稿 (.docx)'}
+              </div>
+              <div style="font-size: 11px; color: var(--gray-500); margin-top: 4px;">支持上传本地二次修改后的最新文件</div>
+            </div>
+          </div>
+
+          <div style="padding: 12px; background: var(--gray-50); border: 1px solid var(--gray-200); border-radius: 6px; font-size: 12px; color: var(--gray-700); margin-top: 14px;">
+            💎 <strong>会员权益提示</strong>：科研版 VIP 会员尊享无限次格式调整免排版费[cite: 1]。<a href="javascript:void(0)" onclick="alert('唤起会员开通弹窗')" style="color: var(--primary); margin-left: 6px;">开通/续费会员</a>
+          </div>
+        `;
+
+        actionsBar.innerHTML = `
+          <button class="btn btn-outline" onclick="switchView('dashboard')">← 返回定稿工作台</button>
+          <button class="btn btn-primary" onclick="goFormatStep(2)">确认支付 100 文优币并继续 →</button>
+        `;
+      }
+    }
+
+    function selectDraft(idx) {
+      selectedLocalFile = false;
+      selectedDraftIndex = idx;
+      renderStep1Scene();
+    }
+
+    function handleLocalDocUpload() {
+      selectedLocalFile = true;
+      alert("本地 Word 初稿解析成功！已自动锁定结构并作为本次排版正文。");
+      const nameEl = document.getElementById('final-format-filename');
+      if (nameEl) nameEl.innerText = "我的本地毕业论文草稿_定稿_浙大模板排版版.docx";
+      renderStep1Scene();
+    }
+
+    // 初始化运行
+    renderStep1Scene();
+  </script>
+</body>
+</html>
