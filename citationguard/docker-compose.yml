@@ -1,0 +1,75 @@
+services:
+  backend:
+    build:
+      context: ./prototype/backend
+    environment:
+      DATABASE_URL: postgresql+psycopg://citation:${POSTGRES_PASSWORD:-citation-dev-password}@postgres:5432/citation_audit
+      ACCESS_KEY_REQUIRED: ${ACCESS_KEY_REQUIRED:-false}
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}
+      OBJECT_STORAGE_PROVIDER: s3
+      S3_BUCKET: citation-papers
+      S3_ENDPOINT_URL: http://minio:9000
+      S3_REGION: us-east-1
+      S3_ACCESS_KEY_ID: ${MINIO_ROOT_USER:-citation-admin}
+      S3_SECRET_ACCESS_KEY: ${MINIO_ROOT_PASSWORD:-citation-dev-password}
+    env_file:
+      - path: ./prototype/backend/.env
+        required: false
+    depends_on:
+      postgres:
+        condition: service_healthy
+      minio-init:
+        condition: service_completed_successfully
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health')"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: citation_audit
+      POSTGRES_USER: citation
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-citation-dev-password}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U citation -d citation_audit"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  minio:
+    image: minio/minio:latest
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-citation-admin}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-citation-dev-password}
+    volumes:
+      - object-data:/data
+
+  minio-init:
+    image: minio/mc:latest
+    depends_on:
+      - minio
+    entrypoint: >
+      /bin/sh -c "
+      until mc alias set local http://minio:9000
+      '${MINIO_ROOT_USER:-citation-admin}'
+      '${MINIO_ROOT_PASSWORD:-citation-dev-password}'; do sleep 1; done;
+      mc mb --ignore-existing local/citation-papers;
+      "
+
+  frontend:
+    build:
+      context: ./prototype/frontend
+    ports:
+      - "${APP_PORT:-8080}:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+
+volumes:
+  postgres-data:
+  object-data:
