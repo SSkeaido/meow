@@ -1,0 +1,1217 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>文优小助 - 生成等待精致动画原型</title>
+  <!-- Tailwind 样式已内嵌，原型可离线打开 -->
+  <style>
+/*! tailwindcss v4.1.10 | MIT License | https://tailwindcss.com */
+@layer properties;
+*, ::after, ::before, ::backdrop, ::file-selector-button {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  border: 0 solid;
+}
+html, :host {
+  line-height: 1.5;
+  -webkit-text-size-adjust: 100%;
+  tab-size: 4;
+  font-family: var(--default-font-family, ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji');
+  font-feature-settings: var(--default-font-feature-settings, normal);
+  font-variation-settings: var(--default-font-variation-settings, normal);
+  -webkit-tap-highlight-color: transparent;
+}
+hr {
+  height: 0;
+  color: inherit;
+  border-top-width: 1px;
+}
+abbr:where([title]) {
+  -webkit-text-decoration: underline dotted;
+  text-decoration: underline dotted;
+}
+h1, h2, h3, h4, h5, h6 {
+  font-size: inherit;
+  font-weight: inherit;
+}
+a {
+  color: inherit;
+  -webkit-text-decoration: inherit;
+  text-decoration: inherit;
+}
+b, strong {
+  font-weight: bolder;
+}
+code, kbd, samp, pre {
+  font-family: var(--default-mono-font-family, ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace);
+  font-feature-settings: var(--default-mono-font-feature-settings, normal);
+  font-variation-settings: var(--default-mono-font-variation-settings, normal);
+  font-size: 1em;
+}
+small {
+  font-size: 80%;
+}
+sub, sup {
+  font-size: 75%;
+  line-height: 0;
+  position: relative;
+  vertical-align: baseline;
+}
+sub {
+  bottom: -0.25em;
+}
+sup {
+  top: -0.5em;
+}
+table {
+  text-indent: 0;
+  border-color: inherit;
+  border-collapse: collapse;
+}
+:-moz-focusring {
+  outline: auto;
+}
+progress {
+  vertical-align: baseline;
+}
+summary {
+  display: list-item;
+}
+ol, ul, menu {
+  list-style: none;
+}
+img, svg, video, canvas, audio, iframe, embed, object {
+  display: block;
+  vertical-align: middle;
+}
+img, video {
+  max-width: 100%;
+  height: auto;
+}
+button, input, select, optgroup, textarea, ::file-selector-button {
+  font: inherit;
+  font-feature-settings: inherit;
+  font-variation-settings: inherit;
+  letter-spacing: inherit;
+  color: inherit;
+  border-radius: 0;
+  background-color: transparent;
+  opacity: 1;
+}
+:where(select:is([multiple], [size])) optgroup {
+  font-weight: bolder;
+}
+:where(select:is([multiple], [size])) optgroup option {
+  padding-inline-start: 20px;
+}
+::file-selector-button {
+  margin-inline-end: 4px;
+}
+::placeholder {
+  opacity: 1;
+}
+@supports (not (-webkit-appearance: -apple-pay-button))  or (contain-intrinsic-size: 1px) {
+  ::placeholder {
+    color: currentcolor;
+    @supports (color: color-mix(in lab, red, red)) {
+      color: color-mix(in oklab, currentcolor 50%, transparent);
+    }
+  }
+}
+textarea {
+  resize: vertical;
+}
+::-webkit-search-decoration {
+  -webkit-appearance: none;
+}
+::-webkit-date-and-time-value {
+  min-height: 1lh;
+  text-align: inherit;
+}
+::-webkit-datetime-edit {
+  display: inline-flex;
+}
+::-webkit-datetime-edit-fields-wrapper {
+  padding: 0;
+}
+::-webkit-datetime-edit, ::-webkit-datetime-edit-year-field, ::-webkit-datetime-edit-month-field, ::-webkit-datetime-edit-day-field, ::-webkit-datetime-edit-hour-field, ::-webkit-datetime-edit-minute-field, ::-webkit-datetime-edit-second-field, ::-webkit-datetime-edit-millisecond-field, ::-webkit-datetime-edit-meridiem-field {
+  padding-block: 0;
+}
+:-moz-ui-invalid {
+  box-shadow: none;
+}
+button, input:where([type='button'], [type='reset'], [type='submit']), ::file-selector-button {
+  appearance: button;
+}
+::-webkit-inner-spin-button, ::-webkit-outer-spin-button {
+  height: auto;
+}
+[hidden]:where(:not([hidden='until-found'])) {
+  display: none !important;
+}
+:root, :host {
+  --font-sans: ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
+    'Noto Color Emoji';
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New',
+    monospace;
+  --color-red-500: oklch(63.7% 0.237 25.331);
+  --color-amber-50: oklch(98.7% 0.022 95.277);
+  --color-amber-200: oklch(92.4% 0.12 95.746);
+  --color-amber-500: oklch(76.9% 0.188 70.08);
+  --color-amber-700: oklch(55.5% 0.163 48.998);
+  --color-amber-900: oklch(41.4% 0.112 45.904);
+  --color-emerald-400: oklch(76.5% 0.177 163.223);
+  --color-emerald-500: oklch(69.6% 0.17 162.48);
+  --color-emerald-600: oklch(59.6% 0.145 163.225);
+  --color-emerald-700: oklch(50.8% 0.118 165.612);
+  --color-indigo-50: oklch(96.2% 0.018 272.314);
+  --color-indigo-100: oklch(93% 0.034 272.788);
+  --color-indigo-600: oklch(51.1% 0.262 276.966);
+  --color-purple-50: oklch(97.7% 0.014 308.299);
+  --color-purple-100: oklch(94.6% 0.033 307.174);
+  --color-purple-200: oklch(90.2% 0.063 306.703);
+  --color-purple-300: oklch(82.7% 0.119 306.383);
+  --color-purple-400: oklch(71.4% 0.203 305.504);
+  --color-purple-500: oklch(62.7% 0.265 303.9);
+  --color-purple-600: oklch(55.8% 0.288 302.321);
+  --color-purple-700: oklch(49.6% 0.265 301.924);
+  --color-purple-800: oklch(43.8% 0.218 303.724);
+  --color-purple-900: oklch(38.1% 0.176 304.987);
+  --color-pink-50: oklch(97.1% 0.014 343.198);
+  --color-pink-400: oklch(71.8% 0.202 349.761);
+  --color-slate-800: oklch(27.9% 0.041 260.031);
+  --color-gray-50: oklch(98.5% 0.002 247.839);
+  --color-gray-100: oklch(96.7% 0.003 264.542);
+  --color-gray-200: oklch(92.8% 0.006 264.531);
+  --color-gray-400: oklch(70.7% 0.022 261.325);
+  --color-gray-500: oklch(55.1% 0.027 264.364);
+  --color-gray-600: oklch(44.6% 0.03 256.802);
+  --color-gray-700: oklch(37.3% 0.034 259.733);
+  --color-gray-800: oklch(27.8% 0.033 256.848);
+  --color-gray-900: oklch(21% 0.034 264.665);
+  --color-white: #fff;
+  --spacing: 0.25rem;
+  --text-xs: 0.75rem;
+  --text-xs--line-height: calc(1 / 0.75);
+  --text-sm: 0.875rem;
+  --text-sm--line-height: calc(1.25 / 0.875);
+  --text-lg: 1.125rem;
+  --text-lg--line-height: calc(1.75 / 1.125);
+  --text-xl: 1.25rem;
+  --text-xl--line-height: calc(1.75 / 1.25);
+  --text-4xl: 2.25rem;
+  --text-4xl--line-height: calc(2.5 / 2.25);
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  --tracking-tight: -0.025em;
+  --radius-md: 0.375rem;
+  --radius-lg: 0.5rem;
+  --radius-xl: 0.75rem;
+  --radius-2xl: 1rem;
+  --animate-pulse: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  --default-transition-duration: 150ms;
+  --default-transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  --default-font-family: var(--font-sans);
+  --default-mono-font-family: var(--font-mono);
+}
+.absolute { position: absolute; }
+.relative { position: relative; }
+.right-0 { right: calc(var(--spacing) * 0); }
+.left-0 { left: calc(var(--spacing) * 0); }
+.z-10 { z-index: 10; }
+.col-span-1 { grid-column: span 1 / span 1; }
+.mx-auto { margin-inline: auto; }
+.mt-0\.5 { margin-top: calc(var(--spacing) * 0.5); }
+.mt-1 { margin-top: calc(var(--spacing) * 1); }
+.mt-2 { margin-top: calc(var(--spacing) * 2); }
+.mt-3 { margin-top: calc(var(--spacing) * 3); }
+.mb-1 { margin-bottom: calc(var(--spacing) * 1); }
+.mb-2 { margin-bottom: calc(var(--spacing) * 2); }
+.mb-3 { margin-bottom: calc(var(--spacing) * 3); }
+.ml-1 { margin-left: calc(var(--spacing) * 1); }
+.ml-2 { margin-left: calc(var(--spacing) * 2); }
+.ml-3 { margin-left: calc(var(--spacing) * 3); }
+.block { display: block; }
+.flex { display: flex; }
+.grid { display: grid; }
+.hidden { display: none; }
+.h-0\.5 { height: calc(var(--spacing) * 0.5); }
+.h-1 { height: calc(var(--spacing) * 1); }
+.h-2 { height: calc(var(--spacing) * 2); }
+.h-6 { height: calc(var(--spacing) * 6); }
+.h-9 { height: calc(var(--spacing) * 9); }
+.h-12 { height: calc(var(--spacing) * 12); }
+.h-\[640px\] { height: 640px; }
+.h-full { height: 100%; }
+.min-h-screen { min-height: 100vh; }
+.w-2 { width: calc(var(--spacing) * 2); }
+.w-6 { width: calc(var(--spacing) * 6); }
+.w-9 { width: calc(var(--spacing) * 9); }
+.w-12 { width: calc(var(--spacing) * 12); }
+.w-full { width: 100%; }
+.max-w-\[1440px\] { max-width: 1440px; }
+.min-w-0 { min-width: calc(var(--spacing) * 0); }
+.flex-1 { flex: 1; }
+.flex-shrink-0 { flex-shrink: 0; }
+.animate-pulse { animation: var(--animate-pulse); }
+.cursor-pointer { cursor: pointer; }
+.grid-cols-1 { grid-template-columns: repeat(1, minmax(0, 1fr)); }
+.flex-col { flex-direction: column; }
+.flex-wrap { flex-wrap: wrap; }
+.items-baseline { align-items: baseline; }
+.items-center { align-items: center; }
+.justify-between { justify-content: space-between; }
+.justify-center { justify-content: center; }
+.gap-1 { gap: calc(var(--spacing) * 1); }
+.gap-1\.5 { gap: calc(var(--spacing) * 1.5); }
+.gap-2 { gap: calc(var(--spacing) * 2); }
+.gap-3 { gap: calc(var(--spacing) * 3); }
+.gap-5 { gap: calc(var(--spacing) * 5); }
+.space-y-1\.5 {
+  :where(& > :not(:last-child)) {
+    margin-block-end: calc(var(--spacing) * 1.5);
+  }
+}
+.space-y-2\.5 {
+  :where(& > :not(:last-child)) {
+    margin-block-end: calc(var(--spacing) * 2.5);
+  }
+}
+.space-y-3 {
+  :where(& > :not(:last-child)) {
+    margin-block-end: calc(var(--spacing) * 3);
+  }
+}
+.space-x-1 {
+  :where(& > :not(:last-child)) {
+    margin-inline-end: calc(var(--spacing) * 1);
+  }
+}
+.space-x-1\.5 {
+  :where(& > :not(:last-child)) {
+    margin-inline-end: calc(var(--spacing) * 1.5);
+  }
+}
+.space-x-2 {
+  :where(& > :not(:last-child)) {
+    margin-inline-end: calc(var(--spacing) * 2);
+  }
+}
+.space-x-3 {
+  :where(& > :not(:last-child)) {
+    margin-inline-end: calc(var(--spacing) * 3);
+  }
+}
+.space-x-4 {
+  :where(& > :not(:last-child)) {
+    margin-inline-end: calc(var(--spacing) * 4);
+  }
+}
+.space-x-6 {
+  :where(& > :not(:last-child)) {
+    margin-inline-end: calc(var(--spacing) * 6);
+  }
+}
+.self-start { align-self: flex-start; }
+.truncate { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.overflow-hidden { overflow: hidden; }
+.rounded { border-radius: 0.25rem; }
+.rounded-2xl { border-radius: var(--radius-2xl); }
+.rounded-full { border-radius: calc(infinity * 1px); }
+.rounded-lg { border-radius: var(--radius-lg); }
+.rounded-md { border-radius: var(--radius-md); }
+.rounded-xl { border-radius: var(--radius-xl); }
+.border { border-style: solid; border-width: 1px; }
+.border-b { border-bottom-style: solid; border-bottom-width: 1px; }
+.border-l { border-left-style: solid; border-left-width: 1px; }
+.border-amber-200 { border-color: var(--color-amber-200); }
+.border-gray-100 { border-color: var(--color-gray-100); }
+.border-gray-200 { border-color: var(--color-gray-200); }
+.border-gray-200\/80 { border-color: color-mix(in srgb, oklch(92.8% 0.006 264.531) 80%, transparent); }
+.border-indigo-50 { border-color: var(--color-indigo-50); }
+.border-indigo-100 { border-color: var(--color-indigo-100); }
+.border-purple-100 { border-color: var(--color-purple-100); }
+.border-purple-100\/70 { border-color: color-mix(in srgb, oklch(94.6% 0.033 307.174) 70%, transparent); }
+.border-purple-200 { border-color: var(--color-purple-200); }
+.bg-\[\#f0f4fd\] { background-color: #f0f4fd; }
+.bg-amber-50 { background-color: var(--color-amber-50); }
+.bg-emerald-400 { background-color: var(--color-emerald-400); }
+.bg-emerald-500 { background-color: var(--color-emerald-500); }
+.bg-gray-50\/70 { background-color: color-mix(in srgb, oklch(98.5% 0.002 247.839) 70%, transparent); }
+.bg-gray-100 { background-color: var(--color-gray-100); }
+.bg-gray-200 { background-color: var(--color-gray-200); }
+.bg-purple-50\/60 { background-color: color-mix(in srgb, oklch(97.7% 0.014 308.299) 60%, transparent); }
+.bg-purple-50\/70 { background-color: color-mix(in srgb, oklch(97.7% 0.014 308.299) 70%, transparent); }
+.bg-purple-100 { background-color: var(--color-purple-100); }
+.bg-purple-100\/70 { background-color: color-mix(in srgb, oklch(94.6% 0.033 307.174) 70%, transparent); }
+.bg-purple-100\/80 { background-color: color-mix(in srgb, oklch(94.6% 0.033 307.174) 80%, transparent); }
+.bg-purple-600 { background-color: var(--color-purple-600); }
+.bg-white { background-color: var(--color-white); }
+.bg-white\/80 { background-color: color-mix(in srgb, #fff 80%, transparent); }
+.bg-gradient-to-r { background-image: linear-gradient(to right in oklab, var(--tw-gradient-stops)); }
+.bg-gradient-to-tr { background-image: linear-gradient(to top right in oklab, var(--tw-gradient-stops)); }
+.from-\[\#ffe8ef\] { --tw-gradient-from: #ffe8ef; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, transparent); }
+.from-pink-400 { --tw-gradient-from: var(--color-pink-400); --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, transparent); }
+.from-purple-700 { --tw-gradient-from: var(--color-purple-700); --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, transparent); }
+.from-white { --tw-gradient-from: var(--color-white); --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, transparent); }
+.via-\[\#edeaff\] { --tw-gradient-via: #edeaff; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-via), var(--tw-gradient-to, transparent); }
+.via-purple-50\/50 { --tw-gradient-via: color-mix(in srgb, oklch(97.7% 0.014 308.299) 50%, transparent); --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-via), var(--tw-gradient-to, transparent); }
+.to-\[\#dff3ff\] { --tw-gradient-to: #dff3ff; }
+.to-indigo-600 { --tw-gradient-to: var(--color-indigo-600); }
+.to-pink-50\/60 { --tw-gradient-to: color-mix(in srgb, oklch(97.1% 0.014 343.198) 60%, transparent); }
+.to-purple-500 { --tw-gradient-to: var(--color-purple-500); }
+.bg-clip-text { background-clip: text; }
+.p-3 { padding: calc(var(--spacing) * 3); }
+.p-4 { padding: calc(var(--spacing) * 4); }
+.p-5 { padding: calc(var(--spacing) * 5); }
+.px-1 { padding-inline: calc(var(--spacing) * 1); }
+.px-2 { padding-inline: calc(var(--spacing) * 2); }
+.px-2\.5 { padding-inline: calc(var(--spacing) * 2.5); }
+.px-4 { padding-inline: calc(var(--spacing) * 4); }
+.px-5 { padding-inline: calc(var(--spacing) * 5); }
+.px-6 { padding-inline: calc(var(--spacing) * 6); }
+.py-0\.5 { padding-block: calc(var(--spacing) * 0.5); }
+.py-1 { padding-block: calc(var(--spacing) * 1); }
+.py-2\.5 { padding-block: calc(var(--spacing) * 2.5); }
+.py-4 { padding-block: calc(var(--spacing) * 4); }
+.pt-1 { padding-top: calc(var(--spacing) * 1); }
+.pt-3 { padding-top: calc(var(--spacing) * 3); }
+.pr-2 { padding-right: calc(var(--spacing) * 2); }
+.pb-1 { padding-bottom: calc(var(--spacing) * 1); }
+.pb-3 { padding-bottom: calc(var(--spacing) * 3); }
+.pl-2 { padding-left: calc(var(--spacing) * 2); }
+.text-left { text-align: left; }
+.font-sans { font-family: var(--font-sans); }
+.text-4xl { font-size: var(--text-4xl); line-height: var(--text-4xl--line-height); }
+.text-lg { font-size: var(--text-lg); line-height: var(--text-lg--line-height); }
+.text-sm { font-size: var(--text-sm); line-height: var(--text-sm--line-height); }
+.text-xl { font-size: var(--text-xl); line-height: var(--text-xl--line-height); }
+.text-xs { font-size: var(--text-xs); line-height: var(--text-xs--line-height); }
+.text-\[10px\] { font-size: 10px; }
+.text-\[11px\] { font-size: 11px; }
+.font-bold { font-weight: var(--font-weight-bold); }
+.font-medium { font-weight: var(--font-weight-medium); }
+.font-semibold { font-weight: var(--font-weight-semibold); }
+.tracking-tight { letter-spacing: var(--tracking-tight); }
+.text-amber-500 { color: var(--color-amber-500); }
+.text-amber-700 { color: var(--color-amber-700); }
+.text-emerald-600 { color: var(--color-emerald-600); }
+.text-gray-400 { color: var(--color-gray-400); }
+.text-gray-500 { color: var(--color-gray-500); }
+.text-gray-600 { color: var(--color-gray-600); }
+.text-gray-700 { color: var(--color-gray-700); }
+.text-gray-800 { color: var(--color-gray-800); }
+.text-gray-900 { color: var(--color-gray-900); }
+.text-purple-600 { color: var(--color-purple-600); }
+.text-purple-700 { color: var(--color-purple-700); }
+.text-purple-900 { color: var(--color-purple-900); }
+.text-slate-800 { color: var(--color-slate-800); }
+.text-transparent { color: transparent; }
+.text-white { color: var(--color-white); }
+.opacity-40 { opacity: 40%; }
+.opacity-60 { opacity: 60%; }
+.shadow-sm { box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1); }
+.shadow-xs { box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05); }
+.transition-all { transition-property: all; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); transition-duration: 150ms; }
+.hover\:border-purple-200:hover { border-color: var(--color-purple-200); }
+.hover\:bg-purple-50\/60:hover { background-color: color-mix(in srgb, oklch(97.7% 0.014 308.299) 60%, transparent); }
+.hover\:text-purple-600:hover { color: var(--color-purple-600); }
+.hover\:shadow-xs:hover { box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05); }
+.md\:col-span-3 { @media (width >= 48rem) { grid-column: span 3 / span 3; } }
+.md\:col-span-9 { @media (width >= 48rem) { grid-column: span 9 / span 9; } }
+.md\:grid-cols-12 { @media (width >= 48rem) { grid-template-columns: repeat(12, minmax(0, 1fr)); } }
+.xl\:flex { @media (width >= 80rem) { display: flex; } }
+@keyframes pulse { 50% { opacity: 0.5; } }
+  
+    .wy-outline-head{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;}
+    .wy-outline-edit-btn{display:inline-flex;align-items:center;gap:6px;border:1px solid #d8c8fb;background:#fff;color:#7c3aed;padding:6px 12px;border-radius:999px;font-size:11px;font-weight:700;line-height:1;box-shadow:0 2px 8px rgba(124,58,237,.08);}
+    .wy-outline-edit-btn:hover{background:#f7f3ff;border-color:#c4b5fd;}
+    .wy-outline-fixed-row.r4{animation-delay:1.5s}.wy-outline-fixed-row.r5{animation-delay:2s}
+    .wy-chapter-fixed.c4{animation-delay:1.5s}.wy-chapter-fixed.c5{animation-delay:2s}
+    .wy-modal-mask{position:fixed;inset:0;background:rgba(17,24,39,.32);backdrop-filter:blur(3px);display:none;align-items:center;justify-content:center;z-index:100; padding:20px;}
+    .wy-modal-mask.show{display:flex;}
+    .wy-modal{width:min(880px,96vw);max-height:min(88vh,900px);background:#fff;border-radius:24px;box-shadow:0 30px 80px rgba(15,23,42,.22);display:flex;flex-direction:column;overflow:hidden;border:1px solid #ece3fe;}
+    .wy-modal-header{padding:22px 26px 14px;display:flex;align-items:center;justify-content:center;position:relative;}
+    .wy-modal-header h3{font-size:18px;font-weight:800;color:#111827;}
+    .wy-modal-close{position:absolute;right:20px;top:18px;font-size:28px;line-height:1;color:#9ca3af;background:transparent;border:none;cursor:pointer;}
+    .wy-modal-body{padding:0 24px 18px;overflow:auto;}
+    .wy-modal-toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:10px 0 14px;}
+    .wy-modal-toolbar label{font-size:14px;font-weight:600;color:#4b5563;}
+    .wy-toolbar-btns{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+    .wy-pill-outline{border:1px solid #8b5cf6;background:#fff;color:#7c3aed;border-radius:10px;padding:8px 14px;font-size:14px;font-weight:700;cursor:pointer;}
+    .wy-pill-fill{border:1px solid #7c3aed;background:linear-gradient(135deg,#7c3aed,#6d28d9);color:#fff;border-radius:10px;padding:8px 14px;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 8px 16px rgba(124,58,237,.16);}
+    .wy-paste-wrap{display:none;border:1px solid #ede9fe;background:#faf8ff;border-radius:14px;padding:12px;margin-bottom:14px;}
+    .wy-paste-wrap.show{display:block;}
+    .wy-paste-wrap textarea{width:100%;height:96px;border:1px solid #ded7f2;border-radius:10px;padding:10px 12px;font-size:13px;color:#374151;resize:vertical;background:#fff;}
+    .wy-outline-editor{border:1px solid #ede7f7;border-radius:16px;padding:10px;background:#fff;}
+    .wy-outline-row{display:grid;grid-template-columns:28px 42px minmax(0,1fr) 280px;gap:10px;align-items:center;margin-bottom:8px;}
+    .wy-outline-row:last-child{margin-bottom:0;}
+    .wy-outline-handle{color:#c4b5fd;font-size:18px;text-align:center;user-select:none;}
+    .wy-outline-num{font-size:14px;color:#6b7280;text-align:right;}
+    .wy-outline-input,.wy-outline-note{height:36px;border:1px solid #ebe7f5;border-radius:10px;padding:0 12px;font-size:14px;color:#374151;background:#fff;min-width:0;}
+    .wy-outline-add{margin-top:12px;border:1px dashed #d8c8fb;border-radius:12px;height:40px;display:flex;align-items:center;justify-content:center;color:#8b7a9f;font-size:14px;cursor:pointer;background:#fcfbff;}
+    .wy-modal-footer{padding:14px 24px 22px;border-top:1px solid #f1ebff;display:flex;justify-content:center;background:#fff;}
+    .wy-confirm-btn{min-width:280px;height:48px;border:none;border-radius:14px;background:linear-gradient(135deg,#7c3aed,#6d28d9);color:#fff;font-size:16px;font-weight:800;box-shadow:0 12px 24px rgba(124,58,237,.22);cursor:pointer;}
+    @media (max-width: 860px){.wy-outline-row{grid-template-columns:24px 36px minmax(0,1fr);}.wy-outline-note{grid-column:3/4;}.wy-modal{width:min(96vw,96vw);}.wy-modal-toolbar{align-items:flex-start;flex-direction:column;}.wy-confirm-btn{min-width:100%;}}
+
+  </style>
+  <style>
+    /* 文优小助：轻量但具有明确学术含义的过程动画。所有动画不代表真实完成率。 */
+    .wy-stage-time{display:inline-flex;align-items:center;justify-content:center;white-space:nowrap;flex-shrink:0;border-radius:999px;padding:4px 10px;font-size:11px;font-weight:650;line-height:1.3;color:#7c3aed;background:#f5f3ff;border:1px solid #ddd6fe;font-variant-numeric:tabular-nums;}
+    .wy-step-active .wy-stage-time{background:#ede9fe;border-color:#c4b5fd;color:#6d28d9;}
+    .wy-stage-action{display:inline-flex;align-items:center;gap:7px;flex-shrink:0;}
+    @media(max-width:720px){.wy-stage-time{padding:3px 6px;font-size:10px;}.wy-stage-action{gap:3px;}.wy-stage-description{display:none;}}
+    .wy-step {transition: border-color .25s,box-shadow .25s;}
+    .wy-step-active{border-color:#c4b5fd !important;box-shadow:0 0 0 1px #c4b5fd,0 6px 20px rgba(124,58,237,.065);}
+    .wy-step-active .stage-head{background:#faf5ff !important;}
+    .wy-step-active .wy-step-number{background:#7c3aed;color:#fff;box-shadow:0 3px 9px #ddd6fe;}
+    .wy-step:not(.wy-step-active) .wy-step-number-active{background:#e5e7eb;color:#475569;box-shadow:none;}
+    .wy-step:not(.wy-step-active) .stage-head{background:#f9fafb !important;}
+    .wy-step-number {display:inline-flex;align-items:center;justify-content:center;flex:none;width:24px;height:24px;border-radius:50%;background:#e5e7eb;color:#475569;font-weight:700;font-size:12px;}
+    .wy-step-number-active {background:#7c3aed;color:#fff;box-shadow:0 3px 9px #ddd6fe;}
+    .wy-stage-body{background:linear-gradient(180deg,#faf7ff 0%,#fff 100%);border-top:1px solid #ede9fe;padding:12px 14px 12px;}
+    .wy-motion-stage{height:194px;position:relative;display:flex;align-items:center;justify-content:center;gap:22px;overflow:hidden;border-radius:14px;border:1px solid #eee9fb;background:radial-gradient(ellipse at 48% 40%,#fcfaff 0%,#fff 65%);padding:12px 25px;isolation:isolate;}
+    .wy-motion-stage:after{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at 50% 110%,rgba(215,200,252,.10),transparent 65%);}
+    .wy-under-motion{display:flex;align-items:center;justify-content:space-between;gap:14px;color:#79718e;font-size:11px;margin:9px 5px 0;}
+    .wy-under-motion>span:last-child{color:#6955bb;white-space:nowrap;font-weight:600;}
+
+    /* 固定栅格、统一层级、动画不改几何定位 */
+    .wy-steps { --wy-text:#322946; --wy-muted:#817895; --wy-accent:#8053d9; }
+    .wy-steps .stage-head { min-height:49px; display:grid!important; grid-template-columns:minmax(0,1fr) auto; align-items:center; gap:14px; }
+    .wy-steps .stage-head > span:first-child { min-width:0; display:flex;align-items:center;gap:12px; }
+    .wy-steps .wy-stage-action { display:flex;align-items:center;gap:14px; }
+    .wy-steps .wy-stage-time { min-width:126px;min-height:26px;padding:4px 10px;line-height:16px;font-size:11px;font-weight:650; }
+    .wy-stage-action > span:last-child{min-width:64px;display:flex;align-items:center;justify-content:flex-end;gap:7px;white-space:nowrap;}
+    .wy-stage-action > span:last-child > span:last-child{margin:0!important;font-size:18px;line-height:14px;width:13px;text-align:center;}
+    .wy-under-motion{min-height:26px;margin:9px 1px 0;display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:14px;line-height:1.45;}
+    .wy-under-motion>span:first-child{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+    .wy-under-motion>span:last-child{font-size:11px;}
+    .wy-visual{height:214px!important;padding:18px 24px!important;display:grid!important;grid-template-columns:minmax(0,1.09fr) minmax(0,.85fr) minmax(0,1.09fr);gap:20px!important;align-items:center;justify-items:center;background:linear-gradient(135deg,#fcfaff 0%,#fff 50%,#fbf9ff 100%);}
+    .wy-visual-cell{width:100%;min-width:0;max-width:286px;height:170px;display:flex;flex-direction:column;justify-content:center;gap:8px;}
+    .wy-module-title{flex:0 0 20px;display:flex;align-items:center;gap:8px;color:#756a8a;font-weight:650;letter-spacing:.08px;font-size:11px;line-height:20px;white-space:nowrap;}
+    .wy-module-index{display:grid;place-items:center;width:20px;height:20px;border:1px solid #e8dcfb;border-radius:6px;background:#f6f0ff;color:#8962cf;font-size:10px;font-weight:750;}
+    .wy-mock-panel{width:100%;min-width:0;height:142px;flex:0 0 142px;border:1px solid #ebe5f5;background:#fff;border-radius:11px;padding:13px 14px;box-shadow:0 8px 20px rgba(62,35,102,.045);position:relative;overflow:hidden;}
+    .wy-center-cell{width:100%;min-width:0;max-width:240px;height:142px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:11px;}
+    .wy-center-word{font-size:12px;font-weight:750;color:#6544a3;text-align:center;letter-spacing:.08px;line-height:1.4;}
+    .wy-center-hint{font-size:11px;color:#9186a5;text-align:center;line-height:1.5;}
+    .wy-center-rail{position:relative;width:min(100%,160px);height:2px;border-radius:2px;background:linear-gradient(90deg,#e9ddfb,#bea5ef,#e9ddfb);}
+    .wy-center-rail:after{content:"";position:absolute;top:-3px;right:0;width:8px;height:8px;border-right:2px solid #b595e8;border-top:2px solid #b595e8;transform:rotate(45deg);}
+    .wy-flow-light{position:absolute;top:-4px;left:2%;height:10px;width:10px;border-radius:50%;background:#966ee8;box-shadow:0 0 0 4px #f4edff,0 0 10px #dbc8ff;animation:wy-travel 6s ease-in-out infinite;}
+    @keyframes wy-travel{0%,18%{left:2%;opacity:0}28%{opacity:1}70%{left:calc(100% - 10px);opacity:1}82%,100%{opacity:0}}
+    .wy-pdf-label{flex-shrink:0;line-height:18px;font-size:10px;padding:1px 6px;color:#e05575;background:#fff0f2;font-weight:800;border-radius:4px;}
+    .wy-file-heading{height:27px;display:flex;align-items:center;gap:9px;border-bottom:1px solid #f0edf7;padding-bottom:8px;}
+    .wy-file-name{font-size:11px;font-weight:650;color:#544765;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;line-height:18px;}
+    .wy-line-stack{display:flex;flex-direction:column;gap:9px;margin-top:19px;}
+    .wy-line-bar{display:block;height:6px;width:var(--w);background:#eeeaf5;border-radius:12px;}
+    .wy-scan-ray{position:absolute;top:38px;left:11px;right:11px;height:3px;border-radius:2px;background:linear-gradient(90deg,transparent,#ad8aef 25%,#8d65df 65%,transparent);box-shadow:0 3px 9px rgba(163,111,241,.2);animation:wy-scan-fixed 6s ease-in-out infinite;pointer-events:none;}
+    @keyframes wy-scan-fixed{0%,12%{transform:translateY(0);opacity:0}20%{opacity:1}75%{transform:translateY(82px);opacity:1}90%,100%{transform:translateY(82px);opacity:0}}
+    .wy-output-fields{display:flex;flex-direction:column;justify-content:center;gap:8px;}
+    .wy-field-row{display:flex;align-items:center;gap:9px;height:30px;line-height:1.3;padding:0 9px;border:1px solid #f0eafb;border-radius:7px;color:#5f526e;font-size:11px;font-weight:600;animation:wy-in-place 6s ease-in-out infinite;}
+    .wy-field-row.second{animation-delay:.27s}.wy-field-row.third{animation-delay:.54s}
+    .wy-field-icon{display:grid;place-items:center;width:19px;height:19px;border-radius:5px;background:#f2ebff;color:#8b60d4;font-size:12px;flex:0 0 19px;}
+    .wy-field-check{margin-left:auto;color:#2aa38a;}
+    @keyframes wy-in-place{0%,35%{opacity:.4;filter:grayscale(.2)}55%,82%{opacity:1;filter:none}100%{opacity:.4;filter:grayscale(.2)}}
+    
+    /* 阶段2：阅读筛选共享基线 */
+    .wy-scene-2.wy-visual{
+       grid-template-columns:repeat(3,minmax(0,1fr));
+       gap:18px!important;
+       justify-items:stretch;
+       align-items:center;
+    }
+    .wy-scene-2 .wy-stage2-cell{
+       position:relative;
+       width:100%;max-width:none;height:170px;
+       display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:20px 142px;row-gap:8px;
+       align-self:center;
+    }
+    .wy-scene-2 .wy-stage2-cell>.wy-module-title{
+       height:20px;line-height:20px;margin:0;
+       justify-content:flex-start;
+    }
+    .wy-scene-2 .wy-stage2-panel{
+       box-sizing:border-box;
+       height:142px;min-height:142px;
+       padding:14px 15px;
+       display:grid;grid-template-rows:14px minmax(0,1fr) 24px;
+       row-gap:8px;
+       align-items:stretch;
+       text-align:left;
+    }
+    .wy-scene-2 .wy-stage2-top{
+       font-size:10px;line-height:14px;height:14px;
+       font-weight:500;color:#9186a5;
+       white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+       text-align:left;
+    }
+    .wy-scene-2 .wy-stage2-main{
+       display:flex;align-items:center;min-width:0;min-height:0;max-height:100%;
+    }
+    .wy-scene-2 .wy-read-filename{
+       display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;
+       width:100%;height:auto;max-height:42px;margin:0;
+       font-size:12px;line-height:21px;overflow:hidden;
+       word-break:break-all;font-weight:700;
+    }
+    .wy-scene-2 .wy-topic-inline{
+       width:100%;max-width:100%;min-height:42px;max-height:50px;
+       display:flex;align-items:center;justify-content:center;
+       font-size:11px;line-height:1.4;margin:0;
+       padding:6px 8px;text-align:center;
+       overflow:hidden;overflow-wrap:anywhere;
+       background:#f7f1ff;border:1px solid #e9dcfa;border-radius:8px;color:#675092;
+    }
+    .wy-scene-2 .wy-stage2-bottom{
+       min-width:0;min-height:24px;height:24px;display:flex;align-items:center;
+    }
+    .wy-scene-2 .wy-stage2-lines{
+       display:flex;flex-direction:column;justify-content:center;gap:5px;
+    }
+    .wy-scene-2 .wy-stage2-lines .wy-line-bar{height:5px;margin:0;}
+    .wy-scene-2 .wy-match-footer{justify-content:center;gap:0;}
+    .wy-scene-2 .wy-match-stem{width:40%;height:2px;background:#e4d7fa;}
+    .wy-scene-2 .wy-match-dot{width:9px;height:9px;flex:0 0 9px;border-radius:50%;background:#9f77eb;box-shadow:0 0 0 4px #f1eaff;animation:wy-icon-breathe 7.4s ease-in-out infinite;}
+    .wy-scene-2 .wy-stage2-decision-line{
+       display:flex;align-items:center;justify-content:center;gap:10px;width:100%;min-width:0;
+    }
+    .wy-scene-2 .wy-decision-icon{
+       flex:0 0 27px;width:27px;height:27px;font-size:15px;margin:0;
+       border-radius:50%;background:#f2eafd;color:#8c64d6;display:grid;place-items:center;font-weight:700;
+       animation:wy-icon-breathe 7.4s ease-in-out infinite;
+    }
+    .wy-scene-2 .wy-decision-name{
+       min-width:0;font-size:12px;line-height:1.45;text-align:left;font-weight:750;color:#6c51a7;
+    }
+    .wy-scene-2 .wy-result-note{
+       margin:0;font-size:10px;line-height:24px;color:#9790a1;
+       justify-content:center;text-align:center;white-space:nowrap;
+       overflow:hidden;text-overflow:ellipsis;
+    }
+    .wy-scene-2 .wy-read-highlight-line{
+       position:absolute;top:43px;left:9px;right:9px;height:45px;z-index:0;
+       background:linear-gradient(90deg,rgba(209,184,255,.04),rgba(180,138,245,.15),rgba(209,184,255,.03));
+       border-left:3px solid #ae89f1;border-radius:4px;transform:scaleX(0);transform-origin:left;
+       animation:wy-read-focused 7.4s ease-in-out infinite;pointer-events:none;
+    }
+    @keyframes wy-read-focused{0%,19%{transform:scaleX(0);opacity:0}28%{opacity:1}51%,77%{transform:scaleX(1);opacity:1}93%,100%{opacity:0}}
+    @keyframes wy-icon-breathe{0%,54%{opacity:.5;box-shadow:0 0 0 0 rgba(182,152,242,0)}68%,83%{opacity:1;box-shadow:0 0 0 5px rgba(182,152,242,.15)}100%{opacity:.5}}
+    .wy-scene-2 .wy-stage2-main,.wy-scene-2 .wy-stage2-top,.wy-scene-2 .wy-stage2-bottom{position:relative;z-index:1;}
+    .wy-scene-2 .wy-stage2-middle::before,
+    .wy-scene-2 .wy-stage2-middle::after{
+       content:'→';position:absolute;top:88px;
+       color:#ad8ce5;font-size:17px;line-height:20px;
+       width:18px;text-align:center;z-index:4;pointer-events:none;
+    }
+    .wy-scene-2 .wy-stage2-middle::before{left:-18px;}
+    .wy-scene-2 .wy-stage2-middle::after{right:-18px;}
+
+    /* 阶段3与4组件样式 */
+    .wy-points-panel,.wy-chapters-panel{display:flex;flex-direction:column;justify-content:center;gap:9px;}
+    .wy-point-item{height:30px;display:flex;align-items:center;gap:9px;border-radius:7px;padding:0 10px;border:1px solid #e9e2f4;background:#fff;color:#675b77;font-weight:650;font-size:11px;animation:wy-point-focus 7.2s ease-in-out infinite;}
+    .wy-point-item.p2{animation-delay:.5s}.wy-point-item.p3{animation-delay:1s}
+    .wy-point-circle{width:7px;height:7px;flex:0 0 7px;background:#a68ada;border-radius:50%;}
+    @keyframes wy-point-focus{0%,16%,94%,100%{background:#fff;border-color:#ebe6f4}30%,80%{background:#f6f0ff;border-color:#cdbaf3}}
+    .wy-outline-panel{display:flex;flex-direction:column;justify-content:center;gap:7px;padding:11px 13px;}
+    .wy-outline-topic-fixed{font-size:10px;color:#8b7a9f;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:16px;margin-bottom:2px;}
+    .wy-outline-fixed-row{height:27px;display:flex;align-items:center;gap:10px;border-radius:7px;border:1px solid #ede7f7;padding:0 8px;font-size:11px;font-weight:600;color:#635473;animation:wy-outline-fixed-focus 7.2s ease-in-out infinite;}
+    .wy-outline-fixed-row.r2{animation-delay:.5s}.wy-outline-fixed-row.r3{animation-delay:1s}
+    .wy-outline-fixed-row>span:first-child{font-size:10px;color:#916ecb;flex:0 0 18px;}
+    .wy-outline-fixed-row>span:last-child{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+    @keyframes wy-outline-fixed-focus{0%,16%,94%,100%{background:#fff;border-color:#ede7f7}30%,80%{background:#f7f2ff;border-color:#cdbaf3}}
+    .wy-chapter-fixed{height:30px;display:flex;align-items:center;border:1px solid #ebe5f2;background:#fff;border-radius:7px;padding:0 10px;font-size:11px;font-weight:650;color:#675b77;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;animation:wy-point-focus 7.5s ease-in-out infinite;}
+    .wy-chapter-fixed.c2{animation-delay:.5s}.wy-chapter-fixed.c3{animation-delay:1s}
+    .wy-draft-panel{padding:10px 13px;display:flex;flex-direction:column;gap:6px;}
+    .wy-draft-bar{height:19px;display:flex;align-items:center;justify-content:space-between;gap:6px;color:#554467;font-size:11px;}
+    .wy-draft-pill{font-size:9px;color:#8b5cf6;background:#f7f2ff;border-radius:12px;padding:2px 6px;font-weight:600;}
+    .wy-draft-topic{color:#8a7b9b;font-size:10px;line-height:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+    .wy-draft-heading{color:#665588;font-size:10px;line-height:15px;font-weight:700;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;}
+    .wy-typing-lines{display:flex;flex-direction:column;gap:7px;margin-top:4px;}
+    .wy-typing-line{height:5px;border-radius:8px;width:var(--w,80%);background:linear-gradient(90deg,#b59bec,#eae0fc);transform-origin:left;animation:wy-lines-fill 7.5s ease-in-out infinite;}
+    .wy-typing-line.w1{--w:90%}.wy-typing-line.w2{--w:75%;animation-delay:.45s}.wy-typing-line.w3{--w:83%;animation-delay:.9s}
+    @keyframes wy-lines-fill{0%,15%{transform:scaleX(0);opacity:.2}48%,85%{transform:scaleX(1);opacity:1}100%{transform:scaleX(0);opacity:.2}}
+
+    .tip-dot {width:6px;height:6px;border-radius:50%;background:#d1d5db;display:block;transition:background .2s;}
+    .tip-dot.is-active {background:#9333ea;}
+
+    @media(max-width:1100px){
+      .wy-visual{padding:16px!important;gap:12px!important;grid-template-columns:minmax(0,1fr) minmax(0,.7fr) minmax(0,1fr)}.wy-module-title{font-size:10px}.wy-mock-panel{padding-left:10px;padding-right:10px}.wy-stage-description{display:none}.wy-topic-inline{display:block;white-space:nowrap;text-overflow:ellipsis;max-height:none;line-height:1.4}
+      .wy-scene-2.wy-visual{grid-template-columns:repeat(3,minmax(0,1fr));gap:12px!important;}
+      .wy-scene-2 .wy-stage2-panel{padding:12px 10px;}
+      .wy-scene-2 .wy-stage2-middle::before{left:-13px;}
+      .wy-scene-2 .wy-stage2-middle::after{right:-13px;}
+    }
+    @media(max-width:780px){
+      .wy-steps .stage-head{gap:7px;padding:9px 10px!important}.wy-steps .wy-stage-action{gap:6px}.wy-steps .wy-stage-time{min-width:0;font-size:10px;padding:3px 6px}.wy-stage-action > span:last-child{min-width:16px}.wy-stage-action > span:last-child > span:first-child{display:none}
+    }
+    @media(max-width:600px){
+      .wy-visual{height:auto!important;min-height:410px;grid-template-columns:minmax(0,1fr)!important;gap:7px!important;padding:16px!important}.wy-visual-cell{height:auto;max-width:100%;gap:6px}.wy-mock-panel{height:113px;flex-basis:113px}.wy-center-cell{height:45px;max-width:none;flex-direction:row;gap:9px}.wy-center-word,.wy-center-hint{white-space:nowrap}.wy-center-rail{width:70px;flex:0 0 70px}.wy-flow-light{animation:none}.wy-output-fields,.wy-points-panel,.wy-chapters-panel{gap:3px}.wy-field-row,.wy-point-item,.wy-chapter-fixed{height:27px}.wy-outline-panel{gap:3px}.wy-outline-fixed-row{height:24px}.wy-document-source .wy-line-stack{margin-top:12px;gap:6px}.wy-scan-ray{animation:none;opacity:.6}.wy-under-motion{grid-template-columns:1fr;gap:3px}
+      .wy-scene-2.wy-visual{display:flex!important;flex-direction:column;min-height:0;height:auto!important;gap:9px!important;}
+      .wy-scene-2 .wy-stage2-cell{display:grid;height:127px;grid-template-rows:18px 101px;row-gap:8px;}
+      .wy-scene-2 .wy-stage2-panel{height:101px;min-height:101px;grid-template-rows:12px minmax(0,1fr) 15px;row-gap:3px;padding:7px 12px;}
+      .wy-scene-2 .wy-stage2-top{line-height:12px;height:12px;}
+      .wy-scene-2 .wy-read-filename{font-size:11px;line-height:17px;max-height:34px;}
+      .wy-scene-2 .wy-topic-inline{min-height:30px;max-height:34px;padding:3px 7px;}
+      .wy-scene-2 .wy-stage2-bottom{min-height:15px;height:15px;}
+      .wy-scene-2 .wy-result-note{line-height:15px;}
+      .wy-scene-2 .wy-stage2-middle::before,.wy-scene-2 .wy-stage2-middle::after{display:none;}
+      .wy-scene-2 .wy-stage2-lines{gap:3px;}
+      .wy-scene-2 .wy-read-highlight-line{top:31px;height:32px;}
+    }
+    @media(prefers-reduced-motion:reduce){
+      .wy-visual *, .wy-breath{animation:none!important}.wy-typing-line{transform:none!important}.wy-read-highlight-line{transform:scaleX(1)!important;opacity:.7!important}.wy-field-row{opacity:1!important}
+    }
+  
+    .wy-outline-head{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;}
+    .wy-outline-edit-btn{display:inline-flex;align-items:center;gap:6px;border:1px solid #d8c8fb;background:#fff;color:#7c3aed;padding:6px 12px;border-radius:999px;font-size:11px;font-weight:700;line-height:1;box-shadow:0 2px 8px rgba(124,58,237,.08);}
+    .wy-outline-edit-btn:hover{background:#f7f3ff;border-color:#c4b5fd;}
+    .wy-outline-fixed-row.r4{animation-delay:1.5s}.wy-outline-fixed-row.r5{animation-delay:2s}
+    .wy-chapter-fixed.c4{animation-delay:1.5s}.wy-chapter-fixed.c5{animation-delay:2s}
+    .wy-modal-mask{position:fixed;inset:0;background:rgba(17,24,39,.32);backdrop-filter:blur(3px);display:none;align-items:center;justify-content:center;z-index:100; padding:20px;}
+    .wy-modal-mask.show{display:flex;}
+    .wy-modal{width:min(880px,96vw);max-height:min(88vh,900px);background:#fff;border-radius:24px;box-shadow:0 30px 80px rgba(15,23,42,.22);display:flex;flex-direction:column;overflow:hidden;border:1px solid #ece3fe;}
+    .wy-modal-header{padding:22px 26px 14px;display:flex;align-items:center;justify-content:center;position:relative;}
+    .wy-modal-header h3{font-size:18px;font-weight:800;color:#111827;}
+    .wy-modal-close{position:absolute;right:20px;top:18px;font-size:28px;line-height:1;color:#9ca3af;background:transparent;border:none;cursor:pointer;}
+    .wy-modal-body{padding:0 24px 18px;overflow:auto;}
+    .wy-modal-toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:10px 0 14px;}
+    .wy-modal-toolbar label{font-size:14px;font-weight:600;color:#4b5563;}
+    .wy-toolbar-btns{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+    .wy-pill-outline{border:1px solid #8b5cf6;background:#fff;color:#7c3aed;border-radius:10px;padding:8px 14px;font-size:14px;font-weight:700;cursor:pointer;}
+    .wy-pill-fill{border:1px solid #7c3aed;background:linear-gradient(135deg,#7c3aed,#6d28d9);color:#fff;border-radius:10px;padding:8px 14px;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 8px 16px rgba(124,58,237,.16);}
+    .wy-paste-wrap{display:none;border:1px solid #ede9fe;background:#faf8ff;border-radius:14px;padding:12px;margin-bottom:14px;}
+    .wy-paste-wrap.show{display:block;}
+    .wy-paste-wrap textarea{width:100%;height:96px;border:1px solid #ded7f2;border-radius:10px;padding:10px 12px;font-size:13px;color:#374151;resize:vertical;background:#fff;}
+    .wy-outline-editor{border:1px solid #ede7f7;border-radius:16px;padding:10px;background:#fff;}
+    .wy-outline-row{display:grid;grid-template-columns:28px 42px minmax(0,1fr) 280px;gap:10px;align-items:center;margin-bottom:8px;}
+    .wy-outline-row:last-child{margin-bottom:0;}
+    .wy-outline-handle{color:#c4b5fd;font-size:18px;text-align:center;user-select:none;}
+    .wy-outline-num{font-size:14px;color:#6b7280;text-align:right;}
+    .wy-outline-input,.wy-outline-note{height:36px;border:1px solid #ebe7f5;border-radius:10px;padding:0 12px;font-size:14px;color:#374151;background:#fff;min-width:0;}
+    .wy-outline-add{margin-top:12px;border:1px dashed #d8c8fb;border-radius:12px;height:40px;display:flex;align-items:center;justify-content:center;color:#8b7a9f;font-size:14px;cursor:pointer;background:#fcfbff;}
+    .wy-modal-footer{padding:14px 24px 22px;border-top:1px solid #f1ebff;display:flex;justify-content:center;background:#fff;}
+    .wy-confirm-btn{min-width:280px;height:48px;border:none;border-radius:14px;background:linear-gradient(135deg,#7c3aed,#6d28d9);color:#fff;font-size:16px;font-weight:800;box-shadow:0 12px 24px rgba(124,58,237,.22);cursor:pointer;}
+    @media (max-width: 860px){.wy-outline-row{grid-template-columns:24px 36px minmax(0,1fr);}.wy-outline-note{grid-column:3/4;}.wy-modal{width:min(96vw,96vw);}.wy-modal-toolbar{align-items:flex-start;flex-direction:column;}.wy-confirm-btn{min-width:100%;}}
+
+  </style>
+</head>
+<body class="bg-[#f0f4fd] text-slate-800 min-h-screen font-sans flex flex-col justify-between">
+
+  <div>
+    <!-- 顶部导航栏 -->
+    <header class="bg-gradient-to-r from-[#ffe8ef] via-[#edeaff] to-[#dff3ff] border-b border-indigo-100 px-6 py-2.5 flex items-center justify-between shadow-xs">
+      <div class="flex items-center space-x-3">
+        <div class="w-9 h-9 rounded-full bg-gradient-to-tr from-pink-400 to-purple-500 flex items-center justify-center text-white text-lg shadow-sm">
+          🐷
+        </div>
+        <div class="flex items-baseline space-x-2">
+          <span class="text-xl font-bold bg-gradient-to-r from-purple-700 to-indigo-600 bg-clip-text text-transparent">文优小助</span>
+          <span class="text-xs bg-purple-600 text-white px-2 py-0.5 rounded-full font-semibold">毕业版</span>
+          <span class="text-[11px] text-gray-500 ml-1">精准 · 高效 · 合规</span>
+        </div>
+      </div>
+
+      <!-- 顶层四个核心阶段进度条 -->
+      <div class="hidden xl:flex items-center space-x-6 text-xs">
+        <div class="flex items-center space-x-2">
+          <div class="w-6 h-6 rounded-full bg-emerald-500 text-white flex items-center justify-center font-bold">✓</div>
+          <div class="flex flex-col">
+            <span class="font-medium text-gray-700">文献综述</span>
+            <span class="text-[10px] text-purple-600 bg-purple-100 px-1 rounded self-start mt-0.5">提交成功</span>
+          </div>
+        </div>
+        <div class="w-12 h-0.5 bg-emerald-400"></div>
+
+        <div class="flex items-center space-x-2">
+          <div class="w-6 h-6 rounded-full bg-purple-600 text-white flex items-center justify-center font-bold shadow-xs">2</div>
+          <div class="flex flex-col">
+            <span class="font-bold text-purple-700">开题报告</span>
+            <span class="text-[10px] text-purple-600 font-semibold self-start mt-0.5">进行中</span>
+          </div>
+        </div>
+        <div class="w-12 h-0.5 bg-gray-200"></div>
+
+        <div class="flex items-center space-x-2 opacity-60">
+          <div class="w-6 h-6 rounded-full bg-gray-200 text-gray-600 flex items-center justify-center font-bold">3</div>
+          <div class="flex flex-col">
+            <span class="font-medium text-gray-600">论文初稿</span>
+            <span class="text-[10px] text-gray-400 self-start mt-0.5">待开始</span>
+          </div>
+        </div>
+        <div class="w-12 h-0.5 bg-gray-200"></div>
+
+        <div class="flex items-center space-x-2 opacity-40">
+          <div class="w-6 h-6 rounded-full bg-gray-200 text-gray-600 flex items-center justify-center font-bold">4</div>
+          <div class="flex flex-col">
+            <span class="font-medium text-gray-600">答辩准备</span>
+            <span class="text-[10px] text-gray-400 self-start mt-0.5">敬请期待</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 右侧用户状态与积分 -->
+      <div class="flex items-center space-x-4 text-xs">
+        <div class="flex items-center space-x-1.5 bg-amber-50 border border-amber-200 px-2.5 py-1 rounded-full text-amber-700 font-medium">
+          <span>🪙</span>
+          <span>3900 文优币</span>
+        </div>
+        <button class="text-gray-600 hover:text-purple-600 flex items-center space-x-1">
+          <span>💬</span>
+          <span>联系客服</span>
+        </button>
+        <div class="flex items-center space-x-1 text-gray-600 pl-2 border-l border-gray-200">
+          <div class="w-6 h-6 rounded-full bg-purple-100 flex items-center justify-center text-[10px] text-purple-700 font-bold">C</div>
+          <span>C001510</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- 主体区域 -->
+    <main class="max-w-[1440px] mx-auto p-5 grid grid-cols-1 md:grid-cols-12 gap-5">
+
+      <!-- 左侧成果物侧边栏 -->
+      <aside class="col-span-1 md:col-span-3 bg-white rounded-2xl p-4 border border-indigo-50 shadow-xs flex flex-col justify-between h-[640px]">
+        <div>
+          <div class="flex items-center justify-between pb-3 border-b border-gray-100 mb-3">
+            <div class="flex items-center space-x-2">
+              <span class="text-purple-600 font-semibold">📋</span>
+              <span class="font-semibold text-gray-800 text-sm">我的成果物</span>
+            </div>
+            <span class="text-xs text-gray-400">共 4 项</span>
+          </div>
+
+          <div class="space-y-2.5">
+            <div class="p-3 bg-purple-50/60 border border-purple-200 rounded-xl cursor-pointer hover:shadow-xs transition-all relative">
+              <div class="flex items-center justify-between mb-1">
+                <span class="text-xs font-semibold text-purple-700 bg-purple-100/80 px-2 py-0.5 rounded">开题报告</span>
+                <span class="w-2 h-2 rounded-full bg-purple-600 animate-pulse"></span>
+              </div>
+              <div class="text-xs font-medium text-gray-800 truncate">制度漂移与行动者实践：企业…</div>
+              <div class="text-[11px] text-gray-400 mt-1">最后更新：刚刚</div>
+            </div>
+
+            <div class="p-3 bg-white border border-gray-200 rounded-xl cursor-pointer hover:border-purple-200 transition-all">
+              <div class="flex items-center justify-between mb-1">
+                <span class="text-xs text-gray-600 bg-gray-100 px-2 py-0.5 rounded">开题报告</span>
+                <span class="text-[10px] text-gray-400">已就绪</span>
+              </div>
+              <div class="text-xs font-medium text-gray-700 truncate">制度漂移与组织惯性：企业…</div>
+              <div class="text-[11px] text-gray-400 mt-1">最后更新：10-9 17:16</div>
+            </div>
+
+            <div class="p-3 bg-white border border-gray-200 rounded-xl cursor-pointer hover:border-purple-200 transition-all">
+              <div class="flex items-center justify-between mb-1">
+                <span class="text-xs text-gray-600 bg-gray-100 px-2 py-0.5 rounded">文献综述</span>
+                <span class="text-[10px] text-emerald-600">已导出</span>
+              </div>
+              <div class="text-xs font-medium text-gray-700 truncate">制度漂移与行动者实践：企业…</div>
+              <div class="text-[11px] text-gray-400 mt-1">最后更新：10-9 17:15</div>
+            </div>
+
+            <div class="p-3 bg-white border border-gray-200 rounded-xl cursor-pointer hover:border-purple-200 transition-all">
+              <div class="flex items-center justify-between mb-1">
+                <span class="text-xs text-gray-600 bg-gray-100 px-2 py-0.5 rounded">初稿</span>
+                <span class="text-[10px] text-gray-400">草稿</span>
+              </div>
+              <div class="text-xs font-medium text-gray-700 truncate">制度漂移与组织惯性：企业…</div>
+              <div class="text-[11px] text-gray-400 mt-1">最后更新：10-8 17:12</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="pt-3 border-t border-gray-100 text-[11px] text-gray-400 flex justify-between items-center">
+          <span>文优学术引擎 v4.2</span>
+          <span class="hover:text-purple-600 cursor-pointer">使用帮助</span>
+        </div>
+      </aside>
+
+      <!-- 右侧主任务 -->
+      <section class="col-span-1 md:col-span-9 space-y-3 min-w-0">
+        <!-- 顶部常驻价值说明 -->
+        <div class="bg-gradient-to-r from-white via-purple-50/50 to-pink-50/60 rounded-2xl px-5 py-4 border border-purple-100/70 shadow-sm flex items-center justify-between gap-3">
+          <div class="space-y-1.5 min-w-0">
+            <h1 class="text-xl font-bold text-gray-900 tracking-tight">你熬一晚才能写的论文，<span class="text-purple-700">小助正在替你加班！</span></h1>
+            <p class="text-xs text-gray-600">读文献、判相关、搭框架、写内容，费时间的活儿交给小助。</p>
+            <div class="flex items-center flex-wrap gap-2 pt-1 text-xs">
+              <span class="text-purple-700 font-semibold bg-purple-100/70 px-2.5 py-1 rounded-md">预计生成时长：约60分钟</span>
+              <span id="task-feedback" class="text-gray-500">任务状态：等待实际任务反馈</span>
+            </div>
+          </div>
+          <div class="text-4xl flex-shrink-0 pr-2" aria-hidden="true">🎓🐷</div>
+        </div>
+
+        <!-- 生成流程卡片组 -->
+        <div class="bg-white rounded-2xl border border-gray-200/80 p-4 shadow-sm space-y-2.5 wy-steps">
+          <div class="flex items-center justify-between gap-3 px-1 pb-1">
+            <span class="text-xs font-bold text-gray-800">小助如何完成这份<span id="current-output-type">开题报告</span>？</span>
+            <span class="text-[11px] text-gray-400">四步为工作流程演示 · 时间仅供参考</span>
+          </div>
+
+          <!-- Step 1 -->
+          <div id="panel-1" class="wy-step border border-gray-200 rounded-xl overflow-hidden">
+            <button type="button" class="stage-head w-full flex items-center justify-between gap-3 p-3 bg-gray-50/70 hover:bg-purple-50/60 text-left" onclick="toggleStageAccordion(1)" aria-expanded="false" aria-controls="stage-content-1">
+              <span class="flex items-center gap-3 min-w-0"><span id="status-icon-1" class="wy-step-number">1</span><span class="min-w-0"><span class="text-sm font-semibold text-gray-800">解析文献</span><span class="wy-stage-description text-xs text-gray-500 ml-3">从原始文件中识别正文、章节与引用</span></span></span>
+              <span class="wy-stage-action"><span id="stage-time-1" class="wy-stage-time" title="进入该阶段时的参考剩余时间，非实时倒计时">预计还需约55分钟</span><span class="text-xs text-gray-400"><span id="status-label-1">查看演示</span><span id="chevron-1" class="ml-2">⌄</span></span></span>
+            </button>
+            <div id="stage-content-1" class="hidden wy-stage-body">
+              <div class="wy-motion-stage wy-visual wy-scene-1" aria-label="展示文献正文被识别为结构化信息的流程演示">
+                <div class="wy-visual-cell">
+                  <div class="wy-module-title"><span class="wy-module-index">01</span>原始文献</div>
+                  <div class="wy-mock-panel wy-document-source">
+                    <div class="wy-file-heading"><span class="wy-pdf-label">PDF</span><span id="stage1-filename" class="wy-file-name" title="">示例文献.pdf</span></div>
+                    <div class="wy-line-stack"><i class="wy-line-bar" style="--w:88%"></i><i class="wy-line-bar" style="--w:100%"></i><i class="wy-line-bar" style="--w:70%"></i><i class="wy-line-bar" style="--w:93%"></i></div>
+                    <span class="wy-scan-ray" aria-hidden="true"></span>
+                  </div>
+                </div>
+                <div class="wy-center-cell"><div class="wy-center-word">提取信息</div><div class="wy-center-rail"><span class="wy-flow-light"></span></div><div class="wy-center-hint">内容识别</div></div>
+                <div class="wy-visual-cell">
+                  <div class="wy-module-title"><span class="wy-module-index">02</span>信息字段</div>
+                  <div class="wy-mock-panel wy-output-fields">
+                    <div class="wy-field-row first"><span class="wy-field-icon">T</span><span>文献标题</span><span class="wy-field-check">✓</span></div>
+                    <div class="wy-field-row second"><span class="wy-field-icon">≡</span><span>章节结构</span><span class="wy-field-check">✓</span></div>
+                    <div class="wy-field-row third"><span class="wy-field-icon">↗</span><span>引用信息</span><span class="wy-field-check">✓</span></div>
+                  </div>
+                </div>
+              </div>
+              <div class="wy-under-motion"><span id="extraction-copy">扫描正文结构 → 定位关键信息 → 整理文献字段</span><span id="stage1-file-context">3 篇示例文献</span></div>
+            </div>
+          </div>
+
+          <!-- Step 2 -->
+          <div id="panel-2" class="wy-step wy-step-active border border-gray-200 rounded-xl overflow-hidden shadow-sm">
+            <button type="button" class="stage-head w-full flex items-center justify-between gap-3 p-3 bg-purple-50/70 text-left" onclick="toggleStageAccordion(2)" aria-expanded="true" aria-controls="stage-content-2">
+              <span class="flex items-center gap-3 min-w-0"><span id="status-icon-2" class="wy-step-number wy-step-number-active">2</span><span class="min-w-0"><span class="text-sm font-bold text-purple-900">阅读筛选</span><span class="wy-stage-description text-xs text-purple-700 ml-3">把文献与研究选题进行关联判断</span></span></span>
+              <span class="wy-stage-action"><span id="stage-time-2" class="wy-stage-time" title="进入该阶段时的参考剩余时间，非实时倒计时">预计还需约40分钟</span><span class="text-xs text-purple-700"><span id="status-label-2">正在预览</span><span id="chevron-2" class="ml-2">⌃</span></span></span>
+            </button>
+            <div id="stage-content-2" class="wy-stage-body">
+              <div class="wy-motion-stage wy-visual wy-scene-2" aria-label="本次文献与研究主题匹配的流程演示">
+                <div class="wy-visual-cell wy-stage2-cell wy-stage2-left">
+                  <div class="wy-module-title"><span class="wy-module-index">01</span><span>阅读文献</span></div>
+                  <div class="wy-mock-panel wy-stage2-panel wy-read-document">
+                    <div class="wy-stage2-top">本次文献</div>
+                    <div class="wy-stage2-main"><div id="stage2-filename" class="wy-read-filename" title="">非策略性演化相关研究（示例）.pdf</div></div>
+                    <div class="wy-stage2-bottom wy-stage2-lines" aria-hidden="true"><i class="wy-line-bar" style="--w:96%"></i><i class="wy-line-bar" style="--w:76%"></i></div>
+                    <div class="wy-read-highlight-line" aria-hidden="true"></div>
+                  </div>
+                </div>
+                <div class="wy-visual-cell wy-stage2-cell wy-stage2-middle">
+                  <div class="wy-module-title"><span class="wy-module-index">02</span><span>研究主题匹配</span></div>
+                  <div class="wy-mock-panel wy-stage2-panel wy-match-panel">
+                    <div class="wy-stage2-top">当前研究主题</div>
+                    <div class="wy-stage2-main"><div id="topic-in-flow" class="wy-topic-inline" title="">组织变革中的非策略性演化研究</div></div>
+                    <div class="wy-stage2-bottom wy-match-footer" aria-hidden="true"><span class="wy-match-stem"></span><span class="wy-match-dot"></span><span class="wy-match-stem"></span></div>
+                  </div>
+                </div>
+                <div class="wy-visual-cell wy-stage2-cell wy-stage2-right">
+                  <div class="wy-module-title"><span class="wy-module-index">03</span><span>判断文献用途</span></div>
+                  <div class="wy-mock-panel wy-stage2-panel wy-decision-panel">
+                    <div class="wy-stage2-top">关联判断结果</div>
+                    <div class="wy-stage2-main"><div class="wy-stage2-decision-line"><div class="wy-decision-icon" id="stage2-result-icon">?</div><div id="stage2-result-label" class="wy-decision-name">关联用途待分析</div></div></div>
+                    <div class="wy-stage2-bottom wy-result-note">真实结果返回后展示</div>
+                  </div>
+                </div>
+              </div>
+              <div class="wy-under-motion"><span id="stage2-dynamic-copy">阅读内容 · 对照研究主题 · 梳理文献用途</span><span id="stage2-file-context">文献名称为演示资料</span></div>
+            </div>
+          </div>
+
+          <!-- Step 3 -->
+          <div id="panel-3" class="wy-step border border-gray-200 rounded-xl overflow-hidden">
+            <button type="button" class="stage-head w-full flex items-center justify-between gap-3 p-3 bg-gray-50/70 hover:bg-purple-50/60 text-left" onclick="toggleStageAccordion(3)" aria-expanded="false" aria-controls="stage-content-3">
+              <span class="flex items-center gap-3 min-w-0"><span id="status-icon-3" class="wy-step-number">3</span><span class="min-w-0"><span class="text-sm font-semibold text-gray-800">提炼观点与搭建框架</span><span class="wy-stage-description text-xs text-gray-500 ml-3">归纳研究观点，形成层次分明的大纲</span></span></span>
+              <span class="wy-stage-action"><span id="stage-time-3" class="wy-stage-time" title="进入该阶段时的参考剩余时间，非实时倒计时">预计还需约20分钟</span><span class="text-xs text-gray-400"><span id="status-label-3">查看演示</span><span id="chevron-3" class="ml-2">⌄</span></span></span>
+            </button>
+            <div id="stage-content-3" class="hidden wy-stage-body">
+              <div class="wy-motion-stage wy-visual wy-scene-3" aria-label="展示研究要点归类成为大纲的流程演示">
+                <div class="wy-visual-cell">
+                  <div class="wy-module-title"><span class="wy-module-index">01</span>提炼研究要点</div>
+                  <div class="wy-mock-panel wy-points-panel">
+                    <div class="wy-point-item p1"><span class="wy-point-circle"></span>理论依据</div>
+                    <div class="wy-point-item p2"><span class="wy-point-circle"></span>已有研究</div>
+                    <div class="wy-point-item p3"><span class="wy-point-circle"></span>研究方法</div>
+                  </div>
+                </div>
+                <div class="wy-center-cell"><div class="wy-center-word">组织逻辑</div><div class="wy-center-rail"><span class="wy-flow-light"></span></div><div class="wy-center-hint">归纳 · 排列</div></div>
+                <div class="wy-visual-cell">
+                  <div class="wy-outline-head">
+                    <div class="wy-module-title"><span class="wy-module-index">02</span>写作框架示例</div>
+                    <button type="button" class="wy-outline-edit-btn" onclick="openOutlineModal()">修改大纲</button>
+                  </div>
+                  <div class="wy-mock-panel wy-outline-panel">
+                    <div id="stage3-topic" class="wy-outline-topic-fixed" title="">制度漂移与行动者实践</div>
+                    <div class="wy-outline-fixed-row r1"><span>01</span><span id="outline-title-1">理论基础</span></div>
+                    <div class="wy-outline-fixed-row r2"><span>02</span><span id="outline-title-2">研究现状</span></div>
+                    <div class="wy-outline-fixed-row r3"><span>03</span><span id="outline-title-3">研究方案</span></div>
+                    <div class="wy-outline-fixed-row r4"><span>04</span><span id="outline-title-4">案例分析</span></div>
+                    <div class="wy-outline-fixed-row r5"><span>05</span><span id="outline-title-5">结论</span></div>
+                  </div>
+                </div>
+              </div>
+              <div class="wy-under-motion"><span>归纳相近观点 → 理清关联 → 演示大纲结构</span><span>实际大纲待生成</span></div>
+            </div>
+          </div>
+
+          <!-- Step 4 -->
+          <div id="panel-4" class="wy-step border border-gray-200 rounded-xl overflow-hidden">
+            <button type="button" class="stage-head w-full flex items-center justify-between gap-3 p-3 bg-gray-50/70 hover:bg-purple-50/60 text-left" onclick="toggleStageAccordion(4)" aria-expanded="false" aria-controls="stage-content-4">
+              <span class="flex items-center gap-3 min-w-0"><span id="status-icon-4" class="wy-step-number">4</span><span class="min-w-0"><span class="text-sm font-semibold text-gray-800">细化内容与撰写初稿</span><span class="wy-stage-description text-xs text-gray-500 ml-3">按章节展开论述并整合文献依据</span></span></span>
+              <span class="wy-stage-action"><span id="stage-time-4" class="wy-stage-time" title="进入该阶段时的参考剩余时间，非实时倒计时">即将完成</span><span class="text-xs text-gray-400"><span id="status-label-4">查看演示</span><span id="chevron-4" class="ml-2">⌄</span></span></span>
+            </button>
+            <div id="stage-content-4" class="hidden wy-stage-body">
+              <div class="wy-motion-stage wy-visual wy-scene-4" aria-label="展示章节大纲展开为正文结构的流程演示">
+                <div class="wy-visual-cell">
+                  <div class="wy-module-title"><span class="wy-module-index">01</span>章节大纲</div>
+                  <div class="wy-mock-panel wy-chapters-panel">
+                    <div id="chapter-name-1" class="wy-chapter-fixed c1">选题背景与意义</div>
+                    <div id="chapter-name-2" class="wy-chapter-fixed c2">国内外研究现状</div>
+                    <div id="chapter-name-3" class="wy-chapter-fixed c3">研究内容与方法</div>
+                    <div id="chapter-name-4" class="wy-chapter-fixed c4">案例分析</div>
+                    <div id="chapter-name-5" class="wy-chapter-fixed c5">结论</div>
+                  </div>
+                </div>
+                <div class="wy-center-cell"><div class="wy-center-word">组织论述</div><div class="wy-center-rail"><span class="wy-flow-light"></span></div><div class="wy-center-hint">整合文献依据</div></div>
+                <div class="wy-visual-cell">
+                  <div class="wy-module-title"><span class="wy-module-index">02</span>正文排版示意</div>
+                  <div class="wy-mock-panel wy-draft-panel">
+                    <div class="wy-draft-bar"><strong id="stage4-output-type">开题报告</strong><span class="wy-draft-pill">示例</span></div>
+                    <div id="stage4-topic" class="wy-draft-topic" title="">制度漂移与行动者实践</div>
+                    <div id="stage4-preview-head" class="wy-draft-heading">一、选题背景与研究意义</div>
+                    <div class="wy-typing-lines"><i class="wy-typing-line w1"></i><i class="wy-typing-line w2"></i><i class="wy-typing-line w3"></i></div>
+                  </div>
+                </div>
+              </div>
+              <div class="wy-under-motion"><span>章节展开动画为示意；不代表正文已开始输出</span><span>生成结果以实际返回为准</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 底部提示 -->
+        <div class="bg-white/80 border border-purple-100 rounded-xl px-4 py-2.5 flex items-center justify-between gap-2 text-xs shadow-sm">
+          <div class="flex items-center gap-2 min-w-0"><span class="text-amber-500">💡</span><span id="footer-tip-text" class="text-gray-600 font-medium truncate">不是所有文献都要写进论文，相关性才是关键</span></div>
+          <div id="tip-dots" class="flex gap-1.5 flex-shrink-0"><span class="tip-dot is-active"></span><span class="tip-dot"></span><span class="tip-dot"></span></div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+
+  <div id="outline-modal" class="wy-modal-mask" aria-hidden="true">
+    <div class="wy-modal" role="dialog" aria-modal="true" aria-labelledby="outline-modal-title">
+      <div class="wy-modal-header">
+        <h3 id="outline-modal-title">自定义大纲</h3>
+        <button type="button" class="wy-modal-close" aria-label="关闭" onclick="closeOutlineModal()">×</button>
+      </div>
+      <div class="wy-modal-body">
+        <div class="wy-modal-toolbar">
+          <label>自定义大纲：</label>
+          <div class="wy-toolbar-btns">
+            <button type="button" class="wy-pill-outline" onclick="togglePasteOutline()">我有大纲 自己粘贴</button>
+            <button type="button" class="wy-pill-fill" onclick="resetOutlineFromTemplate()">重新生成大纲</button>
+          </div>
+        </div>
+        <div id="paste-outline-wrap" class="wy-paste-wrap">
+          <textarea id="paste-outline-input" placeholder="每行一项，例如：
+引言
+研究背景
+研究现状
+研究方法
+结论"></textarea>
+          <div style="display:flex;justify-content:flex-end;margin-top:10px;">
+            <button type="button" class="wy-pill-fill" onclick="applyPastedOutline()">应用粘贴内容</button>
+          </div>
+        </div>
+        <div class="wy-outline-editor" id="outline-editor-list"></div>
+        <button type="button" class="wy-outline-add" onclick="addOutlineRow()">＋ 添加章节</button>
+      </div>
+      <div class="wy-modal-footer">
+        <button type="button" class="wy-confirm-btn" onclick="confirmOutline()">确认大纲</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const project = {
+      topic: '制度漂移与行动者实践：组织变革中的非策略性演化研究',
+      files: ['制度漂移研究（示例）.pdf','组织惯性与组织变革（示例）.pdf','非策略性演化相关研究（示例）.pdf'],
+      outputType: '开题报告',
+      sourceConnected: false,
+      customOutline: null
+    };
+    const defaultOutlines = {
+      '文献综述':['研究背景','核心概念与理论基础','国内外研究现状','研究评述与不足','小结'],
+      '开题报告':['选题背景与研究意义','研究现状与问题','研究目标与内容','研究方法与技术路线','研究计划与进度安排'],
+      '论文初稿':['绪论','理论基础','研究设计','案例分析','结论']
+    };
+    let activeStage = 2;
+    let rotation = 0;
+    let tipIndex = 0;
+    let trustedFeedback = null;
+    let stage2VerifiedResult = null;
+    const $ = id => document.getElementById(id);
+    const setText = (id, content) => { const e=$(id);if(e)e.textContent=String(content); };
+    const currentFile = () => project.files.length?project.files[rotation%project.files.length]:'暂未关联文献';
+    const tips = {
+      1:['先识别文献内容，才能进一步分析研究观点','扫描版文献的正文识别可能需要额外处理','参考文献格式与正文信息需要分别识别'],
+      2:['不是所有文献都要写进论文，相关性才是关键','文献也可以提供理论依据或研究方法参考','文献的最终用途，需要结合原文核对'],
+      3:['好的大纲，不只是观点罗列，还要梳理逻辑','相近观点需要归纳，有分歧的观点需要比较','研究问题决定大纲怎样组织'],
+      4:['从大纲展开正文，关键是论述与依据对应','初稿仍需检查引用来源与研究方法','内容不满意，可以在生成后继续修改']
+    };
+    function getActiveOutline(){
+      const base = defaultOutlines[project.outputType] || defaultOutlines['论文初稿'];
+      const picked = Array.isArray(project.customOutline) && project.customOutline.length ? project.customOutline : base;
+      return picked.slice(0, 12);
+    }
+    function renderProject(){
+      const actual = project.sourceConnected;
+      const count = project.files.length;
+      const filenames = count ? project.files : ['尚未关联文献'];
+      setText('stage1-filename',filenames[0]);
+      setText('stage2-filename',currentFile());
+      setText('topic-in-flow',project.topic);
+      setText('stage3-topic',project.topic);
+      setText('stage4-topic',project.topic);
+      setText('stage1-file-context',actual ? '本次任务已选文献 '+count+' 篇' : count+' 篇示例文献');
+      setText('stage2-file-context',actual ? '文献名称来自本次任务' : '文献名称为演示资料');
+      const output = project.outputType;
+      setText('stage4-output-type',output);
+      setText('current-output-type',output);
+      const chapter = getActiveOutline();
+      for(let i=0;i<5;i++){
+        const value = chapter[i] || '待补充章节';
+        setText('chapter-name-'+(i+1), value);
+        setText('outline-title-'+(i+1), value);
+      }
+      setText('stage4-preview-head','一、'+(chapter[0] || '章节内容'));
+      if($('stage1-filename')) $('stage1-filename').title=filenames[0]||'';
+      if($('stage2-filename')) $('stage2-filename').title=currentFile();
+    }
+    function openOutlineModal(){
+      renderOutlineEditor();
+      $('outline-modal').classList.add('show');
+      $('outline-modal').setAttribute('aria-hidden','false');
+    }
+    function closeOutlineModal(){
+      $('outline-modal').classList.remove('show');
+      $('outline-modal').setAttribute('aria-hidden','true');
+      $('paste-outline-wrap').classList.remove('show');
+    }
+    function renderOutlineEditor(list){
+      const items = (Array.isArray(list) && list.length ? list : getActiveOutline()).slice();
+      const host = $('outline-editor-list');
+      host.innerHTML = items.map((item, idx) => `
+        <div class="wy-outline-row">
+          <div class="wy-outline-handle">⋮⋮</div>
+          <div class="wy-outline-num">${idx+1}</div>
+          <input class="wy-outline-input" value="${String(item).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}" />
+          <input class="wy-outline-note" placeholder="请输入大纲要求提示词" />
+        </div>`).join('');
+    }
+    function collectOutlineEditor(){
+      return Array.from(document.querySelectorAll('#outline-editor-list .wy-outline-row .wy-outline-input')).map(el => el.value.trim()).filter(Boolean);
+    }
+    function addOutlineRow(){
+      const current = collectOutlineEditor();
+      current.push('新增章节');
+      renderOutlineEditor(current);
+    }
+    function togglePasteOutline(){
+      $('paste-outline-wrap').classList.toggle('show');
+    }
+    function applyPastedOutline(){
+      const raw = $('paste-outline-input').value || '';
+      const lines = raw.split(/\r?\n+/).map(s => s.trim()).filter(Boolean);
+      if(lines.length) renderOutlineEditor(lines);
+    }
+    function resetOutlineFromTemplate(){
+      project.customOutline = null;
+      renderOutlineEditor(defaultOutlines[project.outputType] || defaultOutlines['论文初稿']);
+    }
+    function confirmOutline(){
+      const result = collectOutlineEditor();
+      if(result.length) project.customOutline = result;
+      renderProject();
+      closeOutlineModal();
+    }
+    function toggleStageAccordion(stage){
+      activeStage=stage;
+      for(let i=1;i<=4;i++){
+        const expanded=i===stage;
+        $('stage-content-'+i).classList.toggle('hidden',!expanded);
+        $('panel-'+i).classList.toggle('wy-step-active',expanded);
+        $('panel-'+i).querySelector('.stage-head').setAttribute('aria-expanded',String(expanded));
+        $('chevron-'+i).textContent=expanded?'⌃':'⌄';
+        if(!trustedFeedback){setText('status-label-'+i,expanded?'正在预览':'查看演示');}
+      }
+      tipIndex=0;renderTip();
+    }
+    function renderTip(){
+      setText('footer-tip-text',tips[activeStage][tipIndex%3]);
+      Array.from($('tip-dots').children).forEach((e,i)=>e.classList.toggle('is-active',i===tipIndex%3));
+    }
+    window.setInterval(()=>{
+      if(!$('stage-content-2').classList.contains('hidden') && project.files.length){
+        rotation=(rotation+1)%project.files.length;
+        setText('stage2-filename',currentFile());
+        if($('stage2-filename')) $('stage2-filename').title=currentFile();
+      }
+    },7400);
+    window.setInterval(()=>{tipIndex=(tipIndex+1)%3;renderTip();},7500);
+
+    window.WenyouWaiting = {
+      setProject(data){
+        if(!data || typeof data!=='object') return;
+        let received=false;
+        if(typeof data.topic==='string'&&data.topic.trim()){project.topic=data.topic.trim();received=true;}
+        if(Array.isArray(data.files)){
+          project.files=data.files.map(item => typeof item==='string'?item: String(item?.name||'')).map(s=>s.trim()).filter(Boolean).slice(0,100);
+          received=true;
+        }
+        if(['文献综述','开题报告','论文初稿'].includes(data.outputType)){project.outputType=data.outputType;project.customOutline=null;received=true;}
+        if(received){
+          project.sourceConnected=true;
+          stage2VerifiedResult=null;
+          setText('stage2-result-label','关联用途待分析');
+          setText('stage2-result-icon','?');
+          const note=document.querySelector('.wy-result-note');
+          if(note)note.textContent='暂不展示未生成的结论';
+        }
+        rotation=0;renderProject();
+      },
+      setTaskFeedback(data){
+        if(!data || data.verified!==true) return;
+        trustedFeedback=data;
+        const names={queued:'正在排队',running:'任务处理中',done:'生成完成',failed:'生成失败'};
+        if(data.stage>=1&&data.stage<=4){
+          if(data.status==='running' && Number.isFinite(data.remainingMinutes) && data.remainingMinutes>=0){
+            setText('stage-time-'+data.stage,'预计还需约'+Math.ceil(data.remainingMinutes)+'分钟');
+            $('stage-time-'+data.stage).title='来自服务端的预计剩余时长';
+          }
+          const namesOfStages=['','解析文献','阅读筛选','搭建框架','撰写初稿'];
+          setText('task-feedback','任务状态：'+(names[data.status]||'处理中')+' · '+namesOfStages[data.stage]);
+          if(data.status==='running')toggleStageAccordion(data.stage);
+        }else setText('task-feedback','任务状态：'+(names[data.status]||'处理中'));
+        const done=new Set(Array.isArray(data.completedStages)?data.completedStages:[]);
+        for(let i=1;i<=4;i++){
+          const icon=$('status-icon-'+i);
+          if(done.has(i)){icon.textContent='✓';icon.style.background='#10b981';icon.style.color='#fff';}
+          setText('status-label-'+i,done.has(i)?'已完成':i===data.stage?'正在处理':'查看演示');
+        }
+      },
+      setStageResult(stage, result){
+        if(stage===2 && result?.verified===true && typeof result.label==='string'){
+          stage2VerifiedResult=result.label.trim();
+          setText('stage2-result-label',stage2VerifiedResult||'用途待分析');
+          setText('stage2-result-icon',stage2VerifiedResult?'✓':'?');
+          const note=document.querySelector('.wy-result-note');if(note)note.textContent='来自实际任务反馈';
+        }
+      }
+    };
+    document.addEventListener('keydown', (event) => {
+      if(event.key==='Escape' && $('outline-modal').classList.contains('show')) closeOutlineModal();
+    });
+    renderProject();renderTip();
+  </script>
+</body>
+</html>
