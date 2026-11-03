@@ -1856,6 +1856,10 @@ html&gt;body{padding:0}&lt;/style&gt;
     #ambassador-activity-prototype .p-link, #ambassador-activity-prototype .p-text-button { color: var(--p-green); text-decoration: none; background: none; border: 0; padding: 0; }
     #ambassador-activity-prototype .p-action { border: 1px solid var(--p-line); border-radius: 8px; padding: 8px 11px; color: var(--p-text); background: var(--p-surface); }
     #ambassador-activity-prototype .p-action.primary { background: var(--p-green); color: var(--p-on-green); border-color: var(--p-green); }
+    #ambassador-activity-prototype .p-row-actions { display: flex; align-items: center; gap: 5px; }
+    #ambassador-activity-prototype .p-row-action { padding: 5px 7px; border: 1px solid var(--p-line); border-radius: 7px; color: var(--p-green); background: var(--p-surface); white-space: nowrap; }
+    #ambassador-activity-prototype .p-row-action[data-set-user-status=&quot;invalid&quot;] { color: var(--p-red); }
+    #ambassador-activity-prototype .p-row-action:disabled { opacity: .5; cursor: default; }
     #ambassador-activity-prototype .p-flow-wrap { margin: 12px 0 18px; padding: 12px; background: var(--p-surface); border: 1px solid var(--p-line); border-radius: 11px; }
     #ambassador-activity-prototype .p-flow { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
     #ambassador-activity-prototype .p-flow button { position: relative; min-width: 0; text-align: left; padding: 8px 10px; color: var(--p-text); border: 0; border-radius: 8px; background: transparent; }
@@ -2040,15 +2044,15 @@ html&gt;body{padding:0}&lt;/style&gt;
               &lt;div class=&quot;p-section-head&quot;&gt;&lt;h2&gt;用户列表&lt;/h2&gt;&lt;span class=&quot;p-small&quot;&gt;点击用户查看核验依据&lt;/span&gt;&lt;/div&gt;
               &lt;div class=&quot;p-table-wrap&quot;&gt;
                 &lt;table aria-label=&quot;新用户资格记录&quot;&gt;
-                  &lt;thead&gt;&lt;tr&gt;&lt;th&gt;用户&lt;/th&gt;&lt;th&gt;注册时间&lt;/th&gt;&lt;th&gt;归属大使&lt;/th&gt;&lt;th&gt;资格路径与状态&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;
+                  &lt;thead&gt;&lt;tr&gt;&lt;th&gt;用户&lt;/th&gt;&lt;th&gt;注册时间&lt;/th&gt;&lt;th&gt;归属大使&lt;/th&gt;&lt;th&gt;资格路径与状态&lt;/th&gt;&lt;th&gt;操作&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;
                   &lt;tbody id=&quot;p-user-rows&quot;&gt;
-                    &lt;tr data-user-row data-user-id=&quot;U-08137&quot; data-status=&quot;valid&quot; data-search=&quot;U-08137 李同学 清华大学&quot;&gt;&lt;td&gt;&lt;button class=&quot;p-text-button&quot; type=&quot;button&quot; data-select-user=&quot;U-08137&quot;&gt;U-08137&lt;/button&gt;&lt;span class=&quot;p-small&quot;&gt;138****0246 · 已验证&lt;/span&gt;&lt;/td&gt;&lt;td&gt;10.19 14:32&lt;/td&gt;&lt;td&gt;&lt;button class=&quot;p-text-button&quot; type=&quot;button&quot; data-route=&quot;ambassadors&quot; data-amb-id=&quot;li&quot;&gt;李同学&lt;/button&gt;&lt;span class=&quot;p-small&quot;&gt;LMX9527 · 归属已锁定&lt;/span&gt;&lt;/td&gt;&lt;td&gt;行为达标 &lt;span class=&quot;p-tag good&quot;&gt;有效&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;
-                    &lt;tr data-user-row data-user-id=&quot;U-08142&quot; data-status=&quot;valid&quot; data-search=&quot;U-08142 王同学 北京大学&quot;&gt;&lt;td&gt;&lt;button class=&quot;p-text-button&quot; type=&quot;button&quot; data-select-user=&quot;U-08142&quot;&gt;U-08142&lt;/button&gt;&lt;span class=&quot;p-small&quot;&gt;159****6312 · 已验证&lt;/span&gt;&lt;/td&gt;&lt;td&gt;10.26 09:18&lt;/td&gt;&lt;td&gt;&lt;button class=&quot;p-text-button&quot; type=&quot;button&quot; data-route=&quot;ambassadors&quot; data-amb-id=&quot;wang&quot;&gt;王同学&lt;/button&gt;&lt;span class=&quot;p-small&quot;&gt;WSY8899 · 归属已锁定&lt;/span&gt;&lt;/td&gt;&lt;td&gt;付费直达 &lt;span class=&quot;p-tag good&quot;&gt;有效&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;
-                    &lt;tr data-user-row data-user-id=&quot;U-08146&quot; data-status=&quot;observing&quot; data-search=&quot;U-08146 李同学 清华大学&quot;&gt;&lt;td&gt;&lt;button class=&quot;p-text-button&quot; type=&quot;button&quot; data-select-user=&quot;U-08146&quot;&gt;U-08146&lt;/button&gt;&lt;span class=&quot;p-small&quot;&gt;177****9031 · 已验证&lt;/span&gt;&lt;/td&gt;&lt;td&gt;10.30 18:06&lt;/td&gt;&lt;td&gt;&lt;button class=&quot;p-text-button&quot; type=&quot;button&quot; data-route=&quot;ambassadors&quot; data-amb-id=&quot;li&quot;&gt;李同学&lt;/button&gt;&lt;span class=&quot;p-small&quot;&gt;LMX9527 · 归属已锁定&lt;/span&gt;&lt;/td&gt;&lt;td&gt;行为观察中 &lt;span class=&quot;p-tag wait&quot;&gt;待观察&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;
-                    &lt;tr data-user-row data-user-id=&quot;U-08150&quot; data-status=&quot;review&quot; data-search=&quot;U-08150 张同学 复旦大学&quot;&gt;&lt;td&gt;&lt;button class=&quot;p-text-button&quot; type=&quot;button&quot; data-select-user=&quot;U-08150&quot;&gt;U-08150&lt;/button&gt;&lt;span class=&quot;p-small&quot;&gt;186****1520 · 已验证&lt;/span&gt;&lt;/td&gt;&lt;td&gt;10.30 20:44&lt;/td&gt;&lt;td&gt;&lt;button class=&quot;p-text-button&quot; type=&quot;button&quot; data-route=&quot;ambassadors&quot; data-amb-id=&quot;zhang&quot;&gt;张同学&lt;/button&gt;&lt;span class=&quot;p-small&quot;&gt;ZZH6688 · 归属已锁定&lt;/span&gt;&lt;/td&gt;&lt;td&gt;付费直达 &lt;span class=&quot;p-tag wait&quot;&gt;异常复核&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;
-                    &lt;tr data-user-row data-user-id=&quot;U-08158&quot; data-status=&quot;review&quot; data-search=&quot;U-08158 王同学 北京大学&quot;&gt;&lt;td&gt;&lt;button class=&quot;p-text-button&quot; type=&quot;button&quot; data-select-user=&quot;U-08158&quot;&gt;U-08158&lt;/button&gt;&lt;span class=&quot;p-small&quot;&gt;136****2177 · 已验证&lt;/span&gt;&lt;/td&gt;&lt;td&gt;10.28 12:03&lt;/td&gt;&lt;td&gt;&lt;button class=&quot;p-text-button&quot; type=&quot;button&quot; data-route=&quot;ambassadors&quot; data-amb-id=&quot;wang&quot;&gt;王同学&lt;/button&gt;&lt;span class=&quot;p-small&quot;&gt;WSY8899 · 归属已锁定&lt;/span&gt;&lt;/td&gt;&lt;td&gt;付费后退款 &lt;span class=&quot;p-tag wait&quot;&gt;待复核&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;
-                    &lt;tr data-user-row data-user-id=&quot;U-08002&quot; data-status=&quot;invalid&quot; data-search=&quot;U-08002 陈店主 门店&quot;&gt;&lt;td&gt;&lt;button class=&quot;p-text-button&quot; type=&quot;button&quot; data-select-user=&quot;U-08002&quot;&gt;U-08002&lt;/button&gt;&lt;span class=&quot;p-small&quot;&gt;135****5519 · 已验证&lt;/span&gt;&lt;/td&gt;&lt;td&gt;10.12 11:07&lt;/td&gt;&lt;td&gt;&lt;button class=&quot;p-text-button&quot; type=&quot;button&quot; data-route=&quot;ambassadors&quot; data-amb-id=&quot;chen&quot;&gt;陈店主&lt;/button&gt;&lt;span class=&quot;p-small&quot;&gt;CRX1024 · 归属已锁定&lt;/span&gt;&lt;/td&gt;&lt;td&gt;无核心使用或支付 &lt;span class=&quot;p-tag bad&quot;&gt;无效&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;
-                    &lt;tr class=&quot;p-empty&quot; id=&quot;p-user-empty&quot; hidden&gt;&lt;td colspan=&quot;4&quot;&gt;没有符合条件的用户&lt;/td&gt;&lt;/tr&gt;
+                    &lt;tr data-user-row data-user-id=&quot;U-08137&quot; data-status=&quot;valid&quot; data-search=&quot;U-08137 李同学 清华大学&quot;&gt;&lt;td&gt;&lt;button class=&quot;p-text-button&quot; type=&quot;button&quot; data-select-user=&quot;U-08137&quot;&gt;U-08137&lt;/button&gt;&lt;span class=&quot;p-small&quot;&gt;138****0246 · 已验证&lt;/span&gt;&lt;/td&gt;&lt;td&gt;10.19 14:32&lt;/td&gt;&lt;td&gt;&lt;button class=&quot;p-text-button&quot; type=&quot;button&quot; data-route=&quot;ambassadors&quot; data-amb-id=&quot;li&quot;&gt;李同学&lt;/button&gt;&lt;span class=&quot;p-small&quot;&gt;LMX9527 · 归属已锁定&lt;/span&gt;&lt;/td&gt;&lt;td&gt;行为达标 &lt;span class=&quot;p-tag good&quot; data-user-status-tag&gt;有效&lt;/span&gt;&lt;/td&gt;&lt;td&gt;&lt;div class=&quot;p-row-actions&quot;&gt;&lt;button class=&quot;p-row-action&quot; type=&quot;button&quot; data-set-user-status=&quot;valid&quot; aria-label=&quot;将 U-08137 设为有效&quot;&gt;设为有效&lt;/button&gt;&lt;button class=&quot;p-row-action&quot; type=&quot;button&quot; data-set-user-status=&quot;invalid&quot; aria-label=&quot;将 U-08137 设为无效&quot;&gt;设为无效&lt;/button&gt;&lt;/div&gt;&lt;/td&gt;&lt;/tr&gt;
+                    &lt;tr data-user-row data-user-id=&quot;U-08142&quot; data-status=&quot;valid&quot; data-search=&quot;U-08142 王同学 北京大学&quot;&gt;&lt;td&gt;&lt;button class=&quot;p-text-button&quot; type=&quot;button&quot; data-select-user=&quot;U-08142&quot;&gt;U-08142&lt;/button&gt;&lt;span class=&quot;p-small&quot;&gt;159****6312 · 已验证&lt;/span&gt;&lt;/td&gt;&lt;td&gt;10.26 09:18&lt;/td&gt;&lt;td&gt;&lt;button class=&quot;p-text-button&quot; type=&quot;button&quot; data-route=&quot;ambassadors&quot; data-amb-id=&quot;wang&quot;&gt;王同学&lt;/button&gt;&lt;span class=&quot;p-small&quot;&gt;WSY8899 · 归属已锁定&lt;/span&gt;&lt;/td&gt;&lt;td&gt;付费直达 &lt;span class=&quot;p-tag good&quot; data-user-status-tag&gt;有效&lt;/span&gt;&lt;/td&gt;&lt;td&gt;&lt;div class=&quot;p-row-actions&quot;&gt;&lt;button class=&quot;p-row-action&quot; type=&quot;button&quot; data-set-user-status=&quot;valid&quot; aria-label=&quot;将 U-08142 设为有效&quot;&gt;设为有效&lt;/button&gt;&lt;button class=&quot;p-row-action&quot; type=&quot;button&quot; data-set-user-status=&quot;invalid&quot; aria-label=&quot;将 U-08142 设为无效&quot;&gt;设为无效&lt;/button&gt;&lt;/div&gt;&lt;/td&gt;&lt;/tr&gt;
+                    &lt;tr data-user-row data-user-id=&quot;U-08146&quot; data-status=&quot;observing&quot; data-search=&quot;U-08146 李同学 清华大学&quot;&gt;&lt;td&gt;&lt;button class=&quot;p-text-button&quot; type=&quot;button&quot; data-select-user=&quot;U-08146&quot;&gt;U-08146&lt;/button&gt;&lt;span class=&quot;p-small&quot;&gt;177****9031 · 已验证&lt;/span&gt;&lt;/td&gt;&lt;td&gt;10.30 18:06&lt;/td&gt;&lt;td&gt;&lt;button class=&quot;p-text-button&quot; type=&quot;button&quot; data-route=&quot;ambassadors&quot; data-amb-id=&quot;li&quot;&gt;李同学&lt;/button&gt;&lt;span class=&quot;p-small&quot;&gt;LMX9527 · 归属已锁定&lt;/span&gt;&lt;/td&gt;&lt;td&gt;行为观察中 &lt;span class=&quot;p-tag wait&quot; data-user-status-tag&gt;待观察&lt;/span&gt;&lt;/td&gt;&lt;td&gt;&lt;div class=&quot;p-row-actions&quot;&gt;&lt;button class=&quot;p-row-action&quot; type=&quot;button&quot; data-set-user-status=&quot;valid&quot; aria-label=&quot;将 U-08146 设为有效&quot;&gt;设为有效&lt;/button&gt;&lt;button class=&quot;p-row-action&quot; type=&quot;button&quot; data-set-user-status=&quot;invalid&quot; aria-label=&quot;将 U-08146 设为无效&quot;&gt;设为无效&lt;/button&gt;&lt;/div&gt;&lt;/td&gt;&lt;/tr&gt;
+                    &lt;tr data-user-row data-user-id=&quot;U-08150&quot; data-status=&quot;review&quot; data-search=&quot;U-08150 张同学 复旦大学&quot;&gt;&lt;td&gt;&lt;button class=&quot;p-text-button&quot; type=&quot;button&quot; data-select-user=&quot;U-08150&quot;&gt;U-08150&lt;/button&gt;&lt;span class=&quot;p-small&quot;&gt;186****1520 · 已验证&lt;/span&gt;&lt;/td&gt;&lt;td&gt;10.30 20:44&lt;/td&gt;&lt;td&gt;&lt;button class=&quot;p-text-button&quot; type=&quot;button&quot; data-route=&quot;ambassadors&quot; data-amb-id=&quot;zhang&quot;&gt;张同学&lt;/button&gt;&lt;span class=&quot;p-small&quot;&gt;ZZH6688 · 归属已锁定&lt;/span&gt;&lt;/td&gt;&lt;td&gt;付费直达 &lt;span class=&quot;p-tag wait&quot; data-user-status-tag&gt;异常复核&lt;/span&gt;&lt;/td&gt;&lt;td&gt;&lt;div class=&quot;p-row-actions&quot;&gt;&lt;button class=&quot;p-row-action&quot; type=&quot;button&quot; data-set-user-status=&quot;valid&quot; aria-label=&quot;将 U-08150 设为有效&quot;&gt;设为有效&lt;/button&gt;&lt;button class=&quot;p-row-action&quot; type=&quot;button&quot; data-set-user-status=&quot;invalid&quot; aria-label=&quot;将 U-08150 设为无效&quot;&gt;设为无效&lt;/button&gt;&lt;/div&gt;&lt;/td&gt;&lt;/tr&gt;
+                    &lt;tr data-user-row data-user-id=&quot;U-08158&quot; data-status=&quot;review&quot; data-search=&quot;U-08158 王同学 北京大学&quot;&gt;&lt;td&gt;&lt;button class=&quot;p-text-button&quot; type=&quot;button&quot; data-select-user=&quot;U-08158&quot;&gt;U-08158&lt;/button&gt;&lt;span class=&quot;p-small&quot;&gt;136****2177 · 已验证&lt;/span&gt;&lt;/td&gt;&lt;td&gt;10.28 12:03&lt;/td&gt;&lt;td&gt;&lt;button class=&quot;p-text-button&quot; type=&quot;button&quot; data-route=&quot;ambassadors&quot; data-amb-id=&quot;wang&quot;&gt;王同学&lt;/button&gt;&lt;span class=&quot;p-small&quot;&gt;WSY8899 · 归属已锁定&lt;/span&gt;&lt;/td&gt;&lt;td&gt;付费后退款 &lt;span class=&quot;p-tag wait&quot; data-user-status-tag&gt;待复核&lt;/span&gt;&lt;/td&gt;&lt;td&gt;&lt;div class=&quot;p-row-actions&quot;&gt;&lt;button class=&quot;p-row-action&quot; type=&quot;button&quot; data-set-user-status=&quot;valid&quot; aria-label=&quot;将 U-08158 设为有效&quot;&gt;设为有效&lt;/button&gt;&lt;button class=&quot;p-row-action&quot; type=&quot;button&quot; data-set-user-status=&quot;invalid&quot; aria-label=&quot;将 U-08158 设为无效&quot;&gt;设为无效&lt;/button&gt;&lt;/div&gt;&lt;/td&gt;&lt;/tr&gt;
+                    &lt;tr data-user-row data-user-id=&quot;U-08002&quot; data-status=&quot;invalid&quot; data-search=&quot;U-08002 陈店主 门店&quot;&gt;&lt;td&gt;&lt;button class=&quot;p-text-button&quot; type=&quot;button&quot; data-select-user=&quot;U-08002&quot;&gt;U-08002&lt;/button&gt;&lt;span class=&quot;p-small&quot;&gt;135****5519 · 已验证&lt;/span&gt;&lt;/td&gt;&lt;td&gt;10.12 11:07&lt;/td&gt;&lt;td&gt;&lt;button class=&quot;p-text-button&quot; type=&quot;button&quot; data-route=&quot;ambassadors&quot; data-amb-id=&quot;chen&quot;&gt;陈店主&lt;/button&gt;&lt;span class=&quot;p-small&quot;&gt;CRX1024 · 归属已锁定&lt;/span&gt;&lt;/td&gt;&lt;td&gt;无核心使用或支付 &lt;span class=&quot;p-tag bad&quot; data-user-status-tag&gt;无效&lt;/span&gt;&lt;/td&gt;&lt;td&gt;&lt;div class=&quot;p-row-actions&quot;&gt;&lt;button class=&quot;p-row-action&quot; type=&quot;button&quot; data-set-user-status=&quot;valid&quot; aria-label=&quot;将 U-08002 设为有效&quot;&gt;设为有效&lt;/button&gt;&lt;button class=&quot;p-row-action&quot; type=&quot;button&quot; data-set-user-status=&quot;invalid&quot; aria-label=&quot;将 U-08002 设为无效&quot;&gt;设为无效&lt;/button&gt;&lt;/div&gt;&lt;/td&gt;&lt;/tr&gt;
+                    &lt;tr class=&quot;p-empty&quot; id=&quot;p-user-empty&quot; hidden&gt;&lt;td colspan=&quot;5&quot;&gt;没有符合条件的用户&lt;/td&gt;&lt;/tr&gt;
                   &lt;/tbody&gt;
                 &lt;/table&gt;
               &lt;/div&gt;
@@ -2147,12 +2151,12 @@ html&gt;body{padding:0}&lt;/style&gt;
             &lt;button class=&quot;p-tab&quot; id=&quot;p-tab-delay&quot; type=&quot;button&quot; role=&quot;tab&quot; aria-controls=&quot;p-panel-delay&quot; aria-selected=&quot;false&quot;&gt;降重延迟分润&lt;/button&gt;
           &lt;/div&gt;
           &lt;section id=&quot;p-panel-acq&quot; role=&quot;tabpanel&quot; aria-labelledby=&quot;p-tab-acq&quot;&gt;
-            &lt;div class=&quot;p-table-wrap&quot;&gt;&lt;table aria-label=&quot;拉新奖励明细&quot;&gt;&lt;thead&gt;&lt;tr&gt;&lt;th&gt;资格生效周&lt;/th&gt;&lt;th&gt;大使&lt;/th&gt;&lt;th&gt;校区&lt;/th&gt;&lt;th&gt;有效新用户&lt;/th&gt;&lt;th&gt;分段计价&lt;/th&gt;&lt;th&gt;奖励金额&lt;/th&gt;&lt;th&gt;状态&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;
+            &lt;div class=&quot;p-table-wrap&quot;&gt;&lt;table aria-label=&quot;拉新奖励明细&quot;&gt;&lt;thead&gt;&lt;tr&gt;&lt;th&gt;资格生效周&lt;/th&gt;&lt;th&gt;大使&lt;/th&gt;&lt;th&gt;校区&lt;/th&gt;&lt;th&gt;有效新用户&lt;/th&gt;&lt;th&gt;分段计价&lt;/th&gt;&lt;th&gt;发放月份&lt;/th&gt;&lt;th&gt;奖励金额&lt;/th&gt;&lt;th&gt;状态&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;
               &lt;tbody&gt;
-                &lt;tr data-settle-row data-status=&quot;pending&quot; data-search=&quot;李同学 清华大学&quot;&gt;&lt;td&gt;10.26–11.01&lt;/td&gt;&lt;td&gt;&lt;button class=&quot;p-text-button&quot; type=&quot;button&quot; data-route=&quot;ambassadors&quot; data-amb-id=&quot;li&quot;&gt;李同学&lt;/button&gt;&lt;/td&gt;&lt;td&gt;清华大学&lt;/td&gt;&lt;td&gt;6 人&lt;/td&gt;&lt;td&gt;6 × ¥3&lt;/td&gt;&lt;td&gt;¥18&lt;/td&gt;&lt;td&gt;&lt;span class=&quot;p-tag wait&quot;&gt;待发放&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;
-                &lt;tr data-settle-row data-status=&quot;pending&quot; data-search=&quot;王同学 北京大学&quot;&gt;&lt;td&gt;10.26–11.01&lt;/td&gt;&lt;td&gt;&lt;button class=&quot;p-text-button&quot; type=&quot;button&quot; data-route=&quot;ambassadors&quot; data-amb-id=&quot;wang&quot;&gt;王同学&lt;/button&gt;&lt;/td&gt;&lt;td&gt;北京大学&lt;/td&gt;&lt;td&gt;11 人&lt;/td&gt;&lt;td&gt;10 × ¥3 + 1 × ¥4&lt;/td&gt;&lt;td&gt;¥34&lt;/td&gt;&lt;td&gt;&lt;span class=&quot;p-tag wait&quot;&gt;待发放&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;
-                &lt;tr data-settle-row data-status=&quot;pending&quot; data-search=&quot;张同学 复旦大学&quot;&gt;&lt;td&gt;10.26–11.01&lt;/td&gt;&lt;td&gt;&lt;button class=&quot;p-text-button&quot; type=&quot;button&quot; data-route=&quot;ambassadors&quot; data-amb-id=&quot;zhang&quot;&gt;张同学&lt;/button&gt;&lt;/td&gt;&lt;td&gt;复旦大学&lt;/td&gt;&lt;td&gt;21 人&lt;/td&gt;&lt;td&gt;10 × ¥3 + 10 × ¥4 + 1 × ¥5&lt;/td&gt;&lt;td&gt;¥75&lt;/td&gt;&lt;td&gt;&lt;span class=&quot;p-tag wait&quot;&gt;待发放&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;
-                &lt;tr class=&quot;p-empty&quot; data-settle-empty hidden&gt;&lt;td colspan=&quot;7&quot;&gt;没有符合条件的记录&lt;/td&gt;&lt;/tr&gt;
+                &lt;tr data-settle-row data-status=&quot;pending&quot; data-search=&quot;李同学 清华大学 2026年11月&quot;&gt;&lt;td&gt;10.26–11.01&lt;/td&gt;&lt;td&gt;&lt;button class=&quot;p-text-button&quot; type=&quot;button&quot; data-route=&quot;ambassadors&quot; data-amb-id=&quot;li&quot;&gt;李同学&lt;/button&gt;&lt;/td&gt;&lt;td&gt;清华大学&lt;/td&gt;&lt;td&gt;6 人&lt;/td&gt;&lt;td&gt;6 × ¥3&lt;/td&gt;&lt;td&gt;2026年11月&lt;/td&gt;&lt;td&gt;¥18&lt;/td&gt;&lt;td&gt;&lt;span class=&quot;p-tag wait&quot;&gt;待发放&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;
+                &lt;tr data-settle-row data-status=&quot;pending&quot; data-search=&quot;王同学 北京大学 2026年11月&quot;&gt;&lt;td&gt;10.26–11.01&lt;/td&gt;&lt;td&gt;&lt;button class=&quot;p-text-button&quot; type=&quot;button&quot; data-route=&quot;ambassadors&quot; data-amb-id=&quot;wang&quot;&gt;王同学&lt;/button&gt;&lt;/td&gt;&lt;td&gt;北京大学&lt;/td&gt;&lt;td&gt;11 人&lt;/td&gt;&lt;td&gt;10 × ¥3 + 1 × ¥4&lt;/td&gt;&lt;td&gt;2026年11月&lt;/td&gt;&lt;td&gt;¥34&lt;/td&gt;&lt;td&gt;&lt;span class=&quot;p-tag wait&quot;&gt;待发放&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;
+                &lt;tr data-settle-row data-status=&quot;pending&quot; data-search=&quot;张同学 复旦大学 2026年11月&quot;&gt;&lt;td&gt;10.26–11.01&lt;/td&gt;&lt;td&gt;&lt;button class=&quot;p-text-button&quot; type=&quot;button&quot; data-route=&quot;ambassadors&quot; data-amb-id=&quot;zhang&quot;&gt;张同学&lt;/button&gt;&lt;/td&gt;&lt;td&gt;复旦大学&lt;/td&gt;&lt;td&gt;21 人&lt;/td&gt;&lt;td&gt;10 × ¥3 + 10 × ¥4 + 1 × ¥5&lt;/td&gt;&lt;td&gt;2026年11月&lt;/td&gt;&lt;td&gt;¥75&lt;/td&gt;&lt;td&gt;&lt;span class=&quot;p-tag wait&quot;&gt;待发放&lt;/span&gt;&lt;/td&gt;&lt;/tr&gt;
+                &lt;tr class=&quot;p-empty&quot; data-settle-empty hidden&gt;&lt;td colspan=&quot;8&quot;&gt;没有符合条件的记录&lt;/td&gt;&lt;/tr&gt;
               &lt;/tbody&gt;&lt;/table&gt;&lt;/div&gt;
           &lt;/section&gt;
           &lt;section id=&quot;p-panel-direct&quot; role=&quot;tabpanel&quot; aria-labelledby=&quot;p-tab-direct&quot; hidden&gt;
@@ -2174,7 +2178,7 @@ html&gt;body{padding:0}&lt;/style&gt;
                 &lt;tr class=&quot;p-empty&quot; data-settle-empty hidden&gt;&lt;td colspan=&quot;8&quot;&gt;没有符合条件的记录&lt;/td&gt;&lt;/tr&gt;
               &lt;/tbody&gt;&lt;/table&gt;&lt;/div&gt;
           &lt;/section&gt;
-          &lt;p class=&quot;p-note&quot;&gt;列表仅展示部分示意明细，顶部金额为当前活动全量状态汇总。规则：拉新用户按资格生效时间归入对应周，并按周总有效人数边际分段计价（1–10人¥3/人，11–20人¥4/人，21人起¥5/人）；四项非降重任务付款且交付后结算；降重订单须满30天且无退款。分润比例按下单时累计有效新用户档位锁定。支付直达用户确认全额退款或冲正后撤销资格，未发奖励冲回，已发奖励记负向调整抵扣后续结算；部分退款人工复核。&lt;/p&gt;
+          &lt;p class=&quot;p-note&quot;&gt;拉新奖励按资格生效周核算、按月汇总发放；表中“发放月份”用于对应月度发放批次。列表仅展示部分示意明细，顶部金额为当前活动全量状态汇总。拉新奖励按周总有效人数边际分段计价（1–10人¥3/人，11–20人¥4/人，21人起¥5/人）；四项非降重任务付款且交付后结算；降重订单须满30天且无退款。分润比例按下单时累计有效新用户档位锁定。支付直达用户确认全额退款或冲正后撤销资格，未发奖励冲回，已发奖励记负向调整抵扣后续结算；部分退款人工复核。&lt;/p&gt;
         &lt;/section&gt;
       &lt;/main&gt;
     &lt;/div&gt;
@@ -2239,7 +2243,7 @@ html&gt;body{padding:0}&lt;/style&gt;
         const data = users[id] || users[&quot;U-08137&quot;];
         selectedUser = id in users ? id : &quot;U-08137&quot;;
         root.querySelector(&quot;#p-ud-name&quot;).textContent = selectedUser;
-        root.querySelector(&quot;#p-ud-summary&quot;).textContent = data.summary;
+        root.querySelector(&quot;#p-ud-summary&quot;).textContent = data.manualReview ? `${data.summary} · 人工审核` : data.summary;
         const statusTag = root.querySelector(&quot;#p-ud-status&quot;);
         statusTag.textContent = data.status;
         statusTag.className = data.statusClass;
@@ -2255,6 +2259,28 @@ html&gt;body{padding:0}&lt;/style&gt;
         root.querySelector(&quot;#p-ud-refund&quot;).textContent = data.refund;
         root.querySelector(&quot;#p-ud-review&quot;).textContent = data.review;
         root.querySelectorAll(&quot;[data-user-row]&quot;).forEach(row =&gt; row.classList.toggle(&quot;selected&quot;, row.dataset.userId === selectedUser));
+      };
+      const updateUserStatus = (id, nextStatus) =&gt; {
+        const data = users[id];
+        const row = root.querySelector(`[data-user-row][data-user-id=&quot;${id}&quot;]`);
+        if (!data || !row || ![&quot;valid&quot;, &quot;invalid&quot;].includes(nextStatus)) return;
+        const valid = nextStatus === &quot;valid&quot;;
+        const label = valid ? &quot;有效&quot; : &quot;无效&quot;;
+        data.status = label;
+        data.statusClass = valid ? &quot;p-tag good&quot; : &quot;p-tag bad&quot;;
+        data.manualReview = label;
+        data.qualified = valid ? &quot;人工审核确认&quot; : &quot;未生效（人工判定无效）&quot;;
+        data.review = valid ? &quot;人工审核设为有效（原型示意）&quot; : &quot;人工审核设为无效（原型示意）&quot;;
+        row.dataset.status = nextStatus;
+        const statusTag = row.querySelector(&quot;[data-user-status-tag]&quot;);
+        statusTag.textContent = label;
+        statusTag.className = data.statusClass;
+        row.querySelectorAll(&quot;[data-set-user-status]&quot;).forEach(button =&gt; {
+          button.disabled = button.dataset.setUserStatus === nextStatus;
+          button.setAttribute(&quot;aria-pressed&quot;, String(button.disabled));
+        });
+        setUserDetail(id);
+        applyUserFilter();
       };
       const applyUserFilter = () =&gt; {
         const query = userSearch.value.trim().toLocaleLowerCase();
@@ -2349,6 +2375,12 @@ html&gt;body{padding:0}&lt;/style&gt;
         if (selectButton &amp;&amp; root.contains(selectButton)) setDetail(selectButton.dataset.selectAmb);
         const userButton = event.target.closest(&quot;[data-select-user]&quot;);
         if (userButton &amp;&amp; root.contains(userButton)) setUserDetail(userButton.dataset.selectUser);
+        const statusButton = event.target.closest(&quot;[data-set-user-status]&quot;);
+        if (statusButton &amp;&amp; root.contains(statusButton)) {
+          const row = statusButton.closest(&quot;[data-user-row]&quot;);
+          if (row) updateUserStatus(row.dataset.userId, statusButton.dataset.setUserStatus);
+          return;
+        }
       });
       root.querySelector(&quot;[data-detail-settlement]&quot;).addEventListener(&quot;click&quot;, () =&gt; go(&quot;settlement&quot;, { ambId: selectedAmbassador }));
       userSearch.addEventListener(&quot;input&quot;, applyUserFilter);
@@ -2372,12 +2404,20 @@ html&gt;body{padding:0}&lt;/style&gt;
       root.querySelectorAll(&quot;[data-user-row]&quot;).forEach(row =&gt; row.addEventListener(&quot;click&quot;, event =&gt; {
         if (!event.target.closest(&quot;button&quot;)) setUserDetail(row.dataset.userId);
       }));
+      root.querySelectorAll(&quot;[data-user-row]&quot;).forEach(row =&gt; {
+        row.querySelectorAll(&quot;[data-set-user-status]&quot;).forEach(button =&gt; {
+          const current = button.dataset.setUserStatus === row.dataset.status;
+          button.disabled = current;
+          button.setAttribute(&quot;aria-pressed&quot;, String(current));
+        });
+      });
       setDetail(&quot;li&quot;);
       setUserDetail(&quot;U-08137&quot;);
       go(&quot;overview&quot;);
     })();
   &lt;/script&gt;
 &lt;/div&gt;
+
 
 &lt;script src=&quot;https://unpkg.com/@floating-ui/core@1.7.3/dist/floating-ui.core.umd.min.js&quot;&gt;&lt;/script&gt;
 &lt;script src=&quot;https://unpkg.com/@floating-ui/dom@1.7.4/dist/floating-ui.dom.umd.min.js&quot;&gt;&lt;/script&gt;
