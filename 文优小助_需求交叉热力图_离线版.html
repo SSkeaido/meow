@@ -1,0 +1,441 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="文优小助毕业版需求交叉热力图：选择一个需求交叉，查看用户场景、具体需求与对应方案。">
+  <meta name="theme-color" content="#f7f8f5">
+  <title>毕业论文需求交叉 · 文优小助（离线版）</title>
+  <style>
+:root {
+  color-scheme: light;
+  font-family: Inter, "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
+  color: #29342d;
+  background: #f7f8f5;
+  font-synthesis: none;
+  --ink: #29342d;
+  --muted: #7a837b;
+  --line: #e6e9e3;
+  --orange: #d87a31;
+  --green: #e5eee1;
+  --surface: #fff;
+}
+* { box-sizing: border-box; }
+body { margin: 0; min-width: 320px; }
+button, a { font: inherit; }
+a { color: #8a4b1e; }
+:focus-visible { outline: 3px solid #527052; outline-offset: 3px; }
+.topbar {
+  height: 66px; padding: 0 max(28px, calc((100vw - 1536px) / 2));
+  display: flex; align-items: center; justify-content: space-between;
+  background: #fff; border-bottom: 1px solid var(--line);
+}
+.brand { display: inline-flex; align-items: center; gap: 10px; color: var(--ink); text-decoration: none; font-size: 13px; font-weight: 650; }
+.brand-mark { display: grid; grid-template-columns: repeat(2, 9px); gap: 3px; transform: rotate(-5deg); }
+.brand-mark i { width: 9px; height: 9px; border-radius: 3px; background: #dfe9db; }
+.brand-mark i:first-child { background: #d77a32; }
+.brand-mark i:last-child { background: #527052; }
+.brand-divider { color: #b8bdb6; font-weight: 400; margin: 0 5px; }
+.top-note { color: #727d72; font-size: 11px; letter-spacing: .04em; }
+.page { max-width: 1600px; padding: 35px 34px 26px; margin: 0 auto; }
+.page-heading { margin: 0 0 24px; }
+.eyebrow { display: flex; align-items: center; gap: 8px; color: #75806f; font-size: 11px; letter-spacing: .035em; }
+.eyebrow-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--orange); }
+h1,h2,h3,h4,p { margin: 0; }
+h1 { margin-top: 10px; font-weight: 620; font-size: 26px; letter-spacing: -.045em; }
+.page-heading p { margin-top: 8px; color: var(--muted); font-size: 12px; line-height: 1.8; }
+.workspace { display: grid; grid-template-columns: minmax(0, 1.62fr) minmax(390px, 1fr); gap: 24px; align-items: start; }
+.matrix-panel,.detail-panel { min-width: 0; border: 1px solid #e6e9e2; border-radius: 13px; background: var(--surface); box-shadow: 0 4px 20px #283c1a06; }
+.matrix-panel { padding: 21px 20px 18px; }
+.detail-panel { padding: 21px 23px 22px; }
+.panel-heading,.detail-header { display: flex; align-items: center; justify-content: space-between; gap: 14px; }
+.panel-index { display: block; margin-bottom: 5px; color: #929b8f; font-size: 9px; font-weight: 500; letter-spacing: .12em; }
+.panel-heading h2,.detail-header h2 { color: #344236; font-size: 16px; font-weight: 620; line-height: 1.5; }
+.count-pill,.selected-count { flex: 0 0 auto; border-radius: 30px; background: #f1f3ed; color: #6d796b; padding: 5px 9px; font-size: 10px; }
+.selected-count { background: #fff2e7; color: #9a5a2c; }
+.axis-caption { display: flex; justify-content: space-between; gap: 12px; margin: 20px 0 7px; color: #8b9587; font-size: 10px; }
+.matrix-scroll { width: 100%; overflow: auto; padding: 0 0 4px; }
+.matrix { width: 100%; min-width: 770px; border-collapse: separate; border-spacing: 4px; table-layout: fixed; }
+.matrix th,.matrix td { padding: 0; text-align: center; }
+.matrix thead th { height: 60px; vertical-align: bottom; color: #596658; font-size: 11px; font-weight: 520; }
+.matrix thead th.corner { width: 120px; padding: 0 0 11px 4px; text-align: left; color: #90998b; font-size: 10px; font-weight: 450; }
+.col-number,.row-number { display: block; color: #a2aa9c; font-size: 9px; font-weight: 450; font-variant-numeric: tabular-nums; }
+.col-number { margin-bottom: 6px; }
+.process-name { display: block; line-height: 1.5; }
+.axis-trigger { border: 0; border-radius: 5px; padding: 2px 3px; background: transparent; color: inherit; cursor: help; }
+.column-trigger { display: inline-flex; align-items: center; justify-content: center; gap: 4px; max-width: 100%; }
+.row-trigger { display: grid; grid-template-columns: 22px minmax(0,1fr) 14px; align-items: center; width: 100%; text-align: left; }
+.axis-trigger:hover .process-name,.axis-trigger:hover .row-name { color: #9a5a2d; text-decoration: underline; text-decoration-style: dotted; text-underline-offset: 3px; }
+.axis-help { display: inline-flex; align-items: center; justify-content: center; flex: 0 0 13px; width: 13px; height: 13px; border: 1px solid #cdd5c9; border-radius: 50%; color: #859181; font-size: 8px; font-weight: 650; line-height: 1; }
+.matrix tbody th { height: 59px; padding-right: 8px; color: #596958; text-align: left; font-size: 11px; font-weight: 520; line-height: 1.5; }
+.row-number { display: inline-block; width: 22px; }
+.cell { width: 100%; height: 52px; display: flex; align-items: center; justify-content: center; border: 0; border-radius: 6px; line-height: 1; }
+.cell.green { background: var(--green); color: #a1b099; font-size: 15px; }
+.cell.cross { position: relative; background: var(--heat); color: #743e19; cursor: pointer; font-size: 18px; font-weight: 400; transition: filter .14s ease, transform .14s ease, box-shadow .14s ease; }
+.cell.cross:hover { filter: saturate(1.12); transform: translateY(-1px); box-shadow: 0 2px 8px #8f4f2322; }
+.cell.cross.selected { box-shadow: inset 0 0 0 2px #65401f, 0 0 0 2px #fff; }
+.cell.cross.selected::after { content: "✓"; position: absolute; top: 3px; right: 5px; color: #5e3718; font-size: 9px; font-weight: 700; }
+.legend { display: flex; align-items: center; flex-wrap: wrap; gap: 15px; margin: 13px 3px 0; color: #7f897d; font-size: 10px; }
+.legend-item { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
+.swatch { display: inline-block; width: 12px; height: 12px; border-radius: 3px; }
+.swatch.green { background: var(--green); }
+.swatch.orange { background: #f1b27c; }
+.legend-gradient { display: inline-flex; align-items: center; gap: 6px; color: #8a9386; white-space: nowrap; }
+.legend-gradient i { display: inline-block; width: 56px; height: 8px; border-radius: 10px; background: linear-gradient(90deg,hsl(28 85% 93%),hsl(28 85% 60%)); }
+.matrix-note { margin: 12px 3px 0; color: #929a8d; font-size: 10px; line-height: 1.8; }
+.detail-header { align-items: flex-start; padding-bottom: 15px; border-bottom: 1px solid #edf0e9; }
+.detail-header h2 { font-size: 15px; overflow-wrap: anywhere; }
+.detail-content { padding-top: 14px; }
+.detail-placeholder { padding: 20px 2px; color: #899386; font-size: 12px; line-height: 1.9; }
+.pair-line { display: flex; align-items: center; gap: 9px; margin: 0 0 17px; color: #5c6858; font-size: 10px; }
+.pair-line span { border: 1px solid #edf0e9; border-radius: 4px; background: #fafbf9; padding: 4px 7px; }
+.pair-line i { color: #c18456; font-size: 12px; font-style: normal; }
+.detail-block,.solution-block,.success-block { margin: 0; padding: 12px 0 13px; border-bottom: 1px solid #f0f1ed; }
+.block-title { display: flex; align-items: center; gap: 8px; margin-bottom: 7px; }
+.block-number { width: 20px; color: #b17a50; font-size: 9px; font-variant-numeric: tabular-nums; }
+.block-title h3 { color: #3f4e3e; font-size: 11px; font-weight: 650; }
+.solution-mark { margin-left: auto; border: 1px solid #ead8c5; border-radius: 20px; padding: 3px 6px; color: #8b613f; font-size: 8px; white-space: nowrap; }
+.detail-block > p,.solution-block > p,.success-block > p { padding-left: 28px; color: #657064; font-size: 11px; line-height: 1.9; white-space: pre-wrap; overflow-wrap: anywhere; }
+.solution-block { background: #fbf8f3; margin: 8px -10px 0; padding: 12px 10px 14px; border: 1px solid #f3e8db; border-radius: 8px; }
+.solution-block h4 { padding: 0 0 4px 28px; color: #77502f; font-size: 12px; font-weight: 650; line-height: 1.6; }
+.solution-block > p { color: #786e5d; }
+.steps { display: grid; gap: 8px; list-style: none; margin: 0; padding: 2px 0 0 28px; }
+.steps li { display: grid; grid-template-columns: 19px minmax(0,1fr); gap: 6px; align-items: baseline; }
+.steps li span { color: #a1a99c; font-size: 9px; font-variant-numeric: tabular-nums; }
+.steps li p { color: #657064; font-size: 10px; line-height: 1.75; }
+.success-block { border-bottom: 0; padding-bottom: 11px; }
+.evidence-block { margin-top: 11px; padding: 12px 13px; border-radius: 8px; background: #f7f8f5; }
+.evidence-label { margin-bottom: 5px; color: #899284; font-size: 9px; letter-spacing: .02em; }
+.evidence-title,.evidence-scope { color: #7e8879; font-size: 9px; line-height: 1.7; overflow-wrap: anywhere; }
+.evidence-title a { color: #80502c; text-decoration: underline; text-decoration-color: #d9b393; text-underline-offset: 2px; }
+.evidence-title a:hover { text-decoration-color: currentColor; }
+.evidence-scope { margin-top: 3px; color: #979e93; }
+.page-footer { display: flex; justify-content: space-between; gap: 16px; margin-top: 18px; padding: 13px 3px 0; border-top: 1px solid #e8ebe5; color: #929a8e; font-size: 9px; line-height: 1.7; }
+.page-footer span { text-align: right; }
+.axis-tooltip { position: fixed; z-index: 30; width: min(280px,calc(100vw - 24px)); padding: 13px 15px 14px; border: 1px solid #e3e7df; border-radius: 9px; background: #fff; box-shadow: 0 9px 28px #23321e1c; pointer-events: none; }
+.axis-tooltip[hidden] { display: none; }
+.axis-tooltip-axis { display: block; margin-bottom: 5px; color: #a06d43; font-size: 9px; letter-spacing: .04em; }
+.axis-tooltip-title { display: block; color: #364637; font-size: 12px; font-weight: 650; line-height: 1.5; }
+.axis-tooltip-description { margin-top: 5px; color: #687365; font-size: 10px; line-height: 1.8; overflow-wrap: anywhere; }
+@media (max-width: 1120px) {
+  .workspace { grid-template-columns: minmax(0,1fr); gap: 18px; }
+  .matrix-panel { order: 0; }
+  .detail-panel { order: 1; }
+}
+@media (max-width: 650px) {
+  .topbar { height: 58px; padding: 0 16px; }
+  .page { padding: 25px 14px 20px; }
+  .page-heading { margin-bottom: 18px; }
+  h1 { font-size: 22px; }
+  .page-heading p { font-size: 11px; }
+  .matrix-panel { padding: 17px 13px 14px; }
+  .detail-panel { padding: 17px 15px 17px; }
+  .matrix { min-width: 730px; border-spacing: 3px; }
+  .matrix thead th.corner { width: 105px; }
+  .matrix tbody th { font-size: 10px; }
+  .cell { height: 47px; }
+  .legend { gap: 10px; }
+  .legend-gradient { width: 100%; }
+  .page-footer { flex-direction: column; gap: 5px; }
+  .page-footer span { text-align: left; }
+}
+@media (prefers-reduced-motion: reduce) { *,*::before,*::after { transition: none !important; scroll-behavior: auto !important; } }
+
+</style>
+  <script>
+window.WENYOU_MATRIX = (() => {
+  const processes = [
+    {id:'p1',name:'明确任务',description:'明确当前阶段要完成什么、做到什么程度，以及学校和导师的具体要求。'},
+    {id:'p2',name:'收敛选题',description:'把宽泛想法收敛为研究对象、问题和范围明确，且在现有资源与时间内做得成的课题。'},
+    {id:'p3',name:'查读文献',description:'找到相关、可靠的文献，提取对自己课题有用的观点、方法与证据。'},
+    {id:'p4',name:'综合述评',description:'比较、归纳和评价已有研究，说明文献与自己的研究问题、方法和切入点的关系。'},
+    {id:'p5',name:'设计研究',description:'明确需要什么资料、如何获得和分析，以及研究方法怎样回答研究问题。'},
+    {id:'p6',name:'分析材料',description:'把实际数据、案例和材料转化为分析，理解结果能支持哪些论点和结论。'},
+    {id:'p7',name:'形成初稿',description:'让章节围绕同一研究问题展开，形成论据充分、结构连贯、表达严谨的初稿。'},
+    {id:'p8',name:'落实修改',description:'理解反馈，定位问题，补充材料并完成有针对性的修改，检查是否回应了意见。'}
+  ];
+  const requirements = [
+    {id:'r1',name:'可信可核验',description:'内容有可靠依据，能找到来源，清楚哪些部分还需要人工核验。'},
+    {id:'r2',name:'材料连续',description:'承接已有题目、文献、大纲和研究成果，保持阶段和不同文档之间的一致。'},
+    {id:'r3',name:'理解与掌控',description:'保留自己的研究思路，理解建议和修改的理由，能够选择、调整和继续写作。'},
+    {id:'r4',name:'节时少返工',description:'节省整个任务的时间，包括生成后的检查、修改和反复沟通。'},
+    {id:'r5',name:'信心与支持',description:'遇到困难时知道下一步如何推进，得到适合自身能力和阶段的帮助。'},
+    {id:'r6',name:'易学易操作',description:'降低工具的学习和操作负担。这一行目前主要由较弱的公开线索支持，需进一步核实。'}
+  ];
+  const sources = {
+    standards:{title:'四川农业大学｜开题报告撰写规范',url:'https://syzx.sicau.edu.cn/info/1025/1410.htm'},
+    workflow:{title:'本科论文写作过程研究｜单校英语专业',url:'https://onlinelibrary.wiley.com/doi/10.1111/ejed.70886'},
+    use:{title:'北京青年报｜毕业论文拥抱 AI，边界如何定',url:'https://www.nju.edu.cn/info/1056/427381.htm'},
+    trust:{title:'荔枝网｜毕业生使用 AI 的核验体验',url:'https://www.nju.edu.cn/info/1056/419561.htm'},
+    feedback:{title:'本科毕业论文多轮修改研究｜30 名翻译专业学生',url:'https://www.researchgate.net/publication/368881999_The_effect_of_supervisory_feedback_on_the_acquisition_of_discourse_structure_from_the_perspective_of_sociocultural_theory_Wang_L_Qin_L_2022_4501_103-110_shehuiwenhualilunshijiaoxiadaoshifankuiduixuesh'},
+    methods:{title:'社会工作专业本科生研究方法调查｜373 人',url:'https://xb.ynau.edu.cn/jwk_sk/article/doi/10.3969/j.issn.1004-390X(s).202006013?viewType=HTML'},
+    quality:{title:'南国商学院管理学院｜2024 年论文抽检',url:'https://www.gwng.edu.cn/glxy/2024/0426/c318a90559/page.htm'},
+    agency:{title:'生成式人工智能辅助学术写作调查｜34 名大二学生',url:'https://openedu.sou.edu.cn/upload/qikanfile/202407251440451416.pdf'},
+    changes:{title:'中山大学生命科学学院｜2018 年论文答疑',url:'https://lifesciences.sysu.edu.cn/zh-hans/node/760'},
+    time:{title:'艾瑞｜2025 年大学生学术研究洞察报告',url:'https://pdf.dfcfw.com/pdf/H3_AP202506051685351788_1.pdf'},
+    emotions:{title:'本科论文写作负面情绪研究｜113 名英语专业学生',url:'https://pubmed.ncbi.nlm.nih.gov/41655349/'},
+    tools:{title:'护理本科生工具需求研究｜样本描述有不一致，低权重',url:'https://cn.sgsci.org/jyxk/article/download/889/713/4447'}
+  };
+  // 每条是待验证的产品判断；公开资料提供线索，不代表需求发生率或优先级。
+  const make = (scene, reason, need, _family, steps, success, source, scope) => ({scene,reason,need,steps,success,evidence:{...sources[source],scope}});
+  const cells = {
+    'r1-p1':make('学生刚进入论文阶段，正对照学校通知、学院模板和导师要求确认先交什么。','要求散落在不同文件里；若任务拆解错误，后续写得再完整也可能不符合本校规范。开题规范能证明交付要求具体，但不能证明所有学生都会漏看。','把适用于本校、本阶段的要求整理成可核对的交付清单，并知道每项依据来自哪里。','1',['识别学校、学院、导师要求','按阶段整理交付物与检查项','标出原文出处和待确认事项','由学生确认后生成行动清单'],'学生能指出每项任务的依据；交付前能发现缺项，并能快速回到原要求核对。','standards','单校规范展示任务要求的具体性；这是需求归纳，尚未验证漏看比例。'),
+    'r1-p3':make('学生搜到一批论文，准备判断哪些与题目相关，并提取观点、方法或数据。','文献可能真实，但摘要、结论或方法被误读仍会导致后续引用错误；公开个案提到 AI 整理资料后仍须人工审核。','知道每条摘要或提取结果对应哪篇文献、哪段原文，并能标出不确定信息。','3',['导入或记录文献来源','从原文提取相关观点并保留页码或段落线索','提示无法确认或原文未覆盖的信息','用户核对后再纳入文献库'],'抽查提取结果能回到原文；学生可区分原文信息和系统概括，不确定项不会被当作事实。','trust','媒体个案说明核验顾虑的存在，不代表其普遍程度；具体功能效果需产品内验证。'),
+    'r1-p4':make('已经找到若干文献，准备归纳研究现状、比较观点，并提出自己的研究切入点。','多篇文献组合后的判断可能超出原文支持范围。文献真实，也需要核对归纳和评价是否成立。','用户希望知道综述中的关键判断分别依据哪些文献，是否遗漏分歧，以及自己的切入点能否由这些材料支持。','3',['提取相关内容并保留来源定位','按研究问题比较文献','标明共识、分歧和材料空缺','用户确认归纳与切入点','形成段落并保留判断与来源的对应'],'用户能回到原文核对关键判断；能识别依据不足的评价；新增或替换文献后，能定位需要调整的综述内容。','feedback','30 名翻译专业学生的多轮修改研究提供写作与反馈线索；“判断—原文映射”是产品化推导，需验证。'),
+    'r1-p5':make('学生准备写开题报告，需要说明研究问题、方法、资料来源和可行性。','开题内容要能被导师检查；如果方法和材料来源只是生成出来的说法，就无法说明研究是否做得成。','研究设计中的关键选择有理由、有材料依据，并明确哪些条件还没有落实。','4',['拆出问题、方法、资料与进度','为方法选择补上适用理由和来源','检查资料能否获得、时间是否足够','把无法确认的条件列为待办并由学生确认'],'学生能解释方法如何回答问题；资料来源可追溯；开题前能看到尚未解决的可行性风险。','standards','开题规范要求说明研究内容和方法；把依据追溯扩展为产品需求属于推导。'),
+    'r1-p6':make('学生已经收集问卷、访谈、实验或案例材料，开始整理并解释结果。','分析结论需要由实际材料支撑；方法调查也将资料分析列为学生遇到的困难，提示分析过程可能需要更多解释。','看清数据如何经过处理得到某个发现，判断结论能否由材料支持，以及还缺什么。','4',['说明材料来源和清理方式','按研究问题组织分析步骤','展示关键材料与解释的对应','标明样本限制、反例和不能推出的结论'],'学生可从结论回看相应材料和分析步骤，能指出结论的适用范围与证据不足处。','methods','373 人调查提供方法学习困难线索；不能单独证明具体分析功能的普遍需求。'),
+    'r1-p7':make('学生开始把综述、研究设计和结果写进章节，准备形成可交给导师的初稿。','抽检反馈可能指向论证或逻辑薄弱；若观点、证据和结论没有对应，初稿读起来完整也不等于可靠。','知道章节关键观点由哪些已确认材料支撑，识别没有依据或推论过度的段落。','5',['承接已确认的文献和研究材料','按章节目标组织论点与证据','对每个关键判断附来源或材料线索','将缺证据和待补写处显式标出'],'学生能抽查关键段落的依据；读者可辨认事实、解释和推论；空缺不会被流畅文字掩盖。','quality','学院公开抽检介绍反映论证质量问题；单次抽检不能代表整体发生率。'),
+    'r1-p8':make('导师给出修改意见后，学生改动段落、补材料或调整分析，准备提交下一稿。','修改可能引入新事实或让原有判断失去支撑；学生还需要确认每条意见是否确实落实。','能核对修改前后的内容、补充依据和导师意见之间的关系。','6',['逐条拆解导师意见','定位受影响段落和相关依据','记录新增、删除或改写的内容及理由','提交前检查意见回应与证据是否完整'],'学生能逐条说明如何回应意见；修改后的关键说法仍有依据，未解决项可继续追踪。','feedback','多轮修改研究提供反馈与论文结构调整的线索；具体核验流程需在文优小助用户中验证。'),
+
+    'r2-p1':make('学生开始论文任务时，手里已有院系要求、导师交代和可能的课程作业材料。','任务要求需要贯穿后续阶段；如果初始约束没有留存，综述和初稿可能按另一套目标展开。','保存适用的任务约束，并在后续阶段继续看到它们与当前交付的关系。','1',['记录院系、导师和截止时间要求','区分必须项与待确认项','为每个阶段交付物关联相关要求','阶段切换时提醒复核'],'进入下一阶段时，学生不必重新搜集要求；初稿可回看其结构和格式对应的任务约束。','standards','规范证明任务要求存在；跨阶段保存是据此形成的产品假设。'),
+    'r2-p2':make('学生已经有导师指定或自己初步确定的题目，想把题目变成能执行的研究问题。','公开个案显示学生可能在既定题目上继续使用 AI 整理写作材料，说明工具要接住现有课题，而非每次从空白开始。','沿用已有题目、研究对象和导师意见，逐步收窄范围，不丢失已经确认的部分。','2',['导入现有题目和导师反馈','拆分对象、问题、范围与核心概念','展示每次调整的理由和影响','学生确认版本并保留历史'],'题目调整可追溯；学生能说明哪些部分沿用、哪些部分改变，并能在导师意见后继续细化。','use','单个媒体案例说明已有题目是可能的起点，不表示所有学生都需此流程。'),
+    'r2-p3':make('学生已有导师推荐文献、课程阅读或自行收藏的论文，开始扩展检索并做笔记。','如果工具只从新检索开始，已有的关键文献和导师建议可能被遗漏；公开案例有“已有推荐文献后再整理”的过程。','把已有来源与新找到的文献放在同一主题和问题框架中，避免重复整理或丢失上下文。','3',['导入已有文献与个人笔记','将来源绑定到主题、问题和观点','补充检索结果时识别重复与主题缺口','保持引用信息可回看'],'用户能从一个研究问题看到相关旧文献、新文献及笔记；已有引用不需再次手动录入。','use','媒体个案中的文献准备过程提供承接线索；产品内资料连续性的影响需实测。'),
+    'r2-p4':make('学生已形成初步大纲和文献笔记，开始把研究现状与自己的题目连起来。','综述要承接选题和大纲；若比较结果不回写研究问题，综述就可能成为独立的资料堆积。','在同一研究问题下复用文献比较和已有大纲，并清楚看到它们如何支撑或挑战切入点。','3',['导入大纲、题目与文献笔记','按研究问题组织文献比较','标记哪些大纲判断得到支持或需要改写','学生确认后形成综述结构'],'文献变化时可以定位大纲中受影响的判断；综述和选题的关系能由学生解释。','use','公开个案展示文献、大纲与写作材料共同出现；这是流程衔接推论。'),
+    'r2-p5':make('学生因导师反馈或资料条件变化，需要修改已写的开题内容或研究计划。','研究改变会影响开题中的问题、方法和材料；院校答疑可作为“变更后需处理材料”的线索，但案例较早且单校。','知道题目或条件变化后，哪些研究设计、时间安排和文档内容需要同步更新。','4',['记录原研究计划和变更原因','将变更映射到方法、资料、进度和文档','列出受影响的段落及待确认事项','用户确认后更新当前版本'],'修改题目后可快速查看受影响部分；提交版本不再混用旧题目和新方法。','changes','2018 年单校答疑仅作跨阶段变更线索，不能代表当前院校统一规定。'),
+    'r2-p7':make('学生开始写初稿时，已有题目、综述、大纲、研究方法或部分分析结果。','从空白生成会丢失已经投入的工作，也容易造成各章口径不一致；公开案例提到以已有大纲和材料继续写作。','初稿能承接当前确认版本的题目、章节结构、文献依据和研究材料。','5',['读取已确认的题目、大纲和研究资料','为章节明确写作目标与可用材料','生成时提示缺失或冲突的输入','由学生按章确认并保留版本关系'],'生成章节能沿用已确认术语和研究边界；输入材料更新后可定位需重写的部分。','use','案例说明已有材料可成为 AI 写作输入；不证明自动衔接必然有效。'),
+    'r2-p8':make('学生调整题目、方法或章节后，需要把已完成的综述、开题和初稿同步更新。','前文变化可能使后文中的概念、方法和结论过期；历史答疑和修改研究都提示版本变化需要被处理。','看见一项变更影响了哪些已写内容，并保留变更前后的关系。','6',['登记变更内容和原因','扫描题目、综述、方法、章节中的关联内容','呈现冲突与建议同步修改位置','学生确认并记录已处理项'],'学生能定位过时内容，确认修改后关键术语、方法和研究范围一致，且可以回溯版本。','changes','单校答疑与写作反馈只能支持变更场景的存在；自动影响识别需另行验证。'),
+
+    'r3-p2':make('学生面对较宽的兴趣方向，尝试确定一个自己愿意做、也做得完的题目。','选题受学生自身研究思路和可行条件影响；相邻课程研究显示学生会保留自己的思路，但不能直接等同毕业论文需求。','让学生比较选题方向和取舍理由，自己决定研究对象与范围，而不是被系统替他定题。','2',['让学生描述兴趣和已有观察','给出可选的问题切口及各自代价','检查资源、时间和能力约束','由学生选择并说明选择理由'],'学生能用自己的话说明选题依据，能够修改建议并保持对最终问题的决定权。','agency','34 名大二学生的课程写作研究属相邻场景，迁移到毕业论文仍待验证。'),
+    'r3-p4':make('学生读完多篇文献，需要理解研究之间的异同，并判断自己准备补充什么。','如果只拿到整理好的段落，学生可能不理解文献如何支持研究问题；多轮反馈研究为“理解并改写”提供线索。','理解每条归纳的比较逻辑、证据来源与局限，再亲自选择自己的述评角度。','3',['按问题展示相似观点和分歧','将结论拆回到各篇原文依据','提示可能的其他解释或缺少的研究','让学生确认、改写或删除判断'],'学生能解释为何把文献归为一类，知道述评切入点由哪些材料支持。','feedback','小样本、专业特定的反馈研究提供过程线索，不能证明所有学生的理解困难都相同。'),
+    'r3-p5':make('学生在开题阶段选择研究方法，需判断方法是否适合问题、自己是否能实施。','方法选择需要贴合研究问题和实际能力；相邻写作研究提示学生看重能落实的建议，但毕业论文场景仍待核实。','看懂每种方法适用的条件、代价和局限，再由学生决定并能说明理由。','4',['先呈现问题需要回答什么','比较适用方法、材料要求和操作成本','指出能力或资源上的前置条件','让学生确认选择并列出需学习部分'],'学生能解释所选方法如何回答研究问题，知道自己还需准备什么，不把建议当作自动决定。','agency','课程写作研究强调建议的贴合度；用于研究设计的推导需与毕业生验证。'),
+    'r3-p6':make('学生看到初步分析结果后，需要判断它是否意味着预想的结论。','方法经验和分析实践存在关联线索；用户需理解分析选择及边界，避免把相关当因果或把样本结果过度外推。','看懂分析步骤、备选解释和结果边界，选择自己认可且能论证的解释。','4',['显示数据处理和分析步骤','为重要结果列出替代解释','说明样本和方法限制','让学生选择解释并补上论证'],'学生能复述结果由何种分析得到，能指出其他解释及结论不能覆盖的范围。','methods','本科生方法调查覆盖困难线索，但无法直接测量用户是否理解某项 AI 分析。'),
+    'r3-p7':make('学生将个人研究思路写进章节，需要把已有观点组织成读者能跟随的论证。','相邻课程研究显示学生会希望保留自身思路；辅助写作如果替换了其立场，初稿可能流畅却不像自己的研究。','在章节结构和表达得到帮助的同时，保留自己的判断，并能修改系统建议。','5',['先让学生提供本章观点和材料','生成多个结构或表达选项','标记系统补充与用户原有内容','由学生选择、改写并确认'],'学生能识别自己的论点与辅助生成内容，能独立解释并修改每一章的核心判断。','agency','34 名大二课程写作研究是相邻证据，迁移至毕业论文初稿需验证。'),
+    'r3-p8':make('学生收到导师批注或口头意见，不确定导师希望改什么、改到什么程度。','有学生会因不理解反馈而未改，也有人借助示例落实意见；因此解释意见和保留选择权可能相关。','把意见转成清楚的问题和可选修改动作，理解理由后由学生判断如何回应。','6',['把意见拆成可确认的修改目标','定位相关章节并展示上下文','提供修改选项和示例并说明影响','学生决定采纳、部分采纳或提出澄清'],'学生能复述反馈意图，能说明采纳或暂不采纳的理由，且修改内容符合自身研究立场。','feedback','30 名学生、多轮写作的单一专业研究提供线索；不能推断所有导师反馈的表现。'),
+
+    'r4-p3':make('学生面对大量搜索结果，想更快筛出相关文献并提取可用信息。','公开个案提到 AI 用于提取文献要点，指向资料整理可能耗时；但仍需人工核验提取准确性。','缩短初筛、去重和笔记整理时间，同时避免把省下的时间转移到大量纠错上。','3',['按题目或关键词初筛相关来源','提取研究问题、方法、发现等字段','保留原文定位供抽查','让用户批量确认或排除结果'],'相比手动整理，完成同等文献集的总耗时下降，且抽查准确率不降低、返工未增加。','use','单个使用案例提供效率线索；真实节时需通过任务计时和纠错率验证。'),
+    'r4-p4':make('学生一边阅读文献，一边赶开题或综述截止日期，需要把阅读转成比较和写作。','过程研究中出现文献综合和时间冲突的线索，说明多源整合可能占用时间；交叉关系仍是待验证判断。','减少反复翻找与重复概括，让阅读结果能直接支持综述判断和后续写作。','3',['阅读时按研究问题记录观点','自动聚合相同主题并保留来源','优先呈现争议和空缺而非重复内容','确认后复用到综述提纲'],'完成比较和形成综述结构所需时间减少，来源仍可核对，后续章节不需重复整理同一材料。','workflow','单校写作过程研究提供时间与综合任务线索；需验证其适用范围和因果关系。'),
+    'r4-p6':make('学生在整理数据或案例时发现分析方法不确定，反复尝试后仍不知结果是否可用。','本科生方法调查涉及分析和方法困难；减少分析返工是基于此线索提出的需求，尚非直接证实。','及早发现资料质量、方法选择或步骤错误，减少走完整套流程后推翻重做。','4',['先核对资料与研究问题是否匹配','根据数据类型提示可行方法及前提','在小样本或小批案例上先试跑','记录步骤并允许回退到前一选择'],'用户能在正式分析前发现关键前提不满足；从试分析到可解释结果的重复操作减少。','methods','调查提供困难线索但未直接衡量返工次数；需要产品数据验证。'),
+    'r4-p7':make('学生完成初稿后，要花时间调整章节逻辑、段落衔接、格式和证据。','艾瑞报告中，内容逻辑被列为耗时修改内容之一；样本兼含本科生和研究生，只能作方向性线索。','初稿阶段就发现章节逻辑和论据缺口，减少交稿后大范围重排与重复改写。','5',['先检查章节目标与研究问题的对应','标出逻辑跳跃和重复论点','将证据缺口与表达问题分开处理','学生确认修改顺序后分段调整'],'初稿交付前能够定位主要结构问题；从导师反馈到可接受稿的修改轮数和耗时下降。','time','报告混合本科及研究生样本，指标为自报信息，不能代表毕业版用户效果。'),
+    'r4-p8':make('学生收到一轮修改意见后，需要在有限时间内判断先改什么、改完还检查什么。','多类修改意见可能牵涉逻辑、数据和材料核验；把意见分解并追踪可能减少遗漏与返工。','优先处理影响研究结论或结构的修改，避免低优先级润色反复覆盖已完成工作。','6',['将意见按影响范围和依赖关系分类','标记必须补材料的修改','按依赖顺序安排动作并追踪状态','修改后复核受影响段落和引用'],'学生按顺序完成关键修改；重复打开同一问题和因遗漏意见造成的返工减少。','time','报告和写作研究只能提供耗时与反馈线索；方案节时效果需通过实际使用比较。'),
+
+    'r5-p1':make('论文任务刚开始，学生面对多个节点和不清楚的要求，担心不知道从哪里下手。','论文写作情绪研究记录任务压力和能力焦虑；从“压力”推到“需要下一步支持”仍是产品假设。','把模糊任务转成可执行的第一步和近期目标，降低不知道如何开始的不确定感。','1',['确认当前阶段和截止时间','给出一项最小可行动作','说明完成后会得到什么产出','完成后提示下一步而非一次塞入全部任务'],'学生能在短时间内开始一项实际行动，并更清楚当前进度和下一节点。','emotions','113 名英语专业学生的单项研究提示负面情绪，不能代表全部专业或证明功能可降低焦虑。'),
+    'r5-p2':make('学生有兴趣方向但担心选题太大、做不完，或找不到合适的资料和方法。','写作过程研究提及选题与可行性困难，为提供分步支持提供线索；增强信心的效果仍需验证。','知道如何缩小问题、检查条件，并在做决定前看到可行路径和风险。','2',['把宽泛方向拆成可选问题','逐项检查资料、方法、时间和指导条件','提供缩小范围的下一步动作','标明仍需导师确认的风险'],'学生能提出一个范围更清楚的备选题目，并说明现有条件、未知风险和下一步核实对象。','workflow','单校过程研究里的困难不能外推所有学生；信心变化要单独收集反馈。'),
+    'r5-p5':make('学生要设计研究，但对研究方法或材料收集缺乏经验，担心方案无法执行。','情绪研究将研究能力不足与焦虑联系起来；这只能说明可能的困难，不代表工具支持必然改善情绪。','获得与当前能力匹配的指导、先行示例和可执行练习，知道自己如何补齐方法能力。','4',['确认研究问题和用户已有经验','以简短示例解释方法步骤','拆成可练习、可检查的小任务','指出需要请导师或专业人员确认的部分'],'学生能完成一个小规模试做或明确能力缺口，并知道下一步学习或求助渠道。','emotions','单专业样本支持压力场景线索；具体学习支持方案还需要用户验证。'),
+    'r5-p7':make('学生要把多个章节汇成初稿，面对篇幅、逻辑和截止日期时感到压力。','本科论文情绪研究提示写作压力和能力焦虑；需求推断是让复杂任务分阶段、可见进展。','把初稿拆成可完成的章节与任务，看到已有成果和下一步，而非面对一整篇空白文档。','5',['根据确认的大纲拆分章节目标','以已有文献和材料启动一节','保留待补内容并给出清楚提示','显示阶段完成情况并允许调整节奏'],'学生能持续完成章节；未完成项可管理；进度信息让其知道当前可推进的最小任务。','emotions','113 名英语专业学生的研究提供压力线索，未检验任务拆分功能的效果。'),
+    'r5-p8':make('导师提出较多批注后，学生担心自己没理解要求或修改后仍不能通过。','研究记录了与导师沟通的顾虑，多轮反馈也显示反馈需要被解释和落实；“增强信心”仍须验证。','把反馈转成清楚、有限、能逐项完成的修改任务，并识别何时应向导师澄清。','6',['逐条整理意见并标出歧义','给出修改示例和完成标准','区分可自行修改与需沟通确认的问题','提交前显示已回应、未回应和待澄清项'],'学生能看见修改进度和未决问题；需要沟通时能带着具体问题向导师确认。','feedback','小样本反馈研究和沟通情境为需求提供线索；情绪改善与通过率必须另行验证。'),
+
+    'r6-p3':make('学生要管理搜索到的论文和笔记，却不熟悉文献管理软件或复杂导入流程。','相关工具研究以文献管理器使用困难为线索，但原文样本描述不一致，因此权重较低。','不用先学习复杂工具，也能完成文献录入、去重、标注和来源回看。','3',['支持常见文件或手动快速录入','自动补全基础文献信息并允许修正','提供清晰的主题标签和去重操作','让用户随时打开来源原文'],'新用户无需额外教程即可完成一次导入、标注和回看；错误信息能直接改正。','tools','来源文献的样本描述有不一致，不能据此断言普遍需求；此格应优先实测。'),
+    'r6-p6':make('学生首次整理数据，需要选择统计或分析工具，担心软件界面和步骤太难。','工具研究对统计软件学习负担提供弱线索，且样本描述存在问题，不能推断普遍性。','以研究任务为入口解释每一步要做什么，不要求学生先掌握复杂的软件术语。','4',['先描述问题和数据类型而非软件菜单','展示最短可用的分析步骤','解释每步输入与输出','允许撤销并提示需要人工复核的位置'],'用户能独立完成一次基础分析或知道当前卡点；不熟悉的术语有上下文解释。','tools','弱来源且样本信息存疑；应以毕业版用户可用性观察验证后再定优先级。'),
+    'r6-p7':make('学生把已有材料写进初稿，但担心学习一套新平台会拖慢写作。','一项相邻工具研究记录了平台学习负担的顾虑；此格保留为需验证的操作需求。','沿用熟悉的文档与已有材料，用少量清楚的操作完成分章写作和检查。','5',['从熟悉的文档或粘贴内容开始','按当前章节提供少量明确操作','写作和检查结果留在同一处','允许导出到常用文档继续编辑'],'用户无需反复学习新导航即可完成一次章节任务，并能把结果带回熟悉的写作环境。','tools','相邻研究的场景及样本可信度有限，不能推出当前用户真实偏好。'),
+    'r6-p8':make('学生逐条查看导师批注，需要在文档、反馈清单和工具之间切换落实修改。','弱线索研究提到批注识别与修改操作负担，但样本信息不一致，只能作为待核实信号。','让意见、相关段落和修改状态连在一起，减少重复查找和复杂操作。','6',['支持从批注或手动录入意见开始','将意见关联到对应章节位置','提供简单的完成、待确认状态','保留原批注和修改记录'],'用户能从一条意见直接到达相关内容并标记处理结果；常见操作无需重复录入。','tools','证据权重低且与目标场景不完全匹配，应先用访谈替代不了的行为观察/可用性测试核验。')
+  };
+  const solutionsByCell = {
+    'r1-p1':{title:'校规回链的阶段交付清单',description:'把校级、院级和导师要求拆成当前阶段的交付项，每项都能回到原始要求核对。'},
+    'r1-p3':{title:'原文定位式文献提取卡',description:'把提取出的观点、方法和结论连到原文页码或段落，并单独标出未确认信息。'},
+    'r1-p4':{title:'判断—文献证据映射综述',description:'整理文献比较结果，建立综述判断与原文依据的对应关系，再形成综述段落。'},
+    'r1-p5':{title:'可核验的开题论证卡',description:'逐项呈现研究问题、方法、资料来源和可行性理由，让导师与学生能检查依据和待补条件。'},
+    'r1-p6':{title:'材料到结论的分析链路',description:'记录原始材料、整理步骤、分析结果和解释之间的关系，并显示结论适用边界。'},
+    'r1-p7':{title:'初稿论点证据挂接',description:'为章节中的关键论点关联文献或研究材料，突出缺少支撑、推论过度和待补证据的位置。'},
+    'r1-p8':{title:'修改意见与证据变更记录',description:'并排记录导师意见、修改前后内容和新增依据，提交前逐条复核是否回应且仍有证据。'},
+    'r2-p1':{title:'贯穿论文阶段的要求档案',description:'把任务要求、导师约定和截止节点保存在项目中，并在综述、开题和初稿阶段继续调用。'},
+    'r2-p2':{title:'沿用既有题目的逐步收敛稿',description:'从已确定题目和导师意见继续细化，每次调整都保留原版本、修改理由和用户确认。'},
+    'r2-p3':{title:'存量文献与新检索统一归档',description:'把已有推荐文献、个人笔记和新增检索结果放进同一研究问题框架，去重并保留出处。'},
+    'r2-p4':{title:'题目、大纲与综述判断映射表',description:'将文献比较结果关联到研究问题和大纲位置，显示哪些判断支持或挑战当前切入点。'},
+    'r2-p5':{title:'开题变更影响清单',description:'研究条件或题目变化后，列出受影响的方法、材料、进度和开题段落，由学生确认后更新。'},
+    'r2-p7':{title:'确认材料驱动的分章初稿',description:'以当前确认的题目、大纲、文献和研究材料为输入，逐章写作并提示缺项和版本冲突。'},
+    'r2-p8':{title:'跨文档一致性差异清单',description:'题目、方法或范围变更后，扫描综述、开题和初稿，集中呈现过时表述及待同步位置。'},
+    'r3-p2':{title:'学生主导的选题比较卡',description:'并列展示不同问题切口的资料、方法、时间代价和风险，由学生选择并写下取舍理由。'},
+    'r3-p4':{title:'可回到原文的共识与分歧对照',description:'按研究问题呈现文献共识、分歧与空缺，同时显示原文依据，留出用户确认和改写入口。'},
+    'r3-p5':{title:'方法选项与适用条件对照',description:'比较方法所需材料、能力、时间和局限，解释选择理由后由学生决定，不替用户定方法。'},
+    'r3-p6':{title:'结果解释分支与结论边界',description:'对重要结果列出可能解释、对应材料和方法限制，帮助学生选择自己认可且能说明的结论。'},
+    'r3-p7':{title:'保留原观点的分章共写',description:'先收集学生本章观点和材料，再提供结构或表达选项，区分用户原意与系统补充内容。'},
+    'r3-p8':{title:'可理解的导师意见拆解',description:'把批注转成修改目标、相关上下文和可选动作，说明改动影响，由学生决定采纳或澄清。'},
+    'r4-p3':{title:'带原文抽查点的文献批量初筛',description:'批量提取研究问题、方法和发现，提供相关性筛选与去重，并保留原文定位供快速抽查。'},
+    'r4-p4':{title:'按研究问题聚合的综述工作台',description:'阅读时直接按问题归组观点，突出重复内容、争议和空缺，确认后复用到综述提纲。'},
+    'r4-p6':{title:'小样试跑与分析前置校验',description:'正式处理全部材料前先检查数据条件并试跑一小部分，尽早发现方法不适配或步骤错误。'},
+    'r4-p7':{title:'初稿交付前的章节逻辑预检',description:'围绕研究问题检查章节目标、论点顺序、重复和证据缺口，先处理结构问题再做文字润色。'},
+    'r4-p8':{title:'按影响与依赖排序的修改队列',description:'把反馈按影响范围、前置材料和依赖关系排序，完成后自动列出需要复核的段落和引用。'},
+    'r5-p1':{title:'当前阶段的第一步行动卡',description:'结合所处阶段和截止日期，只给一项近期可执行动作，并说明完成后会产出什么。'},
+    'r5-p2':{title:'选题可行性路线卡',description:'把宽泛方向拆成可选问题，逐项核对资料、方法、时间与指导条件，并指出下一步怎么缩小。'},
+    'r5-p5':{title:'低门槛方法示范与试做',description:'用贴近当前课题的小示例解释方法，再拆成可练习的小任务并指出需要求助确认的环节。'},
+    'r5-p7':{title:'分章节推进的初稿计划',description:'按确认的大纲设定每章目标、已有材料和最小写作任务，显示进展并允许调整节奏。'},
+    'r5-p8':{title:'修改任务与待澄清问题板',description:'把批注分成可直接修改和需向导师确认两类，展示完成状态、示例和仍未解决的问题。'},
+    'r6-p3':{title:'无需先学新软件的文献收集台',description:'支持拖入常见文档或快速录入，自动补全文献字段，提供直观去重、标注和来源回看。'},
+    'r6-p6':{title:'从研究问题开始的分析向导',description:'先询问研究问题和材料类型，再用日常语言解释分析步骤、输入输出、撤销和复核位置。'},
+    'r6-p7':{title:'沿用熟悉文档的章节写作入口',description:'从已有文件或粘贴内容开始，围绕当前章节提供少量操作，完成后可导回常用文档继续编辑。'},
+    'r6-p8':{title:'批注与段落一键关联清单',description:'将每条导师意见连到对应章节位置，用简单状态追踪处理进展，并保留原批注和修改记录。'}
+  };
+  Object.entries(solutionsByCell).forEach(([key,solution]) => { cells[key].solution = solution; });
+  return {schema:2,processes,requirements,sources,cells,solutionsByCell,defaultCell:'r1-p4'};
+})();
+
+</script>
+  <script>
+(() => {
+  'use strict';
+  const data = window.WENYOU_MATRIX;
+  const byId = id => document.getElementById(id);
+  const esc = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const cellName = key => {
+    const [rid, pid] = key.split('-');
+    const r = data.requirements.find(x => x.id === rid);
+    const p = data.processes.find(x => x.id === pid);
+    return {r,p,label:`${p.name} × ${r.name}`};
+  };
+  const hasCross = (row,col) => !!data.cells[`${data.requirements[row].id}-${data.processes[col].id}`];
+  function heat(row,col) {
+    if (!hasCross(row,col)) return {horizontal:0,vertical:0,length:0};
+    let horizontal=1, vertical=1;
+    for (let c=col-1;c>=0 && hasCross(row,c);c--) horizontal++;
+    for (let c=col+1;c<data.processes.length && hasCross(row,c);c++) horizontal++;
+    for (let r=row-1;r>=0 && hasCross(r,col);r--) vertical++;
+    for (let r=row+1;r<data.requirements.length && hasCross(r,col);r++) vertical++;
+    return {horizontal,vertical,length:Math.max(horizontal,vertical)};
+  }
+  function renderMatrix() {
+    const matrix=byId('matrix');
+    let html='<thead><tr><th class="corner" scope="col">贯穿需求 ↓</th>';
+    data.processes.forEach((p,i)=>{html+=`<th scope="col"><span class="col-number">${String(i+1).padStart(2,'0')}</span><button type="button" class="axis-trigger column-trigger" data-axis="横轴 · 论文过程节点" data-name="${esc(p.name)}" data-description="${esc(p.description)}" aria-label="横轴，${esc(p.name)}。${esc(p.description)}" aria-describedby="axis-tooltip"><span class="process-name">${esc(p.name)}</span><span class="axis-help" aria-hidden="true">?</span></button></th>`;});
+    html+='</tr></thead><tbody>';
+    data.requirements.forEach((r,ri)=>{
+      html+=`<tr><th scope="row"><button type="button" class="axis-trigger row-trigger" data-axis="纵轴 · 贯穿需求" data-name="${esc(r.name)}" data-description="${esc(r.description)}" aria-label="纵轴，${esc(r.name)}。${esc(r.description)}" aria-describedby="axis-tooltip"><span class="row-number">${String(ri+1).padStart(2,'0')}</span><span class="row-name">${esc(r.name)}</span><span class="axis-help" aria-hidden="true">?</span></button></th>`;
+      data.processes.forEach((p,pi)=>{
+        const key=`${r.id}-${p.id}`;
+        const entry=data.cells[key];
+        if (!entry) {
+          html+='<td><div class="cell green" aria-label="未标记交叉" title="暂未标记交叉"><span aria-hidden="true">—</span></div></td>';
+          return;
+        }
+        const h=heat(ri,pi);
+        const lightness=93-(h.length-1)*33/7;
+        const label=`${p.name} × ${r.name}，需求交叉，横向连续 ${h.horizontal} 格，纵向连续 ${h.vertical} 格`;
+        html+=`<td><button type="button" class="cell cross" data-key="${key}" style="--heat:hsl(28 85% ${lightness.toFixed(1)}%)" aria-label="${esc(label)}" aria-pressed="false" title="${esc(label)}"><span aria-hidden="true">×</span></button></td>`;
+      });
+      html+='</tr>';
+    });
+    matrix.innerHTML=html+'</tbody>';
+    byId('cross-count').textContent=`${Object.keys(data.cells).length} 个交叉 · ${Object.keys(data.solutionsByCell).length} 条方案思路`;
+    matrix.querySelectorAll('button[data-key]').forEach(button=>button.addEventListener('click',()=>selectCell(button.dataset.key)));
+    const tooltip=byId('axis-tooltip');
+    let hideTimer;
+    function showAxisTooltip(trigger){
+      clearTimeout(hideTimer);
+      byId('axis-tooltip-axis').textContent=trigger.dataset.axis;
+      byId('axis-tooltip-title').textContent=trigger.dataset.name;
+      byId('axis-tooltip-description').textContent=trigger.dataset.description;
+      tooltip.hidden=false;
+      tooltip.setAttribute('aria-hidden','false');
+      const rect=trigger.getBoundingClientRect();
+      const margin=12;
+      const left=Math.min(Math.max(margin,rect.left+(rect.width-tooltip.offsetWidth)/2),window.innerWidth-tooltip.offsetWidth-margin);
+      let top=rect.bottom+9;
+      if(top+tooltip.offsetHeight>window.innerHeight-margin) top=rect.top-tooltip.offsetHeight-9;
+      tooltip.style.left=`${Math.max(margin,left)}px`;
+      tooltip.style.top=`${Math.max(margin,top)}px`;
+    }
+    function hideAxisTooltip(){
+      clearTimeout(hideTimer);
+      hideTimer=setTimeout(()=>{tooltip.hidden=true;tooltip.setAttribute('aria-hidden','true');},90);
+    }
+    matrix.querySelectorAll('.axis-trigger').forEach(trigger=>{
+      trigger.addEventListener('pointerenter',()=>showAxisTooltip(trigger));
+      trigger.addEventListener('pointerleave',hideAxisTooltip);
+      trigger.addEventListener('focus',()=>showAxisTooltip(trigger));
+      trigger.addEventListener('blur',hideAxisTooltip);
+    });
+    document.addEventListener('keydown',event=>{if(event.key==='Escape')hideAxisTooltip();});
+    window.addEventListener('resize',hideAxisTooltip,{passive:true});
+    document.querySelector('.matrix-scroll').addEventListener('scroll',hideAxisTooltip,{passive:true});
+  }
+  function selectCell(key) {
+    const entry=data.cells[key];
+    if (!entry) return;
+    const {r,p,label}=cellName(key);
+    const plan=entry.solution;
+    const evidence=entry.evidence;
+    document.querySelectorAll('.cell.cross').forEach(button=>{
+      const active=button.dataset.key===key;
+      button.classList.toggle('selected',active);
+      button.setAttribute('aria-pressed',String(active));
+    });
+    byId('detail-heading').textContent=label;
+    byId('selected-count').textContent='1 条逐格方案思路';
+    const items=[
+      ['用户场景',entry.scene],
+      ['为什么交叉',entry.reason],
+      ['形成的具体需求',entry.need]
+    ];
+    const steps=entry.steps.map((step,i)=>`<li><span>${String(i+1).padStart(2,'0')}</span><p>${esc(step)}</p></li>`).join('');
+    const sourceLink=evidence.url
+      ? `<a href="${esc(evidence.url)}" target="_blank" rel="noopener noreferrer">${esc(evidence.title)}<span aria-hidden="true"> ↗</span></a>`
+      : `<span>${esc(evidence.title)}</span>`;
+    byId('detail-content').innerHTML=`
+      <div class="pair-line"><span>${esc(p.name)}</span><i>×</i><span>${esc(r.name)}</span></div>
+      ${items.map(([title,body],i)=>`<section class="detail-block"><div class="block-title"><span class="block-number">0${i+1}</span><h3>${title}</h3></div><p>${esc(body)}</p></section>`).join('')}
+      <section class="solution-block">
+        <div class="block-title"><span class="block-number">04</span><h3>对应方案</h3><span class="solution-mark">逐格方案假设</span></div>
+        <h4>${esc(plan.title)}</h4><p>${esc(plan.description)}</p>
+      </section>
+      <section class="detail-block">
+        <div class="block-title"><span class="block-number">05</span><h3>具体处理过程</h3></div>
+        <ol class="steps">${steps}</ol>
+      </section>
+      <section class="success-block">
+        <div class="block-title"><span class="block-number">06</span><h3>如何判断解决了</h3></div>
+        <p>${esc(entry.success)}</p>
+      </section>
+      <section class="evidence-block">
+        <div class="evidence-label">公开依据与适用边界</div>
+        <p class="evidence-title">${sourceLink}</p>
+        <p class="evidence-scope">${esc(evidence.scope)}</p>
+      </section>`;
+  }
+  renderMatrix();
+  selectCell(data.defaultCell);
+})();
+
+</script>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="#main" aria-label="文优小助毕业版需求图">
+      <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+      <span>文优小助 <span class="brand-divider">/</span> 毕业版</span>
+    </a>
+    <span class="top-note">需求 → 方案</span>
+  </header>
+  <main id="main" class="page">
+    <header class="page-heading">
+      <div class="eyebrow"><span class="eyebrow-dot"></span>文献综述 · 开题报告 · 论文初稿</div>
+      <h1>需求交叉热力图</h1>
+      <p>选择橙色交叉格，查看两项需求为何相交，以及它们如何指向产品方案。</p>
+    </header>
+    <div class="workspace">
+      <section class="matrix-panel" aria-labelledby="matrix-title">
+        <div class="panel-heading">
+          <div>
+            <span class="panel-index">01 / 需求</span>
+            <h2 id="matrix-title">需求交叉</h2>
+          </div>
+          <span id="cross-count" class="count-pill"></span>
+        </div>
+        <div class="axis-caption"><span>横向：论文过程节点</span><span>纵向：贯穿需求</span></div>
+        <div class="matrix-scroll" tabindex="0" aria-label="需求交叉热力图，可横向滚动">
+          <table id="matrix" class="matrix" aria-label="论文过程节点与贯穿需求的交叉热力图"></table>
+        </div>
+        <div class="legend" aria-label="颜色说明">
+          <span class="legend-item"><i class="swatch green"></i>暂未标记交叉</span>
+          <span class="legend-item"><i class="swatch orange"></i>需求交叉</span>
+          <span class="legend-gradient"><span>连续交叉少</span><i></i><span>多</span></span>
+        </div>
+        <p class="matrix-note">34 个交叉格各自对应一条具体方案思路；后续可以归并成产品模块，不代表要开发 34 个独立功能。橙色深浅表示横向或纵向连续交叉的格数，不代表用户规模或优先级。</p>
+      </section>
+      <aside class="detail-panel" aria-labelledby="detail-heading" aria-live="polite">
+        <div class="detail-header">
+          <div><span class="panel-index">02 / 方案</span><h2 id="detail-heading">点击一个橙色格子</h2></div>
+          <span id="selected-count" class="selected-count">选择交叉</span>
+        </div>
+        <div id="detail-content" class="detail-content">
+          <p class="detail-placeholder">选择左侧橙色格子，这里会展示用户场景、交叉原因、具体需求，以及对应的解决方案。</p>
+        </div>
+      </aside>
+    </div>
+    <footer class="page-footer">文优小助 · 毕业版需求研究 <span>当前交叉为公开资料归纳形成的讨论判断，需结合实际用户反馈继续验证。</span></footer>
+  </main>
+  <div id="axis-tooltip" class="axis-tooltip" role="tooltip" aria-hidden="true" hidden>
+    <span id="axis-tooltip-axis" class="axis-tooltip-axis"></span>
+    <strong id="axis-tooltip-title" class="axis-tooltip-title"></strong>
+    <p id="axis-tooltip-description" class="axis-tooltip-description"></p>
+  </div>
+</body>
+</html>
